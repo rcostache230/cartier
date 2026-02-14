@@ -205,6 +205,11 @@ class ParkingService:
                         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                     );
 
+                    CREATE TABLE IF NOT EXISTS app_meta (
+                        key TEXT PRIMARY KEY,
+                        value TEXT NOT NULL
+                    );
+
                     CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
                     CREATE INDEX IF NOT EXISTS idx_slots_status_building_time
                         ON parking_slots(status, building_number, available_from, available_until);
@@ -254,6 +259,11 @@ class ParkingService:
                     created_at TEXT NOT NULL DEFAULT (datetime('now')),
                     FOREIGN KEY(owner_user_id) REFERENCES users(id),
                     FOREIGN KEY(reserved_by_user_id) REFERENCES users(id)
+                );
+
+                CREATE TABLE IF NOT EXISTS app_meta (
+                    key TEXT PRIMARY KEY,
+                    value TEXT NOT NULL
                 );
 
                 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
@@ -350,11 +360,51 @@ class ParkingService:
             (default_hash,),
         )
 
-    def seed_default_users(self, default_password: str = DEFAULT_RESIDENT_PASSWORD) -> int:
+    def seed_default_users(
+        self,
+        default_password: str = DEFAULT_RESIDENT_PASSWORD,
+        force: bool = False,
+    ) -> int:
         inserted = 0
-        password_hash = self._hash_password(default_password)
 
         with self._connect() as conn:
+            if not force and self._meta_get(conn, "default_users_seeded") == "1":
+                return 0
+
+            password_hash = self._hash_password(default_password)
+
+            if self._is_postgres:
+                result = conn.execute(
+                    """
+                    INSERT INTO users (
+                        username,
+                        password_hash,
+                        role,
+                        building_number,
+                        apartment_number,
+                        phone_number
+                    )
+                    SELECT
+                        'bloc' || b::text || '_apt' || a::text AS username,
+                        %s,
+                        'resident',
+                        b,
+                        a,
+                        ''
+                    FROM generate_series(1, %s) AS b
+                    CROSS JOIN generate_series(1, 16) AS a
+                    ON CONFLICT (username) DO UPDATE
+                    SET role = 'resident',
+                        building_number = EXCLUDED.building_number,
+                        apartment_number = EXCLUDED.apartment_number,
+                        password_hash = COALESCE(users.password_hash, EXCLUDED.password_hash)
+                    """,
+                    (password_hash, TOTAL_BUILDINGS),
+                )
+                inserted = max(int(result.rowcount or 0), 0)
+                self._meta_set(conn, "default_users_seeded", "1")
+                return inserted
+
             for building in range(1, TOTAL_BUILDINGS + 1):
                 for apartment in range(1, 17):
                     username = f"bloc{building}_apt{apartment}"
@@ -392,38 +442,55 @@ class ParkingService:
                     )
                     inserted += 1
 
+            self._meta_set(conn, "default_users_seeded", "1")
+
         return inserted
 
     def ensure_admin_user(
         self,
         username: str = DEFAULT_ADMIN_USERNAME,
         password: str = DEFAULT_ADMIN_PASSWORD,
+        reset_password: bool = False,
     ) -> None:
         username = self._normalize_username(username)
         if not username:
             raise SlotValidationError("admin username cannot be empty")
-
-        password_hash = self._hash_password(password)
         with self._connect() as conn:
             existing = conn.execute(
-                "SELECT id FROM users WHERE username = ?",
+                "SELECT id, password_hash FROM users WHERE username = ?",
                 (username,),
             ).fetchone()
 
             if existing:
-                conn.execute(
-                    """
-                    UPDATE users
-                    SET role = 'admin',
-                        building_number = 0,
-                        apartment_number = 0,
-                        password_hash = ?
-                    WHERE id = ?
-                    """,
-                    (password_hash, int(existing["id"])),
-                )
+                password_hash = str(existing["password_hash"] or "")
+                update_password = reset_password or not password_hash
+                if update_password:
+                    password_hash = self._hash_password(password)
+                    conn.execute(
+                        """
+                        UPDATE users
+                        SET role = 'admin',
+                            building_number = 0,
+                            apartment_number = 0,
+                            password_hash = ?
+                        WHERE id = ?
+                        """,
+                        (password_hash, int(existing["id"])),
+                    )
+                else:
+                    conn.execute(
+                        """
+                        UPDATE users
+                        SET role = 'admin',
+                            building_number = 0,
+                            apartment_number = 0
+                        WHERE id = ?
+                        """,
+                        (int(existing["id"]),),
+                    )
                 return
 
+            password_hash = self._hash_password(password)
             conn.execute(
                 """
                 INSERT INTO users (
@@ -438,6 +505,24 @@ class ParkingService:
                 """,
                 (username, password_hash),
             )
+
+    @staticmethod
+    def _meta_get(conn, key: str) -> Optional[str]:
+        row = conn.execute("SELECT value FROM app_meta WHERE key = ?", (key,)).fetchone()
+        if not row:
+            return None
+        return str(row["value"])
+
+    @staticmethod
+    def _meta_set(conn, key: str, value: str) -> None:
+        conn.execute(
+            """
+            INSERT INTO app_meta (key, value)
+            VALUES (?, ?)
+            ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
+            """,
+            (key, value),
+        )
 
     def authenticate_user(self, username: str, password: str) -> UserAccount:
         username = self._normalize_username(username)

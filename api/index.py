@@ -222,8 +222,12 @@ def create_user():
 @admin_required
 def reset_defaults():
     svc = _service()
-    inserted = svc.seed_default_users(DEFAULT_RESIDENT_PASSWORD)
-    svc.ensure_admin_user(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD)
+    inserted = svc.seed_default_users(DEFAULT_RESIDENT_PASSWORD, force=True)
+    svc.ensure_admin_user(
+        DEFAULT_ADMIN_USERNAME,
+        DEFAULT_ADMIN_PASSWORD,
+        reset_password=True,
+    )
     return jsonify({"inserted_or_updated": inserted}), 200
 
 
