@@ -27,8 +27,26 @@ class SlotNotFoundError(ParkingModuleError):
 
 
 @dataclass(frozen=True)
+class UserAccount:
+    id: int
+    username: str
+    building_number: int
+    apartment_number: int
+
+
+@dataclass(frozen=True)
+class BuildingParkingSpace:
+    id: int
+    building_number: int
+    parking_space_number: str
+    parking_type: str
+    assigned_apartment_number: Optional[int]
+
+
+@dataclass(frozen=True)
 class ParkingSlot:
     id: int
+    building_number: int
     owner_username: str
     parking_space_number: str
     parking_type: str
@@ -80,8 +98,20 @@ class ParkingService:
                     created_at TEXT NOT NULL DEFAULT (datetime('now'))
                 );
 
+                CREATE TABLE IF NOT EXISTS building_parking_spaces (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    building_number INTEGER NOT NULL,
+                    parking_space_number TEXT NOT NULL,
+                    parking_type TEXT NOT NULL,
+                    assigned_apartment_number INTEGER,
+                    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                    UNIQUE(building_number, parking_space_number)
+                );
+
                 CREATE TABLE IF NOT EXISTS parking_slots (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    building_number INTEGER NOT NULL,
+                    parking_space_id INTEGER,
                     owner_user_id INTEGER NOT NULL,
                     parking_space_number TEXT NOT NULL,
                     parking_type TEXT NOT NULL,
@@ -94,9 +124,26 @@ class ParkingService:
                     reservation_until TEXT,
                     created_at TEXT NOT NULL DEFAULT (datetime('now')),
                     FOREIGN KEY(owner_user_id) REFERENCES users(id),
-                    FOREIGN KEY(reserved_by_user_id) REFERENCES users(id)
+                    FOREIGN KEY(reserved_by_user_id) REFERENCES users(id),
+                    FOREIGN KEY(parking_space_id) REFERENCES building_parking_spaces(id)
                 );
                 """
+            )
+            self._ensure_parking_slots_migrations(conn)
+
+    @staticmethod
+    def _ensure_parking_slots_migrations(conn: sqlite3.Connection) -> None:
+        cols = {
+            row["name"]
+            for row in conn.execute("PRAGMA table_info(parking_slots)").fetchall()
+        }
+        if "building_number" not in cols:
+            conn.execute(
+                "ALTER TABLE parking_slots ADD COLUMN building_number INTEGER DEFAULT 1"
+            )
+        if "parking_space_id" not in cols:
+            conn.execute(
+                "ALTER TABLE parking_slots ADD COLUMN parking_space_id INTEGER"
             )
 
     def seed_default_users(self) -> int:
@@ -125,6 +172,204 @@ class ParkingService:
                     inserted += 1
         return inserted
 
+    def seed_building_parking_spaces(
+        self,
+        underground_per_building: int = 10,
+        above_ground_per_building: int = 6,
+    ) -> int:
+        if underground_per_building <= 0 or above_ground_per_building <= 0:
+            raise SlotValidationError("parking slot counts must be greater than zero")
+
+        inserted = 0
+        with self._connect() as conn:
+            for building in range(1, 11):
+                for index in range(1, underground_per_building + 1):
+                    inserted += self._insert_parking_space_if_missing(
+                        conn=conn,
+                        building_number=building,
+                        parking_space_number=f"U{index:02d}",
+                        parking_type="underground",
+                        assigned_apartment_number=index,
+                    )
+
+                for index in range(1, above_ground_per_building + 1):
+                    inserted += self._insert_parking_space_if_missing(
+                        conn=conn,
+                        building_number=building,
+                        parking_space_number=f"A{index:02d}",
+                        parking_type="above_ground",
+                        assigned_apartment_number=underground_per_building + index,
+                    )
+        return inserted
+
+    @staticmethod
+    def _insert_parking_space_if_missing(
+        conn: sqlite3.Connection,
+        building_number: int,
+        parking_space_number: str,
+        parking_type: str,
+        assigned_apartment_number: Optional[int],
+    ) -> int:
+        exists = conn.execute(
+            """
+            SELECT 1
+            FROM building_parking_spaces
+            WHERE building_number = ?
+              AND parking_space_number = ?
+            """,
+            (building_number, parking_space_number),
+        ).fetchone()
+        if exists:
+            return 0
+
+        conn.execute(
+            """
+            INSERT INTO building_parking_spaces (
+                building_number,
+                parking_space_number,
+                parking_type,
+                assigned_apartment_number
+            )
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                building_number,
+                parking_space_number,
+                parking_type,
+                assigned_apartment_number,
+            ),
+        )
+        return 1
+
+    def list_users(self, building_number: Optional[int] = None) -> list[UserAccount]:
+        params: list[object] = []
+        where = ""
+        if building_number is not None:
+            self._validate_building_number(building_number)
+            where = "WHERE building_number = ?"
+            params.append(building_number)
+
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT id, username, building_number, apartment_number
+                FROM users
+                {where}
+                ORDER BY building_number ASC, apartment_number ASC
+                """,
+                params,
+            ).fetchall()
+
+        return [
+            UserAccount(
+                id=int(row["id"]),
+                username=str(row["username"]),
+                building_number=int(row["building_number"]),
+                apartment_number=int(row["apartment_number"]),
+            )
+            for row in rows
+        ]
+
+    def create_user(
+        self,
+        username: str,
+        building_number: int,
+        apartment_number: int,
+    ) -> UserAccount:
+        username = username.strip()
+        if not username:
+            raise SlotValidationError("username cannot be empty")
+        self._validate_building_number(building_number)
+        if apartment_number < 1 or apartment_number > 16:
+            raise SlotValidationError("apartment_number must be between 1 and 16")
+
+        with self._connect() as conn:
+            try:
+                user_id = conn.execute(
+                    """
+                    INSERT INTO users (username, building_number, apartment_number)
+                    VALUES (?, ?, ?)
+                    """,
+                    (username, building_number, apartment_number),
+                ).lastrowid
+            except sqlite3.IntegrityError as exc:
+                raise SlotValidationError("username already exists") from exc
+
+        return UserAccount(
+            id=int(user_id),
+            username=username,
+            building_number=building_number,
+            apartment_number=apartment_number,
+        )
+
+    def list_parking_spaces(
+        self,
+        building_number: Optional[int] = None,
+        parking_type: Optional[str] = None,
+    ) -> list[BuildingParkingSpace]:
+        params: list[object] = []
+        where: list[str] = []
+
+        if building_number is not None:
+            self._validate_building_number(building_number)
+            where.append("building_number = ?")
+            params.append(building_number)
+
+        if parking_type is not None:
+            self._validate_parking_type(parking_type)
+            where.append("parking_type = ?")
+            params.append(parking_type)
+
+        where_sql = f"WHERE {' AND '.join(where)}" if where else ""
+
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT
+                    id,
+                    building_number,
+                    parking_space_number,
+                    parking_type,
+                    assigned_apartment_number
+                FROM building_parking_spaces
+                {where_sql}
+                ORDER BY building_number ASC, parking_type ASC, parking_space_number ASC
+                """,
+                params,
+            ).fetchall()
+
+        return [self._space_from_row(row) for row in rows]
+
+    def list_building_stats(self) -> list[dict[str, object]]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    b.building_number,
+                    SUM(CASE WHEN b.parking_type = 'underground' THEN 1 ELSE 0 END) AS underground_spaces,
+                    SUM(CASE WHEN b.parking_type = 'above_ground' THEN 1 ELSE 0 END) AS above_ground_spaces,
+                    SUM(CASE WHEN ps.status = 'OPEN' THEN 1 ELSE 0 END) AS open_shared_slots,
+                    SUM(CASE WHEN ps.status = 'RESERVED' THEN 1 ELSE 0 END) AS reserved_shared_slots
+                FROM building_parking_spaces b
+                LEFT JOIN parking_slots ps
+                    ON ps.parking_space_id = b.id
+                   AND ps.status IN ('OPEN', 'RESERVED')
+                GROUP BY b.building_number
+                ORDER BY b.building_number ASC
+                """
+            ).fetchall()
+
+        return [
+            {
+                "building_number": int(row["building_number"]),
+                "underground_spaces": int(row["underground_spaces"] or 0),
+                "above_ground_spaces": int(row["above_ground_spaces"] or 0),
+                "open_shared_slots": int(row["open_shared_slots"] or 0),
+                "reserved_shared_slots": int(row["reserved_shared_slots"] or 0),
+            }
+            for row in rows
+        ]
+
     def create_availability_slot(
         self,
         owner_username: str,
@@ -133,30 +378,61 @@ class ParkingService:
         available_from: str,
         available_until: str,
     ) -> ParkingSlot:
-        owner_user_id = self._user_id(owner_username)
+        owner = self._user_by_username(owner_username)
         self._validate_parking_type(parking_type)
         from_dt = self._parse_iso_datetime(available_from)
         until_dt = self._parse_iso_datetime(available_until)
         if from_dt >= until_dt:
             raise SlotValidationError("available_from must be before available_until")
 
-        if not parking_space_number.strip():
+        parking_space_number = parking_space_number.strip().upper()
+        if not parking_space_number:
             raise SlotValidationError("parking_space_number cannot be empty")
 
         with self._connect() as conn:
+            space = conn.execute(
+                """
+                SELECT id, parking_type, assigned_apartment_number
+                FROM building_parking_spaces
+                WHERE building_number = ?
+                  AND parking_space_number = ?
+                """,
+                (owner.building_number, parking_space_number),
+            ).fetchone()
+            if not space:
+                raise SlotValidationError(
+                    "parking space does not exist in owner's building"
+                )
+            if str(space["parking_type"]) != parking_type:
+                raise SlotValidationError(
+                    "parking_type does not match the selected parking space"
+                )
+
+            assigned_apartment = (
+                int(space["assigned_apartment_number"])
+                if space["assigned_apartment_number"] is not None
+                else None
+            )
+            if assigned_apartment is not None and assigned_apartment != owner.apartment_number:
+                raise SlotValidationError(
+                    "selected parking space is assigned to a different apartment"
+                )
+
             overlap = conn.execute(
                 """
                 SELECT id
                 FROM parking_slots
                 WHERE owner_user_id = ?
+                  AND building_number = ?
                   AND parking_space_number = ?
                   AND status IN ('OPEN', 'RESERVED')
                   AND NOT (available_until <= ? OR available_from >= ?)
                 LIMIT 1
                 """,
                 (
-                    owner_user_id,
-                    parking_space_number.strip(),
+                    owner.id,
+                    owner.building_number,
+                    parking_space_number,
                     available_from,
                     available_until,
                 ),
@@ -169,17 +445,21 @@ class ParkingService:
             slot_id = conn.execute(
                 """
                 INSERT INTO parking_slots (
+                    building_number,
+                    parking_space_id,
                     owner_user_id,
                     parking_space_number,
                     parking_type,
                     available_from,
                     available_until
                 )
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
-                    owner_user_id,
-                    parking_space_number.strip(),
+                    owner.building_number,
+                    int(space["id"]),
+                    owner.id,
+                    parking_space_number,
                     parking_type,
                     available_from,
                     available_until,
@@ -193,6 +473,7 @@ class ParkingService:
         requested_from: Optional[str] = None,
         requested_until: Optional[str] = None,
         parking_type: Optional[str] = None,
+        building_number: Optional[int] = None,
     ) -> list[ParkingSlot]:
         params: list[object] = []
         where = ["ps.status = 'OPEN'"]
@@ -201,6 +482,11 @@ class ParkingService:
             self._validate_parking_type(parking_type)
             where.append("ps.parking_type = ?")
             params.append(parking_type)
+
+        if building_number is not None:
+            self._validate_building_number(building_number)
+            where.append("ps.building_number = ?")
+            params.append(building_number)
 
         if requested_from is not None and requested_until is not None:
             from_dt = self._parse_iso_datetime(requested_from)
@@ -218,6 +504,7 @@ class ParkingService:
         query = f"""
             SELECT
                 ps.id,
+                ps.building_number,
                 owner.username AS owner_username,
                 ps.parking_space_number,
                 ps.parking_type,
@@ -243,8 +530,12 @@ class ParkingService:
         requested_from: str,
         requested_until: str,
         parking_type: Optional[str] = None,
+        building_number: Optional[int] = None,
     ) -> ParkingSlot:
-        requester_id = self._user_id(requester_username)
+        requester = self._user_by_username(requester_username)
+        target_building = building_number if building_number is not None else requester.building_number
+        self._validate_building_number(target_building)
+
         from_dt = self._parse_iso_datetime(requested_from)
         until_dt = self._parse_iso_datetime(requested_until)
         if from_dt >= until_dt:
@@ -253,10 +544,11 @@ class ParkingService:
             self._validate_parking_type(parking_type)
 
         with self._connect() as conn:
-            params: list[object] = [requester_id, requested_from, requested_until]
+            params: list[object] = [requester.id, target_building, requested_from, requested_until]
             where = [
                 "ps.status = 'OPEN'",
                 "ps.owner_user_id != ?",
+                "ps.building_number = ?",
                 "ps.available_from <= ?",
                 "ps.available_until >= ?",
             ]
@@ -291,18 +583,18 @@ class ParkingService:
                   AND status = 'OPEN'
                 """,
                 (
-                    requester_id,
+                    requester.id,
                     now_iso,
                     requested_from,
                     requested_until,
-                    slot_row["id"],
+                    int(slot_row["id"]),
                 ),
             )
 
             if updated.rowcount == 0:
                 raise SlotValidationError("slot was reserved by another user, retry")
 
-        return self.get_slot(slot_row["id"])
+        return self.get_slot(int(slot_row["id"]))
 
     def get_slot(self, slot_id: int) -> ParkingSlot:
         with self._connect() as conn:
@@ -310,6 +602,7 @@ class ParkingService:
                 """
                 SELECT
                     ps.id,
+                    ps.building_number,
                     owner.username AS owner_username,
                     ps.parking_space_number,
                     ps.parking_type,
@@ -330,21 +623,35 @@ class ParkingService:
             raise SlotNotFoundError(f"slot {slot_id} not found")
         return self._slot_from_row(row)
 
-    def _user_id(self, username: str) -> int:
+    def _user_by_username(self, username: str) -> UserAccount:
         with self._connect() as conn:
             row = conn.execute(
-                "SELECT id FROM users WHERE username = ?",
+                """
+                SELECT id, username, building_number, apartment_number
+                FROM users
+                WHERE username = ?
+                """,
                 (username,),
             ).fetchone()
         if row is None:
             raise UserNotFoundError(f"user '{username}' not found")
-        return int(row["id"])
+        return UserAccount(
+            id=int(row["id"]),
+            username=str(row["username"]),
+            building_number=int(row["building_number"]),
+            apartment_number=int(row["apartment_number"]),
+        )
 
     @staticmethod
     def _validate_parking_type(parking_type: str) -> None:
         if parking_type not in PARKING_TYPES:
             allowed = ", ".join(sorted(PARKING_TYPES))
             raise SlotValidationError(f"parking_type must be one of: {allowed}")
+
+    @staticmethod
+    def _validate_building_number(building_number: int) -> None:
+        if building_number < 1 or building_number > 10:
+            raise SlotValidationError("building_number must be between 1 and 10")
 
     @staticmethod
     def _parse_iso_datetime(value: str) -> datetime:
@@ -359,6 +666,7 @@ class ParkingService:
     def _slot_from_row(row: sqlite3.Row) -> ParkingSlot:
         return ParkingSlot(
             id=int(row["id"]),
+            building_number=int(row["building_number"]),
             owner_username=str(row["owner_username"]),
             parking_space_number=str(row["parking_space_number"]),
             parking_type=str(row["parking_type"]),
@@ -376,6 +684,20 @@ class ParkingService:
             reservation_until=(
                 str(row["reservation_until"])
                 if row["reservation_until"] is not None
+                else None
+            ),
+        )
+
+    @staticmethod
+    def _space_from_row(row: sqlite3.Row) -> BuildingParkingSpace:
+        return BuildingParkingSpace(
+            id=int(row["id"]),
+            building_number=int(row["building_number"]),
+            parking_space_number=str(row["parking_space_number"]),
+            parking_type=str(row["parking_type"]),
+            assigned_apartment_number=(
+                int(row["assigned_apartment_number"])
+                if row["assigned_apartment_number"] is not None
                 else None
             ),
         )

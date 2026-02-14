@@ -1,86 +1,54 @@
-# Neighbourhood Parking API (Vercel Ready)
+# Neighbourhood Parking Hub (Vercel Ready)
 
-This repository contains the parking slot sharing module and a Vercel-ready API.
+Parking sharing platform for 10 buildings, with apartment-based users and a building parking inventory.
 
-## Features
+## What is implemented
 
-- Default residents: `Bloc1_Apt1` ... `Bloc10_Apt16` (160 users total).
-- Owner shares availability with:
-  - `parking_space_number`
-  - `parking_type` (`above_ground` or `underground`)
-  - exact datetime interval (`available_from`, `available_until`)
-- Auto-fill reservation:
-  - requester asks for a datetime interval and optional parking type
-  - earliest compatible slot is reserved automatically
+- UI dashboard (served at `/`) for:
+  - User management
+  - Share parking availability
+  - Auto-reserve slots
+  - Building stats and open slots overview
+- User model:
+  - Default seed: `Bloc1_Apt1` ... `Bloc10_Apt16` (160 users)
+- Parking inventory model:
+  - Per building: `10` underground (`U01..U10`) + `6` above-ground (`A01..A06`)
+  - Total default spaces: `160`
+- Slot sharing logic:
+  - User can only publish availability for the space assigned to their apartment
+  - Exact datetime intervals (`YYYY-MM-DDTHH:MM`)
+  - Building-scoped auto-reservation (defaults to requester's building)
 
-## API Endpoints
+## API endpoints
 
-- `GET /health`
-- `POST /users/seed`
-- `POST /slots`
-- `GET /slots/open`
-- `POST /slots/auto-reserve`
+- `GET /api/health`
+- `GET /api/users`
+- `POST /api/users`
+- `POST /api/users/seed`
+- `GET /api/parking-spaces`
+- `POST /api/parking-spaces/seed`
+- `GET /api/buildings/stats`
+- `POST /api/slots`
+- `GET /api/slots/open`
+- `POST /api/slots/auto-reserve`
 
-## Example Requests
-
-Create slot:
-
-```bash
-curl -X POST http://localhost:8000/slots \
-  -H "Content-Type: application/json" \
-  -d '{
-    "owner_username": "Bloc1_Apt1",
-    "parking_space_number": "A-07",
-    "parking_type": "underground",
-    "available_from": "2026-02-20T08:00",
-    "available_until": "2026-02-20T18:00"
-  }'
-```
-
-Auto-reserve:
-
-```bash
-curl -X POST http://localhost:8000/slots/auto-reserve \
-  -H "Content-Type: application/json" \
-  -d '{
-    "requester_username": "Bloc2_Apt6",
-    "requested_from": "2026-02-20T12:00",
-    "requested_until": "2026-02-20T16:00",
-    "parking_type": "underground"
-  }'
-```
-
-## Deploy To Vercel
-
-1. Install CLI:
-```bash
-npm i -g vercel
-```
-
-2. Login:
-```bash
-vercel login
-```
-
-3. Deploy from repo root:
-```bash
-vercel
-```
-
-4. Deploy production:
-```bash
-vercel --prod
-```
-
-## Important Note About Database
-
-- On Vercel, local SQLite in `/tmp` is ephemeral.
-- Current setup is fine for demo/testing deployments.
-- For real production data persistence, move to managed Postgres (e.g. Vercel Postgres, Neon, Supabase).
-
-## Local Run
+## Local run
 
 ```bash
 pip install -r requirements.txt
 python api/index.py
 ```
+
+Open [http://localhost:8000](http://localhost:8000).
+
+## Deploy to Vercel
+
+```bash
+vercel
+vercel --prod
+```
+
+## Notes
+
+- On Vercel, SQLite is stored in `/tmp` and is ephemeral.
+- For persistent production data, move to managed Postgres.

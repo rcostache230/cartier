@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neighbourhood Parking Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #1e2a2f;
+        --ink-soft: #47555c;
+        --sand: #f8f4ea;
+        --teal: #0f766e;
+        --teal-soft: #d4f4ee;
+        --orange: #ed7b2f;
+        --card: #fffef9;
+        --line: #ddd5c6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 85% 5%, #ffe3c8 0%, #ffe3c800 32%),
+          radial-gradient(circle at 0% 100%, #d9efe8 0%, #d9efe800 28%),
+          var(--sand);
+      }
+
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .hero {
+        padding: 24px;
+        border: 2px solid var(--line);
+        background: linear-gradient(135deg, #fff 0%, #fff5e7 100%);
+        border-radius: 18px;
+        box-shadow: 0 12px 30px #00000014;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: clamp(1.7rem, 2.8vw, 2.6rem);
+      }
+
+      .hero p {
+        margin-top: 8px;
+        color: var(--ink-soft);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+      }
+
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 1.1rem;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+      }
+
+      .pill {
+        background: var(--teal-soft);
+        border: 1px solid #9cd8ce;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+
+      .pill b {
+        display: block;
+        font-size: 1.3rem;
+        color: var(--teal);
+      }
+
+      form {
+        display: grid;
+        gap: 10px;
+      }
+
+      label {
+        font-size: 0.88rem;
+        color: var(--ink-soft);
+      }
+
+      input,
+      select,
+      button {
+        width: 100%;
+        padding: 9px 10px;
+        border-radius: 8px;
+        border: 1px solid #c8c0b1;
+        font: inherit;
+      }
+
+      input:focus,
+      select:focus {
+        outline: 2px solid #8ecdc1;
+        border-color: #8ecdc1;
+      }
+
+      button {
+        cursor: pointer;
+        border: 0;
+        background: var(--teal);
+        color: white;
+        font-weight: 600;
+        transition: transform 0.14s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      .secondary {
+        background: var(--orange);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+
+      th,
+      td {
+        text-align: left;
+        border-bottom: 1px solid #ece5d9;
+        padding: 8px 6px;
+      }
+
+      .stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .status {
+        margin-top: 12px;
+        min-height: 24px;
+        color: var(--teal);
+        font-size: 0.9rem;
+      }
+
+      .error {
+        color: #b42318;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="hero">
+        <h1>Neighbourhood Parking Hub</h1>
+        <p>
+          10 buildings, each with 10 underground + 6 above-ground spaces.
+          Share your spot while away and reserve automatically inside the building.
+        </p>
+      </section>
+
+      <section class="card" style="margin-top: 18px">
+        <h2>Building Capacity</h2>
+        <div id="buildingStats" class="stats"></div>
+      </section>
+
+      <div class="grid">
+        <section class="card stack">
+          <h2>User Management</h2>
+          <form id="userForm">
+            <div>
+              <label for="username">Username</label>
+              <input id="username" placeholder="Bloc1_Apt17" />
+            </div>
+            <div>
+              <label for="userBuilding">Building</label>
+              <select id="userBuilding"></select>
+            </div>
+            <div>
+              <label for="userApartment">Apartment</label>
+              <input id="userApartment" type="number" min="1" value="17" />
+            </div>
+            <button type="submit">Create User</button>
+          </form>
+
+          <div>
+            <label for="userFilterBuilding">Show users by building</label>
+            <select id="userFilterBuilding"></select>
+          </div>
+          <div style="max-height: 280px; overflow: auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Building</th>
+                  <th>Apt</th>
+                </tr>
+              </thead>
+              <tbody id="usersTbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card stack">
+          <h2>Share My Parking Space</h2>
+          <form id="shareForm">
+            <div>
+              <label for="ownerUser">Owner user</label>
+              <select id="ownerUser"></select>
+            </div>
+            <div>
+              <label for="ownerSpace">Parking space</label>
+              <select id="ownerSpace"></select>
+            </div>
+            <div>
+              <label for="shareFrom">Available from</label>
+              <input id="shareFrom" type="datetime-local" />
+            </div>
+            <div>
+              <label for="shareUntil">Available until</label>
+              <input id="shareUntil" type="datetime-local" />
+            </div>
+            <button type="submit">Publish Availability</button>
+          </form>
+        </section>
+
+        <section class="card stack">
+          <h2>Reserve Automatically</h2>
+          <form id="reserveForm">
+            <div>
+              <label for="requesterUser">Requester user</label>
+              <select id="requesterUser"></select>
+            </div>
+            <div>
+              <label for="reserveBuilding">Building</label>
+              <select id="reserveBuilding"></select>
+            </div>
+            <div>
+              <label for="reserveType">Parking type</label>
+              <select id="reserveType">
+                <option value="">Any</option>
+                <option value="underground">Underground</option>
+                <option value="above_ground">Above Ground</option>
+              </select>
+            </div>
+            <div>
+              <label for="reserveFrom">From</label>
+              <input id="reserveFrom" type="datetime-local" />
+            </div>
+            <div>
+              <label for="reserveUntil">Until</label>
+              <input id="reserveUntil" type="datetime-local" />
+            </div>
+            <button class="secondary" type="submit">Auto Reserve Slot</button>
+          </form>
+        </section>
+      </div>
+
+      <section class="card" style="margin-top: 18px">
+        <h2>Open Shared Slots</h2>
+        <form id="openFilters" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 8px;">
+          <div>
+            <label for="filterBuilding">Building</label>
+            <select id="filterBuilding"></select>
+          </div>
+          <div>
+            <label for="filterType">Type</label>
+            <select id="filterType">
+              <option value="">All</option>
+              <option value="underground">Underground</option>
+              <option value="above_ground">Above Ground</option>
+            </select>
+          </div>
+          <div>
+            <label for="filterFrom">From</label>
+            <input id="filterFrom" type="datetime-local" />
+          </div>
+          <div>
+            <label for="filterUntil">Until</label>
+            <input id="filterUntil" type="datetime-local" />
+          </div>
+          <div style="align-self: end;">
+            <button type="submit">Refresh</button>
+          </div>
+        </form>
+        <div style="max-height: 350px; overflow: auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Building</th>
+                <th>Space</th>
+                <th>Type</th>
+                <th>Owner</th>
+                <th>From</th>
+                <th>Until</th>
+              </tr>
+            </thead>
+            <tbody id="slotsTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div id="status" class="status"></div>
+    </div>
+
+    <script>
+      const statusBox = document.getElementById("status");
+
+      const ownerUser = document.getElementById("ownerUser");
+      const requesterUser = document.getElementById("requesterUser");
+      const reserveBuilding = document.getElementById("reserveBuilding");
+      const userFilterBuilding = document.getElementById("userFilterBuilding");
+      const filterBuilding = document.getElementById("filterBuilding");
+      const userBuilding = document.getElementById("userBuilding");
+
+      const ownerSpace = document.getElementById("ownerSpace");
+      const usersTbody = document.getElementById("usersTbody");
+      const slotsTbody = document.getElementById("slotsTbody");
+      const buildingStats = document.getElementById("buildingStats");
+
+      let allUsers = [];
+
+      function setStatus(message, isError = false) {
+        statusBox.textContent = message;
+        statusBox.className = isError ? "status error" : "status";
+      }
+
+      async function api(path, opts = {}) {
+        const res = await fetch(path, {
+          headers: { "Content-Type": "application/json" },
+          ...opts,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.error || `Request failed (${res.status})`);
+        }
+        return data;
+      }
+
+      function option(value, label) {
+        const opt = document.createElement("option");
+        opt.value = value;
+        opt.textContent = label;
+        return opt;
+      }
+
+      function populateBuildingSelect(selectEl, withAll = false) {
+        selectEl.innerHTML = "";
+        if (withAll) {
+          selectEl.appendChild(option("", "All buildings"));
+        }
+        for (let b = 1; b <= 10; b++) {
+          selectEl.appendChild(option(String(b), `Bloc ${b}`));
+        }
+      }
+
+      function renderUsers(users) {
+        usersTbody.innerHTML = "";
+        users.forEach((u) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${u.username}</td><td>${u.building_number}</td><td>${u.apartment_number}</td>`;
+          usersTbody.appendChild(tr);
+        });
+      }
+
+      async function loadUsers() {
+        const selectedBuilding = userFilterBuilding.value;
+        const query = selectedBuilding ? `?building_number=${selectedBuilding}` : "";
+        const users = await api(`/api/users${query}`);
+        allUsers = await api("/api/users");
+
+        renderUsers(users);
+
+        ownerUser.innerHTML = "";
+        requesterUser.innerHTML = "";
+        allUsers.forEach((u) => {
+          const label = `${u.username} (Bloc ${u.building_number}, Apt ${u.apartment_number})`;
+          ownerUser.appendChild(option(u.username, label));
+          requesterUser.appendChild(option(u.username, label));
+        });
+
+        if (requesterUser.value) {
+          const selectedRequester = allUsers.find((u) => u.username === requesterUser.value);
+          if (selectedRequester) {
+            reserveBuilding.value = String(selectedRequester.building_number);
+          }
+        }
+
+        await loadOwnerSpaces();
+      }
+
+      async function loadOwnerSpaces() {
+        const selected = allUsers.find((u) => u.username === ownerUser.value);
+        if (!selected) return;
+        const spaces = await api(`/api/parking-spaces?building_number=${selected.building_number}`);
+        ownerSpace.innerHTML = "";
+        const assignedSpaces = spaces
+          .filter((s) => s.assigned_apartment_number === selected.apartment_number)
+        assignedSpaces.forEach((s) => {
+          ownerSpace.appendChild(
+            option(
+              `${s.parking_space_number}|${s.parking_type}`,
+              `${s.parking_space_number} (${s.parking_type.replace("_", " ")})`
+            )
+          );
+        });
+        if (assignedSpaces.length === 0) {
+          setStatus("Selected user has no assigned parking space.", true);
+        }
+      }
+
+      async function loadBuildingStats() {
+        const stats = await api("/api/buildings/stats");
+        buildingStats.innerHTML = "";
+        stats.forEach((s) => {
+          const el = document.createElement("div");
+          el.className = "pill";
+          el.innerHTML = `<strong>Bloc ${s.building_number}</strong><b>${s.underground_spaces}+${s.above_ground_spaces}</b>UG ${s.underground_spaces} | AG ${s.above_ground_spaces}<br/>Open ${s.open_shared_slots} | Reserved ${s.reserved_shared_slots}`;
+          buildingStats.appendChild(el);
+        });
+      }
+
+      async function loadOpenSlots() {
+        const params = new URLSearchParams();
+        const b = filterBuilding.value;
+        const t = document.getElementById("filterType").value;
+        const from = document.getElementById("filterFrom").value;
+        const until = document.getElementById("filterUntil").value;
+
+        if (b) params.set("building_number", b);
+        if (t) params.set("parking_type", t);
+        if (from && until) {
+          params.set("requested_from", from);
+          params.set("requested_until", until);
+        }
+
+        const query = params.toString() ? `?${params.toString()}` : "";
+        const slots = await api(`/api/slots/open${query}`);
+
+        slotsTbody.innerHTML = "";
+        slots.forEach((s) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${s.building_number}</td><td>${s.parking_space_number}</td><td>${s.parking_type}</td><td>${s.owner_username}</td><td>${s.available_from.replace("T", " ")}</td><td>${s.available_until.replace("T", " ")}</td>`;
+          slotsTbody.appendChild(tr);
+        });
+      }
+
+      document.getElementById("userForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          await api("/api/users", {
+            method: "POST",
+            body: JSON.stringify({
+              username: document.getElementById("username").value,
+              building_number: Number(userBuilding.value),
+              apartment_number: Number(document.getElementById("userApartment").value),
+            }),
+          });
+          setStatus("User created.");
+          await loadUsers();
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      });
+
+      document.getElementById("shareForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          if (!ownerSpace.value) {
+            throw new Error("No parking space selected for this user.");
+          }
+          const [spaceNumber, parkingType] = ownerSpace.value.split("|");
+          await api("/api/slots", {
+            method: "POST",
+            body: JSON.stringify({
+              owner_username: ownerUser.value,
+              parking_space_number: spaceNumber,
+              parking_type: parkingType,
+              available_from: document.getElementById("shareFrom").value,
+              available_until: document.getElementById("shareUntil").value,
+            }),
+          });
+          setStatus("Parking availability published.");
+          await loadOpenSlots();
+          await loadBuildingStats();
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      });
+
+      document.getElementById("reserveForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          const payload = {
+            requester_username: requesterUser.value,
+            requested_from: document.getElementById("reserveFrom").value,
+            requested_until: document.getElementById("reserveUntil").value,
+            building_number: Number(reserveBuilding.value),
+          };
+          const type = document.getElementById("reserveType").value;
+          if (type) payload.parking_type = type;
+
+          const slot = await api("/api/slots/auto-reserve", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          setStatus(`Reserved ${slot.parking_space_number} in Bloc ${slot.building_number}.`);
+          await loadOpenSlots();
+          await loadBuildingStats();
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      });
+
+      document.getElementById("openFilters").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          await loadOpenSlots();
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      });
+
+      ownerUser.addEventListener("change", async () => {
+        try {
+          await loadOwnerSpaces();
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      });
+
+      requesterUser.addEventListener("change", () => {
+        const selected = allUsers.find((u) => u.username === requesterUser.value);
+        if (selected) {
+          reserveBuilding.value = String(selected.building_number);
+        }
+      });
+
+      userFilterBuilding.addEventListener("change", async () => {
+        try {
+          await loadUsers();
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      });
+
+      async function boot() {
+        populateBuildingSelect(userFilterBuilding, true);
+        populateBuildingSelect(filterBuilding, true);
+        populateBuildingSelect(userBuilding);
+        populateBuildingSelect(reserveBuilding);
+
+        try {
+          await loadBuildingStats();
+          await loadUsers();
+          await loadOpenSlots();
+          setStatus("Dashboard ready.");
+        } catch (err) {
+          setStatus(err.message, true);
+        }
+      }
+
+      boot();
+    </script>
+  </body>
+</html>
