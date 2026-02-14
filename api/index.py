@@ -114,7 +114,12 @@ def home():
 @app.route("/health", methods=["GET"])
 @app.route("/api/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok", "db_path": service.db_path})
+    return jsonify(
+        {
+            "status": "ok",
+            "db_backend": "postgres" if service._is_postgres else "sqlite",
+        }
+    )
 
 
 @app.route("/api", methods=["GET"])

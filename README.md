@@ -9,6 +9,8 @@ This project is a Vercel-ready Flask app for parking spot sharing between neighb
 - Default resident password: `10blocuri`
 - Admin user: `admin`
 - Admin password: `adex123#`
+- Usernames are normalized to lowercase automatically.
+- If a username starts with `blocN` (example: `bloc3_maria`), building is auto-assigned to that building.
 - Building capacity shown in dashboard:
   - 10 underground spots
   - 6 above-ground spots
@@ -62,4 +64,5 @@ vercel --prod
 
 ## Production note
 
-SQLite on Vercel (`/tmp`) is ephemeral. Use managed Postgres for persistent production data.
+This app supports persistent Postgres via `DATABASE_URL` / `POSTGRES_URL`.
+If no Postgres URL is configured, it falls back to SQLite (`/tmp` on Vercel, which is ephemeral).

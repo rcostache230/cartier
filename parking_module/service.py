@@ -11,6 +11,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+try:
+    import psycopg
+    from psycopg.rows import dict_row
+except Exception:  # pragma: no cover - optional dependency for local sqlite-only runs
+    psycopg = None
+    dict_row = None
+
 PARKING_TYPES = {"above_ground", "underground"}
 DEFAULT_RESIDENT_PASSWORD = "10blocuri"
 DEFAULT_ADMIN_PASSWORD = "adex123#"
@@ -72,28 +79,131 @@ class ParkingSlot:
     reservation_until: Optional[str]
 
 
+class _PGExecutionResult:
+    def __init__(self, cursor, lastrowid: Optional[int] = None) -> None:
+        self._cursor = cursor
+        self.lastrowid = lastrowid
+        self.rowcount = cursor.rowcount
+
+    def fetchone(self):
+        row = self._cursor.fetchone()
+        self._cursor.close()
+        return row
+
+    def fetchall(self):
+        rows = self._cursor.fetchall()
+        self._cursor.close()
+        return rows
+
+
+class _PostgresConnectionWrapper:
+    def __init__(self, database_url: str) -> None:
+        if psycopg is None or dict_row is None:
+            raise RuntimeError(
+                "psycopg is required for PostgreSQL. Install dependencies from requirements.txt"
+            )
+        self._conn = psycopg.connect(database_url, row_factory=dict_row)
+
+    @staticmethod
+    def _convert_sql(query: str) -> str:
+        return query.replace("?", "%s")
+
+    def execute(self, query: str, params=()):
+        cursor = self._conn.cursor()
+        cursor.execute(self._convert_sql(query), params)
+        lastrowid: Optional[int] = None
+        if query.lstrip().lower().startswith("insert") and "returning" not in query.lower():
+            id_cursor = self._conn.cursor()
+            id_cursor.execute("SELECT LASTVAL() AS id")
+            row = id_cursor.fetchone()
+            if row and row.get("id") is not None:
+                lastrowid = int(row["id"])
+            id_cursor.close()
+        return _PGExecutionResult(cursor, lastrowid=lastrowid)
+
+    def executescript(self, script: str) -> None:
+        for statement in script.split(";"):
+            stmt = statement.strip()
+            if stmt:
+                self.execute(stmt)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        if exc_type is None:
+            self._conn.commit()
+        else:
+            self._conn.rollback()
+        self._conn.close()
+
+
 class ParkingService:
-    """SQLite-backed parking slot sharing and auto-reservation service."""
+    """Database-backed parking slot sharing and reservation service."""
 
     def __init__(self, db_path: Optional[str] = None) -> None:
         self.db_path = db_path or self._default_db_path()
+        self._is_postgres = self.db_path.startswith(("postgres://", "postgresql://"))
         self._initialize_db()
 
     @staticmethod
     def _default_db_path() -> str:
-        configured = os.getenv("PARKING_DB_PATH")
+        configured = (
+            os.getenv("PARKING_DB_PATH")
+            or os.getenv("DATABASE_URL")
+            or os.getenv("POSTGRES_URL_NON_POOLING")
+            or os.getenv("POSTGRES_URL")
+        )
         if configured:
             return configured
         if os.getenv("VERCEL"):
             return "/tmp/parking_module.db"
         return "parking_module.db"
 
-    def _connect(self) -> sqlite3.Connection:
+    def _connect(self):
+        if self._is_postgres:
+            return _PostgresConnectionWrapper(self.db_path)
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         return conn
 
     def _initialize_db(self) -> None:
+        if self._is_postgres:
+            with self._connect() as conn:
+                conn.executescript(
+                    """
+                    CREATE TABLE IF NOT EXISTS users (
+                        id BIGSERIAL PRIMARY KEY,
+                        username TEXT NOT NULL UNIQUE,
+                        password_hash TEXT,
+                        role TEXT NOT NULL DEFAULT 'resident',
+                        building_number INTEGER NOT NULL,
+                        apartment_number INTEGER NOT NULL,
+                        phone_number TEXT NOT NULL DEFAULT '',
+                        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                    );
+
+                    CREATE TABLE IF NOT EXISTS parking_slots (
+                        id BIGSERIAL PRIMARY KEY,
+                        building_number INTEGER NOT NULL,
+                        owner_user_id BIGINT NOT NULL REFERENCES users(id),
+                        parking_space_number TEXT NOT NULL,
+                        parking_type TEXT NOT NULL,
+                        available_from TEXT NOT NULL,
+                        available_until TEXT NOT NULL,
+                        status TEXT NOT NULL DEFAULT 'OPEN',
+                        reserved_by_user_id BIGINT REFERENCES users(id),
+                        reserved_at TEXT,
+                        claim_phone_number TEXT NOT NULL DEFAULT '',
+                        reservation_from TEXT,
+                        reservation_until TEXT,
+                        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                    );
+                    """
+                )
+                self._run_user_migrations_postgres(conn)
+            return
+
         db_dir = Path(self.db_path).parent
         if str(db_dir) not in ("", "."):
             db_dir.mkdir(parents=True, exist_ok=True)
@@ -134,9 +244,9 @@ class ParkingService:
                 );
                 """
             )
-            self._run_user_migrations(conn)
+            self._run_user_migrations_sqlite(conn)
 
-    def _run_user_migrations(self, conn: sqlite3.Connection) -> None:
+    def _run_user_migrations_sqlite(self, conn: sqlite3.Connection) -> None:
         cols = {row["name"] for row in conn.execute("PRAGMA table_info(users)").fetchall()}
 
         if "password_hash" not in cols:
@@ -155,6 +265,42 @@ class ParkingService:
             )
 
         # Normalize usernames to lowercase.
+        rows = conn.execute("SELECT id, username FROM users").fetchall()
+        for row in rows:
+            normalized = self._normalize_username(str(row["username"]))
+            if normalized == row["username"]:
+                continue
+            duplicate = conn.execute(
+                "SELECT id FROM users WHERE username = ? AND id != ?",
+                (normalized, int(row["id"])),
+            ).fetchone()
+            if duplicate:
+                continue
+            conn.execute(
+                "UPDATE users SET username = ? WHERE id = ?",
+                (normalized, int(row["id"])),
+            )
+
+        default_hash = self._hash_password(DEFAULT_RESIDENT_PASSWORD)
+        conn.execute(
+            """
+            UPDATE users
+            SET password_hash = COALESCE(password_hash, ?),
+                role = COALESCE(role, 'resident'),
+                phone_number = COALESCE(phone_number, '')
+            WHERE role != 'admin'
+            """,
+            (default_hash,),
+        )
+
+    def _run_user_migrations_postgres(self, conn: _PostgresConnectionWrapper) -> None:
+        conn.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash TEXT")
+        conn.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'resident'")
+        conn.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone_number TEXT NOT NULL DEFAULT ''")
+        conn.execute(
+            "ALTER TABLE parking_slots ADD COLUMN IF NOT EXISTS claim_phone_number TEXT NOT NULL DEFAULT ''"
+        )
+
         rows = conn.execute("SELECT id, username FROM users").fetchall()
         for row in rows:
             normalized = self._normalize_username(str(row["username"]))
