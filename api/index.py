@@ -128,6 +128,9 @@ def api_root():
                 "admin_username": DEFAULT_ADMIN_USERNAME,
             },
             "parking_types": sorted(PARKING_TYPES),
+            "endpoints": {
+                "claim_specific_slot": "POST /api/slots/claim",
+            },
         }
     )
 
@@ -176,6 +179,7 @@ def create_user():
         role=str(payload.get("role", "resident")),
         building_number=int(payload.get("building_number", 0)),
         apartment_number=int(payload.get("apartment_number", 0)),
+        phone_number=str(payload.get("phone_number", "")),
     )
     return jsonify(asdict(user)), 201
 
@@ -249,6 +253,20 @@ def auto_reserve_slot():
         requested_until=str(payload.get("requested_until", "")),
         parking_type=payload.get("parking_type"),
         building_number=int(building_number) if building_number is not None else None,
+    )
+    return jsonify(asdict(slot)), 200
+
+
+@app.route("/api/slots/claim", methods=["POST"])
+@login_required
+def claim_specific_slot():
+    payload = request.get_json(silent=True) or {}
+    user = _current_user()
+    slot = service.reserve_specific_slot(
+        requester_username=user.username,
+        slot_id=int(payload.get("slot_id", 0)),
+        requested_from=str(payload.get("requested_from", "")),
+        requested_until=str(payload.get("requested_until", "")),
     )
     return jsonify(asdict(slot)), 200
 

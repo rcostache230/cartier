@@ -22,9 +22,12 @@ This project is a Vercel-ready Flask app for parking spot sharing between neighb
   - My shared spots
   - My shared spots claimed by neighbours (+ claimed period)
   - My claimed spots (+ claimed period)
+- Claim flow:
+  - choose from currently available shared spots
+  - claim a selected spot for an exact period
 - Admin-only user management:
   - List users
-  - Create resident/admin users
+  - Create resident/admin users (with phone number)
 
 ## API
 
@@ -35,6 +38,7 @@ This project is a Vercel-ready Flask app for parking spot sharing between neighb
 - `POST /api/slots` (login required)
 - `GET /api/slots/open` (login required)
 - `POST /api/slots/auto-reserve` (login required)
+- `POST /api/slots/claim` (login required, selected slot)
 - `GET /api/buildings/stats` (login required)
 - `GET /api/users` (admin)
 - `POST /api/users` (admin)

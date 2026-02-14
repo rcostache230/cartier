@@ -6,14 +6,17 @@
     <title>Neighbourhood Parking Dashboard</title>
     <style>
       :root {
-        --bg: #f7f5ef;
-        --card: #fff;
-        --line: #ddd8ce;
-        --ink: #1f2933;
-        --muted: #5c6975;
-        --teal: #116466;
-        --amber: #f18f01;
+        --bg: #f6f4ee;
+        --card: #ffffff;
+        --line: #d7d2c8;
+        --ink: #1d2730;
+        --muted: #55626e;
+        --teal: #0e7568;
+        --teal-2: #0c8f7f;
+        --amber: #da7c1b;
         --danger: #b42318;
+        --free-bg: #e8f7ef;
+        --free-text: #1f8a4d;
       }
 
       * {
@@ -23,40 +26,38 @@
       body {
         margin: 0;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background:
-          radial-gradient(circle at 15% -10%, #fff2d8 0%, #fff2d800 28%),
-          radial-gradient(circle at 100% 120%, #d7f0ef 0%, #d7f0ef00 35%),
-          var(--bg);
         color: var(--ink);
+        background:
+          radial-gradient(circle at 12% -12%, #fce9ce 0%, #fce9ce00 30%),
+          radial-gradient(circle at 110% 110%, #d6f0eb 0%, #d6f0eb00 36%),
+          var(--bg);
       }
 
       .container {
-        max-width: 1200px;
+        max-width: 1240px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 22px;
       }
 
       .hero {
-        background: linear-gradient(135deg, #ffffff, #fbf4e9);
-        border: 1px solid var(--line);
         border-radius: 16px;
-        padding: 16px;
+        border: 1px solid var(--line);
+        background: linear-gradient(115deg, #fff, #f9f4e8);
+        padding: 18px;
       }
 
-      h1,
-      h2,
-      h3 {
+      .hero h1 {
         margin: 0;
       }
 
-      p {
+      .hero p {
         margin: 8px 0 0;
         color: var(--muted);
       }
 
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 14px;
         margin-top: 14px;
       }
@@ -73,37 +74,6 @@
         gap: 10px;
       }
 
-      label {
-        font-size: 0.86rem;
-        color: var(--muted);
-      }
-
-      input,
-      select,
-      button {
-        width: 100%;
-        border: 1px solid #cfc8bb;
-        border-radius: 8px;
-        padding: 9px 10px;
-        font: inherit;
-      }
-
-      button {
-        cursor: pointer;
-        border: 0;
-        color: #fff;
-        background: var(--teal);
-        font-weight: 600;
-      }
-
-      button.alt {
-        background: var(--amber);
-      }
-
-      button.ghost {
-        background: #66727f;
-      }
-
       .topbar {
         margin-top: 14px;
         display: flex;
@@ -115,30 +85,57 @@
 
       .pill {
         border-radius: 999px;
-        background: #eaf6f5;
-        border: 1px solid #bddfdd;
-        padding: 6px 10px;
+        padding: 7px 11px;
+        background: #e8f6f5;
+        border: 1px solid #b9ddd8;
+        font-size: 0.87rem;
+      }
+
+      label {
         font-size: 0.86rem;
+        color: var(--muted);
       }
 
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 8px;
+      input,
+      select,
+      button {
+        width: 100%;
+        border: 1px solid #c9c2b5;
+        border-radius: 8px;
+        padding: 9px 10px;
+        font: inherit;
       }
 
-      .stat {
-        border: 1px solid #d9e6e5;
-        border-radius: 10px;
-        background: #f5fbfb;
-        padding: 8px;
-        font-size: 0.82rem;
+      button {
+        border: 0;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 600;
+        background: var(--teal);
       }
 
-      .stat b {
-        display: block;
-        font-size: 1rem;
-        margin-bottom: 4px;
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+
+      button.alt {
+        background: var(--amber);
+      }
+
+      button.ghost {
+        background: #687684;
+        width: auto;
+        padding: 8px 12px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .table-wrap {
+        max-height: 280px;
+        overflow: auto;
       }
 
       table {
@@ -150,27 +147,75 @@
       th,
       td {
         text-align: left;
-        border-bottom: 1px solid #eee8dd;
+        border-bottom: 1px solid #eee7db;
         padding: 7px 5px;
       }
 
-      .table-wrap {
-        max-height: 250px;
-        overflow: auto;
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 0.74rem;
+        font-weight: 700;
+      }
+
+      .badge.free {
+        background: var(--free-bg);
+        color: var(--free-text);
+        border: 1px solid #b7e6c8;
+      }
+
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .capacity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+      }
+
+      .capacity-card {
+        border-radius: 12px;
+        border: 1px solid #d8e3e2;
+        background: linear-gradient(180deg, #f7fbfb 0%, #eef8f7 100%);
+        padding: 10px;
+      }
+
+      .capacity-card b {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .bar {
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: #deebe9;
+        overflow: hidden;
+        margin: 6px 0;
+      }
+
+      .bar > span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--teal), var(--teal-2));
       }
 
       #status {
-        margin-top: 10px;
+        margin-top: 12px;
         min-height: 22px;
         color: var(--teal);
+        font-weight: 600;
       }
 
       #status.error {
         color: var(--danger);
-      }
-
-      .hidden {
-        display: none;
       }
     </style>
   </head>
@@ -179,7 +224,7 @@
       <section class="hero">
         <h1>Neighbourhood Parking Dashboard</h1>
         <p>
-          Login required to share your spot or claim a neighbour's shared spot.
+          Share your parking spot, claim available shared spots, and track claimed periods.
           Default resident password: <b>10blocuri</b>. Admin: <b>Admin / adex123#</b>
         </p>
       </section>
@@ -195,19 +240,19 @@
             <label for="loginPassword">Password</label>
             <input id="loginPassword" type="password" placeholder="10blocuri" required />
           </div>
-          <button type="submit">Sign In</button>
+          <button id="loginBtn" type="submit">Sign In</button>
         </form>
       </section>
 
       <main id="app" class="hidden">
         <div class="topbar">
           <div class="pill" id="whoami"></div>
-          <button id="logoutBtn" class="ghost" style="width: auto; padding: 8px 12px">Logout</button>
+          <button id="logoutBtn" class="ghost" type="button">Logout</button>
         </div>
 
         <section class="card" style="margin-top: 12px">
           <h2>Building Capacity</h2>
-          <div id="stats" class="stats" style="margin-top: 10px"></div>
+          <div id="stats" class="capacity-grid" style="margin-top: 10px"></div>
         </section>
 
         <div class="grid">
@@ -215,8 +260,8 @@
             <h3>Share My Parking Spot</h3>
             <form id="shareForm" class="stack" style="margin-top: 10px">
               <div>
-                <label for="spaceNumber">Parking Spot Number (free text)</label>
-                <input id="spaceNumber" placeholder="e.g. UG-12 or Spot-44" required />
+                <label for="spaceNumber">Parking Spot Number</label>
+                <input id="spaceNumber" placeholder="e.g. UG-12, Spot 7" required />
               </div>
               <div>
                 <label for="spaceType">Type</label>
@@ -233,7 +278,7 @@
                 <label for="untilAt">Available Until</label>
                 <input id="untilAt" type="datetime-local" required />
               </div>
-              <button type="submit">Share Spot</button>
+              <button id="shareBtn" type="submit" data-default-text="Share Spot">Share Spot</button>
             </form>
           </section>
 
@@ -245,7 +290,7 @@
                 <select id="claimBuilding"></select>
               </div>
               <div>
-                <label for="claimType">Parking Type</label>
+                <label for="claimType">Type</label>
                 <select id="claimType">
                   <option value="">Any</option>
                   <option value="underground">Underground</option>
@@ -253,34 +298,78 @@
                 </select>
               </div>
               <div>
-                <label for="claimFrom">From</label>
+                <label for="availableSlot">Available Spot</label>
+                <select id="availableSlot" required></select>
+              </div>
+              <div>
+                <label for="claimFrom">Claim From</label>
                 <input id="claimFrom" type="datetime-local" required />
               </div>
               <div>
-                <label for="claimUntil">Until</label>
+                <label for="claimUntil">Claim Until</label>
                 <input id="claimUntil" type="datetime-local" required />
               </div>
-              <button class="alt" type="submit">Auto Claim</button>
+              <button id="claimBtn" class="alt" type="submit" data-default-text="Claim Selected Spot">Claim Selected Spot</button>
             </form>
           </section>
         </div>
 
         <div class="grid">
           <section class="card">
-            <h3>Shared Parking Spots</h3>
-            <div class="table-wrap"><table><thead><tr><th>Building</th><th>Space</th><th>Type</th><th>Owner</th><th>From</th><th>Until</th></tr></thead><tbody id="sharedSpots"></tbody></table></div>
+            <h3>Shared Parking Spots (Free)</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Building</th>
+                    <th>Spot</th>
+                    <th>Type</th>
+                    <th>Owner</th>
+                    <th>Phone</th>
+                    <th>From</th>
+                    <th>Until</th>
+                  </tr>
+                </thead>
+                <tbody id="sharedSpots"></tbody>
+              </table>
+            </div>
           </section>
+
           <section class="card">
             <h3>My Shared Spots</h3>
-            <div class="table-wrap"><table><thead><tr><th>Space</th><th>Type</th><th>Status</th><th>From</th><th>Until</th></tr></thead><tbody id="myShared"></tbody></table></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Spot</th><th>Type</th><th>Status</th><th>From</th><th>Until</th></tr>
+                </thead>
+                <tbody id="myShared"></tbody>
+              </table>
+            </div>
           </section>
+
           <section class="card">
             <h3>My Shared Spots Claimed By Neighbours</h3>
-            <div class="table-wrap"><table><thead><tr><th>Space</th><th>Claimed By</th><th>Claim From</th><th>Claim Until</th></tr></thead><tbody id="claimedOnMine"></tbody></table></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Spot</th><th>Claimed By</th><th>Claim From</th><th>Claim Until</th></tr>
+                </thead>
+                <tbody id="claimedOnMine"></tbody>
+              </table>
+            </div>
           </section>
+
           <section class="card">
             <h3>My Claimed Spots</h3>
-            <div class="table-wrap"><table><thead><tr><th>Building</th><th>Space</th><th>Owner</th><th>Claim From</th><th>Claim Until</th></tr></thead><tbody id="myClaimed"></tbody></table></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Building</th><th>Spot</th><th>Owner</th><th>Phone</th><th>Claim From</th><th>Claim Until</th></tr>
+                </thead>
+                <tbody id="myClaimed"></tbody>
+              </table>
+            </div>
           </section>
         </div>
 
@@ -292,12 +381,14 @@
               <form id="createUserForm" class="stack" style="margin-top: 8px">
                 <div><label for="newUsername">Username</label><input id="newUsername" required /></div>
                 <div><label for="newPassword">Password</label><input id="newPassword" placeholder="10blocuri" required /></div>
+                <div><label for="newPhone">Phone Number</label><input id="newPhone" placeholder="0712 345 678" /></div>
                 <div><label for="newRole">Role</label><select id="newRole"><option value="resident">Resident</option><option value="admin">Admin</option></select></div>
                 <div><label for="newBuilding">Building</label><select id="newBuilding"></select></div>
                 <div><label for="newApartment">Apartment</label><input id="newApartment" type="number" min="1" max="16" value="1" /></div>
-                <button type="submit">Create</button>
+                <button id="createUserBtn" type="submit" data-default-text="Create User">Create User</button>
               </form>
             </section>
+
             <section class="card">
               <h3>Admin Create Shared Slot</h3>
               <form id="adminSlotForm" class="stack" style="margin-top: 8px">
@@ -306,12 +397,20 @@
                 <div><label for="adminSpaceType">Type</label><select id="adminSpaceType"><option value="underground">Underground</option><option value="above_ground">Above Ground</option></select></div>
                 <div><label for="adminFromAt">Available From</label><input id="adminFromAt" type="datetime-local" required /></div>
                 <div><label for="adminUntilAt">Available Until</label><input id="adminUntilAt" type="datetime-local" required /></div>
-                <button type="submit">Create Shared Slot</button>
+                <button id="adminShareBtn" type="submit" data-default-text="Create Shared Slot">Create Shared Slot</button>
               </form>
             </section>
+
             <section class="card">
               <h3>All Users</h3>
-              <div class="table-wrap"><table><thead><tr><th>User</th><th>Role</th><th>Building</th><th>Apt</th></tr></thead><tbody id="allUsers"></tbody></table></div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>User</th><th>Role</th><th>Building</th><th>Apt</th><th>Phone</th></tr>
+                  </thead>
+                  <tbody id="allUsers"></tbody>
+                </table>
+              </div>
             </section>
           </div>
         </section>
@@ -333,12 +432,14 @@
         myClaimed: document.getElementById("myClaimed"),
         stats: document.getElementById("stats"),
         allUsers: document.getElementById("allUsers"),
+        availableSlot: document.getElementById("availableSlot"),
       };
 
       let currentUser = null;
+      let currentOpenSlots = [];
 
-      function setStatus(msg, isError = false) {
-        els.status.textContent = msg;
+      function setStatus(message, isError = false) {
+        els.status.textContent = message;
         els.status.className = isError ? "error" : "";
       }
 
@@ -348,34 +449,81 @@
           ...opts,
         });
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+        if (!res.ok) {
+          throw new Error(data.error || `Request failed (${res.status})`);
+        }
         return data;
       }
 
-      function option(value, label) {
-        const o = document.createElement("option");
-        o.value = value;
-        o.textContent = label;
-        return o;
+      async function withButtonProgress(buttonEl, inProgressText, run) {
+        const previous = buttonEl.textContent;
+        buttonEl.disabled = true;
+        buttonEl.textContent = inProgressText;
+        try {
+          await run();
+        } finally {
+          buttonEl.disabled = false;
+          buttonEl.textContent = buttonEl.dataset.defaultText || previous;
+        }
       }
 
-      function fillBuildingSelect(id, includeEmpty = false) {
-        const sel = document.getElementById(id);
-        sel.innerHTML = "";
-        if (includeEmpty) sel.appendChild(option("", "Auto / My building"));
-        for (let b = 1; b <= 10; b++) sel.appendChild(option(String(b), `Bloc ${b}`));
+      function option(value, label) {
+        const opt = document.createElement("option");
+        opt.value = value;
+        opt.textContent = label;
+        return opt;
       }
 
       function td(value) {
         return `<td>${value ?? "-"}</td>`;
       }
 
-      function slotRow(s) {
-        return `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.parking_type)}${td(s.owner_username)}${td((s.available_from || "").replace("T", " "))}${td((s.available_until || "").replace("T", " "))}</tr>`;
+      function fillBuildingSelect(id, includeEmpty = false) {
+        const select = document.getElementById(id);
+        select.innerHTML = "";
+        if (includeEmpty) {
+          select.appendChild(option("", "Auto / My building"));
+        }
+        for (let b = 1; b <= 10; b++) {
+          select.appendChild(option(String(b), `Bloc ${b}`));
+        }
+      }
+
+      function refreshStats(stats) {
+        els.stats.innerHTML = stats
+          .map((s) => {
+            const total = s.underground_spaces + s.above_ground_spaces;
+            const used = s.open_shared_slots + s.reserved_shared_slots;
+            const pct = total > 0 ? Math.min(100, Math.round((used / total) * 100)) : 0;
+            return `
+              <div class="capacity-card">
+                <b>Bloc ${s.building_number}</b>
+                UG ${s.underground_spaces} | AG ${s.above_ground_spaces}<br />
+                Shared Open ${s.open_shared_slots} | Claimed ${s.reserved_shared_slots}
+                <div class="bar"><span style="width:${pct}%"></span></div>
+                Shared usage ${used}/${total}
+              </div>
+            `;
+          })
+          .join("");
       }
 
       function refreshTables(data) {
-        els.sharedSpots.innerHTML = data.shared_parking_spots.map(slotRow).join("");
+        els.sharedSpots.innerHTML = data.shared_parking_spots
+          .map(
+            (s) =>
+              `<tr>
+                <td><span class="badge free"><span class="dot"></span>FREE</span></td>
+                ${td(s.building_number)}
+                ${td(s.parking_space_number)}
+                ${td(s.parking_type)}
+                ${td(s.owner_username)}
+                ${td(s.owner_phone_number || "-")}
+                ${td((s.available_from || "").replace("T", " "))}
+                ${td((s.available_until || "").replace("T", " "))}
+              </tr>`
+          )
+          .join("");
 
         els.myShared.innerHTML = data.my_shared_parking_spots
           .map(
@@ -394,73 +542,111 @@
         els.myClaimed.innerHTML = data.my_claimed_parking_spots
           .map(
             (s) =>
-              `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
+              `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
           )
           .join("");
       }
 
-      function refreshStats(stats) {
-        els.stats.innerHTML = stats
-          .map(
-            (s) =>
-              `<div class="stat"><b>Bloc ${s.building_number}</b>UG ${s.underground_spaces} | AG ${s.above_ground_spaces}<br/>Open ${s.open_shared_slots} | Reserved ${s.reserved_shared_slots}</div>`
-          )
-          .join("");
+      function fillAvailableSpotSelect(slots) {
+        els.availableSlot.innerHTML = "";
+        if (slots.length === 0) {
+          els.availableSlot.appendChild(option("", "No free spots available for selected filter"));
+          els.availableSlot.disabled = true;
+          return;
+        }
+
+        els.availableSlot.disabled = false;
+        slots.forEach((slot) => {
+          const label = `Bloc ${slot.building_number} | ${slot.parking_space_number} (${slot.parking_type}) - ${slot.owner_username}${slot.owner_phone_number ? ` / ${slot.owner_phone_number}` : ""}`;
+          els.availableSlot.appendChild(option(String(slot.id), label));
+        });
+        syncClaimPeriodToSelection();
+      }
+
+      function syncClaimPeriodToSelection() {
+        const slotId = Number(els.availableSlot.value || 0);
+        const slot = currentOpenSlots.find((s) => s.id === slotId);
+        if (!slot) return;
+        document.getElementById("claimFrom").value = slot.available_from;
+        document.getElementById("claimUntil").value = slot.available_until;
+      }
+
+      async function refreshOpenSpotOptions() {
+        if (!currentUser) return;
+        const params = new URLSearchParams();
+        const building = document.getElementById("claimBuilding").value;
+        const type = document.getElementById("claimType").value;
+
+        if (building) params.set("building_number", building);
+        if (type) params.set("parking_type", type);
+        params.set("exclude_self", "1");
+
+        currentOpenSlots = await api(`/api/slots/open?${params.toString()}`);
+        fillAvailableSpotSelect(currentOpenSlots);
       }
 
       async function refreshDashboard() {
         const data = await api("/api/dashboard");
         refreshStats(data.building_stats);
         refreshTables(data);
+        await refreshOpenSpotOptions();
       }
 
       async function refreshAdminUsers() {
         if (!currentUser || currentUser.role !== "admin") return;
         const users = await api("/api/users");
         els.allUsers.innerHTML = users
-          .map((u) => `<tr>${td(u.username)}${td(u.role)}${td(u.building_number)}${td(u.apartment_number)}</tr>`)
+          .map(
+            (u) =>
+              `<tr>${td(u.username)}${td(u.role)}${td(u.building_number)}${td(u.apartment_number)}${td(u.phone_number || "-")}</tr>`
+          )
           .join("");
       }
 
       function applyAuthState(user) {
         currentUser = user;
-        if (user) {
-          els.loginCard.classList.add("hidden");
-          els.app.classList.remove("hidden");
-          els.whoami.textContent = `${user.username} (${user.role})`;
-          document.getElementById("claimBuilding").value =
-            user.role === "resident" ? String(user.building_number) : "";
-          if (user.role === "admin") {
-            els.adminPanel.classList.remove("hidden");
-          } else {
-            els.adminPanel.classList.add("hidden");
-          }
-        } else {
+        if (!user) {
           els.loginCard.classList.remove("hidden");
           els.app.classList.add("hidden");
+          return;
+        }
+
+        els.loginCard.classList.add("hidden");
+        els.app.classList.remove("hidden");
+        els.whoami.textContent = `${user.username} (${user.role})${user.phone_number ? ` - ${user.phone_number}` : ""}`;
+
+        const claimBuilding = document.getElementById("claimBuilding");
+        if (user.role === "resident") {
+          claimBuilding.value = String(user.building_number);
+        }
+
+        if (user.role === "admin") {
+          els.adminPanel.classList.remove("hidden");
+        } else {
           els.adminPanel.classList.add("hidden");
         }
       }
 
-      document.getElementById("loginForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        try {
-          const user = (
-            await api("/api/auth/login", {
+      document.getElementById("loginForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = document.getElementById("loginBtn");
+        await withButtonProgress(button, "Signing In...", async () => {
+          try {
+            const response = await api("/api/auth/login", {
               method: "POST",
               body: JSON.stringify({
                 username: document.getElementById("loginUsername").value,
                 password: document.getElementById("loginPassword").value,
               }),
-            })
-          ).user;
-          applyAuthState(user);
-          await refreshDashboard();
-          await refreshAdminUsers();
-          setStatus("Logged in.");
-        } catch (err) {
-          setStatus(err.message, true);
-        }
+            });
+            applyAuthState(response.user);
+            await refreshDashboard();
+            await refreshAdminUsers();
+            setStatus("Login successful.");
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
       });
 
       document.getElementById("logoutBtn").addEventListener("click", async () => {
@@ -468,91 +654,123 @@
           await api("/api/auth/logout", { method: "POST" });
           applyAuthState(null);
           setStatus("Logged out.");
-        } catch (err) {
-          setStatus(err.message, true);
+        } catch (error) {
+          setStatus(error.message, true);
         }
       });
 
-      document.getElementById("shareForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
+      document.getElementById("shareForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = document.getElementById("shareBtn");
+        await withButtonProgress(button, "Sharing...", async () => {
+          try {
+            await api("/api/slots", {
+              method: "POST",
+              body: JSON.stringify({
+                parking_space_number: document.getElementById("spaceNumber").value,
+                parking_type: document.getElementById("spaceType").value,
+                available_from: document.getElementById("fromAt").value,
+                available_until: document.getElementById("untilAt").value,
+              }),
+            });
+            await refreshDashboard();
+            setStatus("Spot shared successfully.");
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+      });
+
+      document.getElementById("claimForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = document.getElementById("claimBtn");
+        await withButtonProgress(button, "Claiming...", async () => {
+          try {
+            const slotId = Number(els.availableSlot.value || 0);
+            if (!slotId) {
+              throw new Error("Select an available spot first.");
+            }
+            await api("/api/slots/claim", {
+              method: "POST",
+              body: JSON.stringify({
+                slot_id: slotId,
+                requested_from: document.getElementById("claimFrom").value,
+                requested_until: document.getElementById("claimUntil").value,
+              }),
+            });
+            await refreshDashboard();
+            setStatus("Spot claimed successfully.");
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+      });
+
+      document.getElementById("createUserForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = document.getElementById("createUserBtn");
+        await withButtonProgress(button, "Creating...", async () => {
+          try {
+            await api("/api/users", {
+              method: "POST",
+              body: JSON.stringify({
+                username: document.getElementById("newUsername").value,
+                password: document.getElementById("newPassword").value,
+                phone_number: document.getElementById("newPhone").value,
+                role: document.getElementById("newRole").value,
+                building_number: Number(document.getElementById("newBuilding").value),
+                apartment_number: Number(document.getElementById("newApartment").value),
+              }),
+            });
+            await refreshAdminUsers();
+            setStatus("User created.");
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+      });
+
+      document.getElementById("adminSlotForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = document.getElementById("adminShareBtn");
+        await withButtonProgress(button, "Creating...", async () => {
+          try {
+            await api("/api/admin/slots", {
+              method: "POST",
+              body: JSON.stringify({
+                owner_username: document.getElementById("adminOwnerUsername").value,
+                parking_space_number: document.getElementById("adminSpaceNumber").value,
+                parking_type: document.getElementById("adminSpaceType").value,
+                available_from: document.getElementById("adminFromAt").value,
+                available_until: document.getElementById("adminUntilAt").value,
+              }),
+            });
+            await refreshDashboard();
+            setStatus("Admin shared spot created.");
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+      });
+
+      document.getElementById("claimBuilding").addEventListener("change", async () => {
         try {
-          await api("/api/slots", {
-            method: "POST",
-            body: JSON.stringify({
-              parking_space_number: document.getElementById("spaceNumber").value,
-              parking_type: document.getElementById("spaceType").value,
-              available_from: document.getElementById("fromAt").value,
-              available_until: document.getElementById("untilAt").value,
-            }),
-          });
-          await refreshDashboard();
-          setStatus("Parking spot shared.");
-        } catch (err) {
-          setStatus(err.message, true);
+          await refreshOpenSpotOptions();
+        } catch (error) {
+          setStatus(error.message, true);
         }
       });
 
-      document.getElementById("claimForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
+      document.getElementById("claimType").addEventListener("change", async () => {
         try {
-          const payload = {
-            requested_from: document.getElementById("claimFrom").value,
-            requested_until: document.getElementById("claimUntil").value,
-          };
-          const building = document.getElementById("claimBuilding").value;
-          const type = document.getElementById("claimType").value;
-          if (building) payload.building_number = Number(building);
-          if (type) payload.parking_type = type;
-
-          await api("/api/slots/auto-reserve", {
-            method: "POST",
-            body: JSON.stringify(payload),
-          });
-          await refreshDashboard();
-          setStatus("Parking spot claimed.");
-        } catch (err) {
-          setStatus(err.message, true);
+          await refreshOpenSpotOptions();
+        } catch (error) {
+          setStatus(error.message, true);
         }
       });
 
-      document.getElementById("createUserForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        try {
-          await api("/api/users", {
-            method: "POST",
-            body: JSON.stringify({
-              username: document.getElementById("newUsername").value,
-              password: document.getElementById("newPassword").value,
-              role: document.getElementById("newRole").value,
-              building_number: Number(document.getElementById("newBuilding").value),
-              apartment_number: Number(document.getElementById("newApartment").value),
-            }),
-          });
-          await refreshAdminUsers();
-          setStatus("User created by admin.");
-        } catch (err) {
-          setStatus(err.message, true);
-        }
-      });
-
-      document.getElementById("adminSlotForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        try {
-          await api("/api/admin/slots", {
-            method: "POST",
-            body: JSON.stringify({
-              owner_username: document.getElementById("adminOwnerUsername").value,
-              parking_space_number: document.getElementById("adminSpaceNumber").value,
-              parking_type: document.getElementById("adminSpaceType").value,
-              available_from: document.getElementById("adminFromAt").value,
-              available_until: document.getElementById("adminUntilAt").value,
-            }),
-          });
-          await refreshDashboard();
-          setStatus("Admin created shared slot.");
-        } catch (err) {
-          setStatus(err.message, true);
-        }
+      els.availableSlot.addEventListener("change", () => {
+        syncClaimPeriodToSelection();
       });
 
       async function boot() {
@@ -560,16 +778,16 @@
         fillBuildingSelect("newBuilding");
 
         try {
-          const auth = await api("/api/auth/me");
-          if (!auth.authenticated) {
+          const me = await api("/api/auth/me");
+          if (!me.authenticated) {
             applyAuthState(null);
             return;
           }
-          applyAuthState(auth.user);
+          applyAuthState(me.user);
           await refreshDashboard();
           await refreshAdminUsers();
-        } catch (err) {
-          setStatus(err.message, true);
+        } catch (error) {
+          setStatus(error.message, true);
         }
       }
 

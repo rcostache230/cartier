@@ -9,6 +9,7 @@ from parking_module import (
     AuthenticationError,
     ParkingService,
     SlotNotFoundError,
+    SlotValidationError,
 )
 
 
@@ -27,6 +28,7 @@ def test_default_users_and_admin_exist(service: ParkingService) -> None:
 
     resident = service.authenticate_user("Bloc1_Apt1", DEFAULT_RESIDENT_PASSWORD)
     assert resident.role == "resident"
+    assert resident.phone_number == ""
 
     admin = service.authenticate_user("Admin", DEFAULT_ADMIN_PASSWORD)
     assert admin.role == "admin"
@@ -46,6 +48,7 @@ def test_share_spot_accepts_free_text_number(service: ParkingService) -> None:
         available_until="2026-02-20T12:00",
     )
     assert slot.parking_space_number == "UG-SPECIAL-44"
+    assert slot.owner_phone_number == ""
 
 
 def test_auto_reserve_and_claim_lists(service: ParkingService) -> None:
@@ -95,4 +98,49 @@ def test_cannot_double_reserve_same_slot(service: ParkingService) -> None:
             requested_from="2026-02-22T09:00",
             requested_until="2026-02-22T10:00",
             parking_type="underground",
+        )
+
+
+def test_create_user_with_phone_and_claim_selected_slot(service: ParkingService) -> None:
+    created = service.create_user(
+        username="Bloc5_Apt20",
+        password="secret",
+        building_number=5,
+        apartment_number=5,
+        role="resident",
+        phone_number="0712-000-111",
+    )
+    assert created.phone_number == "0712-000-111"
+
+    shared = service.create_availability_slot(
+        owner_username="Bloc5_Apt1",
+        parking_space_number="SPOT-501",
+        parking_type="underground",
+        available_from="2026-02-23T08:00",
+        available_until="2026-02-23T18:00",
+    )
+    claimed = service.reserve_specific_slot(
+        requester_username="Bloc5_Apt2",
+        slot_id=shared.id,
+        requested_from="2026-02-23T09:00",
+        requested_until="2026-02-23T11:00",
+    )
+    assert claimed.reserved_by_username == "Bloc5_Apt2"
+
+
+def test_claim_selected_slot_respects_window(service: ParkingService) -> None:
+    shared = service.create_availability_slot(
+        owner_username="Bloc6_Apt1",
+        parking_space_number="SPOT-601",
+        parking_type="above_ground",
+        available_from="2026-02-24T10:00",
+        available_until="2026-02-24T12:00",
+    )
+
+    with pytest.raises(SlotValidationError):
+        service.reserve_specific_slot(
+            requester_username="Bloc6_Apt2",
+            slot_id=shared.id,
+            requested_from="2026-02-24T09:00",
+            requested_until="2026-02-24T11:00",
         )
