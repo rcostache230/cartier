@@ -149,6 +149,29 @@ def test_claim_selected_slot_respects_window(service: ParkingService) -> None:
         )
 
 
+def test_partial_claim_leaves_remaining_open_duration(service: ParkingService) -> None:
+    shared = service.create_availability_slot(
+        owner_username="bloc7_apt1",
+        parking_space_number="SPOT-701",
+        parking_type="underground",
+        available_from="2026-02-25T08:00",
+        available_until="2026-02-25T18:00",
+    )
+
+    claimed = service.reserve_specific_slot(
+        requester_username="bloc7_apt2",
+        slot_id=shared.id,
+        requested_from="2026-02-25T10:00",
+        requested_until="2026-02-25T12:00",
+    )
+    assert claimed.status == "RESERVED"
+
+    open_slots = service.list_open_slots(building_number=7, parking_type="underground")
+    intervals = {(s.available_from, s.available_until) for s in open_slots if s.parking_space_number == "SPOT-701"}
+    assert ("2026-02-25T08:00", "2026-02-25T10:00") in intervals
+    assert ("2026-02-25T12:00", "2026-02-25T18:00") in intervals
+
+
 def test_building_inferred_from_username_prefix(service: ParkingService) -> None:
     created = service.create_user(
         username="Bloc3_guest_user",

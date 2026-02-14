@@ -97,12 +97,9 @@ class _PGExecutionResult:
 
 
 class _PostgresConnectionWrapper:
-    def __init__(self, database_url: str) -> None:
-        if psycopg is None or dict_row is None:
-            raise RuntimeError(
-                "psycopg is required for PostgreSQL. Install dependencies from requirements.txt"
-            )
-        self._conn = psycopg.connect(database_url, row_factory=dict_row)
+    def __init__(self, connection, close_on_exit: bool) -> None:
+        self._conn = connection
+        self._close_on_exit = close_on_exit
 
     @staticmethod
     def _convert_sql(query: str) -> str:
@@ -135,7 +132,8 @@ class _PostgresConnectionWrapper:
             self._conn.commit()
         else:
             self._conn.rollback()
-        self._conn.close()
+        if self._close_on_exit:
+            self._conn.close()
 
 
 class ParkingService:
@@ -144,6 +142,7 @@ class ParkingService:
     def __init__(self, db_path: Optional[str] = None) -> None:
         self.db_path = db_path or self._default_db_path()
         self._is_postgres = self.db_path.startswith(("postgres://", "postgresql://"))
+        self._pg_conn = None
         self._initialize_db()
 
     @staticmethod
@@ -162,7 +161,13 @@ class ParkingService:
 
     def _connect(self):
         if self._is_postgres:
-            return _PostgresConnectionWrapper(self.db_path)
+            if psycopg is None or dict_row is None:
+                raise RuntimeError(
+                    "psycopg is required for PostgreSQL. Install dependencies from requirements.txt"
+                )
+            if self._pg_conn is None or self._pg_conn.closed:
+                self._pg_conn = psycopg.connect(self.db_path, row_factory=dict_row)
+            return _PostgresConnectionWrapper(self._pg_conn, close_on_exit=False)
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         return conn
@@ -199,6 +204,14 @@ class ParkingService:
                         reservation_until TEXT,
                         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                     );
+
+                    CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+                    CREATE INDEX IF NOT EXISTS idx_slots_status_building_time
+                        ON parking_slots(status, building_number, available_from, available_until);
+                    CREATE INDEX IF NOT EXISTS idx_slots_owner_status
+                        ON parking_slots(owner_user_id, status);
+                    CREATE INDEX IF NOT EXISTS idx_slots_reserver_status
+                        ON parking_slots(reserved_by_user_id, status);
                     """
                 )
                 self._run_user_migrations_postgres(conn)
@@ -242,6 +255,14 @@ class ParkingService:
                     FOREIGN KEY(owner_user_id) REFERENCES users(id),
                     FOREIGN KEY(reserved_by_user_id) REFERENCES users(id)
                 );
+
+                CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+                CREATE INDEX IF NOT EXISTS idx_slots_status_building_time
+                    ON parking_slots(status, building_number, available_from, available_until);
+                CREATE INDEX IF NOT EXISTS idx_slots_owner_status
+                    ON parking_slots(owner_user_id, status);
+                CREATE INDEX IF NOT EXISTS idx_slots_reserver_status
+                    ON parking_slots(reserved_by_user_id, status);
                 """
             )
             self._run_user_migrations_sqlite(conn)
@@ -513,8 +534,10 @@ class ParkingService:
                         phone_number,
                     ),
                 ).lastrowid
-            except sqlite3.IntegrityError as exc:
-                raise SlotValidationError("username already exists") from exc
+            except Exception as exc:
+                if isinstance(exc, sqlite3.IntegrityError) or "unique" in str(exc).lower():
+                    raise SlotValidationError("username already exists") from exc
+                raise
 
         return UserAccount(
             id=int(user_id),
@@ -561,8 +584,9 @@ class ParkingService:
         parking_type: str,
         available_from: str,
         available_until: str,
+        owner_user: Optional[UserAccount] = None,
     ) -> ParkingSlot:
-        owner = self.get_user_by_username(owner_username)
+        owner = owner_user or self.get_user_by_username(owner_username)
         if owner.role == "admin":
             raise AuthorizationError("admin cannot share parking spots directly")
         self._validate_building_number(owner.building_number)
@@ -631,6 +655,7 @@ class ParkingService:
         parking_type: Optional[str] = None,
         building_number: Optional[int] = None,
         exclude_owner_username: Optional[str] = None,
+        exclude_owner_user_id: Optional[int] = None,
     ) -> list[ParkingSlot]:
         params: list[object] = []
         where = ["ps.status = 'OPEN'"]
@@ -645,7 +670,10 @@ class ParkingService:
             where.append("ps.building_number = ?")
             params.append(building_number)
 
-        if exclude_owner_username:
+        if exclude_owner_user_id is not None:
+            where.append("ps.owner_user_id != ?")
+            params.append(exclude_owner_user_id)
+        elif exclude_owner_username:
             owner = self.get_user_by_username(exclude_owner_username)
             where.append("ps.owner_user_id != ?")
             params.append(owner.id)
@@ -700,8 +728,9 @@ class ParkingService:
         parking_type: Optional[str] = None,
         building_number: Optional[int] = None,
         claim_phone_number: Optional[str] = None,
+        requester_user: Optional[UserAccount] = None,
     ) -> ParkingSlot:
-        requester = self.get_user_by_username(requester_username)
+        requester = requester_user or self.get_user_by_username(requester_username)
         if requester.role == "admin" and building_number is None:
             raise SlotValidationError("admin must provide building_number to claim a slot")
         target_building = (
@@ -734,7 +763,14 @@ class ParkingService:
         with self._connect() as conn:
             slot_row = conn.execute(
                 f"""
-                SELECT ps.id
+                SELECT
+                    ps.id,
+                    ps.building_number,
+                    ps.owner_user_id,
+                    ps.parking_space_number,
+                    ps.parking_type,
+                    ps.available_from,
+                    ps.available_until
                 FROM parking_slots ps
                 WHERE {' AND '.join(where)}
                 ORDER BY ps.available_from ASC, ps.id ASC
@@ -748,7 +784,7 @@ class ParkingService:
 
             self._reserve_slot(
                 conn=conn,
-                slot_id=int(slot_row["id"]),
+                slot_row=slot_row,
                 requester_id=requester.id,
                 requested_from=requested_from,
                 requested_until=requested_until,
@@ -764,8 +800,9 @@ class ParkingService:
         requested_from: str,
         requested_until: str,
         claim_phone_number: Optional[str] = None,
+        requester_user: Optional[UserAccount] = None,
     ) -> ParkingSlot:
-        requester = self.get_user_by_username(requester_username)
+        requester = requester_user or self.get_user_by_username(requester_username)
         from_dt = self._parse_iso_datetime(requested_from)
         until_dt = self._parse_iso_datetime(requested_until)
         if from_dt >= until_dt:
@@ -774,7 +811,15 @@ class ParkingService:
         with self._connect() as conn:
             row = conn.execute(
                 """
-                SELECT id, owner_user_id, available_from, available_until, status
+                SELECT
+                    id,
+                    building_number,
+                    owner_user_id,
+                    parking_space_number,
+                    parking_type,
+                    available_from,
+                    available_until,
+                    status
                 FROM parking_slots
                 WHERE id = ?
                 """,
@@ -793,7 +838,7 @@ class ParkingService:
 
             self._reserve_slot(
                 conn=conn,
-                slot_id=int(row["id"]),
+                slot_row=row,
                 requester_id=requester.id,
                 requested_from=requested_from,
                 requested_until=requested_until,
@@ -804,28 +849,49 @@ class ParkingService:
 
     def list_slots_shared_by_user(self, username: str) -> list[ParkingSlot]:
         user = self.get_user_by_username(username)
-        return self._list_slots("ps.owner_user_id = ?", [user.id])
+        return self.list_slots_shared_by_user_id(user.id)
 
     def list_slots_claimed_by_user(self, username: str) -> list[ParkingSlot]:
         user = self.get_user_by_username(username)
-        return self._list_slots("ps.reserved_by_user_id = ?", [user.id])
+        return self.list_slots_claimed_by_user_id(user.id)
 
     def list_slots_claimed_on_user_spaces(self, username: str) -> list[ParkingSlot]:
         user = self.get_user_by_username(username)
+        return self.list_slots_claimed_on_user_spaces_id(user.id)
+
+    def list_slots_shared_by_user_id(self, user_id: int) -> list[ParkingSlot]:
+        return self._list_slots("ps.owner_user_id = ?", [user_id])
+
+    def list_slots_claimed_by_user_id(self, user_id: int) -> list[ParkingSlot]:
+        return self._list_slots("ps.reserved_by_user_id = ?", [user_id])
+
+    def list_slots_claimed_on_user_spaces_id(self, user_id: int) -> list[ParkingSlot]:
         return self._list_slots(
             "ps.owner_user_id = ? AND ps.status = 'RESERVED'",
-            [user.id],
+            [user_id],
         )
 
     @staticmethod
     def _reserve_slot(
-        conn: sqlite3.Connection,
-        slot_id: int,
+        conn,
+        slot_row,
         requester_id: int,
         requested_from: str,
         requested_until: str,
         claim_phone_number: str = "",
     ) -> None:
+        slot_id = int(slot_row["id"])
+        slot_from = str(slot_row["available_from"])
+        slot_until = str(slot_row["available_until"])
+        slot_from_dt = ParkingService._parse_iso_datetime(slot_from)
+        slot_until_dt = ParkingService._parse_iso_datetime(slot_until)
+        requested_from_dt = ParkingService._parse_iso_datetime(requested_from)
+        requested_until_dt = ParkingService._parse_iso_datetime(requested_until)
+        if requested_from_dt < slot_from_dt or requested_until_dt > slot_until_dt:
+            raise SlotValidationError("requested period must be within slot availability")
+        now = datetime.utcnow().isoformat(timespec="seconds")
+
+        # Lock in the claimed interval on the original row.
         updated = conn.execute(
             """
             UPDATE parking_slots
@@ -834,21 +900,78 @@ class ParkingService:
                 reserved_at = ?,
                 claim_phone_number = ?,
                 reservation_from = ?,
-                reservation_until = ?
+                reservation_until = ?,
+                available_from = ?,
+                available_until = ?
             WHERE id = ?
               AND status = 'OPEN'
+              AND available_from = ?
+              AND available_until = ?
             """,
             (
                 requester_id,
-                datetime.utcnow().isoformat(timespec="seconds"),
+                now,
                 claim_phone_number.strip(),
                 requested_from,
                 requested_until,
+                requested_from,
+                requested_until,
                 slot_id,
+                slot_from,
+                slot_until,
             ),
         )
         if updated.rowcount == 0:
             raise SlotValidationError("slot was reserved by another user, retry")
+
+        # Create remaining OPEN fragments for any unclaimed time.
+        if slot_from_dt < requested_from_dt:
+            conn.execute(
+                """
+                INSERT INTO parking_slots (
+                    building_number,
+                    owner_user_id,
+                    parking_space_number,
+                    parking_type,
+                    available_from,
+                    available_until,
+                    status
+                )
+                VALUES (?, ?, ?, ?, ?, ?, 'OPEN')
+                """,
+                (
+                    int(slot_row["building_number"]),
+                    int(slot_row["owner_user_id"]),
+                    str(slot_row["parking_space_number"]),
+                    str(slot_row["parking_type"]),
+                    slot_from,
+                    requested_from,
+                ),
+            )
+
+        if requested_until_dt < slot_until_dt:
+            conn.execute(
+                """
+                INSERT INTO parking_slots (
+                    building_number,
+                    owner_user_id,
+                    parking_space_number,
+                    parking_type,
+                    available_from,
+                    available_until,
+                    status
+                )
+                VALUES (?, ?, ?, ?, ?, ?, 'OPEN')
+                """,
+                (
+                    int(slot_row["building_number"]),
+                    int(slot_row["owner_user_id"]),
+                    str(slot_row["parking_space_number"]),
+                    str(slot_row["parking_type"]),
+                    requested_until,
+                    slot_until,
+                ),
+            )
 
     def _list_slots(self, where_clause: str, params: list[object]) -> list[ParkingSlot]:
         with self._connect() as conn:
@@ -973,7 +1096,7 @@ class ParkingService:
 
     @staticmethod
     def _infer_building_from_username(username: str) -> Optional[int]:
-        match = re.match(r"^bloc([1-9]|10)(?:_|\\b)", username)
+        match = re.match(r"^bloc([1-9]|10)(?:_|\b)", username)
         if not match:
             return None
         return int(match.group(1))

@@ -583,7 +583,7 @@
         document.getElementById("claimUntil").value = slot.available_until;
       }
 
-      async function refreshOpenSpotOptions() {
+      async function fetchOpenSpotOptionsData() {
         if (!currentUser) return;
         const params = new URLSearchParams();
         const building = document.getElementById("claimBuilding").value;
@@ -593,15 +593,24 @@
         if (type) params.set("parking_type", type);
         params.set("exclude_self", "1");
 
-        currentOpenSlots = await api(`/api/slots/open?${params.toString()}`);
+        return api(`/api/slots/open?${params.toString()}`);
+      }
+
+      function applyOpenSpotOptions(slots) {
+        currentOpenSlots = Array.isArray(slots) ? slots : [];
         fillAvailableSpotSelect(currentOpenSlots);
       }
 
+      async function refreshOpenSpotOptions() {
+        const slots = await fetchOpenSpotOptionsData();
+        applyOpenSpotOptions(slots);
+      }
+
       async function refreshDashboard() {
-        const data = await api("/api/dashboard");
+        const [data, openSlots] = await Promise.all([api("/api/dashboard"), fetchOpenSpotOptionsData()]);
         refreshStats(data.building_stats);
         refreshTables(data);
-        await refreshOpenSpotOptions();
+        applyOpenSpotOptions(openSlots);
       }
 
       async function refreshAdminUsers() {

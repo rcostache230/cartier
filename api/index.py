@@ -207,6 +207,7 @@ def create_slot():
         parking_type=str(payload.get("parking_type", "")),
         available_from=str(payload.get("available_from", "")),
         available_until=str(payload.get("available_until", "")),
+        owner_user=user,
     )
     return jsonify(asdict(slot)), 201
 
@@ -240,7 +241,7 @@ def list_open_slots():
         requested_until=requested_until,
         parking_type=parking_type,
         building_number=building_number,
-        exclude_owner_username=user.username if exclude_self else None,
+        exclude_owner_user_id=user.id if exclude_self else None,
     )
     return jsonify([asdict(slot) for slot in slots]), 200
 
@@ -258,6 +259,7 @@ def auto_reserve_slot():
         parking_type=payload.get("parking_type"),
         building_number=int(building_number) if building_number is not None else None,
         claim_phone_number=str(payload.get("claim_phone_number", "")),
+        requester_user=user,
     )
     return jsonify(asdict(slot)), 200
 
@@ -273,6 +275,7 @@ def claim_specific_slot():
         requested_from=str(payload.get("requested_from", "")),
         requested_until=str(payload.get("requested_until", "")),
         claim_phone_number=str(payload.get("claim_phone_number", "")),
+        requester_user=user,
     )
     return jsonify(asdict(slot)), 200
 
@@ -293,9 +296,9 @@ def dashboard():
         building_number=building_number,
         exclude_owner_username=None,
     )
-    my_shared = service.list_slots_shared_by_user(user.username)
-    my_claimed = service.list_slots_claimed_by_user(user.username)
-    claimed_on_my = service.list_slots_claimed_on_user_spaces(user.username)
+    my_shared = service.list_slots_shared_by_user_id(user.id)
+    my_claimed = service.list_slots_claimed_by_user_id(user.id)
+    claimed_on_my = service.list_slots_claimed_on_user_spaces_id(user.id)
 
     return jsonify(
         {
