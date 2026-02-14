@@ -1,36 +1,44 @@
-# Neighbourhood Parking Hub (Vercel Ready)
+# Neighbourhood Parking Dashboard (Auth + Admin)
 
-Parking sharing platform for 10 buildings, with apartment-based users and a building parking inventory.
+This project is a Vercel-ready Flask app for parking spot sharing between neighbours.
 
-## What is implemented
+## Defaults
 
-- UI dashboard (served at `/`) for:
-  - User management
-  - Share parking availability
-  - Auto-reserve slots
-  - Building stats and open slots overview
-- User model:
-  - Default seed: `Bloc1_Apt1` ... `Bloc10_Apt16` (160 users)
-- Parking inventory model:
-  - Per building: `10` underground (`U01..U10`) + `6` above-ground (`A01..A06`)
-  - Total default spaces: `160`
-- Slot sharing logic:
-  - User can only publish availability for the space assigned to their apartment
-  - Exact datetime intervals (`YYYY-MM-DDTHH:MM`)
-  - Building-scoped auto-reservation (defaults to requester's building)
+- 10 buildings (`Bloc1` .. `Bloc10`)
+- 16 apartment users per building (`Bloc1_Apt1` .. `Bloc10_Apt16`)
+- Default resident password: `10blocuri`
+- Admin user: `Admin`
+- Admin password: `adex123#`
+- Building capacity shown in dashboard:
+  - 10 underground spots
+  - 6 above-ground spots
 
-## API endpoints
+## What changed
 
-- `GET /api/health`
-- `GET /api/users`
-- `POST /api/users`
-- `POST /api/users/seed`
-- `GET /api/parking-spaces`
-- `POST /api/parking-spaces/seed`
-- `GET /api/buildings/stats`
-- `POST /api/slots`
-- `GET /api/slots/open`
-- `POST /api/slots/auto-reserve`
+- Authentication required for all parking actions.
+- Free-text parking spot number when sharing (no fixed slot lookup).
+- Dashboard sections:
+  - Shared parking spots
+  - My shared spots
+  - My shared spots claimed by neighbours (+ claimed period)
+  - My claimed spots (+ claimed period)
+- Admin-only user management:
+  - List users
+  - Create resident/admin users
+
+## API
+
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+- `GET /api/dashboard` (login required)
+- `POST /api/slots` (login required)
+- `GET /api/slots/open` (login required)
+- `POST /api/slots/auto-reserve` (login required)
+- `GET /api/buildings/stats` (login required)
+- `GET /api/users` (admin)
+- `POST /api/users` (admin)
+- `POST /api/admin/slots` (admin, create slot for any resident)
 
 ## Local run
 
@@ -39,16 +47,15 @@ pip install -r requirements.txt
 python api/index.py
 ```
 
-Open [http://localhost:8000](http://localhost:8000).
+Open `http://localhost:8000`.
 
-## Deploy to Vercel
+## Deploy
 
 ```bash
 vercel
 vercel --prod
 ```
 
-## Notes
+## Production note
 
-- On Vercel, SQLite is stored in `/tmp` and is ephemeral.
-- For persistent production data, move to managed Postgres.
+SQLite on Vercel (`/tmp`) is ephemeral. Use managed Postgres for persistent production data.

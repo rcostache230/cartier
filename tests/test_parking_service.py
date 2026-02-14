@@ -2,130 +2,97 @@ from pathlib import Path
 
 import pytest
 
-from parking_module import ParkingService, SlotNotFoundError, SlotValidationError
+from parking_module import (
+    DEFAULT_ADMIN_PASSWORD,
+    DEFAULT_ADMIN_USERNAME,
+    DEFAULT_RESIDENT_PASSWORD,
+    AuthenticationError,
+    ParkingService,
+    SlotNotFoundError,
+)
 
 
 @pytest.fixture()
 def service(tmp_path: Path) -> ParkingService:
     db_path = tmp_path / "parking_test.db"
     svc = ParkingService(str(db_path))
-    svc.seed_default_users()
-    svc.seed_building_parking_spaces(underground_per_building=10, above_ground_per_building=6)
+    svc.seed_default_users(DEFAULT_RESIDENT_PASSWORD)
+    svc.ensure_admin_user(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD)
     return svc
 
 
-def test_seeds_expected_capacity(service: ParkingService) -> None:
+def test_default_users_and_admin_exist(service: ParkingService) -> None:
     users = service.list_users()
-    spaces = service.list_parking_spaces()
-    assert len(users) == 160
-    assert len(spaces) == 160
+    assert len(users) >= 161
 
-    stats = service.list_building_stats()
-    assert len(stats) == 10
-    assert stats[0]["underground_spaces"] == 10
-    assert stats[0]["above_ground_spaces"] == 6
+    resident = service.authenticate_user("Bloc1_Apt1", DEFAULT_RESIDENT_PASSWORD)
+    assert resident.role == "resident"
+
+    admin = service.authenticate_user("Admin", DEFAULT_ADMIN_PASSWORD)
+    assert admin.role == "admin"
 
 
-def test_create_slot_must_match_assigned_apartment(service: ParkingService) -> None:
-    # Bloc1_Apt1 owns U01 in Bloc 1.
+def test_authentication_fails_with_wrong_password(service: ParkingService) -> None:
+    with pytest.raises(AuthenticationError):
+        service.authenticate_user("Bloc1_Apt1", "wrong")
+
+
+def test_share_spot_accepts_free_text_number(service: ParkingService) -> None:
     slot = service.create_availability_slot(
         owner_username="Bloc1_Apt1",
-        parking_space_number="U01",
+        parking_space_number="UG-SPECIAL-44",
         parking_type="underground",
         available_from="2026-02-20T08:00",
         available_until="2026-02-20T12:00",
     )
-    assert slot.owner_username == "Bloc1_Apt1"
-    assert slot.building_number == 1
-
-    with pytest.raises(SlotValidationError):
-        service.create_availability_slot(
-            owner_username="Bloc1_Apt1",
-            parking_space_number="U02",
-            parking_type="underground",
-            available_from="2026-02-20T13:00",
-            available_until="2026-02-20T15:00",
-        )
+    assert slot.parking_space_number == "UG-SPECIAL-44"
 
 
-def test_create_slot_rejects_wrong_parking_type(service: ParkingService) -> None:
-    with pytest.raises(SlotValidationError):
-        service.create_availability_slot(
-            owner_username="Bloc1_Apt11",  # Apt11 owns A01 (above_ground)
-            parking_space_number="A01",
-            parking_type="underground",
-            available_from="2026-02-20T08:00",
-            available_until="2026-02-20T12:00",
-        )
-
-
-def test_auto_reserve_defaults_to_requester_building(service: ParkingService) -> None:
+def test_auto_reserve_and_claim_lists(service: ParkingService) -> None:
     service.create_availability_slot(
         owner_username="Bloc2_Apt1",
-        parking_space_number="U01",
-        parking_type="underground",
-        available_from="2026-02-20T08:00",
-        available_until="2026-02-20T18:00",
-    )
-
-    with pytest.raises(SlotNotFoundError):
-        service.auto_reserve_slot(
-            requester_username="Bloc3_Apt4",
-            requested_from="2026-02-20T09:00",
-            requested_until="2026-02-20T10:00",
-            parking_type="underground",
-        )
-
-
-def test_auto_reserve_with_building_filter(service: ParkingService) -> None:
-    service.create_availability_slot(
-        owner_username="Bloc1_Apt1",
-        parking_space_number="U01",
-        parking_type="underground",
-        available_from="2026-02-20T08:00",
-        available_until="2026-02-20T18:00",
-    )
-    service.create_availability_slot(
-        owner_username="Bloc1_Apt11",
-        parking_space_number="A01",
+        parking_space_number="SPOT-201",
         parking_type="above_ground",
-        available_from="2026-02-20T08:00",
-        available_until="2026-02-20T18:00",
+        available_from="2026-02-21T08:00",
+        available_until="2026-02-21T18:00",
     )
 
     reserved = service.auto_reserve_slot(
-        requester_username="Bloc2_Apt5",
-        requested_from="2026-02-20T10:00",
-        requested_until="2026-02-20T11:00",
+        requester_username="Bloc2_Apt3",
+        requested_from="2026-02-21T10:00",
+        requested_until="2026-02-21T12:00",
         parking_type="above_ground",
-        building_number=1,
     )
-    assert reserved.owner_username == "Bloc1_Apt11"
     assert reserved.status == "RESERVED"
+    assert reserved.reserved_by_username == "Bloc2_Apt3"
+
+    claimed_by_me = service.list_slots_claimed_by_user("Bloc2_Apt3")
+    assert len(claimed_by_me) == 1
+
+    claimed_on_owner = service.list_slots_claimed_on_user_spaces("Bloc2_Apt1")
+    assert len(claimed_on_owner) == 1
 
 
-def test_reserved_slot_not_double_booked(service: ParkingService) -> None:
+def test_cannot_double_reserve_same_slot(service: ParkingService) -> None:
     service.create_availability_slot(
-        owner_username="Bloc4_Apt7",
-        parking_space_number="U07",
+        owner_username="Bloc3_Apt6",
+        parking_space_number="SPOT-306",
         parking_type="underground",
-        available_from="2026-02-20T08:00",
-        available_until="2026-02-20T18:00",
+        available_from="2026-02-22T08:00",
+        available_until="2026-02-22T18:00",
     )
 
     service.auto_reserve_slot(
-        requester_username="Bloc4_Apt8",
-        requested_from="2026-02-20T10:00",
-        requested_until="2026-02-20T12:00",
+        requester_username="Bloc3_Apt7",
+        requested_from="2026-02-22T09:00",
+        requested_until="2026-02-22T10:00",
         parking_type="underground",
-        building_number=4,
     )
 
     with pytest.raises(SlotNotFoundError):
         service.auto_reserve_slot(
-            requester_username="Bloc4_Apt9",
-            requested_from="2026-02-20T10:00",
-            requested_until="2026-02-20T12:00",
+            requester_username="Bloc3_Apt8",
+            requested_from="2026-02-22T09:00",
+            requested_until="2026-02-22T10:00",
             parking_type="underground",
-            building_number=4,
         )
