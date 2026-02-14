@@ -4,10 +4,10 @@ This project is a Vercel-ready Flask app for parking spot sharing between neighb
 
 ## Defaults
 
-- 10 buildings (`Bloc1` .. `Bloc10`)
-- 16 apartment users per building (`Bloc1_Apt1` .. `Bloc10_Apt16`)
+- 10 buildings (`bloc1` .. `bloc10`)
+- 16 apartment users per building (`bloc1_apt1` .. `bloc10_apt16`)
 - Default resident password: `10blocuri`
-- Admin user: `Admin`
+- Admin user: `admin`
 - Admin password: `adex123#`
 - Building capacity shown in dashboard:
   - 10 underground spots

@@ -225,7 +225,6 @@
         <h1>Neighbourhood Parking Dashboard</h1>
         <p>
           Share your parking spot, claim available shared spots, and track claimed periods.
-          Default resident password: <b>10blocuri</b>. Admin: <b>Admin / adex123#</b>
         </p>
       </section>
 
@@ -234,7 +233,7 @@
         <form id="loginForm" class="stack" style="margin-top: 10px">
           <div>
             <label for="loginUsername">Username</label>
-            <input id="loginUsername" placeholder="Bloc1_Apt1" required />
+            <input id="loginUsername" placeholder="bloc1_apt1" required />
           </div>
           <div>
             <label for="loginPassword">Password</label>
@@ -309,6 +308,10 @@
                 <label for="claimUntil">Claim Until</label>
                 <input id="claimUntil" type="datetime-local" required />
               </div>
+              <div>
+                <label for="claimPhone">Contact Phone (for owner)</label>
+                <input id="claimPhone" placeholder="07xx xxx xxx" />
+              </div>
               <button id="claimBtn" class="alt" type="submit" data-default-text="Claim Selected Spot">Claim Selected Spot</button>
             </form>
           </section>
@@ -353,7 +356,7 @@
             <div class="table-wrap">
               <table>
                 <thead>
-                  <tr><th>Spot</th><th>Claimed By</th><th>Claim From</th><th>Claim Until</th></tr>
+                  <tr><th>Spot</th><th>Claimed By</th><th>Phone</th><th>Claim From</th><th>Claim Until</th></tr>
                 </thead>
                 <tbody id="claimedOnMine"></tbody>
               </table>
@@ -365,7 +368,7 @@
             <div class="table-wrap">
               <table>
                 <thead>
-                  <tr><th>Building</th><th>Spot</th><th>Owner</th><th>Phone</th><th>Claim From</th><th>Claim Until</th></tr>
+                  <tr><th>Building</th><th>Spot</th><th>Owner</th><th>Owner Phone</th><th>Contact Used</th><th>Claim From</th><th>Claim Until</th></tr>
                 </thead>
                 <tbody id="myClaimed"></tbody>
               </table>
@@ -392,7 +395,7 @@
             <section class="card">
               <h3>Admin Create Shared Slot</h3>
               <form id="adminSlotForm" class="stack" style="margin-top: 8px">
-                <div><label for="adminOwnerUsername">Owner Username</label><input id="adminOwnerUsername" placeholder="Bloc2_Apt4" required /></div>
+                <div><label for="adminOwnerUsername">Owner Username</label><input id="adminOwnerUsername" placeholder="bloc2_apt4" required /></div>
                 <div><label for="adminSpaceNumber">Parking Spot Number</label><input id="adminSpaceNumber" placeholder="Spot-88" required /></div>
                 <div><label for="adminSpaceType">Type</label><select id="adminSpaceType"><option value="underground">Underground</option><option value="above_ground">Above Ground</option></select></div>
                 <div><label for="adminFromAt">Available From</label><input id="adminFromAt" type="datetime-local" required /></div>
@@ -478,11 +481,20 @@
         return `<td>${value ?? "-"}</td>`;
       }
 
+      function normalizeUsername(value) {
+        return (value || "").trim().toLowerCase();
+      }
+
+      function inferBuildingFromUsername(username) {
+        const match = normalizeUsername(username).match(/^bloc([1-9]|10)\b/);
+        return match ? Number(match[1]) : null;
+      }
+
       function fillBuildingSelect(id, includeEmpty = false) {
         const select = document.getElementById(id);
         select.innerHTML = "";
         if (includeEmpty) {
-          select.appendChild(option("", "Auto / My building"));
+          select.appendChild(option("", "Any"));
         }
         for (let b = 1; b <= 10; b++) {
           select.appendChild(option(String(b), `Bloc ${b}`));
@@ -535,14 +547,14 @@
         els.claimedOnMine.innerHTML = data.my_shared_claimed_by_neighbours
           .map(
             (s) =>
-              `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
+              `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
           )
           .join("");
 
         els.myClaimed.innerHTML = data.my_claimed_parking_spots
           .map(
             (s) =>
-              `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
+              `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
           )
           .join("");
       }
@@ -614,11 +626,8 @@
         els.loginCard.classList.add("hidden");
         els.app.classList.remove("hidden");
         els.whoami.textContent = `${user.username} (${user.role})${user.phone_number ? ` - ${user.phone_number}` : ""}`;
-
-        const claimBuilding = document.getElementById("claimBuilding");
-        if (user.role === "resident") {
-          claimBuilding.value = String(user.building_number);
-        }
+        document.getElementById("claimBuilding").value = "";
+        document.getElementById("claimPhone").value = user.phone_number || "";
 
         if (user.role === "admin") {
           els.adminPanel.classList.remove("hidden");
@@ -635,7 +644,7 @@
             const response = await api("/api/auth/login", {
               method: "POST",
               body: JSON.stringify({
-                username: document.getElementById("loginUsername").value,
+                username: normalizeUsername(document.getElementById("loginUsername").value),
                 password: document.getElementById("loginPassword").value,
               }),
             });
@@ -696,6 +705,7 @@
                 slot_id: slotId,
                 requested_from: document.getElementById("claimFrom").value,
                 requested_until: document.getElementById("claimUntil").value,
+                claim_phone_number: document.getElementById("claimPhone").value,
               }),
             });
             await refreshDashboard();
@@ -714,7 +724,7 @@
             await api("/api/users", {
               method: "POST",
               body: JSON.stringify({
-                username: document.getElementById("newUsername").value,
+                username: normalizeUsername(document.getElementById("newUsername").value),
                 password: document.getElementById("newPassword").value,
                 phone_number: document.getElementById("newPhone").value,
                 role: document.getElementById("newRole").value,
@@ -738,7 +748,7 @@
             await api("/api/admin/slots", {
               method: "POST",
               body: JSON.stringify({
-                owner_username: document.getElementById("adminOwnerUsername").value,
+                owner_username: normalizeUsername(document.getElementById("adminOwnerUsername").value),
                 parking_space_number: document.getElementById("adminSpaceNumber").value,
                 parking_type: document.getElementById("adminSpaceType").value,
                 available_from: document.getElementById("adminFromAt").value,
@@ -771,6 +781,22 @@
 
       els.availableSlot.addEventListener("change", () => {
         syncClaimPeriodToSelection();
+      });
+
+      document.getElementById("loginUsername").addEventListener("input", (event) => {
+        event.target.value = normalizeUsername(event.target.value);
+      });
+
+      document.getElementById("newUsername").addEventListener("input", (event) => {
+        event.target.value = normalizeUsername(event.target.value);
+        const inferred = inferBuildingFromUsername(event.target.value);
+        if (inferred) {
+          document.getElementById("newBuilding").value = String(inferred);
+        }
+      });
+
+      document.getElementById("adminOwnerUsername").addEventListener("input", (event) => {
+        event.target.value = normalizeUsername(event.target.value);
       });
 
       async function boot() {

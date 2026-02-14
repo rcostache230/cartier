@@ -124,7 +124,6 @@ def api_root():
             "service": "neighbourhood-parking-api",
             "version": "3.0.0",
             "defaults": {
-                "resident_password": DEFAULT_RESIDENT_PASSWORD,
                 "admin_username": DEFAULT_ADMIN_USERNAME,
             },
             "parking_types": sorted(PARKING_TYPES),
@@ -253,6 +252,7 @@ def auto_reserve_slot():
         requested_until=str(payload.get("requested_until", "")),
         parking_type=payload.get("parking_type"),
         building_number=int(building_number) if building_number is not None else None,
+        claim_phone_number=str(payload.get("claim_phone_number", "")),
     )
     return jsonify(asdict(slot)), 200
 
@@ -267,6 +267,7 @@ def claim_specific_slot():
         slot_id=int(payload.get("slot_id", 0)),
         requested_from=str(payload.get("requested_from", "")),
         requested_until=str(payload.get("requested_until", "")),
+        claim_phone_number=str(payload.get("claim_phone_number", "")),
     )
     return jsonify(asdict(slot)), 200
 
@@ -282,12 +283,10 @@ def building_stats():
 def dashboard():
     user = _current_user()
     building_number = _parse_optional_int(request.args.get("building_number"))
-    if building_number is None and user.role != "admin":
-        building_number = user.building_number
 
     shared_spots = service.list_open_slots(
         building_number=building_number,
-        exclude_owner_username=user.username,
+        exclude_owner_username=None,
     )
     my_shared = service.list_slots_shared_by_user(user.username)
     my_claimed = service.list_slots_claimed_by_user(user.username)

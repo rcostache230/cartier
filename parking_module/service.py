@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import os
+import re
 import secrets
 import sqlite3
 from dataclasses import dataclass
@@ -13,7 +14,7 @@ from typing import Optional
 PARKING_TYPES = {"above_ground", "underground"}
 DEFAULT_RESIDENT_PASSWORD = "10blocuri"
 DEFAULT_ADMIN_PASSWORD = "adex123#"
-DEFAULT_ADMIN_USERNAME = "Admin"
+DEFAULT_ADMIN_USERNAME = "admin"
 UNDERGROUND_CAPACITY_PER_BUILDING = 10
 ABOVE_GROUND_CAPACITY_PER_BUILDING = 6
 TOTAL_BUILDINGS = 10
@@ -65,6 +66,8 @@ class ParkingSlot:
     available_until: str
     status: str
     reserved_by_username: Optional[str]
+    reserved_by_phone_number: str
+    reservation_contact_phone: str
     reservation_from: Optional[str]
     reservation_until: Optional[str]
 
@@ -122,6 +125,7 @@ class ParkingService:
                     status TEXT NOT NULL DEFAULT 'OPEN',
                     reserved_by_user_id INTEGER,
                     reserved_at TEXT,
+                    claim_phone_number TEXT NOT NULL DEFAULT '',
                     reservation_from TEXT,
                     reservation_until TEXT,
                     created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -141,6 +145,31 @@ class ParkingService:
             conn.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'resident'")
         if "phone_number" not in cols:
             conn.execute("ALTER TABLE users ADD COLUMN phone_number TEXT DEFAULT ''")
+        slot_cols = {
+            row["name"]
+            for row in conn.execute("PRAGMA table_info(parking_slots)").fetchall()
+        }
+        if "claim_phone_number" not in slot_cols:
+            conn.execute(
+                "ALTER TABLE parking_slots ADD COLUMN claim_phone_number TEXT NOT NULL DEFAULT ''"
+            )
+
+        # Normalize usernames to lowercase.
+        rows = conn.execute("SELECT id, username FROM users").fetchall()
+        for row in rows:
+            normalized = self._normalize_username(str(row["username"]))
+            if normalized == row["username"]:
+                continue
+            duplicate = conn.execute(
+                "SELECT id FROM users WHERE username = ? AND id != ?",
+                (normalized, int(row["id"])),
+            ).fetchone()
+            if duplicate:
+                continue
+            conn.execute(
+                "UPDATE users SET username = ? WHERE id = ?",
+                (normalized, int(row["id"])),
+            )
 
         default_hash = self._hash_password(DEFAULT_RESIDENT_PASSWORD)
         conn.execute(
@@ -161,7 +190,7 @@ class ParkingService:
         with self._connect() as conn:
             for building in range(1, TOTAL_BUILDINGS + 1):
                 for apartment in range(1, 17):
-                    username = f"Bloc{building}_Apt{apartment}"
+                    username = f"bloc{building}_apt{apartment}"
                     row = conn.execute(
                         "SELECT id, password_hash, role FROM users WHERE username = ?",
                         (username,),
@@ -203,7 +232,7 @@ class ParkingService:
         username: str = DEFAULT_ADMIN_USERNAME,
         password: str = DEFAULT_ADMIN_PASSWORD,
     ) -> None:
-        username = username.strip()
+        username = self._normalize_username(username)
         if not username:
             raise SlotValidationError("admin username cannot be empty")
 
@@ -244,6 +273,7 @@ class ParkingService:
             )
 
     def authenticate_user(self, username: str, password: str) -> UserAccount:
+        username = self._normalize_username(username)
         with self._connect() as conn:
             row = conn.execute(
                 """
@@ -293,7 +323,7 @@ class ParkingService:
         role: str = "resident",
         phone_number: str = "",
     ) -> UserAccount:
-        username = username.strip()
+        username = self._normalize_username(username)
         if not username:
             raise SlotValidationError("username cannot be empty")
         if role not in {"resident", "admin"}:
@@ -303,6 +333,9 @@ class ParkingService:
             building_number = 0
             apartment_number = 0
         else:
+            inferred_building = self._infer_building_from_username(username)
+            if inferred_building is not None:
+                building_number = inferred_building
             self._validate_building_number(building_number)
             if apartment_number < 1 or apartment_number > 16:
                 raise SlotValidationError("apartment_number must be between 1 and 16")
@@ -361,6 +394,7 @@ class ParkingService:
         return self._user_from_row(row)
 
     def get_user_by_username(self, username: str) -> UserAccount:
+        username = self._normalize_username(username)
         with self._connect() as conn:
             row = conn.execute(
                 """
@@ -497,6 +531,8 @@ class ParkingService:
                     ps.available_until,
                     ps.status,
                     reserver.username AS reserved_by_username,
+                    reserver.phone_number AS reserved_by_phone_number,
+                    ps.claim_phone_number,
                     ps.reservation_from,
                     ps.reservation_until
                 FROM parking_slots ps
@@ -517,6 +553,7 @@ class ParkingService:
         requested_until: str,
         parking_type: Optional[str] = None,
         building_number: Optional[int] = None,
+        claim_phone_number: Optional[str] = None,
     ) -> ParkingSlot:
         requester = self.get_user_by_username(requester_username)
         if requester.role == "admin" and building_number is None:
@@ -569,6 +606,7 @@ class ParkingService:
                 requester_id=requester.id,
                 requested_from=requested_from,
                 requested_until=requested_until,
+                claim_phone_number=claim_phone_number or requester.phone_number,
             )
 
         return self.get_slot(int(slot_row["id"]))
@@ -579,6 +617,7 @@ class ParkingService:
         slot_id: int,
         requested_from: str,
         requested_until: str,
+        claim_phone_number: Optional[str] = None,
     ) -> ParkingSlot:
         requester = self.get_user_by_username(requester_username)
         from_dt = self._parse_iso_datetime(requested_from)
@@ -612,6 +651,7 @@ class ParkingService:
                 requester_id=requester.id,
                 requested_from=requested_from,
                 requested_until=requested_until,
+                claim_phone_number=claim_phone_number or requester.phone_number,
             )
 
         return self.get_slot(int(slot_id))
@@ -638,6 +678,7 @@ class ParkingService:
         requester_id: int,
         requested_from: str,
         requested_until: str,
+        claim_phone_number: str = "",
     ) -> None:
         updated = conn.execute(
             """
@@ -645,6 +686,7 @@ class ParkingService:
             SET status = 'RESERVED',
                 reserved_by_user_id = ?,
                 reserved_at = ?,
+                claim_phone_number = ?,
                 reservation_from = ?,
                 reservation_until = ?
             WHERE id = ?
@@ -653,6 +695,7 @@ class ParkingService:
             (
                 requester_id,
                 datetime.utcnow().isoformat(timespec="seconds"),
+                claim_phone_number.strip(),
                 requested_from,
                 requested_until,
                 slot_id,
@@ -676,6 +719,8 @@ class ParkingService:
                     ps.available_until,
                     ps.status,
                     reserver.username AS reserved_by_username,
+                    reserver.phone_number AS reserved_by_phone_number,
+                    ps.claim_phone_number,
                     ps.reservation_from,
                     ps.reservation_until
                 FROM parking_slots ps
@@ -703,6 +748,8 @@ class ParkingService:
                     ps.available_until,
                     ps.status,
                     reserver.username AS reserved_by_username,
+                    reserver.phone_number AS reserved_by_phone_number,
+                    ps.claim_phone_number,
                     ps.reservation_from,
                     ps.reservation_until
                 FROM parking_slots ps
@@ -775,6 +822,17 @@ class ParkingService:
             ) from exc
 
     @staticmethod
+    def _normalize_username(username: str) -> str:
+        return username.strip().lower()
+
+    @staticmethod
+    def _infer_building_from_username(username: str) -> Optional[int]:
+        match = re.match(r"^bloc([1-9]|10)(?:_|\\b)", username)
+        if not match:
+            return None
+        return int(match.group(1))
+
+    @staticmethod
     def _user_from_row(row: sqlite3.Row) -> UserAccount:
         return UserAccount(
             id=int(row["id"]),
@@ -802,6 +860,8 @@ class ParkingService:
                 if row["reserved_by_username"] is not None
                 else None
             ),
+            reserved_by_phone_number=str(row["reserved_by_phone_number"] or ""),
+            reservation_contact_phone=str(row["claim_phone_number"] or ""),
             reservation_from=(
                 str(row["reservation_from"]) if row["reservation_from"] is not None else None
             ),
