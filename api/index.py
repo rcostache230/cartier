@@ -25,15 +25,33 @@ from parking_module import (
 app = Flask(__name__, template_folder="templates")
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "change-this-secret")
 
-service = ParkingService()
-service.seed_default_users(DEFAULT_RESIDENT_PASSWORD)
-service.ensure_admin_user(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD)
+_service_instance: ParkingService | None = None
 
 F = TypeVar("F", bound=Callable[..., object])
 
 
+class ServiceUnavailableError(Exception):
+    """Raised when the database/service cannot be initialized."""
+
+
 def _json_error(message: str, status: int):
     return jsonify({"error": message}), status
+
+
+def _service() -> ParkingService:
+    global _service_instance
+    if _service_instance is not None:
+        return _service_instance
+    try:
+        svc = ParkingService()
+        svc.seed_default_users(DEFAULT_RESIDENT_PASSWORD)
+        svc.ensure_admin_user(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD)
+        _service_instance = svc
+        return svc
+    except Exception as exc:
+        raise ServiceUnavailableError(
+            f"service initialization failed: {type(exc).__name__}: {exc}"
+        ) from exc
 
 
 def _parse_optional_int(value: str | None) -> int | None:
@@ -50,7 +68,7 @@ def _current_user() -> UserAccount:
     if not user_id:
         raise AuthenticationError("authentication required")
     try:
-        return service.get_user_by_id(int(user_id))
+        return _service().get_user_by_id(int(user_id))
     except UserNotFoundError as exc:
         session.clear()
         raise AuthenticationError("authentication required") from exc
@@ -106,6 +124,11 @@ def _handle_parking_error(err: ParkingModuleError):
     return _json_error(str(err), 400)
 
 
+@app.errorhandler(ServiceUnavailableError)
+def _handle_service_unavailable(err: ServiceUnavailableError):
+    return _json_error(str(err), 503)
+
+
 @app.route("/", methods=["GET"])
 def home():
     return render_template("index.html")
@@ -114,12 +137,19 @@ def home():
 @app.route("/health", methods=["GET"])
 @app.route("/api/health", methods=["GET"])
 def health():
-    return jsonify(
-        {
-            "status": "ok",
-            "db_backend": "postgres" if service._is_postgres else "sqlite",
-        }
-    )
+    try:
+        svc = _service()
+    except ServiceUnavailableError as exc:
+        return (
+            jsonify(
+                {
+                    "status": "degraded",
+                    "error": str(exc),
+                }
+            ),
+            503,
+        )
+    return jsonify({"status": "ok", "db_backend": "postgres" if svc._is_postgres else "sqlite"})
 
 
 @app.route("/api", methods=["GET"])
@@ -144,7 +174,7 @@ def login():
     payload = request.get_json(silent=True) or {}
     username = str(payload.get("username", ""))
     password = str(payload.get("password", ""))
-    user = service.authenticate_user(username, password)
+    user = _service().authenticate_user(username, password)
     session["user_id"] = user.id
     return jsonify({"user": asdict(user)}), 200
 
@@ -169,7 +199,7 @@ def auth_me():
 @admin_required
 def list_users():
     building_number = _parse_optional_int(request.args.get("building_number"))
-    users = service.list_users(building_number=building_number)
+    users = _service().list_users(building_number=building_number)
     return jsonify([asdict(user) for user in users]), 200
 
 
@@ -177,7 +207,7 @@ def list_users():
 @admin_required
 def create_user():
     payload = request.get_json(silent=True) or {}
-    user = service.create_user(
+    user = _service().create_user(
         username=str(payload.get("username", "")),
         password=str(payload.get("password", DEFAULT_RESIDENT_PASSWORD)),
         role=str(payload.get("role", "resident")),
@@ -191,8 +221,9 @@ def create_user():
 @app.route("/api/users/reset-defaults", methods=["POST"])
 @admin_required
 def reset_defaults():
-    inserted = service.seed_default_users(DEFAULT_RESIDENT_PASSWORD)
-    service.ensure_admin_user(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD)
+    svc = _service()
+    inserted = svc.seed_default_users(DEFAULT_RESIDENT_PASSWORD)
+    svc.ensure_admin_user(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD)
     return jsonify({"inserted_or_updated": inserted}), 200
 
 
@@ -201,7 +232,7 @@ def reset_defaults():
 def create_slot():
     payload = request.get_json(silent=True) or {}
     user = _current_user()
-    slot = service.create_availability_slot(
+    slot = _service().create_availability_slot(
         owner_username=user.username,
         parking_space_number=str(payload.get("parking_space_number", "")),
         parking_type=str(payload.get("parking_type", "")),
@@ -216,7 +247,7 @@ def create_slot():
 @admin_required
 def admin_create_slot():
     payload = request.get_json(silent=True) or {}
-    slot = service.create_availability_slot(
+    slot = _service().create_availability_slot(
         owner_username=str(payload.get("owner_username", "")),
         parking_space_number=str(payload.get("parking_space_number", "")),
         parking_type=str(payload.get("parking_type", "")),
@@ -236,7 +267,7 @@ def list_open_slots():
     building_number = _parse_optional_int(request.args.get("building_number"))
     exclude_self = request.args.get("exclude_self", "1") != "0"
 
-    slots = service.list_open_slots(
+    slots = _service().list_open_slots(
         requested_from=requested_from,
         requested_until=requested_until,
         parking_type=parking_type,
@@ -252,7 +283,7 @@ def auto_reserve_slot():
     payload = request.get_json(silent=True) or {}
     user = _current_user()
     building_number = payload.get("building_number")
-    slot = service.auto_reserve_slot(
+    slot = _service().auto_reserve_slot(
         requester_username=user.username,
         requested_from=str(payload.get("requested_from", "")),
         requested_until=str(payload.get("requested_until", "")),
@@ -269,7 +300,7 @@ def auto_reserve_slot():
 def claim_specific_slot():
     payload = request.get_json(silent=True) or {}
     user = _current_user()
-    slot = service.reserve_specific_slot(
+    slot = _service().reserve_specific_slot(
         requester_username=user.username,
         slot_id=int(payload.get("slot_id", 0)),
         requested_from=str(payload.get("requested_from", "")),
@@ -283,7 +314,7 @@ def claim_specific_slot():
 @app.route("/api/buildings/stats", methods=["GET"])
 @login_required
 def building_stats():
-    return jsonify(service.list_building_stats()), 200
+    return jsonify(_service().list_building_stats()), 200
 
 
 @app.route("/api/dashboard", methods=["GET"])
@@ -291,19 +322,20 @@ def building_stats():
 def dashboard():
     user = _current_user()
     building_number = _parse_optional_int(request.args.get("building_number"))
+    svc = _service()
 
-    shared_spots = service.list_open_slots(
+    shared_spots = svc.list_open_slots(
         building_number=building_number,
         exclude_owner_username=None,
     )
-    my_shared = service.list_slots_shared_by_user_id(user.id)
-    my_claimed = service.list_slots_claimed_by_user_id(user.id)
-    claimed_on_my = service.list_slots_claimed_on_user_spaces_id(user.id)
+    my_shared = svc.list_slots_shared_by_user_id(user.id)
+    my_claimed = svc.list_slots_claimed_by_user_id(user.id)
+    claimed_on_my = svc.list_slots_claimed_on_user_spaces_id(user.id)
 
     return jsonify(
         {
             "current_user": asdict(user),
-            "building_stats": service.list_building_stats(),
+            "building_stats": svc.list_building_stats(),
             "shared_parking_spots": [asdict(slot) for slot in shared_spots],
             "my_shared_parking_spots": [asdict(slot) for slot in my_shared],
             "my_shared_claimed_by_neighbours": [asdict(slot) for slot in claimed_on_my],
