@@ -142,7 +142,6 @@ class ParkingService:
     def __init__(self, db_path: Optional[str] = None) -> None:
         self.db_path = db_path or self._default_db_path()
         self._is_postgres = self.db_path.startswith(("postgres://", "postgresql://"))
-        self._pg_conn = None
         self._initialize_db()
 
     @staticmethod
@@ -165,9 +164,8 @@ class ParkingService:
                 raise RuntimeError(
                     "psycopg is required for PostgreSQL. Install dependencies from requirements.txt"
                 )
-            if self._pg_conn is None or self._pg_conn.closed:
-                self._pg_conn = psycopg.connect(self.db_path, row_factory=dict_row)
-            return _PostgresConnectionWrapper(self._pg_conn, close_on_exit=False)
+            conn = psycopg.connect(self.db_path, row_factory=dict_row)
+            return _PostgresConnectionWrapper(conn, close_on_exit=True)
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         return conn
@@ -325,12 +323,24 @@ class ParkingService:
         )
 
     def _run_user_migrations_postgres(self, conn: _PostgresConnectionWrapper) -> None:
-        conn.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash TEXT")
-        conn.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'resident'")
-        conn.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone_number TEXT NOT NULL DEFAULT ''")
-        conn.execute(
-            "ALTER TABLE parking_slots ADD COLUMN IF NOT EXISTS claim_phone_number TEXT NOT NULL DEFAULT ''"
-        )
+        # Serialize schema/data migrations across concurrent cold starts.
+        conn.execute("SELECT pg_advisory_xact_lock(?)", (7040101,))
+        if self._meta_get(conn, "migrations_v1_done") == "1":
+            return
+
+        user_cols = self._postgres_columns(conn, "users")
+        if "password_hash" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN password_hash TEXT")
+        if "role" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'resident'")
+        if "phone_number" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN phone_number TEXT NOT NULL DEFAULT ''")
+
+        slot_cols = self._postgres_columns(conn, "parking_slots")
+        if "claim_phone_number" not in slot_cols:
+            conn.execute(
+                "ALTER TABLE parking_slots ADD COLUMN claim_phone_number TEXT NOT NULL DEFAULT ''"
+            )
 
         rows = conn.execute("SELECT id, username FROM users").fetchall()
         for row in rows:
@@ -356,9 +366,11 @@ class ParkingService:
                 role = COALESCE(role, 'resident'),
                 phone_number = COALESCE(phone_number, '')
             WHERE role != 'admin'
+              AND (password_hash IS NULL OR role IS NULL OR phone_number IS NULL)
             """,
             (default_hash,),
         )
+        self._meta_set(conn, "migrations_v1_done", "1")
 
     def seed_default_users(
         self,
@@ -523,6 +535,18 @@ class ParkingService:
             """,
             (key, value),
         )
+
+    @staticmethod
+    def _postgres_columns(conn, table_name: str) -> set[str]:
+        rows = conn.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_schema = 'public' AND table_name = ?
+            """,
+            (table_name,),
+        ).fetchall()
+        return {str(row["column_name"]) for row in rows}
 
     def authenticate_user(self, username: str, password: str) -> UserAccount:
         username = self._normalize_username(username)

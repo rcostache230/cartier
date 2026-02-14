@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import threading
 from dataclasses import asdict
 from functools import wraps
 from typing import Callable, TypeVar
@@ -26,6 +27,7 @@ app = Flask(__name__, template_folder="templates")
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "change-this-secret")
 
 _service_instance: ParkingService | None = None
+_service_lock = threading.Lock()
 
 F = TypeVar("F", bound=Callable[..., object])
 
@@ -42,16 +44,19 @@ def _service() -> ParkingService:
     global _service_instance
     if _service_instance is not None:
         return _service_instance
-    try:
-        svc = ParkingService()
-        svc.seed_default_users(DEFAULT_RESIDENT_PASSWORD)
-        svc.ensure_admin_user(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD)
-        _service_instance = svc
-        return svc
-    except Exception as exc:
-        raise ServiceUnavailableError(
-            f"service initialization failed: {type(exc).__name__}: {exc}"
-        ) from exc
+    with _service_lock:
+        if _service_instance is not None:
+            return _service_instance
+        try:
+            svc = ParkingService()
+            svc.seed_default_users(DEFAULT_RESIDENT_PASSWORD)
+            svc.ensure_admin_user(DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_PASSWORD)
+            _service_instance = svc
+            return svc
+        except Exception as exc:
+            raise ServiceUnavailableError(
+                f"service initialization failed: {type(exc).__name__}: {exc}"
+            ) from exc
 
 
 def _parse_optional_int(value: str | None) -> int | None:
