@@ -217,6 +217,35 @@
       #status.error {
         color: var(--danger);
       }
+
+      .faq {
+        margin-top: 14px;
+      }
+
+      .faq h2 {
+        margin-top: 0;
+      }
+
+      .faq-item {
+        border: 1px solid #e4ddd2;
+        border-radius: 10px;
+        background: #fffcf6;
+        padding: 10px 12px;
+      }
+
+      .faq-item + .faq-item {
+        margin-top: 8px;
+      }
+
+      .faq-item summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .faq-item p {
+        margin: 8px 0 0;
+        color: var(--muted);
+      }
     </style>
   </head>
   <body>
@@ -226,6 +255,54 @@
         <p>
           Share your parking spot, claim available shared spots, and track claimed periods.
         </p>
+      </section>
+
+      <section class="card faq">
+        <h2>FAQ - How To Use This Website</h2>
+        <details class="faq-item" open>
+          <summary>1) How do I log in?</summary>
+          <p>
+            Use your apartment account (for example <code>bloc1_apt1</code>) and your assigned
+            password. Usernames are lowercase.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>2) How do I share my parking spot?</summary>
+          <p>
+            In <b>Share My Parking Spot</b>, enter your parking spot number, choose
+            underground/above ground, then set exact start and end date/time and press
+            <b>Share Spot</b>.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>3) How do I claim an available spot?</summary>
+          <p>
+            In <b>Claim Shared Parking Spot</b>, filter by building/type (or keep <b>Any</b>),
+            select a free spot, set the period you need, add contact phone, then press
+            <b>Claim Selected Spot</b>.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>4) What happens if I claim only part of the shared period?</summary>
+          <p>
+            The claimed interval is reserved for you, and the remaining time before/after your
+            claim stays available for other neighbours.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>5) Where do I see free spots and claimed history?</summary>
+          <p>
+            Use dashboard tables: <b>Shared Parking Spots (Free)</b>, <b>My Shared Spots</b>,
+            <b>My Shared Spots Claimed By Neighbours</b>, and <b>My Claimed Spots</b>.
+          </p>
+        </details>
+        <details class="faq-item">
+          <summary>6) What can the admin user do?</summary>
+          <p>
+            Admin can create users, create shared slots for residents, reset default users, and
+            monitor all users and parking activity.
+          </p>
+        </details>
       </section>
 
       <section id="loginCard" class="card" style="margin-top: 14px; max-width: 420px">
