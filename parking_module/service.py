@@ -110,12 +110,18 @@ class _PostgresConnectionWrapper:
         cursor.execute(self._convert_sql(query), params)
         lastrowid: Optional[int] = None
         if query.lstrip().lower().startswith("insert") and "returning" not in query.lower():
+            # Some INSERT statements target tables without sequence-backed IDs
+            # (for example app_meta). In that case LASTVAL is undefined.
             id_cursor = self._conn.cursor()
-            id_cursor.execute("SELECT LASTVAL() AS id")
-            row = id_cursor.fetchone()
-            if row and row.get("id") is not None:
-                lastrowid = int(row["id"])
-            id_cursor.close()
+            try:
+                id_cursor.execute("SELECT LASTVAL() AS id")
+                row = id_cursor.fetchone()
+                if row and row.get("id") is not None:
+                    lastrowid = int(row["id"])
+            except Exception:
+                lastrowid = None
+            finally:
+                id_cursor.close()
         return _PGExecutionResult(cursor, lastrowid=lastrowid)
 
     def executescript(self, script: str) -> None:
