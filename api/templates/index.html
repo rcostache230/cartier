@@ -137,7 +137,7 @@
       }
 
       .hidden {
-        display: none;
+        display: none !important;
       }
 
       .table-wrap {
@@ -944,11 +944,23 @@
       }
 
       function openHelpModal() {
+        if (!els.claimConfirmModal.classList.contains("hidden")) {
+          closeClaimConfirmation(false);
+        }
         els.helpModal.classList.remove("hidden");
       }
 
       function closeHelpModal() {
         els.helpModal.classList.add("hidden");
+      }
+
+      function closeAllModals() {
+        closeHelpModal();
+        if (!els.claimConfirmModal.classList.contains("hidden")) {
+          closeClaimConfirmation(false);
+        } else {
+          els.claimConfirmModal.classList.add("hidden");
+        }
       }
 
       function maybeShowHelpOnce() {
@@ -964,6 +976,7 @@
       }
 
       function requestClaimConfirmation(slot, requestedFrom, requestedUntil) {
+        closeHelpModal();
         const fromText = (requestedFrom || "").replace("T", " ");
         const untilText = (requestedUntil || "").replace("T", " ");
         els.claimConfirmText.textContent =
@@ -1178,11 +1191,13 @@
       function applyAuthState(user) {
         currentUser = user;
         if (!user) {
+          closeAllModals();
           els.loginCard.classList.remove("hidden");
           els.app.classList.add("hidden");
           return;
         }
 
+        closeAllModals();
         els.loginCard.classList.add("hidden");
         els.app.classList.remove("hidden");
         els.whoami.textContent = `${user.username} (${user.role})${user.phone_number ? ` - ${user.phone_number}` : ""}`;
