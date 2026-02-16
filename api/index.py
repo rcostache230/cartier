@@ -22,12 +22,22 @@ from parking_module import (
     UserAccount,
     UserNotFoundError,
 )
+from voting_module import (
+    PollNotFoundError,
+    PollValidationError,
+    VoteValidationError,
+    VotingAuthorizationError,
+    VotingModuleError,
+    VotingService,
+)
 
 app = Flask(__name__, template_folder="templates")
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "change-this-secret")
 
 _service_instance: ParkingService | None = None
 _service_lock = threading.Lock()
+_voting_service_instance: VotingService | None = None
+_voting_service_lock = threading.Lock()
 
 F = TypeVar("F", bound=Callable[..., object])
 
@@ -36,8 +46,15 @@ class ServiceUnavailableError(Exception):
     """Raised when the database/service cannot be initialized."""
 
 
-def _json_error(message: str, status: int):
-    return jsonify({"error": message}), status
+def _json_error(message: str, status: int, details: dict | None = None):
+    payload = {"error": message}
+    if details:
+        payload["details"] = details
+    return jsonify(payload), status
+
+
+def _payload_error(message: str, details: dict | None = None, status: int = 400):
+    return _json_error(message, status, details)
 
 
 def _service() -> ParkingService:
@@ -59,6 +76,24 @@ def _service() -> ParkingService:
             ) from exc
 
 
+def _voting_service() -> VotingService:
+    global _voting_service_instance
+    if _voting_service_instance is not None:
+        return _voting_service_instance
+    with _voting_service_lock:
+        if _voting_service_instance is not None:
+            return _voting_service_instance
+        try:
+            parking = _service()
+            svc = VotingService(parking.db_path)
+            _voting_service_instance = svc
+            return svc
+        except Exception as exc:
+            raise ServiceUnavailableError(
+                f"voting service initialization failed: {type(exc).__name__}: {exc}"
+            ) from exc
+
+
 def _parse_optional_int(value: str | None) -> int | None:
     if value is None or value == "":
         return None
@@ -66,6 +101,162 @@ def _parse_optional_int(value: str | None) -> int | None:
         return int(value)
     except ValueError as exc:
         raise SlotValidationError(f"invalid integer value: {value}") from exc
+
+
+def _validate_poll_payload(payload: dict) -> tuple[dict, dict]:
+    errors: dict[str, str] = {}
+
+    title = payload.get("title")
+    if not isinstance(title, str) or not title.strip():
+        errors["title"] = "required string (max 200 chars)"
+    elif len(title.strip()) > 200:
+        errors["title"] = "must be at most 200 characters"
+
+    description = payload.get("description")
+    if description is not None and not isinstance(description, str):
+        errors["description"] = "must be a string"
+
+    poll_type = payload.get("poll_type")
+    if poll_type not in {"yes_no", "multiple_choice", "weighted"}:
+        errors["poll_type"] = "must be yes_no, multiple_choice, or weighted"
+
+    scope = payload.get("scope")
+    if scope not in {"neighbourhood", "building"}:
+        errors["scope"] = "must be neighbourhood or building"
+
+    status = payload.get("status", "draft")
+    if status not in {"draft", "active", "closed", "archived"}:
+        errors["status"] = "must be draft, active, closed, or archived"
+
+    allow_multiple_selections = payload.get("allow_multiple_selections", False)
+    if not isinstance(allow_multiple_selections, bool):
+        errors["allow_multiple_selections"] = "must be boolean"
+
+    show_results_before_close = payload.get("show_results_before_close", False)
+    if not isinstance(show_results_before_close, bool):
+        errors["show_results_before_close"] = "must be boolean"
+
+    requires_quorum = payload.get("requires_quorum", False)
+    if not isinstance(requires_quorum, bool):
+        errors["requires_quorum"] = "must be boolean"
+
+    quorum_percentage = payload.get("quorum_percentage")
+    if requires_quorum:
+        if quorum_percentage is None:
+            errors["quorum_percentage"] = "required when requires_quorum is true"
+        else:
+            try:
+                quorum_percentage = int(quorum_percentage)
+            except (TypeError, ValueError):
+                errors["quorum_percentage"] = "must be integer 1-100"
+            else:
+                if quorum_percentage < 1 or quorum_percentage > 100:
+                    errors["quorum_percentage"] = "must be between 1 and 100"
+    else:
+        quorum_percentage = None
+
+    start_date = payload.get("start_date")
+    if not isinstance(start_date, str) or not start_date.strip():
+        errors["start_date"] = "required ISO datetime string"
+
+    end_date = payload.get("end_date")
+    if not isinstance(end_date, str) or not end_date.strip():
+        errors["end_date"] = "required ISO datetime string"
+
+    building_id = payload.get("building_id")
+    if scope == "building":
+        if building_id is None:
+            errors["building_id"] = "required for building scope"
+    if building_id is not None:
+        try:
+            building_id = int(building_id)
+        except (TypeError, ValueError):
+            errors["building_id"] = "must be integer 1-10"
+        else:
+            if building_id < 1 or building_id > 10:
+                errors["building_id"] = "must be between 1 and 10"
+
+    options = payload.get("options", [])
+    if poll_type in {"multiple_choice", "weighted"}:
+        if not isinstance(options, list):
+            errors["options"] = "must be an array of option labels"
+        else:
+            invalid_items = [item for item in options if not isinstance(item, str) or not item.strip()]
+            if invalid_items:
+                errors["options"] = "each option must be a non-empty string"
+            else:
+                normalized = [item.strip() for item in options]
+                if len(normalized) < 2 or len(normalized) > 10:
+                    errors["options"] = "must include between 2 and 10 options"
+                options = normalized
+
+    if poll_type != "multiple_choice" and allow_multiple_selections:
+        errors["allow_multiple_selections"] = "only allowed for multiple_choice polls"
+
+    attachments = payload.get("attachments")
+    if attachments is not None:
+        if not isinstance(attachments, list):
+            errors["attachments"] = "must be an array"
+        else:
+            for idx, attachment in enumerate(attachments, start=1):
+                if not isinstance(attachment, dict):
+                    errors[f"attachments[{idx}]"] = "must be an object"
+                    continue
+                for key in ("file_url", "file_name", "file_type"):
+                    value = attachment.get(key)
+                    if not isinstance(value, str) or not value.strip():
+                        errors[f"attachments[{idx}].{key}"] = "required string"
+
+    cleaned = {
+        "title": str(title or ""),
+        "description": description,
+        "poll_type": str(poll_type or ""),
+        "scope": str(scope or ""),
+        "building_id": building_id,
+        "status": str(status or "draft"),
+        "allow_multiple_selections": bool(allow_multiple_selections),
+        "show_results_before_close": bool(show_results_before_close),
+        "requires_quorum": bool(requires_quorum),
+        "quorum_percentage": quorum_percentage,
+        "start_date": str(start_date or ""),
+        "end_date": str(end_date or ""),
+        "options": options,
+        "attachments": attachments,
+    }
+
+    return cleaned, errors
+
+
+def _validate_vote_payload(payload: dict) -> tuple[list[str], dict]:
+    errors: dict[str, str] = {}
+    present_keys = [key for key in ("ranking", "option_ids", "option_id") if key in payload]
+    if not present_keys:
+        errors["selections"] = "provide ranking, option_ids, or option_id"
+        return [], errors
+    if len(present_keys) > 1:
+        errors["selections"] = "provide only one of ranking, option_ids, or option_id"
+        return [], errors
+
+    key = present_keys[0]
+    selections = payload.get(key)
+
+    if isinstance(selections, str):
+        selections = [selections]
+    if not isinstance(selections, list):
+        errors[key] = "must be a list of option ids"
+        return [], errors
+
+    if any(not isinstance(item, str) or not item.strip() for item in selections):
+        errors[key] = "option ids must be non-empty strings"
+        return [], errors
+
+    normalized = [item.strip() for item in selections]
+    if not normalized:
+        errors[key] = "must include at least one option id"
+    if len(normalized) != len(set(normalized)):
+        errors[key] = "duplicate option ids are not allowed"
+
+    return normalized, errors
 
 
 def _current_user() -> UserAccount:
@@ -129,6 +320,31 @@ def _handle_parking_error(err: ParkingModuleError):
     return _json_error(str(err), 400)
 
 
+@app.errorhandler(PollNotFoundError)
+def _handle_poll_not_found(err: PollNotFoundError):
+    return _json_error(str(err), 404)
+
+
+@app.errorhandler(PollValidationError)
+def _handle_poll_validation(err: PollValidationError):
+    return _json_error(str(err), 400)
+
+
+@app.errorhandler(VoteValidationError)
+def _handle_vote_validation(err: VoteValidationError):
+    return _json_error(str(err), 400)
+
+
+@app.errorhandler(VotingAuthorizationError)
+def _handle_voting_authorization(err: VotingAuthorizationError):
+    return _json_error(str(err), 403)
+
+
+@app.errorhandler(VotingModuleError)
+def _handle_voting_module_error(err: VotingModuleError):
+    return _json_error(str(err), 400)
+
+
 @app.errorhandler(ServiceUnavailableError)
 def _handle_service_unavailable(err: ServiceUnavailableError):
     return _json_error(str(err), 503)
@@ -169,6 +385,10 @@ def api_root():
             "parking_types": sorted(PARKING_TYPES),
             "endpoints": {
                 "claim_specific_slot": "POST /api/slots/claim",
+                "polls": "GET /api/polls",
+                "poll_create": "POST /api/polls",
+                "poll_vote": "POST /api/polls/<poll_id>/vote",
+                "poll_results": "GET /api/polls/<poll_id>/results",
             },
         }
     )
@@ -351,6 +571,217 @@ def dashboard():
             "my_claimed_parking_spots": [asdict(slot) for slot in my_claimed],
         }
     )
+
+
+def _ensure_poll_visible(poll, user: UserAccount) -> None:
+    if user.role == "admin":
+        return
+    if poll.scope == "building" and poll.building_id != user.building_number:
+        raise VotingAuthorizationError("poll restricted to another building")
+
+
+@app.route("/api/polls", methods=["GET"])
+@login_required
+def list_polls():
+    user = _current_user()
+    scope = request.args.get("scope")
+    status = request.args.get("status")
+    building_id_raw = request.args.get("building_id")
+
+    errors: dict[str, str] = {}
+    if scope is not None and scope not in {"neighbourhood", "building"}:
+        errors["scope"] = "must be neighbourhood or building"
+    if status is not None and status not in {"draft", "active", "closed", "archived"}:
+        errors["status"] = "must be draft, active, closed, or archived"
+
+    building_id = None
+    if building_id_raw is not None and building_id_raw != "":
+        try:
+            building_id = int(building_id_raw)
+        except ValueError:
+            errors["building_id"] = "must be integer 1-10"
+        else:
+            if building_id < 1 or building_id > 10:
+                errors["building_id"] = "must be between 1 and 10"
+
+    if errors:
+        return _payload_error("invalid query parameters", errors)
+
+    polls = _voting_service().list_polls(
+        scope=scope,
+        status=status,
+        building_id=building_id,
+        viewer_role=user.role,
+        viewer_building=user.building_number if user.role != "admin" else None,
+    )
+
+    payload = []
+    for poll in polls:
+        votes = _voting_service().list_votes_for_user(poll.id, user.id)
+        payload.append(
+            {
+                **asdict(poll),
+                "has_voted": bool(votes),
+            }
+        )
+    return jsonify(payload), 200
+
+
+@app.route("/api/polls", methods=["POST"])
+@admin_required
+def create_poll():
+    payload = request.get_json(silent=True)
+    if payload is None:
+        payload = {}
+    if not isinstance(payload, dict):
+        return _payload_error("invalid payload", {"payload": "object required"})
+    user = _current_user()
+    cleaned, errors = _validate_poll_payload(payload)
+    if errors:
+        return _payload_error("invalid poll payload", errors)
+
+    if cleaned["poll_type"] == "yes_no":
+        cleaned["options"] = []
+
+    poll = _voting_service().create_poll(
+        title=cleaned["title"],
+        description=cleaned["description"],
+        poll_type=cleaned["poll_type"],
+        created_by=user.id,
+        scope=cleaned["scope"],
+        building_id=cleaned["building_id"],
+        status=cleaned["status"],
+        allow_multiple_selections=cleaned["allow_multiple_selections"],
+        show_results_before_close=cleaned["show_results_before_close"],
+        requires_quorum=cleaned["requires_quorum"],
+        quorum_percentage=cleaned["quorum_percentage"],
+        start_date=cleaned["start_date"],
+        end_date=cleaned["end_date"],
+        option_labels=cleaned["options"],
+        attachments=cleaned["attachments"],
+    )
+    options = _voting_service().get_poll_options(poll.id)
+    attachments = _voting_service().get_poll_attachments(poll.id)
+    return (
+        jsonify(
+            {
+                "poll": asdict(poll),
+                "options": [asdict(option) for option in options],
+                "attachments": [asdict(item) for item in attachments],
+            }
+        ),
+        201,
+    )
+
+
+@app.route("/api/polls/<poll_id>", methods=["GET"])
+@login_required
+def poll_detail(poll_id: str):
+    user = _current_user()
+    poll = _voting_service().get_poll(poll_id)
+    _ensure_poll_visible(poll, user)
+    options = _voting_service().get_poll_options(poll.id)
+    attachments = _voting_service().get_poll_attachments(poll.id)
+    votes = _voting_service().list_votes_for_user(poll.id, user.id)
+    return (
+        jsonify(
+            {
+                "poll": asdict(poll),
+                "options": [asdict(option) for option in options],
+                "attachments": [asdict(item) for item in attachments],
+                "has_voted": bool(votes),
+                "my_votes": [asdict(vote) for vote in votes],
+            }
+        ),
+        200,
+    )
+
+
+@app.route("/api/polls/<poll_id>/attachments", methods=["POST"])
+@admin_required
+def add_poll_attachments(poll_id: str):
+    payload = request.get_json(silent=True)
+    if payload is None:
+        payload = {}
+    if not isinstance(payload, dict):
+        return _payload_error("invalid payload", {"payload": "object required"})
+    attachments = payload.get("attachments", [])
+    errors: dict[str, str] = {}
+    if not isinstance(attachments, list) or not attachments:
+        errors["attachments"] = "must be a non-empty array"
+    else:
+        for idx, attachment in enumerate(attachments, start=1):
+            if not isinstance(attachment, dict):
+                errors[f"attachments[{idx}]"] = "must be an object"
+                continue
+            for key in ("file_url", "file_name", "file_type"):
+                value = attachment.get(key)
+                if not isinstance(value, str) or not value.strip():
+                    errors[f"attachments[{idx}].{key}"] = "required string"
+    if errors:
+        return _payload_error("invalid attachments payload", errors)
+    added = _voting_service().add_poll_attachments(poll_id, attachments)
+    return jsonify([asdict(item) for item in added]), 201
+
+
+@app.route("/api/polls/<poll_id>/activate", methods=["POST"])
+@admin_required
+def activate_poll(poll_id: str):
+    poll = _voting_service().update_poll_status(poll_id, "active")
+    return jsonify(asdict(poll)), 200
+
+
+@app.route("/api/polls/<poll_id>/close", methods=["POST"])
+@admin_required
+def close_poll(poll_id: str):
+    poll = _voting_service().update_poll_status(poll_id, "closed")
+    return jsonify(asdict(poll)), 200
+
+
+@app.route("/api/polls/<poll_id>/archive", methods=["POST"])
+@admin_required
+def archive_poll(poll_id: str):
+    poll = _voting_service().update_poll_status(poll_id, "archived")
+    return jsonify(asdict(poll)), 200
+
+
+@app.route("/api/polls/<poll_id>/vote", methods=["POST"])
+@login_required
+def cast_vote(poll_id: str):
+    payload = request.get_json(silent=True)
+    if payload is None:
+        payload = {}
+    if not isinstance(payload, dict):
+        return _payload_error("invalid payload", {"payload": "object required"})
+    user = _current_user()
+    poll = _voting_service().get_poll(poll_id)
+    _ensure_poll_visible(poll, user)
+
+    selections, errors = _validate_vote_payload(payload)
+    if errors:
+        return _payload_error("invalid vote payload", errors)
+
+    votes = _voting_service().cast_vote(
+        poll_id=poll_id,
+        user_id=user.id,
+        user_role=user.role,
+        user_building=user.building_number,
+        selections=selections,
+    )
+    return jsonify([asdict(vote) for vote in votes]), 201
+
+
+@app.route("/api/polls/<poll_id>/results", methods=["GET"])
+@login_required
+def poll_results(poll_id: str):
+    user = _current_user()
+    poll = _voting_service().get_poll(poll_id)
+    _ensure_poll_visible(poll, user)
+    if poll.status != "closed" and not poll.show_results_before_close and user.role != "admin":
+        raise VotingAuthorizationError("results are hidden until poll closes")
+    results = _voting_service().get_results(poll_id)
+    results["poll"] = asdict(results["poll"])
+    return jsonify(results), 200
 
 
 if __name__ == "__main__":

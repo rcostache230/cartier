@@ -45,6 +45,15 @@ This project is a Vercel-ready Flask app for parking spot sharing between neighb
 - `GET /api/users` (admin)
 - `POST /api/users` (admin)
 - `POST /api/admin/slots` (admin, create slot for any resident)
+- `GET /api/polls` (login required)
+- `POST /api/polls` (admin)
+- `GET /api/polls/<poll_id>` (login required)
+- `POST /api/polls/<poll_id>/attachments` (admin)
+- `POST /api/polls/<poll_id>/activate` (admin)
+- `POST /api/polls/<poll_id>/close` (admin)
+- `POST /api/polls/<poll_id>/archive` (admin)
+- `POST /api/polls/<poll_id>/vote` (login required)
+- `GET /api/polls/<poll_id>/results` (login required)
 
 ## Local run
 
