@@ -50,6 +50,13 @@
         margin: 0;
       }
 
+      .hero-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
       .hero p {
         margin: 8px 0 0;
         color: var(--muted);
@@ -136,6 +143,12 @@
       .table-wrap {
         max-height: 280px;
         overflow: auto;
+      }
+
+      .table-action-btn {
+        width: auto;
+        padding: 6px 10px;
+        font-size: 0.8rem;
       }
 
       table {
@@ -303,15 +316,104 @@
         margin: 0;
       }
 
-      #status {
-        margin-top: 12px;
-        min-height: 22px;
-        color: var(--teal);
-        font-weight: 600;
+      .capacity-legend {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.84rem;
       }
 
-      #status.error {
-        color: var(--danger);
+      .preset-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .preset-label {
+        color: var(--muted);
+        font-size: 0.8rem;
+        margin-right: 4px;
+      }
+
+      .preset-btn {
+        width: auto;
+        border: 1px solid #b9ddd8;
+        color: #155a52;
+        background: #e8f6f5;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .help-btn {
+        width: auto;
+        border: 1px solid #b9ddd8;
+        background: #e8f6f5;
+        color: #155a52;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      #status {
+        display: none;
+      }
+
+      .toast-wrap {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        display: grid;
+        gap: 8px;
+        z-index: 2000;
+      }
+
+      .toast {
+        min-width: 250px;
+        max-width: 420px;
+        border-radius: 10px;
+        padding: 10px 12px;
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+        font-size: 0.88rem;
+      }
+
+      .toast.success {
+        background: #1f8a4d;
+      }
+
+      .toast.error {
+        background: #b42318;
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 29, 37, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 2100;
+      }
+
+      .modal-card {
+        width: min(720px, 100%);
+        max-height: min(82vh, 820px);
+        overflow: auto;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: #fff;
+        padding: 14px;
+      }
+
+      .modal-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
       }
 
       .faq {
@@ -370,64 +472,30 @@
         .tab-btn {
           flex: 0 0 auto;
         }
+
+        .toast-wrap {
+          left: 12px;
+          right: 12px;
+          bottom: 12px;
+        }
+
+        .toast {
+          min-width: 0;
+          max-width: none;
+        }
       }
     </style>
   </head>
   <body>
     <div class="container">
       <section class="hero">
-        <h1>Neighbourhood Parking Dashboard</h1>
+        <div class="hero-head">
+          <h1>Neighbourhood Parking Dashboard</h1>
+          <button id="helpBtn" class="help-btn" type="button" aria-label="Open help">Help</button>
+        </div>
         <p>
           Share your parking spot, claim available shared spots, and track claimed periods.
         </p>
-      </section>
-
-      <section class="card faq">
-        <h2>FAQ - How To Use This Website</h2>
-        <details class="faq-item" open>
-          <summary>1) How do I log in?</summary>
-          <p>
-            Use your apartment account (for example <code>bloc1_apt1</code>) and your assigned
-            password. Usernames are lowercase.
-          </p>
-        </details>
-        <details class="faq-item">
-          <summary>2) How do I share my parking spot?</summary>
-          <p>
-            In <b>Share My Parking Spot</b>, enter your parking spot number, choose
-            underground/above ground, then set exact start and end date/time and press
-            <b>Share Spot</b>.
-          </p>
-        </details>
-        <details class="faq-item">
-          <summary>3) How do I claim an available spot?</summary>
-          <p>
-            In <b>Claim Shared Parking Spot</b>, filter by building/type (or keep <b>Any</b>),
-            select a free spot, set the period you need, add contact phone, then press
-            <b>Claim Selected Spot</b>.
-          </p>
-        </details>
-        <details class="faq-item">
-          <summary>4) What happens if I claim only part of the shared period?</summary>
-          <p>
-            The claimed interval is reserved for you, and the remaining time before/after your
-            claim stays available for other neighbours.
-          </p>
-        </details>
-        <details class="faq-item">
-          <summary>5) Where do I see free spots and claimed history?</summary>
-          <p>
-            Use dashboard tables: <b>Shared Parking Spots (Free)</b>, <b>My Shared Spots</b>,
-            <b>My Shared Spots Claimed By Neighbours</b>, and <b>My Claimed Spots</b>.
-          </p>
-        </details>
-        <details class="faq-item">
-          <summary>6) What can the admin user do?</summary>
-          <p>
-            Admin can create users, create shared slots for residents, reset default users, and
-            monitor all users and parking activity.
-          </p>
-        </details>
       </section>
 
       <section id="loginCard" class="card" style="margin-top: 14px; max-width: 420px">
@@ -453,6 +521,7 @@
 
         <section class="card" style="margin-top: 12px">
           <h2>Building Capacity</h2>
+          <p class="capacity-legend">UG = Underground, AG = Above-ground. Tap a bloc card to filter claim options.</p>
           <div id="stats" class="capacity-grid" style="margin-top: 10px"></div>
         </section>
 
@@ -466,6 +535,12 @@
 
           <section id="actionSharePanel" class="tab-panel" data-tab-group="action">
             <form id="shareForm" class="stack">
+              <div class="preset-row">
+                <span class="preset-label">Quick Range:</span>
+                <button type="button" class="preset-btn" data-target-form="share" data-preset="today">Today</button>
+                <button type="button" class="preset-btn" data-target-form="share" data-preset="tomorrow">Tomorrow</button>
+                <button type="button" class="preset-btn" data-target-form="share" data-preset="weekend">This weekend</button>
+              </div>
               <div>
                 <label for="spaceNumber">Parking Spot Number</label>
                 <input id="spaceNumber" placeholder="e.g. UG-12, Spot 7" required />
@@ -491,6 +566,12 @@
 
           <section id="actionClaimPanel" class="tab-panel hidden" data-tab-group="action">
             <form id="claimForm" class="stack">
+              <div class="preset-row">
+                <span class="preset-label">Quick Range:</span>
+                <button type="button" class="preset-btn" data-target-form="claim" data-preset="today">Today</button>
+                <button type="button" class="preset-btn" data-target-form="claim" data-preset="tomorrow">Tomorrow</button>
+                <button type="button" class="preset-btn" data-target-form="claim" data-preset="weekend">This weekend</button>
+              </div>
               <div>
                 <label for="claimBuilding">Building</label>
                 <select id="claimBuilding"></select>
@@ -554,6 +635,7 @@
                     <th>Phone</th>
                     <th>From</th>
                     <th>Until</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody id="sharedSpots"></tbody>
@@ -638,10 +720,55 @@
         </section>
       </main>
 
+      <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="modal-card">
+          <h2 id="helpModalTitle">How To Use This Website</h2>
+          <section class="faq">
+            <details class="faq-item" open>
+              <summary>1) How do I log in?</summary>
+              <p>Use your apartment account (for example <code>bloc1_apt1</code>) and your assigned password. Usernames are lowercase.</p>
+            </details>
+            <details class="faq-item">
+              <summary>2) How do I share my parking spot?</summary>
+              <p>In <b>Share my spot</b>, enter your parking spot number, choose underground/above ground, set start/end date-time and submit.</p>
+            </details>
+            <details class="faq-item">
+              <summary>3) How do I claim a spot quickly?</summary>
+              <p>Use the <b>Claim</b> button directly in a free-spot row, or use the claim form with filters.</p>
+            </details>
+            <details class="faq-item">
+              <summary>4) What if I claim only part of the period?</summary>
+              <p>Your claimed interval is reserved, and the remaining time stays available for other neighbours.</p>
+            </details>
+            <details class="faq-item">
+              <summary>5) What can admin do?</summary>
+              <p>Admin can manage users, create shared spots, and monitor activity.</p>
+            </details>
+          </section>
+          <div class="modal-actions">
+            <button id="helpCloseBtn" class="ghost" type="button">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="claimConfirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="claimConfirmTitle">
+        <div class="modal-card">
+          <h2 id="claimConfirmTitle">Confirm Spot Claim</h2>
+          <p id="claimConfirmText" style="margin-top: 8px; color: var(--muted)"></p>
+          <div class="modal-actions">
+            <button id="claimConfirmCancelBtn" class="ghost" type="button">Cancel</button>
+            <button id="claimConfirmOkBtn" class="alt" type="button">Confirm Claim</button>
+          </div>
+        </div>
+      </div>
+
       <div id="status"></div>
+      <div id="toastContainer" class="toast-wrap"></div>
     </div>
 
     <script>
+      const HELP_SEEN_KEY = "cartier_help_seen_v1";
+
       const els = {
         loginCard: document.getElementById("loginCard"),
         app: document.getElementById("app"),
@@ -659,14 +786,33 @@
         countShared: document.getElementById("countShared"),
         countClaimedByOthers: document.getElementById("countClaimedByOthers"),
         countMyClaims: document.getElementById("countMyClaims"),
+        helpBtn: document.getElementById("helpBtn"),
+        helpModal: document.getElementById("helpModal"),
+        helpCloseBtn: document.getElementById("helpCloseBtn"),
+        claimConfirmModal: document.getElementById("claimConfirmModal"),
+        claimConfirmText: document.getElementById("claimConfirmText"),
+        claimConfirmCancelBtn: document.getElementById("claimConfirmCancelBtn"),
+        claimConfirmOkBtn: document.getElementById("claimConfirmOkBtn"),
+        toastContainer: document.getElementById("toastContainer"),
       };
 
       let currentUser = null;
       let currentOpenSlots = [];
+      let currentFreeSpots = [];
+      let claimConfirmResolver = null;
+
+      function showToast(message, kind = "success") {
+        const toast = document.createElement("div");
+        toast.className = `toast ${kind}`;
+        toast.textContent = message;
+        els.toastContainer.appendChild(toast);
+        setTimeout(() => {
+          toast.remove();
+        }, 3600);
+      }
 
       function setStatus(message, isError = false) {
-        els.status.textContent = message;
-        els.status.className = isError ? "error" : "";
+        showToast(message, isError ? "error" : "success");
       }
 
       async function api(path, opts = {}) {
@@ -733,6 +879,110 @@
         });
       }
 
+      function toInputValue(dateObj) {
+        const pad = (v) => String(v).padStart(2, "0");
+        const y = dateObj.getFullYear();
+        const m = pad(dateObj.getMonth() + 1);
+        const d = pad(dateObj.getDate());
+        const hh = pad(dateObj.getHours());
+        const mm = pad(dateObj.getMinutes());
+        return `${y}-${m}-${d}T${hh}:${mm}`;
+      }
+
+      function rangeFromPreset(preset) {
+        const now = new Date();
+        const start = new Date(now);
+        const end = new Date(now);
+
+        if (preset === "today") {
+          start.setHours(8, 0, 0, 0);
+          end.setHours(18, 0, 0, 0);
+          return { from: toInputValue(start), until: toInputValue(end) };
+        }
+
+        if (preset === "tomorrow") {
+          start.setDate(start.getDate() + 1);
+          end.setDate(end.getDate() + 1);
+          start.setHours(8, 0, 0, 0);
+          end.setHours(18, 0, 0, 0);
+          return { from: toInputValue(start), until: toInputValue(end) };
+        }
+
+        const day = now.getDay();
+        let daysToSaturday = (6 - day + 7) % 7;
+        if (day === 0) {
+          daysToSaturday = 6;
+        }
+        start.setDate(start.getDate() + daysToSaturday);
+        end.setDate(start.getDate() + 1);
+        start.setHours(8, 0, 0, 0);
+        end.setHours(18, 0, 0, 0);
+        return { from: toInputValue(start), until: toInputValue(end) };
+      }
+
+      function applyPreset(targetForm, preset) {
+        const range = rangeFromPreset(preset);
+        if (targetForm === "share") {
+          document.getElementById("fromAt").value = range.from;
+          document.getElementById("untilAt").value = range.until;
+          return;
+        }
+        document.getElementById("claimFrom").value = range.from;
+        document.getElementById("claimUntil").value = range.until;
+      }
+
+      function applyDefaultTimeValues() {
+        const defaultRange = rangeFromPreset("today");
+        const fromAt = document.getElementById("fromAt");
+        const untilAt = document.getElementById("untilAt");
+        const claimFrom = document.getElementById("claimFrom");
+        const claimUntil = document.getElementById("claimUntil");
+        if (!fromAt.value) fromAt.value = defaultRange.from;
+        if (!untilAt.value) untilAt.value = defaultRange.until;
+        if (!claimFrom.value) claimFrom.value = defaultRange.from;
+        if (!claimUntil.value) claimUntil.value = defaultRange.until;
+      }
+
+      function openHelpModal() {
+        els.helpModal.classList.remove("hidden");
+      }
+
+      function closeHelpModal() {
+        els.helpModal.classList.add("hidden");
+      }
+
+      function maybeShowHelpOnce() {
+        try {
+          if (localStorage.getItem(HELP_SEEN_KEY) === "1") {
+            return;
+          }
+          openHelpModal();
+          localStorage.setItem(HELP_SEEN_KEY, "1");
+        } catch (error) {
+          openHelpModal();
+        }
+      }
+
+      function requestClaimConfirmation(slot, requestedFrom, requestedUntil) {
+        const fromText = (requestedFrom || "").replace("T", " ");
+        const untilText = (requestedUntil || "").replace("T", " ");
+        els.claimConfirmText.textContent =
+          `Confirm claim for Bloc ${slot.building_number}, spot ${slot.parking_space_number} (${slot.parking_type}) from ${fromText} to ${untilText}?`;
+        els.claimConfirmModal.classList.remove("hidden");
+
+        return new Promise((resolve) => {
+          claimConfirmResolver = resolve;
+        });
+      }
+
+      function closeClaimConfirmation(confirmed) {
+        els.claimConfirmModal.classList.add("hidden");
+        if (claimConfirmResolver) {
+          claimConfirmResolver(confirmed);
+          claimConfirmResolver = null;
+        }
+      }
+
       function refreshStats(stats) {
         els.stats.innerHTML = stats
           .map((s) => {
@@ -779,46 +1029,52 @@
         const myShared = data.my_shared_parking_spots || [];
         const claimedByOthers = data.my_shared_claimed_by_neighbours || [];
         const myClaims = data.my_claimed_parking_spots || [];
+        currentFreeSpots = freeSpots;
 
         els.sharedSpots.innerHTML = freeSpots.length
-          ? freeSpots.map(
-            (s) =>
-              `<tr>
-                <td><span class="badge free"><span class="dot"></span>FREE</span></td>
-                ${td(s.building_number)}
-                ${td(s.parking_space_number)}
-                ${td(s.parking_type)}
-                ${td(s.owner_username)}
-                ${td(s.owner_phone_number || "-")}
-                ${td((s.available_from || "").replace("T", " "))}
-                ${td((s.available_until || "").replace("T", " "))}
-              </tr>`
-          )
-          .join("")
-          : `<tr><td colspan="8">No free shared spots right now.</td></tr>`;
+          ? freeSpots
+              .map(
+                (s) =>
+                  `<tr>
+                    <td><span class="badge free"><span class="dot"></span>FREE</span></td>
+                    ${td(s.building_number)}
+                    ${td(s.parking_space_number)}
+                    ${td(s.parking_type)}
+                    ${td(s.owner_username)}
+                    ${td(s.owner_phone_number || "-")}
+                    ${td((s.available_from || "").replace("T", " "))}
+                    ${td((s.available_until || "").replace("T", " "))}
+                    <td><button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Claim</button></td>
+                  </tr>`
+              )
+              .join("")
+          : `<tr><td colspan="9">No free shared spots right now.</td></tr>`;
 
         els.myShared.innerHTML = myShared.length
-          ? myShared.map(
-            (s) =>
-              `<tr>${td(s.parking_space_number)}${td(s.parking_type)}${td(s.status)}${td((s.available_from || "").replace("T", " "))}${td((s.available_until || "").replace("T", " "))}</tr>`
-          )
-          .join("")
+          ? myShared
+              .map(
+                (s) =>
+                  `<tr>${td(s.parking_space_number)}${td(s.parking_type)}${td(s.status)}${td((s.available_from || "").replace("T", " "))}${td((s.available_until || "").replace("T", " "))}</tr>`
+              )
+              .join("")
           : `<tr><td colspan="5">You have not shared any spot yet.</td></tr>`;
 
         els.claimedOnMine.innerHTML = claimedByOthers.length
-          ? claimedByOthers.map(
-            (s) =>
-              `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
-          )
-          .join("")
+          ? claimedByOthers
+              .map(
+                (s) =>
+                  `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
+              )
+              .join("")
           : `<tr><td colspan="5">No one has claimed your shared spots yet.</td></tr>`;
 
         els.myClaimed.innerHTML = myClaims.length
-          ? myClaims.map(
-            (s) =>
-              `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
-          )
-          .join("")
+          ? myClaims
+              .map(
+                (s) =>
+                  `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
+              )
+              .join("")
           : `<tr><td colspan="7">You have not claimed any shared spot yet.</td></tr>`;
 
         els.countFree.textContent = String(freeSpots.length);
@@ -852,7 +1108,7 @@
       }
 
       async function fetchOpenSpotOptionsData() {
-        if (!currentUser) return;
+        if (!currentUser) return [];
         const params = new URLSearchParams();
         const building = document.getElementById("claimBuilding").value;
         const type = document.getElementById("claimType").value;
@@ -892,6 +1148,33 @@
           .join("");
       }
 
+      async function claimSlotByPayload(payload, slotForDisplay, buttonEl) {
+        const confirmed = await requestClaimConfirmation(
+          slotForDisplay,
+          payload.requested_from,
+          payload.requested_until
+        );
+        if (!confirmed) {
+          showToast("Claim cancelled.", "error");
+          return;
+        }
+
+        const runClaim = async () => {
+          await api("/api/slots/claim", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          await refreshDashboard();
+          showToast("Spot claimed successfully.");
+        };
+
+        if (buttonEl) {
+          await withButtonProgress(buttonEl, "Claiming...", runClaim);
+        } else {
+          await runClaim();
+        }
+      }
+
       function applyAuthState(user) {
         currentUser = user;
         if (!user) {
@@ -905,12 +1188,15 @@
         els.whoami.textContent = `${user.username} (${user.role})${user.phone_number ? ` - ${user.phone_number}` : ""}`;
         document.getElementById("claimBuilding").value = "";
         document.getElementById("claimPhone").value = user.phone_number || "";
+        applyDefaultTimeValues();
 
         if (user.role === "admin") {
           els.adminPanel.classList.remove("hidden");
         } else {
           els.adminPanel.classList.add("hidden");
         }
+
+        maybeShowHelpOnce();
       }
 
       document.getElementById("loginForm").addEventListener("submit", async (event) => {
@@ -928,7 +1214,7 @@
             applyAuthState(response.user);
             await refreshDashboard();
             await refreshAdminUsers();
-            setStatus("Login successful.");
+            showToast("Login successful.");
           } catch (error) {
             setStatus(error.message, true);
           }
@@ -939,7 +1225,7 @@
         try {
           await api("/api/auth/logout", { method: "POST" });
           applyAuthState(null);
-          setStatus("Logged out.");
+          showToast("Logged out.");
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -960,7 +1246,7 @@
               }),
             });
             await refreshDashboard();
-            setStatus("Spot shared successfully.");
+            showToast("Spot shared successfully.");
           } catch (error) {
             setStatus(error.message, true);
           }
@@ -970,27 +1256,25 @@
       document.getElementById("claimForm").addEventListener("submit", async (event) => {
         event.preventDefault();
         const button = document.getElementById("claimBtn");
-        await withButtonProgress(button, "Claiming...", async () => {
-          try {
-            const slotId = Number(els.availableSlot.value || 0);
-            if (!slotId) {
-              throw new Error("Select an available spot first.");
-            }
-            await api("/api/slots/claim", {
-              method: "POST",
-              body: JSON.stringify({
-                slot_id: slotId,
-                requested_from: document.getElementById("claimFrom").value,
-                requested_until: document.getElementById("claimUntil").value,
-                claim_phone_number: document.getElementById("claimPhone").value,
-              }),
-            });
-            await refreshDashboard();
-            setStatus("Spot claimed successfully.");
-          } catch (error) {
-            setStatus(error.message, true);
+        try {
+          const slotId = Number(els.availableSlot.value || 0);
+          if (!slotId) {
+            throw new Error("Select an available spot first.");
           }
-        });
+          const slot = currentOpenSlots.find((s) => s.id === slotId);
+          if (!slot) {
+            throw new Error("Selected spot is no longer available. Please refresh.");
+          }
+          const payload = {
+            slot_id: slotId,
+            requested_from: document.getElementById("claimFrom").value,
+            requested_until: document.getElementById("claimUntil").value,
+            claim_phone_number: document.getElementById("claimPhone").value,
+          };
+          await claimSlotByPayload(payload, slot, button);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
       });
 
       document.getElementById("createUserForm").addEventListener("submit", async (event) => {
@@ -1010,7 +1294,7 @@
               }),
             });
             await refreshAdminUsers();
-            setStatus("User created.");
+            showToast("User created.");
           } catch (error) {
             setStatus(error.message, true);
           }
@@ -1033,7 +1317,7 @@
               }),
             });
             await refreshDashboard();
-            setStatus("Admin shared spot created.");
+            showToast("Admin shared spot created.");
           } catch (error) {
             setStatus(error.message, true);
           }
@@ -1046,6 +1330,12 @@
         });
       });
 
+      document.querySelectorAll(".preset-btn[data-target-form][data-preset]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          applyPreset(btn.dataset.targetForm, btn.dataset.preset);
+        });
+      });
+
       async function filterClaimsByBuilding(buildingNumber) {
         if (!currentUser) return;
         document.getElementById("claimBuilding").value = String(buildingNumber);
@@ -1053,7 +1343,7 @@
         try {
           await refreshOpenSpotOptions();
           document.getElementById("actionPanel").scrollIntoView({ behavior: "smooth", block: "start" });
-          setStatus(`Claim form filtered for Bloc ${buildingNumber}.`);
+          showToast(`Claim form filtered for Bloc ${buildingNumber}.`);
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -1071,6 +1361,43 @@
         if (!card) return;
         event.preventDefault();
         await filterClaimsByBuilding(Number(card.dataset.buildingNumber));
+      });
+
+      els.sharedSpots.addEventListener("click", async (event) => {
+        const button = event.target.closest(".quick-claim-btn");
+        if (!button) return;
+        try {
+          const slotId = Number(button.dataset.slotId || 0);
+          const slot = currentFreeSpots.find((s) => s.id === slotId);
+          if (!slot) {
+            throw new Error("Selected spot is no longer available.");
+          }
+
+          setActiveTab("action", "actionClaimPanel");
+          document.getElementById("claimBuilding").value = String(slot.building_number);
+          document.getElementById("claimType").value = slot.parking_type || "";
+          await refreshOpenSpotOptions();
+
+          const available = currentOpenSlots.find((s) => s.id === slotId);
+          if (!available) {
+            throw new Error("Spot was already claimed by someone else.");
+          }
+
+          els.availableSlot.value = String(slotId);
+          document.getElementById("claimFrom").value = available.available_from;
+          document.getElementById("claimUntil").value = available.available_until;
+          document.getElementById("actionPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+
+          const payload = {
+            slot_id: slotId,
+            requested_from: available.available_from,
+            requested_until: available.available_until,
+            claim_phone_number: document.getElementById("claimPhone").value,
+          };
+          await claimSlotByPayload(payload, available, button);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
       });
 
       document.getElementById("claimBuilding").addEventListener("change", async () => {
@@ -1109,11 +1436,36 @@
         event.target.value = normalizeUsername(event.target.value);
       });
 
+      els.helpBtn.addEventListener("click", () => openHelpModal());
+      els.helpCloseBtn.addEventListener("click", () => closeHelpModal());
+
+      els.helpModal.addEventListener("click", (event) => {
+        if (event.target === els.helpModal) closeHelpModal();
+      });
+
+      els.claimConfirmCancelBtn.addEventListener("click", () => closeClaimConfirmation(false));
+      els.claimConfirmOkBtn.addEventListener("click", () => closeClaimConfirmation(true));
+
+      els.claimConfirmModal.addEventListener("click", (event) => {
+        if (event.target === els.claimConfirmModal) closeClaimConfirmation(false);
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!els.helpModal.classList.contains("hidden")) {
+          closeHelpModal();
+        }
+        if (!els.claimConfirmModal.classList.contains("hidden")) {
+          closeClaimConfirmation(false);
+        }
+      });
+
       async function boot() {
         fillBuildingSelect("claimBuilding", true);
         fillBuildingSelect("newBuilding");
         setActiveTab("action", "actionSharePanel");
         setActiveTab("activity", "activityFreePanel");
+        applyDefaultTimeValues();
 
         try {
           const me = await api("/api/auth/me");
