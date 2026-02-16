@@ -76,6 +76,97 @@
         padding: 14px;
       }
 
+      .module-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .module-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: linear-gradient(135deg, #ffffff, #eef7f5);
+        display: grid;
+        gap: 8px;
+      }
+
+      .module-card h3 {
+        margin: 0;
+      }
+
+      .module-card p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .module-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .module-actions button {
+        width: auto;
+      }
+
+      .count-pill {
+        margin-left: 6px;
+        border-radius: 999px;
+        padding: 1px 7px;
+        background: #eef1eb;
+        border: 1px solid #d8d2c5;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .poll-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .poll-options {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .poll-option-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .poll-option-row label {
+        color: var(--ink);
+      }
+
+      .poll-option-row select {
+        width: 120px;
+      }
+
+      .poll-rank-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .poll-note {
+        font-size: 0.86rem;
+        color: var(--muted);
+      }
+
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+
       .stack {
         display: grid;
         gap: 10px;
@@ -111,6 +202,11 @@
         border-radius: 8px;
         padding: 9px 10px;
         font: inherit;
+      }
+
+      input[type="checkbox"],
+      input[type="radio"] {
+        width: auto;
       }
 
       button {
@@ -519,206 +615,296 @@
           <button id="logoutBtn" class="ghost" type="button">Logout</button>
         </div>
 
-        <section class="card" style="margin-top: 12px">
-          <h2>Building Capacity</h2>
-          <p class="capacity-legend">UG = Underground, AG = Above-ground. Tap a bloc card to filter claim options.</p>
-          <div id="stats" class="capacity-grid" style="margin-top: 10px"></div>
-        </section>
-
-        <section class="card action-shell" id="actionPanel">
-          <h2>Parking Actions</h2>
-          <p style="margin: 8px 0 0; color: var(--muted)">I want to:</p>
-          <div class="tabs" style="margin-top: 8px">
-            <button type="button" class="tab-btn active" data-tab-group="action" data-tab-target="actionSharePanel">Share my spot</button>
-            <button type="button" class="tab-btn" data-tab-group="action" data-tab-target="actionClaimPanel">Claim a spot</button>
+        <section id="modulesCard" class="card" style="margin-top: 12px">
+          <h2>Modules</h2>
+          <p class="poll-note">Choose which module you want to work in. Both require authenticated access.</p>
+          <div class="module-grid">
+            <article class="module-card">
+              <h3>Parking Module</h3>
+              <p>Share and claim parking spots, monitor availability, and manage your claims.</p>
+              <div class="module-actions">
+                <button type="button" class="ghost" data-module-target="parkingModule">Open Parking</button>
+              </div>
+            </article>
+            <article class="module-card">
+              <h3>Voting Module</h3>
+              <p>Join building and neighbourhood polls, submit votes, and review results.</p>
+              <div class="module-actions">
+                <button type="button" class="alt" data-module-target="votingModule">Open Voting</button>
+              </div>
+            </article>
           </div>
-
-          <section id="actionSharePanel" class="tab-panel" data-tab-group="action">
-            <form id="shareForm" class="stack">
-              <div class="preset-row">
-                <span class="preset-label">Quick Range:</span>
-                <button type="button" class="preset-btn" data-target-form="share" data-preset="today">Today</button>
-                <button type="button" class="preset-btn" data-target-form="share" data-preset="tomorrow">Tomorrow</button>
-                <button type="button" class="preset-btn" data-target-form="share" data-preset="weekend">This weekend</button>
-              </div>
-              <div>
-                <label for="spaceNumber">Parking Spot Number</label>
-                <input id="spaceNumber" placeholder="e.g. UG-12, Spot 7" required />
-              </div>
-              <div>
-                <label for="spaceType">Type</label>
-                <select id="spaceType" required>
-                  <option value="underground">Underground</option>
-                  <option value="above_ground">Above Ground</option>
-                </select>
-              </div>
-              <div>
-                <label for="fromAt">Available From</label>
-                <input id="fromAt" type="datetime-local" required />
-              </div>
-              <div>
-                <label for="untilAt">Available Until</label>
-                <input id="untilAt" type="datetime-local" required />
-              </div>
-              <button id="shareBtn" type="submit" data-default-text="Share Spot">Share Spot</button>
-            </form>
-          </section>
-
-          <section id="actionClaimPanel" class="tab-panel hidden" data-tab-group="action">
-            <form id="claimForm" class="stack">
-              <div class="preset-row">
-                <span class="preset-label">Quick Range:</span>
-                <button type="button" class="preset-btn" data-target-form="claim" data-preset="today">Today</button>
-                <button type="button" class="preset-btn" data-target-form="claim" data-preset="tomorrow">Tomorrow</button>
-                <button type="button" class="preset-btn" data-target-form="claim" data-preset="weekend">This weekend</button>
-              </div>
-              <div>
-                <label for="claimBuilding">Building</label>
-                <select id="claimBuilding"></select>
-              </div>
-              <div>
-                <label for="claimType">Type</label>
-                <select id="claimType">
-                  <option value="">Any</option>
-                  <option value="underground">Underground</option>
-                  <option value="above_ground">Above Ground</option>
-                </select>
-              </div>
-              <div>
-                <label for="availableSlot">Available Spot</label>
-                <select id="availableSlot" required></select>
-              </div>
-              <div>
-                <label for="claimFrom">Claim From</label>
-                <input id="claimFrom" type="datetime-local" required />
-              </div>
-              <div>
-                <label for="claimUntil">Claim Until</label>
-                <input id="claimUntil" type="datetime-local" required />
-              </div>
-              <div>
-                <label for="claimPhone">Contact Phone (for owner)</label>
-                <input id="claimPhone" placeholder="07xx xxx xxx" />
-              </div>
-              <button id="claimBtn" class="alt" type="submit" data-default-text="Claim Selected Spot">Claim Selected Spot</button>
-            </form>
-          </section>
         </section>
 
-        <section class="card activity-shell" style="margin-top: 14px">
-          <h2>My Activity</h2>
-          <div class="tabs" style="margin-top: 10px">
-            <button type="button" class="tab-btn active" data-tab-group="activity" data-tab-target="activityFreePanel">
-              Free Spots <span class="tab-count" id="countFree">0</span>
-            </button>
-            <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activitySharedPanel">
-              My Shared <span class="tab-count" id="countShared">0</span>
-            </button>
-            <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activityClaimedByOthersPanel">
-              Claimed By Others <span class="tab-count" id="countClaimedByOthers">0</span>
-            </button>
-            <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activityMyClaimsPanel">
-              My Claims <span class="tab-count" id="countMyClaims">0</span>
-            </button>
-          </div>
-
-          <section id="activityFreePanel" class="tab-panel" data-tab-group="activity">
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Status</th>
-                    <th>Building</th>
-                    <th>Spot</th>
-                    <th>Type</th>
-                    <th>Owner</th>
-                    <th>Phone</th>
-                    <th>From</th>
-                    <th>Until</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="sharedSpots"></tbody>
-              </table>
-            </div>
+        <div id="parkingModule">
+          <section class="card" style="margin-top: 12px">
+            <h2>Building Capacity</h2>
+            <p class="capacity-legend">UG = Underground, AG = Above-ground. Tap a bloc card to filter claim options.</p>
+            <div id="stats" class="capacity-grid" style="margin-top: 10px"></div>
           </section>
 
-          <section id="activitySharedPanel" class="tab-panel hidden" data-tab-group="activity">
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr><th>Spot</th><th>Type</th><th>Status</th><th>From</th><th>Until</th></tr>
-                </thead>
-                <tbody id="myShared"></tbody>
-              </table>
+          <section class="card action-shell" id="actionPanel">
+            <h2>Parking Actions</h2>
+            <p style="margin: 8px 0 0; color: var(--muted)">I want to:</p>
+            <div class="tabs" style="margin-top: 8px">
+              <button type="button" class="tab-btn active" data-tab-group="action" data-tab-target="actionSharePanel">Share my spot</button>
+              <button type="button" class="tab-btn" data-tab-group="action" data-tab-target="actionClaimPanel">Claim a spot</button>
             </div>
-          </section>
 
-          <section id="activityClaimedByOthersPanel" class="tab-panel hidden" data-tab-group="activity">
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr><th>Spot</th><th>Claimed By</th><th>Phone</th><th>Claim From</th><th>Claim Until</th></tr>
-                </thead>
-                <tbody id="claimedOnMine"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <section id="activityMyClaimsPanel" class="tab-panel hidden" data-tab-group="activity">
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr><th>Building</th><th>Spot</th><th>Owner</th><th>Owner Phone</th><th>Contact Used</th><th>Claim From</th><th>Claim Until</th></tr>
-                </thead>
-                <tbody id="myClaimed"></tbody>
-              </table>
-            </div>
-          </section>
-        </section>
-
-        <section id="adminPanel" class="card hidden" style="margin-top: 14px">
-          <h2>Admin Panel</h2>
-          <div class="grid" style="margin-top: 10px">
-            <section class="card">
-              <h3>Create User</h3>
-              <form id="createUserForm" class="stack" style="margin-top: 8px">
-                <div><label for="newUsername">Username</label><input id="newUsername" required /></div>
-                <div><label for="newPassword">Password</label><input id="newPassword" placeholder="10blocuri" required /></div>
-                <div><label for="newPhone">Phone Number</label><input id="newPhone" placeholder="0712 345 678" /></div>
-                <div><label for="newRole">Role</label><select id="newRole"><option value="resident">Resident</option><option value="admin">Admin</option></select></div>
-                <div><label for="newBuilding">Building</label><select id="newBuilding"></select></div>
-                <div><label for="newApartment">Apartment</label><input id="newApartment" type="number" min="1" max="16" value="1" /></div>
-                <button id="createUserBtn" type="submit" data-default-text="Create User">Create User</button>
+            <section id="actionSharePanel" class="tab-panel" data-tab-group="action">
+              <form id="shareForm" class="stack">
+                <div class="preset-row">
+                  <span class="preset-label">Quick Range:</span>
+                  <button type="button" class="preset-btn" data-target-form="share" data-preset="today">Today</button>
+                  <button type="button" class="preset-btn" data-target-form="share" data-preset="tomorrow">Tomorrow</button>
+                  <button type="button" class="preset-btn" data-target-form="share" data-preset="weekend">This weekend</button>
+                </div>
+                <div>
+                  <label for="spaceNumber">Parking Spot Number</label>
+                  <input id="spaceNumber" placeholder="e.g. UG-12, Spot 7" required />
+                </div>
+                <div>
+                  <label for="spaceType">Type</label>
+                  <select id="spaceType" required>
+                    <option value="underground">Underground</option>
+                    <option value="above_ground">Above Ground</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="fromAt">Available From</label>
+                  <input id="fromAt" type="datetime-local" required />
+                </div>
+                <div>
+                  <label for="untilAt">Available Until</label>
+                  <input id="untilAt" type="datetime-local" required />
+                </div>
+                <button id="shareBtn" type="submit" data-default-text="Share Spot">Share Spot</button>
               </form>
             </section>
 
-            <section class="card">
-              <h3>Admin Create Shared Slot</h3>
-              <form id="adminSlotForm" class="stack" style="margin-top: 8px">
-                <div><label for="adminOwnerUsername">Owner Username</label><input id="adminOwnerUsername" placeholder="bloc2_apt4" required /></div>
-                <div><label for="adminSpaceNumber">Parking Spot Number</label><input id="adminSpaceNumber" placeholder="Spot-88" required /></div>
-                <div><label for="adminSpaceType">Type</label><select id="adminSpaceType"><option value="underground">Underground</option><option value="above_ground">Above Ground</option></select></div>
-                <div><label for="adminFromAt">Available From</label><input id="adminFromAt" type="datetime-local" required /></div>
-                <div><label for="adminUntilAt">Available Until</label><input id="adminUntilAt" type="datetime-local" required /></div>
-                <button id="adminShareBtn" type="submit" data-default-text="Create Shared Slot">Create Shared Slot</button>
+            <section id="actionClaimPanel" class="tab-panel hidden" data-tab-group="action">
+              <form id="claimForm" class="stack">
+                <div class="preset-row">
+                  <span class="preset-label">Quick Range:</span>
+                  <button type="button" class="preset-btn" data-target-form="claim" data-preset="today">Today</button>
+                  <button type="button" class="preset-btn" data-target-form="claim" data-preset="tomorrow">Tomorrow</button>
+                  <button type="button" class="preset-btn" data-target-form="claim" data-preset="weekend">This weekend</button>
+                </div>
+                <div>
+                  <label for="claimBuilding">Building</label>
+                  <select id="claimBuilding"></select>
+                </div>
+                <div>
+                  <label for="claimType">Type</label>
+                  <select id="claimType">
+                    <option value="">Any</option>
+                    <option value="underground">Underground</option>
+                    <option value="above_ground">Above Ground</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="availableSlot">Available Spot</label>
+                  <select id="availableSlot" required></select>
+                </div>
+                <div>
+                  <label for="claimFrom">Claim From</label>
+                  <input id="claimFrom" type="datetime-local" required />
+                </div>
+                <div>
+                  <label for="claimUntil">Claim Until</label>
+                  <input id="claimUntil" type="datetime-local" required />
+                </div>
+                <div>
+                  <label for="claimPhone">Contact Phone (for owner)</label>
+                  <input id="claimPhone" placeholder="07xx xxx xxx" />
+                </div>
+                <button id="claimBtn" class="alt" type="submit" data-default-text="Claim Selected Spot">Claim Selected Spot</button>
               </form>
             </section>
+          </section>
 
-            <section class="card">
-              <h3>All Users</h3>
+          <section class="card activity-shell" style="margin-top: 14px">
+            <h2>My Activity</h2>
+            <div class="tabs" style="margin-top: 10px">
+              <button type="button" class="tab-btn active" data-tab-group="activity" data-tab-target="activityFreePanel">
+                Free Spots <span class="tab-count" id="countFree">0</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activitySharedPanel">
+                My Shared <span class="tab-count" id="countShared">0</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activityClaimedByOthersPanel">
+                Claimed By Others <span class="tab-count" id="countClaimedByOthers">0</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activityMyClaimsPanel">
+                My Claims <span class="tab-count" id="countMyClaims">0</span>
+              </button>
+            </div>
+
+            <section id="activityFreePanel" class="tab-panel" data-tab-group="activity">
               <div class="table-wrap">
                 <table>
                   <thead>
-                    <tr><th>User</th><th>Role</th><th>Building</th><th>Apt</th><th>Phone</th></tr>
+                    <tr>
+                      <th>Status</th>
+                      <th>Building</th>
+                      <th>Spot</th>
+                      <th>Type</th>
+                      <th>Owner</th>
+                      <th>Phone</th>
+                      <th>From</th>
+                      <th>Until</th>
+                      <th>Action</th>
+                    </tr>
                   </thead>
-                  <tbody id="allUsers"></tbody>
+                  <tbody id="sharedSpots"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section id="activitySharedPanel" class="tab-panel hidden" data-tab-group="activity">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Spot</th><th>Type</th><th>Status</th><th>From</th><th>Until</th></tr>
+                  </thead>
+                  <tbody id="myShared"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section id="activityClaimedByOthersPanel" class="tab-panel hidden" data-tab-group="activity">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Spot</th><th>Claimed By</th><th>Phone</th><th>Claim From</th><th>Claim Until</th></tr>
+                  </thead>
+                  <tbody id="claimedOnMine"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section id="activityMyClaimsPanel" class="tab-panel hidden" data-tab-group="activity">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Building</th><th>Spot</th><th>Owner</th><th>Owner Phone</th><th>Contact Used</th><th>Claim From</th><th>Claim Until</th></tr>
+                  </thead>
+                  <tbody id="myClaimed"></tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <section id="adminPanel" class="card hidden" style="margin-top: 14px">
+            <h2>Admin Panel</h2>
+            <div class="grid" style="margin-top: 10px">
+              <section class="card">
+                <h3>Create User</h3>
+                <form id="createUserForm" class="stack" style="margin-top: 8px">
+                  <div><label for="newUsername">Username</label><input id="newUsername" required /></div>
+                  <div><label for="newPassword">Password</label><input id="newPassword" placeholder="10blocuri" required /></div>
+                  <div><label for="newPhone">Phone Number</label><input id="newPhone" placeholder="0712 345 678" /></div>
+                  <div><label for="newRole">Role</label><select id="newRole"><option value="resident">Resident</option><option value="admin">Admin</option></select></div>
+                  <div><label for="newBuilding">Building</label><select id="newBuilding"></select></div>
+                  <div><label for="newApartment">Apartment</label><input id="newApartment" type="number" min="1" max="16" value="1" /></div>
+                  <button id="createUserBtn" type="submit" data-default-text="Create User">Create User</button>
+                </form>
+              </section>
+
+              <section class="card">
+                <h3>Admin Create Shared Slot</h3>
+                <form id="adminSlotForm" class="stack" style="margin-top: 8px">
+                  <div><label for="adminOwnerUsername">Owner Username</label><input id="adminOwnerUsername" placeholder="bloc2_apt4" required /></div>
+                  <div><label for="adminSpaceNumber">Parking Spot Number</label><input id="adminSpaceNumber" placeholder="Spot-88" required /></div>
+                  <div><label for="adminSpaceType">Type</label><select id="adminSpaceType"><option value="underground">Underground</option><option value="above_ground">Above Ground</option></select></div>
+                  <div><label for="adminFromAt">Available From</label><input id="adminFromAt" type="datetime-local" required /></div>
+                  <div><label for="adminUntilAt">Available Until</label><input id="adminUntilAt" type="datetime-local" required /></div>
+                  <button id="adminShareBtn" type="submit" data-default-text="Create Shared Slot">Create Shared Slot</button>
+                </form>
+              </section>
+
+              <section class="card">
+                <h3>All Users</h3>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr><th>User</th><th>Role</th><th>Building</th><th>Apt</th><th>Phone</th></tr>
+                    </thead>
+                    <tbody id="allUsers"></tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+
+        <section id="votingModule" class="card" style="margin-top: 14px">
+          <div class="topbar">
+            <div>
+              <h2>Voting</h2>
+              <p class="poll-note">Participate in neighbourhood or building-specific polls.</p>
+            </div>
+            <button id="refreshPollsBtn" class="ghost" type="button">Refresh</button>
+          </div>
+          <div class="grid" style="margin-top: 10px">
+            <section class="card">
+              <h3>Active Polls <span class="count-pill" id="countActivePolls">0</span></h3>
+              <div class="table-wrap" style="margin-top: 8px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Scope</th>
+                      <th>Ends</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activePolls"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="card">
+              <h3>Closed Polls <span class="count-pill" id="countClosedPolls">0</span></h3>
+              <div class="table-wrap" style="margin-top: 8px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Scope</th>
+                      <th>Closed</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="closedPolls"></tbody>
                 </table>
               </div>
             </section>
           </div>
         </section>
       </main>
+
+      <div id="pollModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pollModalTitle">
+        <div class="modal-card">
+          <div class="modal-head">
+            <h2 id="pollModalTitle">Poll</h2>
+            <button id="pollCloseBtn" class="ghost" type="button">Close</button>
+          </div>
+          <div id="pollMeta" class="poll-meta"></div>
+          <p id="pollDescription" style="margin-top: 8px"></p>
+          <div id="pollAttachments" class="stack" style="margin-top: 10px"></div>
+          <section id="pollVoteSection" style="margin-top: 12px">
+            <h3>Cast Your Vote</h3>
+            <p id="pollVoteHint" class="poll-note"></p>
+            <form id="pollVoteForm" class="stack" style="margin-top: 10px">
+              <div id="pollVoteOptions" class="poll-options"></div>
+              <button id="pollVoteBtn" type="submit" data-default-text="Submit Vote">Submit Vote</button>
+            </form>
+          </section>
+          <section id="pollResultsSection" style="margin-top: 14px"></section>
+        </div>
+      </div>
 
       <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
         <div class="modal-card">
@@ -775,6 +961,24 @@
         status: document.getElementById("status"),
         whoami: document.getElementById("whoami"),
         adminPanel: document.getElementById("adminPanel"),
+        modulesCard: document.getElementById("modulesCard"),
+        activePolls: document.getElementById("activePolls"),
+        closedPolls: document.getElementById("closedPolls"),
+        countActivePolls: document.getElementById("countActivePolls"),
+        countClosedPolls: document.getElementById("countClosedPolls"),
+        refreshPollsBtn: document.getElementById("refreshPollsBtn"),
+        pollModal: document.getElementById("pollModal"),
+        pollModalTitle: document.getElementById("pollModalTitle"),
+        pollCloseBtn: document.getElementById("pollCloseBtn"),
+        pollMeta: document.getElementById("pollMeta"),
+        pollDescription: document.getElementById("pollDescription"),
+        pollAttachments: document.getElementById("pollAttachments"),
+        pollVoteSection: document.getElementById("pollVoteSection"),
+        pollVoteHint: document.getElementById("pollVoteHint"),
+        pollVoteForm: document.getElementById("pollVoteForm"),
+        pollVoteOptions: document.getElementById("pollVoteOptions"),
+        pollVoteBtn: document.getElementById("pollVoteBtn"),
+        pollResultsSection: document.getElementById("pollResultsSection"),
         sharedSpots: document.getElementById("sharedSpots"),
         myShared: document.getElementById("myShared"),
         claimedOnMine: document.getElementById("claimedOnMine"),
@@ -800,6 +1004,7 @@
       let currentOpenSlots = [];
       let currentFreeSpots = [];
       let claimConfirmResolver = null;
+      let currentPollDetail = null;
 
       function showToast(message, kind = "success") {
         const toast = document.createElement("div");
@@ -848,6 +1053,25 @@
 
       function td(value) {
         return `<td>${value ?? "-"}</td>`;
+      }
+
+      function formatPollDate(value) {
+        if (!value) return "-";
+        return value.replace("T", " ").replace("+00:00", " UTC");
+      }
+
+      function pollScopeLabel(poll) {
+        if (poll.scope === "building") {
+          return `Bloc ${poll.building_id}`;
+        }
+        return "Neighbourhood";
+      }
+
+      function pollStatusLabel(poll) {
+        if (poll.status === "active") {
+          return poll.has_voted ? "Active (voted)" : "Active";
+        }
+        return poll.status;
       }
 
       function normalizeUsername(value) {
@@ -960,6 +1184,9 @@
           closeClaimConfirmation(false);
         } else {
           els.claimConfirmModal.classList.add("hidden");
+        }
+        if (!els.pollModal.classList.contains("hidden")) {
+          closePollModal();
         }
       }
 
@@ -1161,6 +1388,271 @@
           .join("");
       }
 
+      function renderPollList(targetEl, polls, emptyText, actionLabelGetter) {
+        targetEl.innerHTML = polls.length
+          ? polls
+              .map((poll) => {
+                const actionLabel = actionLabelGetter(poll);
+                return `<tr>
+                  ${td(poll.title)}
+                  ${td(pollScopeLabel(poll))}
+                  ${td(formatPollDate(poll.end_date))}
+                  ${td(pollStatusLabel(poll))}
+                  <td><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">${actionLabel}</button></td>
+                </tr>`;
+              })
+              .join("")
+          : `<tr><td colspan="5">${emptyText}</td></tr>`;
+      }
+
+      function clearPollLists() {
+        els.activePolls.innerHTML = `<tr><td colspan="5">No active polls.</td></tr>`;
+        els.closedPolls.innerHTML = `<tr><td colspan="5">No closed polls.</td></tr>`;
+        els.countActivePolls.textContent = "0";
+        els.countClosedPolls.textContent = "0";
+      }
+
+      async function refreshVoting() {
+        if (!currentUser) return;
+        const [active, closed] = await Promise.all([
+          api("/api/polls?status=active"),
+          api("/api/polls?status=closed"),
+        ]);
+        const activePolls = Array.isArray(active) ? active : [];
+        const closedPolls = Array.isArray(closed) ? closed : [];
+        renderPollList(
+          els.activePolls,
+          activePolls,
+          "No active polls at the moment.",
+          (poll) => (poll.has_voted ? "View" : "Vote")
+        );
+        renderPollList(
+          els.closedPolls,
+          closedPolls,
+          "No closed polls yet.",
+          () => "View"
+        );
+        els.countActivePolls.textContent = String(activePolls.length);
+        els.countClosedPolls.textContent = String(closedPolls.length);
+      }
+
+      function closePollModal() {
+        els.pollModal.classList.add("hidden");
+        currentPollDetail = null;
+      }
+
+      function renderPollVote(data) {
+        const poll = data.poll;
+        const options = data.options || [];
+
+        els.pollVoteHint.textContent = "";
+        els.pollVoteForm.classList.remove("hidden");
+        els.pollVoteOptions.innerHTML = "";
+
+        if (poll.status !== "active") {
+          els.pollVoteHint.textContent = "This poll is not active.";
+          els.pollVoteForm.classList.add("hidden");
+          return;
+        }
+        if (data.has_voted) {
+          els.pollVoteHint.textContent = "You have already voted in this poll.";
+          els.pollVoteForm.classList.add("hidden");
+          return;
+        }
+
+        if (poll.poll_type === "weighted") {
+          els.pollVoteHint.textContent = "Rank all options (1 = top choice).";
+          const rankOptions = options
+            .map((_, idx) => `<option value="${idx + 1}">${idx + 1}</option>`)
+            .join("");
+          els.pollVoteOptions.innerHTML = `
+            <div class="poll-rank-grid">
+              ${options
+                .map(
+                  (opt) => `
+                    <div class="poll-option-row">
+                      <label>${opt.label}</label>
+                      <select data-option-id="${opt.id}" required>
+                        <option value="">Rank</option>
+                        ${rankOptions}
+                      </select>
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          `;
+          return;
+        }
+
+        if (poll.poll_type === "multiple_choice" && poll.allow_multiple_selections) {
+          els.pollVoteHint.textContent = "Select one or more options.";
+          els.pollVoteOptions.innerHTML = options
+            .map(
+              (opt) => `
+                <label class="poll-option-row">
+                  <input type="checkbox" value="${opt.id}" />
+                  <span>${opt.label}</span>
+                </label>
+              `
+            )
+            .join("");
+          return;
+        }
+
+        els.pollVoteHint.textContent = "Select one option.";
+        els.pollVoteOptions.innerHTML = options
+          .map(
+            (opt) => `
+              <label class="poll-option-row">
+                <input type="radio" name="pollOption" value="${opt.id}" required />
+                <span>${opt.label}</span>
+              </label>
+            `
+          )
+          .join("");
+      }
+
+      function renderPollResults(results) {
+        const poll = results.poll;
+        if (!poll) return;
+
+        const quorumLine = poll.requires_quorum
+          ? `Turnout ${results.turnout_percentage}% (${results.unique_voters}/${results.eligible_voters}) - ${
+              results.quorum_met ? "quorum met" : "quorum not met"
+            }`
+          : `Turnout ${results.turnout_percentage}% (${results.unique_voters}/${results.eligible_voters})`;
+
+        let tableHead = "";
+        let tableBody = "";
+        let emptyColspan = 3;
+        if (poll.poll_type === "weighted") {
+          emptyColspan = 2;
+          tableHead = "<tr><th>Option</th><th>Points</th></tr>";
+          tableBody = (results.options || [])
+            .map((opt) => `<tr>${td(opt.label)}${td(opt.points)}</tr>`)
+            .join("");
+        } else {
+          tableHead = "<tr><th>Option</th><th>Votes</th><th>%</th></tr>";
+          tableBody = (results.options || [])
+            .map((opt) => `<tr>${td(opt.label)}${td(opt.votes)}${td(opt.percentage)}</tr>`)
+            .join("");
+        }
+
+        const winnerLabels = (results.winners || [])
+          .map((id) => {
+            const match = (results.options || []).find((opt) => opt.id === id);
+            return match ? match.label : id;
+          })
+          .join(", ");
+
+        els.pollResultsSection.innerHTML = `
+          <h3>Results</h3>
+          <div class="poll-meta">
+            <span>${quorumLine}</span>
+            <span>Status: ${results.result_status}</span>
+            <span>Winner: ${winnerLabels || "-"}</span>
+          </div>
+          <div class="table-wrap" style="margin-top: 8px">
+            <table>
+              <thead>${tableHead}</thead>
+              <tbody>${tableBody || `<tr><td colspan="${emptyColspan}">No votes yet.</td></tr>`}</tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      function buildVotePayload() {
+        const poll = currentPollDetail.poll;
+        const options = currentPollDetail.options || [];
+
+        if (poll.poll_type === "weighted") {
+          const selects = Array.from(els.pollVoteOptions.querySelectorAll("select[data-option-id]"));
+          if (!selects.length) {
+            throw new Error("Ranking options are missing.");
+          }
+          const ranked = [];
+          const usedRanks = new Set();
+          for (const select of selects) {
+            const rank = Number(select.value || 0);
+            if (!rank) {
+              throw new Error("Select a rank for each option.");
+            }
+            if (rank < 1 || rank > options.length) {
+              throw new Error("Ranks must be within the available range.");
+            }
+            if (usedRanks.has(rank)) {
+              throw new Error("Each rank must be unique.");
+            }
+            usedRanks.add(rank);
+            ranked.push({ rank, optionId: select.dataset.optionId });
+          }
+          ranked.sort((a, b) => a.rank - b.rank);
+          return { ranking: ranked.map((item) => item.optionId) };
+        }
+
+        if (poll.poll_type === "multiple_choice" && poll.allow_multiple_selections) {
+          const selected = Array.from(els.pollVoteOptions.querySelectorAll("input[type=checkbox]:checked")).map(
+            (input) => input.value
+          );
+          if (!selected.length) {
+            throw new Error("Select at least one option.");
+          }
+          return { option_ids: selected };
+        }
+
+        const selected = els.pollVoteOptions.querySelector("input[type=radio]:checked");
+        if (!selected) {
+          throw new Error("Select an option to vote.");
+        }
+        return { option_ids: [selected.value] };
+      }
+
+      async function loadPollModal(pollId) {
+        const data = await api(`/api/polls/${pollId}`);
+        currentPollDetail = data;
+
+        const poll = data.poll;
+        els.pollModalTitle.textContent = poll.title;
+        els.pollDescription.textContent = poll.description || "No description provided.";
+        els.pollMeta.innerHTML = `
+          <span>Type: ${poll.poll_type}</span>
+          <span>Scope: ${pollScopeLabel(poll)}</span>
+          <span>Status: ${poll.status}</span>
+          <span>Start: ${formatPollDate(poll.start_date)}</span>
+          <span>End: ${formatPollDate(poll.end_date)}</span>
+        `;
+
+        const attachments = data.attachments || [];
+        if (!attachments.length) {
+          els.pollAttachments.innerHTML = `<span class="poll-note">No attachments provided.</span>`;
+        } else {
+          els.pollAttachments.innerHTML = attachments
+            .map((item) => `<span class="pill">${item.file_name} (${item.file_type})</span>`)
+            .join("");
+        }
+
+        renderPollVote(data);
+
+        const canViewResults =
+          poll.status === "closed" || poll.show_results_before_close || (currentUser && currentUser.role === "admin");
+        if (!canViewResults) {
+          els.pollResultsSection.innerHTML = `<p class="poll-note">Results will be available after the poll closes.</p>`;
+          return;
+        }
+        try {
+          const results = await api(`/api/polls/${pollId}/results`);
+          renderPollResults(results);
+        } catch (error) {
+          els.pollResultsSection.innerHTML = `<p class="poll-note">Results are not available yet.</p>`;
+        }
+      }
+
+      async function openPollModal(pollId) {
+        await loadPollModal(pollId);
+        els.pollModal.classList.remove("hidden");
+      }
+
       async function claimSlotByPayload(payload, slotForDisplay, buttonEl) {
         const confirmed = await requestClaimConfirmation(
           slotForDisplay,
@@ -1194,6 +1686,7 @@
           closeAllModals();
           els.loginCard.classList.remove("hidden");
           els.app.classList.add("hidden");
+          clearPollLists();
           return;
         }
 
@@ -1229,6 +1722,7 @@
             applyAuthState(response.user);
             await refreshDashboard();
             await refreshAdminUsers();
+            await refreshVoting();
             showToast("Login successful.");
           } catch (error) {
             setStatus(error.message, true);
@@ -1345,9 +1839,72 @@
         });
       });
 
+      document.querySelectorAll("[data-module-target]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = document.getElementById(btn.dataset.moduleTarget);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+
       document.querySelectorAll(".preset-btn[data-target-form][data-preset]").forEach((btn) => {
         btn.addEventListener("click", () => {
           applyPreset(btn.dataset.targetForm, btn.dataset.preset);
+        });
+      });
+
+      els.refreshPollsBtn.addEventListener("click", async () => {
+        try {
+          await refreshVoting();
+          showToast("Polls refreshed.");
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
+      els.activePolls.addEventListener("click", async (event) => {
+        const button = event.target.closest(".poll-open-btn");
+        if (!button) return;
+        try {
+          await openPollModal(button.dataset.pollId);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
+      els.closedPolls.addEventListener("click", async (event) => {
+        const button = event.target.closest(".poll-open-btn");
+        if (!button) return;
+        try {
+          await openPollModal(button.dataset.pollId);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
+      els.pollCloseBtn.addEventListener("click", () => closePollModal());
+      els.pollModal.addEventListener("click", (event) => {
+        if (event.target === els.pollModal) closePollModal();
+      });
+
+      els.pollVoteForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!currentPollDetail) return;
+        const pollId = currentPollDetail.poll.id;
+        await withButtonProgress(els.pollVoteBtn, "Submitting...", async () => {
+          try {
+            const payload = buildVotePayload();
+            await api(`/api/polls/${pollId}/vote`, {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+            showToast("Vote submitted.");
+            await refreshVoting();
+            await loadPollModal(pollId);
+          } catch (error) {
+            setStatus(error.message, true);
+          }
         });
       });
 
@@ -1473,6 +2030,9 @@
         if (!els.claimConfirmModal.classList.contains("hidden")) {
           closeClaimConfirmation(false);
         }
+        if (!els.pollModal.classList.contains("hidden")) {
+          closePollModal();
+        }
       });
 
       async function boot() {
@@ -1491,6 +2051,7 @@
           applyAuthState(me.user);
           await refreshDashboard();
           await refreshAdminUsers();
+          await refreshVoting();
         } catch (error) {
           setStatus(error.message, true);
         }
