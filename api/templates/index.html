@@ -196,12 +196,18 @@
 
       input,
       select,
+      textarea,
       button {
         width: 100%;
         border: 1px solid #c9c2b5;
         border-radius: 8px;
         padding: 9px 10px;
         font: inherit;
+      }
+
+      textarea {
+        min-height: 96px;
+        resize: vertical;
       }
 
       input[type="checkbox"],
@@ -636,7 +642,12 @@
           </div>
         </section>
 
-        <div id="parkingModule">
+        <div id="parkingModule" class="hidden">
+          <section class="topbar">
+            <div class="pill">Parking Module</div>
+            <button type="button" class="ghost" data-back-modules>Back To Modules</button>
+          </section>
+
           <section class="card" style="margin-top: 12px">
             <h2>Building Capacity</h2>
             <p class="capacity-legend">UG = Underground, AG = Above-ground. Tap a bloc card to filter claim options.</p>
@@ -838,14 +849,86 @@
           </section>
         </div>
 
-        <section id="votingModule" class="card" style="margin-top: 14px">
+        <section id="votingModule" class="card hidden" style="margin-top: 14px">
           <div class="topbar">
             <div>
               <h2>Voting</h2>
               <p class="poll-note">Participate in neighbourhood or building-specific polls.</p>
             </div>
-            <button id="refreshPollsBtn" class="ghost" type="button">Refresh</button>
+            <div class="module-actions">
+              <button type="button" class="ghost" data-back-modules>Back To Modules</button>
+              <button id="refreshPollsBtn" class="ghost" type="button">Refresh</button>
+            </div>
           </div>
+          <section id="createPollCard" class="card hidden" style="margin-top: 12px">
+            <h3>Create Poll (Admin)</h3>
+            <form id="createPollForm" class="stack" style="margin-top: 8px">
+              <div>
+                <label for="pollTitle">Title</label>
+                <input id="pollTitle" maxlength="200" placeholder="e.g. Upgrade Entrance Lighting" required />
+              </div>
+              <div>
+                <label for="pollDescriptionInput">Description</label>
+                <textarea id="pollDescriptionInput" placeholder="Optional context for residents"></textarea>
+              </div>
+              <div class="grid" style="margin-top: 0">
+                <div>
+                  <label for="pollType">Poll Type</label>
+                  <select id="pollType">
+                    <option value="yes_no">Yes/No</option>
+                    <option value="multiple_choice">Multiple Choice</option>
+                    <option value="weighted">Weighted Ranking</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="pollScope">Scope</label>
+                  <select id="pollScope">
+                    <option value="neighbourhood">Neighbourhood</option>
+                    <option value="building">Building</option>
+                  </select>
+                </div>
+              </div>
+              <div id="pollBuildingRow" class="hidden">
+                <label for="pollBuilding">Building</label>
+                <select id="pollBuilding"></select>
+              </div>
+              <div class="grid" style="margin-top: 0">
+                <div>
+                  <label for="pollStart">Start</label>
+                  <input id="pollStart" type="datetime-local" required />
+                </div>
+                <div>
+                  <label for="pollEnd">End</label>
+                  <input id="pollEnd" type="datetime-local" required />
+                </div>
+              </div>
+              <div>
+                <label for="pollStatus">Initial Status</label>
+                <select id="pollStatus">
+                  <option value="active">Active</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </div>
+              <div id="pollOptionsRow" class="hidden">
+                <label for="pollOptions">Options (one per line)</label>
+                <textarea id="pollOptions" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+              </div>
+              <div id="pollAllowMultipleRow" class="hidden">
+                <label><input id="pollAllowMultiple" type="checkbox" /> Allow multiple selections</label>
+              </div>
+              <div>
+                <label><input id="pollShowResultsEarly" type="checkbox" /> Show results before poll closes</label>
+              </div>
+              <div>
+                <label><input id="pollRequiresQuorum" type="checkbox" /> Requires quorum</label>
+              </div>
+              <div id="pollQuorumRow" class="hidden">
+                <label for="pollQuorumPercentage">Quorum Percentage</label>
+                <input id="pollQuorumPercentage" type="number" min="1" max="100" placeholder="e.g. 50" />
+              </div>
+              <button id="createPollBtn" class="alt" type="submit" data-default-text="Create Poll">Create Poll</button>
+            </form>
+          </section>
           <div class="grid" style="margin-top: 10px">
             <section class="card">
               <h3>Active Polls <span class="count-pill" id="countActivePolls">0</span></h3>
@@ -979,6 +1062,28 @@
         pollVoteOptions: document.getElementById("pollVoteOptions"),
         pollVoteBtn: document.getElementById("pollVoteBtn"),
         pollResultsSection: document.getElementById("pollResultsSection"),
+        parkingModule: document.getElementById("parkingModule"),
+        votingModule: document.getElementById("votingModule"),
+        createPollCard: document.getElementById("createPollCard"),
+        createPollForm: document.getElementById("createPollForm"),
+        createPollBtn: document.getElementById("createPollBtn"),
+        pollTitle: document.getElementById("pollTitle"),
+        pollDescriptionInput: document.getElementById("pollDescriptionInput"),
+        pollType: document.getElementById("pollType"),
+        pollScope: document.getElementById("pollScope"),
+        pollBuildingRow: document.getElementById("pollBuildingRow"),
+        pollBuilding: document.getElementById("pollBuilding"),
+        pollStart: document.getElementById("pollStart"),
+        pollEnd: document.getElementById("pollEnd"),
+        pollStatus: document.getElementById("pollStatus"),
+        pollOptionsRow: document.getElementById("pollOptionsRow"),
+        pollOptions: document.getElementById("pollOptions"),
+        pollAllowMultipleRow: document.getElementById("pollAllowMultipleRow"),
+        pollAllowMultiple: document.getElementById("pollAllowMultiple"),
+        pollShowResultsEarly: document.getElementById("pollShowResultsEarly"),
+        pollRequiresQuorum: document.getElementById("pollRequiresQuorum"),
+        pollQuorumRow: document.getElementById("pollQuorumRow"),
+        pollQuorumPercentage: document.getElementById("pollQuorumPercentage"),
         sharedSpots: document.getElementById("sharedSpots"),
         myShared: document.getElementById("myShared"),
         claimedOnMine: document.getElementById("claimedOnMine"),
@@ -1005,6 +1110,7 @@
       let currentFreeSpots = [];
       let claimConfirmResolver = null;
       let currentPollDetail = null;
+      let currentModule = null;
 
       function showToast(message, kind = "success") {
         const toast = document.createElement("div");
@@ -1103,6 +1209,23 @@
         });
       }
 
+      function showModuleChooser() {
+        currentModule = null;
+        els.modulesCard.classList.remove("hidden");
+        els.parkingModule.classList.add("hidden");
+        els.votingModule.classList.add("hidden");
+      }
+
+      function openModule(moduleId) {
+        currentModule = moduleId;
+        els.modulesCard.classList.add("hidden");
+        els.parkingModule.classList.toggle("hidden", moduleId !== "parkingModule");
+        els.votingModule.classList.toggle("hidden", moduleId !== "votingModule");
+        if (moduleId === "votingModule") {
+          refreshVoting().catch((error) => setStatus(error.message, true));
+        }
+      }
+
       function toInputValue(dateObj) {
         const pad = (v) => String(v).padStart(2, "0");
         const y = dateObj.getFullYear();
@@ -1165,6 +1288,71 @@
         if (!untilAt.value) untilAt.value = defaultRange.until;
         if (!claimFrom.value) claimFrom.value = defaultRange.from;
         if (!claimUntil.value) claimUntil.value = defaultRange.until;
+      }
+
+      function pollDefaultWindow() {
+        const now = new Date();
+        const start = new Date(now);
+        start.setMinutes(0, 0, 0);
+        start.setHours(start.getHours() + 1);
+        const end = new Date(start);
+        end.setDate(end.getDate() + 3);
+        end.setHours(20, 0, 0, 0);
+        return { start: toInputValue(start), end: toInputValue(end) };
+      }
+
+      function setPollFormDefaults() {
+        const windowDefaults = pollDefaultWindow();
+        if (!els.pollStart.value) els.pollStart.value = windowDefaults.start;
+        if (!els.pollEnd.value) els.pollEnd.value = windowDefaults.end;
+        if (!els.pollStatus.value) els.pollStatus.value = "active";
+      }
+
+      function updatePollFormVisibility() {
+        const type = els.pollType.value;
+        const scope = els.pollScope.value;
+        const requiresQuorum = els.pollRequiresQuorum.checked;
+
+        const hasCustomOptions = type === "multiple_choice" || type === "weighted";
+        els.pollOptionsRow.classList.toggle("hidden", !hasCustomOptions);
+        els.pollAllowMultipleRow.classList.toggle("hidden", type !== "multiple_choice");
+        if (type !== "multiple_choice") {
+          els.pollAllowMultiple.checked = false;
+        }
+
+        const needsBuilding = scope === "building";
+        els.pollBuildingRow.classList.toggle("hidden", !needsBuilding);
+
+        els.pollQuorumRow.classList.toggle("hidden", !requiresQuorum);
+        if (!requiresQuorum) {
+          els.pollQuorumPercentage.value = "";
+        }
+      }
+
+      function buildPollCreatePayload() {
+        const type = els.pollType.value;
+        const scope = els.pollScope.value;
+        const options = (els.pollOptions.value || "")
+          .split("\n")
+          .map((item) => item.trim())
+          .filter(Boolean);
+        return {
+          title: els.pollTitle.value.trim(),
+          description: (els.pollDescriptionInput.value || "").trim(),
+          poll_type: type,
+          scope,
+          building_id: scope === "building" ? Number(els.pollBuilding.value || 0) : null,
+          status: els.pollStatus.value || "active",
+          allow_multiple_selections: type === "multiple_choice" ? els.pollAllowMultiple.checked : false,
+          show_results_before_close: els.pollShowResultsEarly.checked,
+          requires_quorum: els.pollRequiresQuorum.checked,
+          quorum_percentage: els.pollRequiresQuorum.checked
+            ? Number(els.pollQuorumPercentage.value || 0)
+            : null,
+          start_date: els.pollStart.value,
+          end_date: els.pollEnd.value,
+          options,
+        };
       }
 
       function openHelpModal() {
@@ -1686,6 +1874,7 @@
           closeAllModals();
           els.loginCard.classList.remove("hidden");
           els.app.classList.add("hidden");
+          showModuleChooser();
           clearPollLists();
           return;
         }
@@ -1693,15 +1882,19 @@
         closeAllModals();
         els.loginCard.classList.add("hidden");
         els.app.classList.remove("hidden");
+        showModuleChooser();
         els.whoami.textContent = `${user.username} (${user.role})${user.phone_number ? ` - ${user.phone_number}` : ""}`;
         document.getElementById("claimBuilding").value = "";
         document.getElementById("claimPhone").value = user.phone_number || "";
         applyDefaultTimeValues();
+        setPollFormDefaults();
 
         if (user.role === "admin") {
           els.adminPanel.classList.remove("hidden");
+          els.createPollCard.classList.remove("hidden");
         } else {
           els.adminPanel.classList.add("hidden");
+          els.createPollCard.classList.add("hidden");
         }
 
         maybeShowHelpOnce();
@@ -1841,10 +2034,13 @@
 
       document.querySelectorAll("[data-module-target]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const target = document.getElementById(btn.dataset.moduleTarget);
-          if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
+          openModule(btn.dataset.moduleTarget);
+        });
+      });
+
+      document.querySelectorAll("[data-back-modules]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          showModuleChooser();
         });
       });
 
@@ -1861,6 +2057,42 @@
         } catch (error) {
           setStatus(error.message, true);
         }
+      });
+
+      els.pollType.addEventListener("change", () => {
+        updatePollFormVisibility();
+      });
+
+      els.pollScope.addEventListener("change", () => {
+        updatePollFormVisibility();
+      });
+
+      els.pollRequiresQuorum.addEventListener("change", () => {
+        updatePollFormVisibility();
+      });
+
+      els.createPollForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!currentUser || currentUser.role !== "admin") {
+          setStatus("Only admin can create polls.", true);
+          return;
+        }
+        await withButtonProgress(els.createPollBtn, "Creating...", async () => {
+          try {
+            const payload = buildPollCreatePayload();
+            await api("/api/polls", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+            showToast("Poll created.");
+            els.createPollForm.reset();
+            setPollFormDefaults();
+            updatePollFormVisibility();
+            await refreshVoting();
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
       });
 
       els.activePolls.addEventListener("click", async (event) => {
@@ -2038,9 +2270,13 @@
       async function boot() {
         fillBuildingSelect("claimBuilding", true);
         fillBuildingSelect("newBuilding");
+        fillBuildingSelect("pollBuilding");
         setActiveTab("action", "actionSharePanel");
         setActiveTab("activity", "activityFreePanel");
         applyDefaultTimeValues();
+        setPollFormDefaults();
+        updatePollFormVisibility();
+        showModuleChooser();
 
         try {
           const me = await api("/api/auth/me");
