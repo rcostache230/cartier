@@ -30,6 +30,32 @@ Optional:
 
 - `FLASK_SECRET_KEY` (used as session signing secret for compatibility)
 
+## Cloudflare R2 (Photos/Attachments)
+
+To enable file uploads for poll attachments, set:
+
+- `R2_ACCOUNT_ID` (or `R2_ENDPOINT`)
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET`
+
+The app uses:
+
+- `POST /api/uploads/presign` to generate signed upload URLs
+- `GET /api/uploads/view?key=...` to serve signed download links
+
+### Push R2 settings to Vercel
+
+1. Copy `.env.example` to your local `.env` and fill values.
+2. Export vars in your shell (or source `.env`).
+3. Run:
+
+```bash
+./scripts/push-vercel-r2-env.sh
+```
+
+This pushes env vars to `production`, `preview`, and `development` scopes.
+
 ## Local Development
 
 ```bash
@@ -74,3 +100,5 @@ Vercel auto-detects Next.js. No custom `vercel.json` is required.
 - `POST /api/polls/:poll_id/archive` (admin)
 - `POST /api/polls/:poll_id/vote`
 - `GET /api/polls/:poll_id/results`
+- `POST /api/uploads/presign`
+- `GET /api/uploads/view?key=...`

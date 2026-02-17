@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import { DateTime } from "luxon";
 import { NextResponse } from "next/server";
 import { ensureInitialized, query, withTransaction } from "../../../lib/db.js";
+import { createUploadTarget, createViewUrl, isR2Configured } from "../../../lib/r2.js";
 import {
   ABOVE_GROUND_CAPACITY_PER_BUILDING,
   BUCHAREST_TIMEZONE,
@@ -1426,6 +1427,7 @@ async function handleRequest(request, slug) {
         poll_create: "POST /api/polls",
         poll_vote: "POST /api/polls/<poll_id>/vote",
         poll_results: "GET /api/polls/<poll_id>/results",
+        upload_presign: "POST /api/uploads/presign",
       },
     });
   }
@@ -1458,6 +1460,58 @@ async function handleRequest(request, slug) {
     } catch {
       return json({ authenticated: false }, 200);
     }
+  }
+
+  if (method === "POST" && path[0] === "uploads" && path[1] === "presign") {
+    const user = await requireUser(request);
+    if (!isR2Configured()) {
+      throw new AppError(503, "R2 storage is not configured on the server");
+    }
+    const payload = await parseJsonBody(request);
+    if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+      return jsonError("invalid payload", 400, { payload: "object required" });
+    }
+
+    const fileName = String(payload.file_name || "").trim();
+    if (!fileName) {
+      return jsonError("invalid payload", 400, { file_name: "required string" });
+    }
+    const fileType = String(payload.file_type || "application/octet-stream").trim() || "application/octet-stream";
+    const moduleName = String(payload.module_name || "misc").trim();
+
+    const target = await createUploadTarget({
+      userId: user.id,
+      fileName,
+      fileType,
+      moduleName,
+    });
+
+    return json(
+      {
+        upload_url: target.uploadUrl,
+        file_url: target.fileUrl,
+        key: target.key,
+        expires_in: target.expiresIn,
+      },
+      200
+    );
+  }
+
+  if (method === "GET" && path[0] === "uploads" && path[1] === "view") {
+    await requireUser(request);
+    if (!isR2Configured()) {
+      throw new AppError(503, "R2 storage is not configured on the server");
+    }
+    const key = String(request.nextUrl.searchParams.get("key") || "").trim();
+    if (!key) {
+      throw new AppError(400, "key query parameter is required");
+    }
+    if (key.includes("..")) {
+      throw new AppError(400, "invalid key");
+    }
+
+    const signedUrl = await createViewUrl(key);
+    return NextResponse.redirect(signedUrl, { status: 307 });
   }
 
   if (method === "GET" && path.length === 1 && path[0] === "users") {

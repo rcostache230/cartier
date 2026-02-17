@@ -231,6 +231,19 @@
         color: var(--muted);
       }
 
+      .upload-status {
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .upload-status.error {
+        color: var(--danger);
+      }
+
+      .upload-status.success {
+        color: var(--free-text);
+      }
+
       .tz-note {
         margin-top: 6px;
         font-size: 0.78rem;
@@ -1063,6 +1076,12 @@
                 <label for="pollQuorumPercentage">Quorum Percentage</label>
                 <input id="pollQuorumPercentage" type="number" min="1" max="100" placeholder="e.g. 50" />
               </div>
+              <div>
+                <label for="pollFiles">Attachments (photos, PDFs, documents)</label>
+                <input id="pollFiles" type="file" multiple />
+                <p class="poll-note">Files are uploaded to secure Cloudflare R2 storage before poll creation.</p>
+                <p id="pollUploadStatus" class="upload-status">No files selected.</p>
+              </div>
               <button id="createPollBtn" class="alt" type="submit" data-default-text="Create Poll">Create Poll</button>
             </form>
           </section>
@@ -1247,6 +1266,8 @@
         pollRequiresQuorum: document.getElementById("pollRequiresQuorum"),
         pollQuorumRow: document.getElementById("pollQuorumRow"),
         pollQuorumPercentage: document.getElementById("pollQuorumPercentage"),
+        pollFiles: document.getElementById("pollFiles"),
+        pollUploadStatus: document.getElementById("pollUploadStatus"),
         sharedSpots: document.getElementById("sharedSpots"),
         myShared: document.getElementById("myShared"),
         claimedOnMine: document.getElementById("claimedOnMine"),
@@ -1274,6 +1295,9 @@
       let claimConfirmResolver = null;
       let currentPollDetail = null;
       let currentModule = null;
+      let pollUploadedAttachments = [];
+      let pollUploadPromise = null;
+      let pollUploadToken = 0;
 
       function showToast(message, kind = "success") {
         const toast = document.createElement("div");
@@ -1603,6 +1627,139 @@
           end_date: els.pollEnd.value,
           options,
         };
+      }
+
+      function setPollUploadStatus(message, kind = "") {
+        els.pollUploadStatus.textContent = message;
+        els.pollUploadStatus.classList.remove("error", "success");
+        if (kind) {
+          els.pollUploadStatus.classList.add(kind);
+        }
+      }
+
+      function clearPollUploadState() {
+        pollUploadedAttachments = [];
+        pollUploadPromise = null;
+        pollUploadToken += 1;
+        setPollUploadStatus("No files selected.");
+      }
+
+      async function uploadPollAttachments(files, onProgress = null) {
+        const uploaded = [];
+        for (let i = 0; i < files.length; i += 1) {
+          const file = files[i];
+          if (typeof onProgress === "function") {
+            onProgress({
+              index: i,
+              total: files.length,
+              fileName: file.name,
+              stage: "presign",
+            });
+          }
+          const fileType = file.type || "application/octet-stream";
+          const presign = await api("/api/uploads/presign", {
+            method: "POST",
+            body: JSON.stringify({
+              file_name: file.name,
+              file_type: fileType,
+              module_name: "polls",
+            }),
+          });
+
+          if (typeof onProgress === "function") {
+            onProgress({
+              index: i,
+              total: files.length,
+              fileName: file.name,
+              stage: "upload",
+            });
+          }
+          const uploadRes = await fetch(presign.upload_url, {
+            method: "PUT",
+            headers: { "Content-Type": fileType },
+            body: file,
+          });
+          if (!uploadRes.ok) {
+            throw new Error(`Upload failed for ${file.name}.`);
+          }
+
+          uploaded.push({
+            file_url: presign.file_url,
+            file_name: file.name,
+            file_type: fileType,
+          });
+
+          if (typeof onProgress === "function") {
+            onProgress({
+              index: i + 1,
+              total: files.length,
+              fileName: file.name,
+              stage: "done",
+            });
+          }
+        }
+        return uploaded;
+      }
+
+      async function startPollAttachmentUpload() {
+        const files = Array.from(els.pollFiles.files || []);
+        const token = ++pollUploadToken;
+
+        if (!files.length) {
+          clearPollUploadState();
+          return;
+        }
+
+        setPollUploadStatus(`Uploading ${files.length} file(s)...`);
+
+        pollUploadPromise = uploadPollAttachments(files, (progress) => {
+          if (token !== pollUploadToken) {
+            throw new Error("__upload_cancelled__");
+          }
+          if (progress.stage === "presign") {
+            setPollUploadStatus(
+              `Preparing upload ${progress.index + 1}/${progress.total}: ${progress.fileName}...`
+            );
+            return;
+          }
+          if (progress.stage === "upload") {
+            setPollUploadStatus(
+              `Uploading ${progress.index + 1}/${progress.total}: ${progress.fileName}...`
+            );
+            return;
+          }
+          if (progress.stage === "done") {
+            setPollUploadStatus(`Uploaded ${progress.index}/${progress.total} file(s)...`);
+          }
+        })
+          .then((attachments) => {
+            if (token !== pollUploadToken) {
+              return;
+            }
+            pollUploadedAttachments = attachments;
+            setPollUploadStatus(
+              `Upload complete: ${attachments.length} file(s) ready to attach.`,
+              "success"
+            );
+          })
+          .catch((error) => {
+            if (token !== pollUploadToken || error.message === "__upload_cancelled__") {
+              return;
+            }
+            pollUploadedAttachments = [];
+            setPollUploadStatus(
+              `Upload failed: ${error.message || "unknown error"}`,
+              "error"
+            );
+            throw error;
+          })
+          .finally(() => {
+            if (token === pollUploadToken) {
+              pollUploadPromise = null;
+            }
+          });
+
+        return pollUploadPromise;
       }
 
       function openHelpModal() {
@@ -2087,7 +2244,10 @@
           els.pollAttachments.innerHTML = `<span class="poll-note">No files were attached to this poll.</span>`;
         } else {
           els.pollAttachments.innerHTML = attachments
-            .map((item) => `<span class="pill">${item.file_name} (${item.file_type})</span>`)
+            .map(
+              (item) =>
+                `<a class="pill" href="${item.file_url}" target="_blank" rel="noopener noreferrer">${item.file_name} (${item.file_type})</a>`
+            )
             .join("");
         }
 
@@ -2342,6 +2502,14 @@
         updatePollFormVisibility();
       });
 
+      els.pollFiles.addEventListener("change", async () => {
+        try {
+          await startPollAttachmentUpload();
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
       els.createPollForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (!currentUser || currentUser.role !== "admin") {
@@ -2351,12 +2519,25 @@
         await withButtonProgress(els.createPollBtn, "Creating...", async () => {
           try {
             const payload = buildPollCreatePayload();
+            const files = Array.from(els.pollFiles.files || []);
+            if (files.length) {
+              if (pollUploadPromise) {
+                await pollUploadPromise;
+              } else if (!pollUploadedAttachments.length) {
+                await startPollAttachmentUpload();
+              }
+              if (!pollUploadedAttachments.length) {
+                throw new Error("Attachments failed to upload. Please reselect files.");
+              }
+              payload.attachments = [...pollUploadedAttachments];
+            }
             await api("/api/polls", {
               method: "POST",
               body: JSON.stringify(payload),
             });
             showToast("Poll created.");
             els.createPollForm.reset();
+            clearPollUploadState();
             setPollFormDefaults();
             updatePollFormVisibility();
             await refreshVoting();
