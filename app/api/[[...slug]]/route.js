@@ -12,6 +12,8 @@ import {
   ABOVE_GROUND_CAPACITY_PER_BUILDING,
   BUCHAREST_TIMEZONE,
   DEFAULT_ADMIN_USERNAME,
+  MARKETPLACE_LISTING_TYPES,
+  MARKETPLACE_POST_STATUSES,
   PARKING_TYPES,
   POLL_SCOPES,
   POLL_STATUSES,
@@ -196,6 +198,38 @@ function mapAttachment(row) {
     file_url: String(row.file_url),
     file_name: String(row.file_name),
     file_type: String(row.file_type),
+  };
+}
+
+function mapMarketplacePhoto(row) {
+  return {
+    id: String(row.id),
+    post_id: Number(row.post_id),
+    file_url: String(row.file_url),
+    file_name: String(row.file_name),
+    file_type: String(row.file_type),
+    position: Number(row.position || 1),
+  };
+}
+
+function mapMarketplacePost(row) {
+  return {
+    id: Number(row.id),
+    listing_type: String(row.listing_type),
+    title: String(row.title),
+    description: String(row.description || ""),
+    price_text: String(row.price_text || ""),
+    contact_phone: String(row.contact_phone || ""),
+    pickup_details: String(row.pickup_details || ""),
+    status: String(row.status),
+    in_person_only: Boolean(row.in_person_only),
+    owner_username: String(row.owner_username),
+    owner_phone_number: String(row.owner_phone_number || ""),
+    claimed_by_username: row.claimed_by_username == null ? null : String(row.claimed_by_username),
+    claimed_by_phone_number: String(row.claimed_by_phone_number || ""),
+    claimed_at: row.claimed_at == null ? null : String(row.claimed_at),
+    created_at: String(row.created_at),
+    updated_at: String(row.updated_at),
   };
 }
 
@@ -689,6 +723,314 @@ async function listBuildingStats() {
     });
   }
   return stats;
+}
+
+function validateMarketplaceListingType(listingType) {
+  if (!MARKETPLACE_LISTING_TYPES.includes(listingType)) {
+    throw new AppError(400, `listing_type must be one of: ${MARKETPLACE_LISTING_TYPES.join(", ")}`);
+  }
+}
+
+function validateMarketplaceStatus(status) {
+  if (!MARKETPLACE_POST_STATUSES.includes(status)) {
+    throw new AppError(400, `status must be one of: ${MARKETPLACE_POST_STATUSES.join(", ")}`);
+  }
+}
+
+function normalizeMarketplacePhotos(rawPhotos) {
+  if (rawPhotos == null) return [];
+  if (!Array.isArray(rawPhotos)) {
+    throw new AppError(400, "photos must be an array");
+  }
+  if (rawPhotos.length > 8) {
+    throw new AppError(400, "at most 8 photos are allowed per listing");
+  }
+  return rawPhotos.map((photo, idx) => {
+    if (typeof photo !== "object" || photo == null) {
+      throw new AppError(400, `photos[${idx + 1}] must be an object`);
+    }
+    const fileUrl = String(photo.file_url || "").trim();
+    const fileName = String(photo.file_name || "").trim();
+    const fileType = String(photo.file_type || "").trim() || "application/octet-stream";
+    if (!fileUrl || !fileName) {
+      throw new AppError(400, `photos[${idx + 1}] requires file_url and file_name`);
+    }
+    return {
+      file_url: fileUrl,
+      file_name: fileName,
+      file_type: fileType,
+      position: idx + 1,
+    };
+  });
+}
+
+function normalizeMarketplaceCreatePayload(payload, ownerUser) {
+  if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+    throw new AppError(400, "invalid payload");
+  }
+
+  const listingType = String(payload.listing_type || "").trim().toLowerCase();
+  validateMarketplaceListingType(listingType);
+
+  const title = String(payload.title || "").trim();
+  if (!title) {
+    throw new AppError(400, "title is required");
+  }
+  if (title.length > 160) {
+    throw new AppError(400, "title must be at most 160 characters");
+  }
+
+  const description = String(payload.description || "").trim();
+  if (description.length > 2500) {
+    throw new AppError(400, "description must be at most 2500 characters");
+  }
+
+  const pickupDetails = String(payload.pickup_details || "").trim();
+  if (pickupDetails.length > 600) {
+    throw new AppError(400, "pickup_details must be at most 600 characters");
+  }
+
+  const contactPhone = String(payload.contact_phone || ownerUser.phone_number || "").trim();
+  if (contactPhone.length > 64) {
+    throw new AppError(400, "contact_phone must be at most 64 characters");
+  }
+
+  let priceText = String(payload.price_text || "").trim();
+  if (listingType === "sale") {
+    if (!priceText) {
+      throw new AppError(400, "price_text is required for sale listings");
+    }
+    if (priceText.length > 120) {
+      throw new AppError(400, "price_text must be at most 120 characters");
+    }
+  } else {
+    priceText = "";
+  }
+
+  const photos = normalizeMarketplacePhotos(payload.photos);
+
+  return {
+    listing_type: listingType,
+    title,
+    description,
+    price_text: priceText,
+    contact_phone: contactPhone,
+    pickup_details: pickupDetails,
+    in_person_only: true,
+    photos,
+  };
+}
+
+async function attachMarketplacePhotos(posts) {
+  if (!posts.length) return posts;
+  const postIds = posts.map((post) => Number(post.id));
+  const photosResult = await query(
+    `
+      SELECT id, post_id, file_url, file_name, file_type, position
+      FROM marketplace_post_photos
+      WHERE post_id = ANY($1::BIGINT[])
+      ORDER BY post_id ASC, position ASC, file_name ASC
+    `,
+    [postIds]
+  );
+  const byPost = new Map();
+  photosResult.rows.map(mapMarketplacePhoto).forEach((photo) => {
+    if (!byPost.has(photo.post_id)) {
+      byPost.set(photo.post_id, []);
+    }
+    byPost.get(photo.post_id).push(photo);
+  });
+  posts.forEach((post) => {
+    post.photos = byPost.get(Number(post.id)) || [];
+  });
+  return posts;
+}
+
+async function queryMarketplacePosts(whereClause, params = []) {
+  const result = await query(
+    `
+      SELECT
+        mp.*,
+        owner.username AS owner_username,
+        owner.phone_number AS owner_phone_number,
+        claimer.username AS claimed_by_username,
+        claimer.phone_number AS claimed_by_phone_number
+      FROM marketplace_posts mp
+      JOIN users owner ON owner.id = mp.owner_user_id
+      LEFT JOIN users claimer ON claimer.id = mp.claimed_by_user_id
+      WHERE ${whereClause}
+      ORDER BY
+        CASE WHEN mp.status = 'active' THEN 0 ELSE 1 END ASC,
+        mp.created_at DESC,
+        mp.id DESC
+    `,
+    params
+  );
+  const posts = result.rows.map(mapMarketplacePost);
+  return attachMarketplacePhotos(posts);
+}
+
+async function getMarketplacePostRowForUpdate(client, postId) {
+  const result = await client.query(
+    `
+      SELECT *
+      FROM marketplace_posts
+      WHERE id = $1
+      FOR UPDATE
+    `,
+    [postId]
+  );
+  if (!result.rowCount) {
+    throw new AppError(404, `marketplace post ${postId} not found`);
+  }
+  return result.rows[0];
+}
+
+async function getMarketplacePostById(postId) {
+  const posts = await queryMarketplacePosts("mp.id = $1", [postId]);
+  if (!posts.length) {
+    throw new AppError(404, `marketplace post ${postId} not found`);
+  }
+  return posts[0];
+}
+
+async function createMarketplacePost({ ownerUser, payload }) {
+  if (ownerUser.role !== "resident") {
+    throw new AppError(403, "resident access required");
+  }
+  const cleaned = normalizeMarketplaceCreatePayload(payload, ownerUser);
+  const now = nowIsoUtc();
+  let postId = 0;
+  await withTransaction(async (client) => {
+    const inserted = await client.query(
+      `
+        INSERT INTO marketplace_posts (
+          owner_user_id,
+          listing_type,
+          title,
+          description,
+          price_text,
+          contact_phone,
+          pickup_details,
+          status,
+          in_person_only,
+          updated_at
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, 'active', TRUE, $8)
+        RETURNING id
+      `,
+      [
+        ownerUser.id,
+        cleaned.listing_type,
+        cleaned.title,
+        cleaned.description,
+        cleaned.price_text,
+        cleaned.contact_phone,
+        cleaned.pickup_details,
+        now,
+      ]
+    );
+    postId = Number(inserted.rows[0].id);
+
+    for (const photo of cleaned.photos) {
+      await client.query(
+        `
+          INSERT INTO marketplace_post_photos (id, post_id, file_url, file_name, file_type, position)
+          VALUES ($1, $2, $3, $4, $5, $6)
+        `,
+        [crypto.randomUUID(), postId, photo.file_url, photo.file_name, photo.file_type, photo.position]
+      );
+    }
+  });
+  return getMarketplacePostById(postId);
+}
+
+async function claimDonationPost({ user, postId }) {
+  if (user.role !== "resident") {
+    throw new AppError(403, "resident access required");
+  }
+  const now = nowIsoUtc();
+  await withTransaction(async (client) => {
+    const row = await getMarketplacePostRowForUpdate(client, postId);
+    validateMarketplaceStatus(String(row.status));
+    if (String(row.status) !== "active") {
+      throw new AppError(400, "only active listings can be claimed");
+    }
+    if (String(row.listing_type) !== "donation") {
+      throw new AppError(400, "only donation listings can be claimed");
+    }
+    if (Number(row.owner_user_id) === Number(user.id)) {
+      throw new AppError(400, "cannot claim your own donation");
+    }
+    if (row.claimed_by_user_id != null) {
+      throw new AppError(400, "donation is already claimed");
+    }
+
+    const updated = await client.query(
+      `
+        UPDATE marketplace_posts
+        SET claimed_by_user_id = $1,
+            claimed_at = $2,
+            updated_at = $3
+        WHERE id = $4
+          AND claimed_by_user_id IS NULL
+      `,
+      [user.id, now, now, postId]
+    );
+    if (!updated.rowCount) {
+      throw new AppError(400, "donation was claimed by another resident");
+    }
+  });
+  return getMarketplacePostById(postId);
+}
+
+async function markMarketplacePostComplete({ actorUser, postId }) {
+  const now = nowIsoUtc();
+  await withTransaction(async (client) => {
+    const row = await getMarketplacePostRowForUpdate(client, postId);
+    if (actorUser.role !== "admin" && Number(row.owner_user_id) !== Number(actorUser.id)) {
+      throw new AppError(403, "only the owner can update this listing");
+    }
+    if (String(row.status) !== "active") {
+      throw new AppError(400, "listing is already completed");
+    }
+    const targetStatus = String(row.listing_type) === "sale" ? "sold" : "donated";
+    await client.query(
+      `
+        UPDATE marketplace_posts
+        SET status = $1,
+            updated_at = $2
+        WHERE id = $3
+      `,
+      [targetStatus, now, postId]
+    );
+  });
+  return getMarketplacePostById(postId);
+}
+
+async function deleteMarketplacePost({ actorUser, postId }) {
+  await withTransaction(async (client) => {
+    const row = await getMarketplacePostRowForUpdate(client, postId);
+    if (actorUser.role !== "admin" && Number(row.owner_user_id) !== Number(actorUser.id)) {
+      throw new AppError(403, "only the owner can delete this listing");
+    }
+    await client.query("DELETE FROM marketplace_posts WHERE id = $1", [postId]);
+  });
+  return { deleted: true, post_id: postId };
+}
+
+async function getMarketplaceDashboard(user) {
+  const [activeListings, myListings, myClaimedDonations] = await Promise.all([
+    queryMarketplacePosts("mp.status = 'active'", []),
+    queryMarketplacePosts("mp.owner_user_id = $1", [user.id]),
+    queryMarketplacePosts("mp.claimed_by_user_id = $1 AND mp.listing_type = 'donation'", [user.id]),
+  ]);
+  return {
+    current_user: user,
+    active_listings: activeListings,
+    my_listings: myListings,
+    my_claimed_donations: myClaimedDonations,
+  };
 }
 
 function parseOptionalInt(value, fieldName) {
@@ -1423,12 +1765,19 @@ async function handleRequest(request, slug) {
 
   if (method === "GET" && path.length === 0) {
     return json({
-      service: "neighbourhood-parking-api",
-      version: "4.0.0-next",
+      service: "neighbourhood-app-api",
+      version: "5.0.0-next",
       defaults: { admin_username: DEFAULT_ADMIN_USERNAME },
       parking_types: [...PARKING_TYPES].sort(),
+      marketplace_listing_types: [...MARKETPLACE_LISTING_TYPES],
       endpoints: {
         claim_specific_slot: "POST /api/slots/claim",
+        marketplace_dashboard: "GET /api/marketplace/dashboard",
+        marketplace_posts: "GET /api/marketplace/posts",
+        marketplace_create_post: "POST /api/marketplace/posts",
+        marketplace_claim_donation: "POST /api/marketplace/posts/<post_id>/claim",
+        marketplace_complete_post: "POST /api/marketplace/posts/<post_id>/complete",
+        marketplace_delete_post: "POST /api/marketplace/posts/<post_id>/delete",
         polls: "GET /api/polls",
         poll_create: "POST /api/polls",
         poll_vote: "POST /api/polls/<poll_id>/vote",
@@ -1750,6 +2099,81 @@ async function handleRequest(request, slug) {
       },
       200
     );
+  }
+
+  if (method === "GET" && path[0] === "marketplace" && path[1] === "dashboard") {
+    const user = await requireUser(request);
+    return json(await getMarketplaceDashboard(user), 200);
+  }
+
+  if (method === "GET" && path[0] === "marketplace" && path[1] === "posts" && path.length === 2) {
+    const user = await requireUser(request);
+    const mineOnly = request.nextUrl.searchParams.get("mine") === "1";
+    const status = request.nextUrl.searchParams.get("status");
+
+    if (mineOnly) {
+      const where = ["mp.owner_user_id = $1"];
+      const params = [user.id];
+      if (status) {
+        validateMarketplaceStatus(status);
+        params.push(status);
+        where.push(`mp.status = $${params.length}`);
+      }
+      return json(await queryMarketplacePosts(where.join(" AND "), params), 200);
+    }
+
+    const where = [];
+    const params = [];
+    if (status) {
+      validateMarketplaceStatus(status);
+      params.push(status);
+      where.push(`mp.status = $${params.length}`);
+    } else {
+      where.push("mp.status = 'active'");
+    }
+    return json(await queryMarketplacePosts(where.join(" AND "), params), 200);
+  }
+
+  if (method === "GET" && path[0] === "marketplace" && path[1] === "posts" && path.length === 3) {
+    await requireUser(request);
+    const postId = Number(path[2]);
+    if (!Number.isInteger(postId) || postId <= 0) {
+      throw new AppError(400, "post_id must be a valid integer");
+    }
+    return json(await getMarketplacePostById(postId), 200);
+  }
+
+  if (method === "POST" && path[0] === "marketplace" && path[1] === "posts" && path.length === 2) {
+    const user = await requireUser(request);
+    const payload = await parseJsonBody(request);
+    return json(await createMarketplacePost({ ownerUser: user, payload }), 201);
+  }
+
+  if (method === "POST" && path[0] === "marketplace" && path[1] === "posts" && path.length === 4 && path[3] === "claim") {
+    const user = await requireUser(request);
+    const postId = Number(path[2]);
+    if (!Number.isInteger(postId) || postId <= 0) {
+      throw new AppError(400, "post_id must be a valid integer");
+    }
+    return json(await claimDonationPost({ user, postId }), 200);
+  }
+
+  if (method === "POST" && path[0] === "marketplace" && path[1] === "posts" && path.length === 4 && path[3] === "complete") {
+    const user = await requireUser(request);
+    const postId = Number(path[2]);
+    if (!Number.isInteger(postId) || postId <= 0) {
+      throw new AppError(400, "post_id must be a valid integer");
+    }
+    return json(await markMarketplacePostComplete({ actorUser: user, postId }), 200);
+  }
+
+  if (method === "POST" && path[0] === "marketplace" && path[1] === "posts" && path.length === 4 && path[3] === "delete") {
+    const user = await requireUser(request);
+    const postId = Number(path[2]);
+    if (!Number.isInteger(postId) || postId <= 0) {
+      throw new AppError(400, "post_id must be a valid integer");
+    }
+    return json(await deleteMarketplacePost({ actorUser: user, postId }), 200);
   }
 
   if (path[0] === "polls" && method === "GET" && path.length === 1) {

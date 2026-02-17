@@ -92,6 +92,13 @@ Vercel auto-detects Next.js. No custom `vercel.json` is required.
 - `GET /api/users` (admin)
 - `POST /api/users` (admin)
 - `POST /api/admin/slots` (admin)
+- `GET /api/marketplace/dashboard`
+- `GET /api/marketplace/posts`
+- `GET /api/marketplace/posts/:post_id`
+- `POST /api/marketplace/posts` (resident)
+- `POST /api/marketplace/posts/:post_id/claim` (resident, donation only)
+- `POST /api/marketplace/posts/:post_id/complete` (owner/admin)
+- `POST /api/marketplace/posts/:post_id/delete` (owner/admin)
 - `GET /api/polls`
 - `POST /api/polls` (admin)
 - `GET /api/polls/:poll_id`

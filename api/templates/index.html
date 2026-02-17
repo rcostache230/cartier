@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neighbourhood Parking Dashboard</title>
+    <title>Neighbourhood Community Dashboard</title>
     <style>
       :root {
         --bg: #f6f4ee;
@@ -737,11 +737,11 @@
     <div class="container">
       <section class="hero">
         <div class="hero-head">
-          <h1>Neighbourhood Parking Dashboard</h1>
+          <h1>Neighbourhood Community Dashboard</h1>
           <button id="helpBtn" class="help-btn" type="button" aria-label="Open help">Help</button>
         </div>
         <p>
-          Share your parking spot, claim available shared spots, and track claimed periods.
+          Parking, voting, and marketplace modules for residents. Sales are in person only, and donations can be claimed.
         </p>
         <p class="tz-note">All dates and times are in Bucharest time (Europe/Bucharest).</p>
       </section>
@@ -769,13 +769,20 @@
 
         <section id="modulesCard" class="card" style="margin-top: 12px">
           <h2>Modules</h2>
-          <p class="poll-note">Choose which module you want to work in. Both require authenticated access.</p>
+          <p class="poll-note">Choose which module you want to work in. All modules require authenticated access.</p>
           <div class="module-grid">
             <article class="module-card">
               <h3>Parking Module</h3>
               <p>Share and claim parking spots, monitor availability, and manage your claims.</p>
               <div class="module-actions">
                 <button type="button" class="ghost" data-module-target="parkingModule">Open Parking</button>
+              </div>
+            </article>
+            <article class="module-card">
+              <h3>Marketplace Module</h3>
+              <p>Residents can sell in person, donate items, claim donations, and mark listings as completed.</p>
+              <div class="module-actions">
+                <button type="button" class="alt" data-module-target="marketplaceModule">Open Marketplace</button>
               </div>
             </article>
             <article class="module-card">
@@ -997,6 +1004,108 @@
             </div>
           </section>
         </div>
+
+        <section id="marketplaceModule" class="card hidden" style="margin-top: 14px">
+          <div class="topbar">
+            <div>
+              <h2>Marketplace</h2>
+              <p class="poll-note">
+                Sell items in person only or donate items. No lending. Donations can be claimed.
+              </p>
+            </div>
+            <div class="module-actions">
+              <button type="button" class="ghost" data-back-modules>Back To Modules</button>
+              <button id="refreshMarketplaceBtn" class="ghost" type="button">Refresh</button>
+            </div>
+          </div>
+
+          <section class="card" style="margin-top: 12px">
+            <h3>Create Listing</h3>
+            <form id="marketplaceCreateForm" class="stack" style="margin-top: 8px">
+              <div class="grid" style="margin-top: 0">
+                <div>
+                  <label for="marketplaceListingType">Listing Type</label>
+                  <select id="marketplaceListingType">
+                    <option value="sale">Sale</option>
+                    <option value="donation">Donation</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="marketplacePriceText">Price (for sale)</label>
+                  <input id="marketplacePriceText" maxlength="120" placeholder="e.g. 150 RON, negotiable" />
+                </div>
+              </div>
+              <div>
+                <label for="marketplaceTitle">Title</label>
+                <input id="marketplaceTitle" maxlength="160" placeholder="e.g. Dining table - solid wood" required />
+              </div>
+              <div>
+                <label for="marketplaceDescription">Description</label>
+                <textarea id="marketplaceDescription" maxlength="2500" placeholder="Condition, dimensions, details"></textarea>
+              </div>
+              <div class="grid" style="margin-top: 0">
+                <div>
+                  <label for="marketplaceContactPhone">Contact Phone</label>
+                  <input id="marketplaceContactPhone" maxlength="64" placeholder="07xx xxx xxx" />
+                </div>
+                <div>
+                  <label for="marketplacePickupDetails">Pickup Details</label>
+                  <input id="marketplacePickupDetails" maxlength="600" placeholder="Bloc, floor, pickup interval" />
+                </div>
+              </div>
+              <div>
+                <label for="marketplacePhotos">Photos</label>
+                <input id="marketplacePhotos" type="file" accept="image/*" multiple />
+                <p class="poll-note">Uploads use secure storage. Keep photos clear and recent.</p>
+                <p id="marketplaceUploadStatus" class="upload-status">No photos selected.</p>
+              </div>
+              <p class="tz-note">Marketplace sales are in person only. No online payment is supported.</p>
+              <button id="marketplaceCreateBtn" type="submit" data-default-text="Create Listing">Create Listing</button>
+            </form>
+          </section>
+
+          <div class="grid" style="margin-top: 10px">
+            <section class="card">
+              <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
+              <div class="table-wrap" style="margin-top: 8px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Item</th>
+                      <th>Price</th>
+                      <th>Owner</th>
+                      <th>Contact</th>
+                      <th>Details</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="marketplaceActiveBody"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="card">
+              <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
+              <div class="table-wrap" style="margin-top: 8px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Item</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th>Claimed By</th>
+                      <th>Updated</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="marketplaceMineBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
 
         <section id="votingModule" class="card hidden" style="margin-top: 14px">
           <div class="topbar">
@@ -1245,7 +1354,23 @@
         pollVoteBtn: document.getElementById("pollVoteBtn"),
         pollResultsSection: document.getElementById("pollResultsSection"),
         parkingModule: document.getElementById("parkingModule"),
+        marketplaceModule: document.getElementById("marketplaceModule"),
         votingModule: document.getElementById("votingModule"),
+        refreshMarketplaceBtn: document.getElementById("refreshMarketplaceBtn"),
+        marketplaceCreateForm: document.getElementById("marketplaceCreateForm"),
+        marketplaceCreateBtn: document.getElementById("marketplaceCreateBtn"),
+        marketplaceListingType: document.getElementById("marketplaceListingType"),
+        marketplaceTitle: document.getElementById("marketplaceTitle"),
+        marketplaceDescription: document.getElementById("marketplaceDescription"),
+        marketplacePriceText: document.getElementById("marketplacePriceText"),
+        marketplaceContactPhone: document.getElementById("marketplaceContactPhone"),
+        marketplacePickupDetails: document.getElementById("marketplacePickupDetails"),
+        marketplacePhotos: document.getElementById("marketplacePhotos"),
+        marketplaceUploadStatus: document.getElementById("marketplaceUploadStatus"),
+        marketplaceActiveBody: document.getElementById("marketplaceActiveBody"),
+        marketplaceMineBody: document.getElementById("marketplaceMineBody"),
+        marketplaceActiveCount: document.getElementById("marketplaceActiveCount"),
+        marketplaceMineCount: document.getElementById("marketplaceMineCount"),
         createPollCard: document.getElementById("createPollCard"),
         createPollForm: document.getElementById("createPollForm"),
         createPollBtn: document.getElementById("createPollBtn"),
@@ -1298,6 +1423,9 @@
       let pollUploadedAttachments = [];
       let pollUploadPromise = null;
       let pollUploadToken = 0;
+      let marketplaceUploadedPhotos = [];
+      let marketplaceUploadPromise = null;
+      let marketplaceUploadToken = 0;
 
       function showToast(message, kind = "success") {
         const toast = document.createElement("div");
@@ -1463,6 +1591,7 @@
         currentModule = null;
         els.modulesCard.classList.remove("hidden");
         els.parkingModule.classList.add("hidden");
+        els.marketplaceModule.classList.add("hidden");
         els.votingModule.classList.add("hidden");
       }
 
@@ -1470,7 +1599,11 @@
         currentModule = moduleId;
         els.modulesCard.classList.add("hidden");
         els.parkingModule.classList.toggle("hidden", moduleId !== "parkingModule");
+        els.marketplaceModule.classList.toggle("hidden", moduleId !== "marketplaceModule");
         els.votingModule.classList.toggle("hidden", moduleId !== "votingModule");
+        if (moduleId === "marketplaceModule") {
+          refreshMarketplace().catch((error) => setStatus(error.message, true));
+        }
         if (moduleId === "votingModule") {
           refreshVoting().catch((error) => setStatus(error.message, true));
         }
@@ -1969,6 +2102,215 @@
           .join("");
       }
 
+      function marketplaceTypeLabel(type) {
+        return type === "donation" ? "Donation" : "Sale";
+      }
+
+      function marketplaceStatusLabel(status) {
+        if (status === "sold") return "Sold";
+        if (status === "donated") return "Donated";
+        return "Active";
+      }
+
+      function setMarketplaceUploadStatus(message, kind = "") {
+        els.marketplaceUploadStatus.textContent = message;
+        els.marketplaceUploadStatus.classList.remove("error", "success");
+        if (kind) {
+          els.marketplaceUploadStatus.classList.add(kind);
+        }
+      }
+
+      function clearMarketplaceUploadState() {
+        marketplaceUploadedPhotos = [];
+        marketplaceUploadPromise = null;
+        marketplaceUploadToken += 1;
+        setMarketplaceUploadStatus("No photos selected.");
+      }
+
+      function updateMarketplaceFormVisibility() {
+        const isDonation = els.marketplaceListingType.value === "donation";
+        els.marketplacePriceText.disabled = isDonation;
+        if (isDonation) {
+          els.marketplacePriceText.value = "";
+          els.marketplacePriceText.placeholder = "Not used for donations";
+        } else {
+          els.marketplacePriceText.placeholder = "e.g. 150 RON, negotiable";
+        }
+      }
+
+      async function uploadMarketplacePhotos(files, onProgress = null) {
+        const uploaded = [];
+        for (let i = 0; i < files.length; i += 1) {
+          const file = files[i];
+          if (typeof onProgress === "function") {
+            onProgress({
+              index: i,
+              total: files.length,
+              fileName: file.name,
+              stage: "upload",
+            });
+          }
+          const form = new FormData();
+          form.append("file", file);
+          form.append("module_name", "marketplace");
+
+          const uploadRes = await fetch("/api/uploads/direct", {
+            method: "POST",
+            body: form,
+          });
+          const uploadData = await uploadRes.json().catch(() => ({}));
+          if (!uploadRes.ok) {
+            throw new Error(uploadData.error || `Upload failed for ${file.name}.`);
+          }
+
+          uploaded.push({
+            file_url: uploadData.file_url,
+            file_name: uploadData.file_name || file.name,
+            file_type: uploadData.file_type || file.type || "application/octet-stream",
+          });
+
+          if (typeof onProgress === "function") {
+            onProgress({
+              index: i + 1,
+              total: files.length,
+              fileName: file.name,
+              stage: "done",
+            });
+          }
+        }
+        return uploaded;
+      }
+
+      async function startMarketplacePhotoUpload() {
+        const files = Array.from(els.marketplacePhotos.files || []);
+        const token = ++marketplaceUploadToken;
+
+        if (!files.length) {
+          clearMarketplaceUploadState();
+          return;
+        }
+
+        setMarketplaceUploadStatus(`Uploading ${files.length} photo(s)...`);
+
+        marketplaceUploadPromise = uploadMarketplacePhotos(files, (progress) => {
+          if (token !== marketplaceUploadToken) {
+            throw new Error("__upload_cancelled__");
+          }
+          if (progress.stage === "upload") {
+            setMarketplaceUploadStatus(
+              `Uploading ${progress.index + 1}/${progress.total}: ${progress.fileName}...`
+            );
+            return;
+          }
+          if (progress.stage === "done") {
+            setMarketplaceUploadStatus(`Uploaded ${progress.index}/${progress.total} photo(s)...`);
+          }
+        })
+          .then((photos) => {
+            if (token !== marketplaceUploadToken) return;
+            marketplaceUploadedPhotos = photos;
+            setMarketplaceUploadStatus(
+              `Upload complete: ${photos.length} photo(s) ready.`,
+              "success"
+            );
+          })
+          .catch((error) => {
+            if (token !== marketplaceUploadToken || error.message === "__upload_cancelled__") {
+              return;
+            }
+            marketplaceUploadedPhotos = [];
+            setMarketplaceUploadStatus(
+              `Upload failed: ${error.message || "unknown error"}`,
+              "error"
+            );
+            throw error;
+          })
+          .finally(() => {
+            if (token === marketplaceUploadToken) {
+              marketplaceUploadPromise = null;
+            }
+          });
+
+        return marketplaceUploadPromise;
+      }
+
+      function marketplacePhotoLinks(post) {
+        const photos = Array.isArray(post.photos) ? post.photos : [];
+        if (!photos.length) return "-";
+        return photos
+          .map((photo, idx) => `<a href="${photo.file_url}" target="_blank" rel="noopener noreferrer">Photo ${idx + 1}</a>`)
+          .join(" | ");
+      }
+
+      function clearMarketplaceTables() {
+        els.marketplaceActiveBody.innerHTML = `<tr><td colspan="8">No active listings.</td></tr>`;
+        els.marketplaceMineBody.innerHTML = `<tr><td colspan="7">No listings created yet.</td></tr>`;
+        els.marketplaceActiveCount.textContent = "0";
+        els.marketplaceMineCount.textContent = "0";
+      }
+
+      function renderMarketplace(data) {
+        const activeListings = Array.isArray(data.active_listings) ? data.active_listings : [];
+        const myListings = Array.isArray(data.my_listings) ? data.my_listings : [];
+
+        els.marketplaceActiveBody.innerHTML = activeListings.length
+          ? activeListings
+              .map((post) => {
+                const isOwner = currentUser && post.owner_username === currentUser.username;
+                const canClaim =
+                  post.status === "active" &&
+                  post.listing_type === "donation" &&
+                  !post.claimed_by_username &&
+                  !isOwner;
+                const action = canClaim
+                  ? `<button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Claim</button>`
+                  : isOwner
+                    ? `<span class="poll-note">Your listing</span>`
+                    : `<span class="poll-note">${post.claimed_by_username ? "Already claimed" : "Contact owner"}</span>`;
+                return `<tr>
+                  ${td(marketplaceTypeLabel(post.listing_type))}
+                  ${td(`<strong>${post.title}</strong>`)}
+                  ${td(post.listing_type === "sale" ? post.price_text || "-" : "Free")}
+                  ${td(post.owner_username)}
+                  ${td(post.contact_phone || post.owner_phone_number || "-")}
+                  ${td(`${post.pickup_details || "-"}<br>${marketplacePhotoLinks(post)}`)}
+                  ${td(post.claimed_by_username ? `Claimed by ${post.claimed_by_username}` : marketplaceStatusLabel(post.status))}
+                  <td>${action}</td>
+                </tr>`;
+              })
+              .join("")
+          : `<tr><td colspan="8">No active listings right now.</td></tr>`;
+
+        els.marketplaceMineBody.innerHTML = myListings.length
+          ? myListings
+              .map((post) => {
+                const isActive = post.status === "active";
+                const action = isActive
+                  ? `<button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark ${post.listing_type === "sale" ? "Sold" : "Donated"}</button> <button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>`
+                  : `<button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>`;
+                return `<tr>
+                  ${td(marketplaceTypeLabel(post.listing_type))}
+                  ${td(`<strong>${post.title}</strong><br>${marketplacePhotoLinks(post)}`)}
+                  ${td(post.listing_type === "sale" ? post.price_text || "-" : "Free")}
+                  ${td(marketplaceStatusLabel(post.status))}
+                  ${td(post.claimed_by_username || "-")}
+                  ${td(formatBucharestDateTime(post.updated_at || post.created_at))}
+                  <td>${action}</td>
+                </tr>`;
+              })
+              .join("")
+          : `<tr><td colspan="7">You have not created any listings yet.</td></tr>`;
+
+        els.marketplaceActiveCount.textContent = String(activeListings.length);
+        els.marketplaceMineCount.textContent = String(myListings.length);
+      }
+
+      async function refreshMarketplace() {
+        if (!currentUser) return;
+        const data = await api("/api/marketplace/dashboard");
+        renderMarketplace(data);
+      }
+
       function renderPollList(targetEl, polls, emptyText, actionLabelGetter) {
         targetEl.innerHTML = polls.length
           ? polls
@@ -2293,6 +2635,8 @@
           els.app.classList.add("hidden");
           showModuleChooser();
           clearPollLists();
+          clearMarketplaceTables();
+          clearMarketplaceUploadState();
           return;
         }
 
@@ -2303,8 +2647,10 @@
         els.whoami.textContent = `${user.username} (${user.role})${user.phone_number ? ` - ${user.phone_number}` : ""}`;
         document.getElementById("claimBuilding").value = "";
         document.getElementById("claimPhone").value = user.phone_number || "";
+        els.marketplaceContactPhone.value = user.phone_number || "";
         applyDefaultTimeValues();
         setPollFormDefaults();
+        updateMarketplaceFormVisibility();
 
         if (user.role === "admin") {
           els.adminPanel.classList.remove("hidden");
@@ -2332,6 +2678,7 @@
             applyAuthState(response.user);
             await refreshDashboard();
             await refreshAdminUsers();
+            await refreshMarketplace();
             await refreshVoting();
             showToast("Login successful.");
           } catch (error) {
@@ -2465,6 +2812,124 @@
         btn.addEventListener("click", () => {
           applyPreset(btn.dataset.targetForm, btn.dataset.preset);
         });
+      });
+
+      els.refreshMarketplaceBtn.addEventListener("click", async () => {
+        try {
+          await refreshMarketplace();
+          showToast("Marketplace refreshed.");
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
+      els.marketplaceListingType.addEventListener("change", () => {
+        updateMarketplaceFormVisibility();
+      });
+
+      els.marketplacePhotos.addEventListener("change", async () => {
+        try {
+          await startMarketplacePhotoUpload();
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
+      els.marketplaceCreateForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!currentUser || currentUser.role !== "resident") {
+          setStatus("Only residents can create marketplace listings.", true);
+          return;
+        }
+        await withButtonProgress(els.marketplaceCreateBtn, "Creating...", async () => {
+          try {
+            const payload = {
+              listing_type: els.marketplaceListingType.value,
+              title: els.marketplaceTitle.value.trim(),
+              description: (els.marketplaceDescription.value || "").trim(),
+              price_text: (els.marketplacePriceText.value || "").trim(),
+              contact_phone: (els.marketplaceContactPhone.value || "").trim(),
+              pickup_details: (els.marketplacePickupDetails.value || "").trim(),
+            };
+
+            const files = Array.from(els.marketplacePhotos.files || []);
+            if (files.length) {
+              if (marketplaceUploadPromise) {
+                await marketplaceUploadPromise;
+              } else if (!marketplaceUploadedPhotos.length) {
+                await startMarketplacePhotoUpload();
+              }
+              if (!marketplaceUploadedPhotos.length) {
+                throw new Error("Photos failed to upload. Please reselect files.");
+              }
+              payload.photos = [...marketplaceUploadedPhotos];
+            }
+
+            await api("/api/marketplace/posts", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+            showToast("Marketplace listing created.");
+            els.marketplaceCreateForm.reset();
+            els.marketplaceContactPhone.value = currentUser.phone_number || "";
+            clearMarketplaceUploadState();
+            updateMarketplaceFormVisibility();
+            await refreshMarketplace();
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+      });
+
+      els.marketplaceActiveBody.addEventListener("click", async (event) => {
+        const button = event.target.closest(".market-claim-btn");
+        if (!button) return;
+        const postId = Number(button.dataset.postId || 0);
+        if (!postId) return;
+
+        await withButtonProgress(button, "Claiming...", async () => {
+          try {
+            await api(`/api/marketplace/posts/${postId}/claim`, { method: "POST" });
+            await refreshMarketplace();
+            showToast("Donation claimed.");
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+      });
+
+      els.marketplaceMineBody.addEventListener("click", async (event) => {
+        const completeBtn = event.target.closest(".market-complete-btn");
+        const deleteBtn = event.target.closest(".market-delete-btn");
+        if (completeBtn) {
+          const postId = Number(completeBtn.dataset.postId || 0);
+          if (!postId) return;
+          await withButtonProgress(completeBtn, "Updating...", async () => {
+            try {
+              await api(`/api/marketplace/posts/${postId}/complete`, { method: "POST" });
+              await refreshMarketplace();
+              showToast("Listing marked as completed.");
+            } catch (error) {
+              setStatus(error.message, true);
+            }
+          });
+          return;
+        }
+        if (deleteBtn) {
+          const postId = Number(deleteBtn.dataset.postId || 0);
+          if (!postId) return;
+          const confirmed = window.confirm("Delete this listing permanently?");
+          if (!confirmed) return;
+          await withButtonProgress(deleteBtn, "Deleting...", async () => {
+            try {
+              await api(`/api/marketplace/posts/${postId}/delete`, { method: "POST" });
+              await refreshMarketplace();
+              showToast("Listing deleted.");
+            } catch (error) {
+              setStatus(error.message, true);
+            }
+          });
+        }
       });
 
       els.refreshPollsBtn.addEventListener("click", async () => {
@@ -2702,6 +3167,9 @@
         applyDefaultTimeValues();
         setPollFormDefaults();
         updatePollFormVisibility();
+        updateMarketplaceFormVisibility();
+        clearMarketplaceTables();
+        clearMarketplaceUploadState();
         showModuleChooser();
 
         try {
@@ -2713,6 +3181,7 @@
           applyAuthState(me.user);
           await refreshDashboard();
           await refreshAdminUsers();
+          await refreshMarketplace();
           await refreshVoting();
         } catch (error) {
           setStatus(error.message, true);
