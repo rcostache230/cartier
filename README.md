@@ -41,7 +41,8 @@ To enable file uploads for poll attachments, set:
 
 The app uses:
 
-- `POST /api/uploads/presign` to generate signed upload URLs
+- `POST /api/uploads/direct` for same-origin uploads (no browser CORS issues)
+- `POST /api/uploads/presign` to generate signed upload URLs (optional advanced flow)
 - `GET /api/uploads/view?key=...` to serve signed download links
 
 ### Push R2 settings to Vercel
@@ -100,5 +101,6 @@ Vercel auto-detects Next.js. No custom `vercel.json` is required.
 - `POST /api/polls/:poll_id/archive` (admin)
 - `POST /api/polls/:poll_id/vote`
 - `GET /api/polls/:poll_id/results`
+- `POST /api/uploads/direct`
 - `POST /api/uploads/presign`
 - `GET /api/uploads/view?key=...`

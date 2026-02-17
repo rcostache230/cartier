@@ -2,7 +2,12 @@ import crypto from "node:crypto";
 import { DateTime } from "luxon";
 import { NextResponse } from "next/server";
 import { ensureInitialized, query, withTransaction } from "../../../lib/db.js";
-import { createUploadTarget, createViewUrl, isR2Configured } from "../../../lib/r2.js";
+import {
+  createUploadTarget,
+  createViewUrl,
+  isR2Configured,
+  uploadObjectBuffer,
+} from "../../../lib/r2.js";
 import {
   ABOVE_GROUND_CAPACITY_PER_BUILDING,
   BUCHAREST_TIMEZONE,
@@ -19,6 +24,7 @@ import { hashPassword, signSessionToken, verifyPassword, verifySessionToken } fr
 export const runtime = "nodejs";
 
 const SESSION_COOKIE = "cartier_session";
+const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 
 class AppError extends Error {
   constructor(status, message, details = null) {
@@ -1428,6 +1434,7 @@ async function handleRequest(request, slug) {
         poll_vote: "POST /api/polls/<poll_id>/vote",
         poll_results: "GET /api/polls/<poll_id>/results",
         upload_presign: "POST /api/uploads/presign",
+        upload_direct: "POST /api/uploads/direct",
       },
     });
   }
@@ -1494,6 +1501,49 @@ async function handleRequest(request, slug) {
         expires_in: target.expiresIn,
       },
       200
+    );
+  }
+
+  if (method === "POST" && path[0] === "uploads" && path[1] === "direct") {
+    const user = await requireUser(request);
+    if (!isR2Configured()) {
+      throw new AppError(503, "R2 storage is not configured on the server");
+    }
+
+    const form = await request.formData();
+    const file = form.get("file");
+    const moduleName = String(form.get("module_name") || "misc").trim();
+    if (!file || typeof file === "string" || typeof file.arrayBuffer !== "function") {
+      throw new AppError(400, "file is required");
+    }
+
+    const fileName = String(file.name || "").trim() || "file";
+    const fileType = String(file.type || "application/octet-stream") || "application/octet-stream";
+    if (typeof file.size === "number" && file.size > MAX_UPLOAD_BYTES) {
+      throw new AppError(400, `file too large (max ${Math.floor(MAX_UPLOAD_BYTES / 1024 / 1024)}MB)`);
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    if (arrayBuffer.byteLength > MAX_UPLOAD_BYTES) {
+      throw new AppError(400, `file too large (max ${Math.floor(MAX_UPLOAD_BYTES / 1024 / 1024)}MB)`);
+    }
+
+    const uploaded = await uploadObjectBuffer({
+      userId: user.id,
+      fileName,
+      fileType,
+      moduleName,
+      body: Buffer.from(arrayBuffer),
+    });
+
+    return json(
+      {
+        key: uploaded.key,
+        file_url: uploaded.fileUrl,
+        file_name: fileName,
+        file_type: fileType,
+      },
+      201
     );
   }
 
