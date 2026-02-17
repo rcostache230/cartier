@@ -111,3 +111,7 @@ Vercel auto-detects Next.js. No custom `vercel.json` is required.
 - `POST /api/uploads/direct`
 - `POST /api/uploads/presign`
 - `GET /api/uploads/view?key=...`
+
+## Marketplace Listing Page
+
+- `GET /marketplace/listings/:id` (full listing details + photo gallery)

@@ -398,6 +398,44 @@
         font-size: 0.8rem;
       }
 
+      .table-action-link {
+        display: inline-block;
+        width: auto;
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        line-height: 1.2;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #fff;
+        background: var(--teal);
+      }
+
+      .table-action-link.ghost {
+        background: #687684;
+      }
+
+      .market-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .market-thumb {
+        width: 56px;
+        height: 56px;
+        flex: 0 0 56px;
+        border-radius: 8px;
+        border: 1px solid #d8d2c5;
+        object-fit: cover;
+        background: #f4f1ea;
+      }
+
+      .market-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
       table {
         width: 100%;
         border-collapse: collapse;
@@ -1019,6 +1057,48 @@
             </div>
           </div>
 
+          <div class="grid" style="margin-top: 12px">
+            <section class="card">
+              <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
+              <div class="table-wrap" style="margin-top: 8px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Item</th>
+                      <th>Price</th>
+                      <th>Owner</th>
+                      <th>Contact</th>
+                      <th>Details</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="marketplaceActiveBody"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="card">
+              <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
+              <div class="table-wrap" style="margin-top: 8px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Item</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th>Claimed By</th>
+                      <th>Updated</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="marketplaceMineBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
           <section class="card" style="margin-top: 12px">
             <h3>Create Listing</h3>
             <form id="marketplaceCreateForm" class="stack" style="margin-top: 8px">
@@ -1063,48 +1143,6 @@
               <button id="marketplaceCreateBtn" type="submit" data-default-text="Create Listing">Create Listing</button>
             </form>
           </section>
-
-          <div class="grid" style="margin-top: 10px">
-            <section class="card">
-              <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
-              <div class="table-wrap" style="margin-top: 8px">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Item</th>
-                      <th>Price</th>
-                      <th>Owner</th>
-                      <th>Contact</th>
-                      <th>Details</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="marketplaceActiveBody"></tbody>
-                </table>
-              </div>
-            </section>
-            <section class="card">
-              <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
-              <div class="table-wrap" style="margin-top: 8px">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Item</th>
-                      <th>Price</th>
-                      <th>Status</th>
-                      <th>Claimed By</th>
-                      <th>Updated</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="marketplaceMineBody"></tbody>
-                </table>
-              </div>
-            </section>
-          </div>
         </section>
 
         <section id="votingModule" class="card hidden" style="margin-top: 14px">
@@ -1328,6 +1366,11 @@
         hour12: false,
       });
       const WEEKDAY_INDEX = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+      const MARKETPLACE_PLACEHOLDER_THUMB =
+        "data:image/svg+xml;utf8," +
+        encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><rect width="240" height="240" fill="#f3efe7"/><rect x="38" y="46" width="164" height="148" rx="14" fill="#ffffff" stroke="#d7d2c8" stroke-width="6"/><circle cx="92" cy="98" r="16" fill="#d8d2c8"/><path d="M58 174l44-46 28 28 24-23 28 41H58z" fill="#c6d9d4"/><text x="120" y="220" text-anchor="middle" font-size="18" fill="#8a8f95" font-family="Arial, sans-serif">No Photo</text></svg>'
+        );
 
       const els = {
         loginCard: document.getElementById("loginCard"),
@@ -2112,6 +2155,18 @@
         return "Active";
       }
 
+      function marketplacePrimaryPhotoUrl(post) {
+        const photos = Array.isArray(post?.photos) ? post.photos : [];
+        if (!photos.length) return MARKETPLACE_PLACEHOLDER_THUMB;
+        const first = photos[0];
+        return first && first.file_url ? first.file_url : MARKETPLACE_PLACEHOLDER_THUMB;
+      }
+
+      function marketplaceThumbHtml(post, title = "Listing photo") {
+        const thumbUrl = marketplacePrimaryPhotoUrl(post);
+        return `<img class="market-thumb" src="${thumbUrl}" alt="${title}" loading="lazy" />`;
+      }
+
       function setMarketplaceUploadStatus(message, kind = "") {
         els.marketplaceUploadStatus.textContent = message;
         els.marketplaceUploadStatus.classList.remove("error", "success");
@@ -2242,6 +2297,10 @@
           .join(" | ");
       }
 
+      function marketplaceListingUrl(postId) {
+        return `/marketplace/listings/${postId}`;
+      }
+
       function clearMarketplaceTables() {
         els.marketplaceActiveBody.innerHTML = `<tr><td colspan="8">No active listings.</td></tr>`;
         els.marketplaceMineBody.innerHTML = `<tr><td colspan="7">No listings created yet.</td></tr>`;
@@ -2257,23 +2316,24 @@
           ? activeListings
               .map((post) => {
                 const isOwner = currentUser && post.owner_username === currentUser.username;
+                const openLink = `<a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Open</a>`;
                 const canClaim =
                   post.status === "active" &&
                   post.listing_type === "donation" &&
                   !post.claimed_by_username &&
                   !isOwner;
                 const action = canClaim
-                  ? `<button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Claim</button>`
+                  ? `<div class="market-actions"><button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Claim</button>${openLink}</div>`
                   : isOwner
-                    ? `<span class="poll-note">Your listing</span>`
-                    : `<span class="poll-note">${post.claimed_by_username ? "Already claimed" : "Contact owner"}</span>`;
+                    ? `<div class="market-actions"><span class="poll-note">Your listing</span>${openLink}</div>`
+                    : `<div class="market-actions"><span class="poll-note">${post.claimed_by_username ? "Already claimed" : "Contact owner"}</span>${openLink}</div>`;
                 return `<tr>
                   ${td(marketplaceTypeLabel(post.listing_type))}
-                  ${td(`<strong>${post.title}</strong>`)}
+                  ${td(`<div class="market-item">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}<div><strong>${post.title}</strong></div></div>`)}
                   ${td(post.listing_type === "sale" ? post.price_text || "-" : "Free")}
                   ${td(post.owner_username)}
                   ${td(post.contact_phone || post.owner_phone_number || "-")}
-                  ${td(`${post.pickup_details || "-"}<br>${marketplacePhotoLinks(post)}`)}
+                  ${td(post.pickup_details || "-")}
                   ${td(post.claimed_by_username ? `Claimed by ${post.claimed_by_username}` : marketplaceStatusLabel(post.status))}
                   <td>${action}</td>
                 </tr>`;
@@ -2285,12 +2345,13 @@
           ? myListings
               .map((post) => {
                 const isActive = post.status === "active";
+                const openLink = `<a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Open</a>`;
                 const action = isActive
-                  ? `<button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark ${post.listing_type === "sale" ? "Sold" : "Donated"}</button> <button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>`
-                  : `<button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>`;
+                  ? `<div class="market-actions"><button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark ${post.listing_type === "sale" ? "Sold" : "Donated"}</button><button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>${openLink}</div>`
+                  : `<div class="market-actions"><button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>${openLink}</div>`;
                 return `<tr>
                   ${td(marketplaceTypeLabel(post.listing_type))}
-                  ${td(`<strong>${post.title}</strong><br>${marketplacePhotoLinks(post)}`)}
+                  ${td(`<div class="market-item">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}<div><strong>${post.title}</strong><br>${marketplacePhotoLinks(post)}</div></div>`)}
                   ${td(post.listing_type === "sale" ? post.price_text || "-" : "Free")}
                   ${td(marketplaceStatusLabel(post.status))}
                   ${td(post.claimed_by_username || "-")}
