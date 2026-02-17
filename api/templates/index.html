@@ -978,7 +978,7 @@
           <p id="pollDescription" style="margin-top: 8px"></p>
           <div id="pollAttachments" class="stack" style="margin-top: 10px"></div>
           <section id="pollVoteSection" style="margin-top: 12px">
-            <h3>Cast Your Vote</h3>
+            <h3>Your Vote</h3>
             <p id="pollVoteHint" class="poll-note"></p>
             <form id="pollVoteForm" class="stack" style="margin-top: 10px">
               <div id="pollVoteOptions" class="poll-options"></div>
@@ -1166,18 +1166,38 @@
         return value.replace("T", " ").replace("+00:00", " UTC");
       }
 
+      function titleize(rawValue) {
+        return String(rawValue || "")
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+      }
+
+      function pollTypeLabel(type) {
+        if (type === "yes_no") return "Yes or No";
+        if (type === "multiple_choice") return "Multiple Choice";
+        if (type === "weighted") return "Ranked Choice";
+        return titleize(type);
+      }
+
       function pollScopeLabel(poll) {
         if (poll.scope === "building") {
-          return `Bloc ${poll.building_id}`;
+          return `Bloc ${poll.building_id} residents`;
         }
-        return "Neighbourhood";
+        return "All residents";
       }
 
       function pollStatusLabel(poll) {
         if (poll.status === "active") {
-          return poll.has_voted ? "Active (voted)" : "Active";
+          return poll.has_voted ? "Active - Voted" : "Active";
         }
-        return poll.status;
+        return titleize(poll.status);
+      }
+
+      function resultStatusLabel(value) {
+        if (value === "valid") return "Valid result";
+        if (value === "invalid_no_quorum") return "Invalid (quorum not met)";
+        if (value === "pending") return "Pending";
+        return titleize(value);
       }
 
       function normalizeUsername(value) {
@@ -1638,18 +1658,18 @@
         els.pollVoteOptions.innerHTML = "";
 
         if (poll.status !== "active") {
-          els.pollVoteHint.textContent = "This poll is not active.";
+          els.pollVoteHint.textContent = "Voting is currently closed for this poll.";
           els.pollVoteForm.classList.add("hidden");
           return;
         }
         if (data.has_voted) {
-          els.pollVoteHint.textContent = "You have already voted in this poll.";
+          els.pollVoteHint.textContent = "Your vote has already been recorded.";
           els.pollVoteForm.classList.add("hidden");
           return;
         }
 
         if (poll.poll_type === "weighted") {
-          els.pollVoteHint.textContent = "Rank all options (1 = top choice).";
+          els.pollVoteHint.textContent = "Rank every option. Rank 1 is your top choice.";
           const rankOptions = options
             .map((_, idx) => `<option value="${idx + 1}">${idx + 1}</option>`)
             .join("");
@@ -1674,7 +1694,7 @@
         }
 
         if (poll.poll_type === "multiple_choice" && poll.allow_multiple_selections) {
-          els.pollVoteHint.textContent = "Select one or more options.";
+          els.pollVoteHint.textContent = "Choose one or more options.";
           els.pollVoteOptions.innerHTML = options
             .map(
               (opt) => `
@@ -1688,7 +1708,7 @@
           return;
         }
 
-        els.pollVoteHint.textContent = "Select one option.";
+        els.pollVoteHint.textContent = "Choose one option.";
         els.pollVoteOptions.innerHTML = options
           .map(
             (opt) => `
@@ -1706,10 +1726,10 @@
         if (!poll) return;
 
         const quorumLine = poll.requires_quorum
-          ? `Turnout ${results.turnout_percentage}% (${results.unique_voters}/${results.eligible_voters}) - ${
-              results.quorum_met ? "quorum met" : "quorum not met"
-            }`
-          : `Turnout ${results.turnout_percentage}% (${results.unique_voters}/${results.eligible_voters})`;
+          ? `Turnout: ${results.turnout_percentage}% (${results.unique_voters} of ${results.eligible_voters} residents). Quorum ${
+              results.quorum_met ? "met" : "not met"
+            }.`
+          : `Turnout: ${results.turnout_percentage}% (${results.unique_voters} of ${results.eligible_voters} residents).`;
 
         let tableHead = "";
         let tableBody = "";
@@ -1727,24 +1747,29 @@
             .join("");
         }
 
-        const winnerLabels = (results.winners || [])
+        const winnerLabelList = (results.winners || [])
           .map((id) => {
             const match = (results.options || []).find((opt) => opt.id === id);
             return match ? match.label : id;
-          })
-          .join(", ");
+          });
+        let winnerText = "No winner yet";
+        if (winnerLabelList.length === 1) {
+          winnerText = winnerLabelList[0];
+        } else if (winnerLabelList.length > 1) {
+          winnerText = `Tie: ${winnerLabelList.join(", ")}`;
+        }
 
         els.pollResultsSection.innerHTML = `
           <h3>Results</h3>
           <div class="poll-meta">
             <span>${quorumLine}</span>
-            <span>Status: ${results.result_status}</span>
-            <span>Winner: ${winnerLabels || "-"}</span>
+            <span>Result: ${resultStatusLabel(results.result_status)}</span>
+            <span>Winner: ${winnerText}</span>
           </div>
           <div class="table-wrap" style="margin-top: 8px">
             <table>
               <thead>${tableHead}</thead>
-              <tbody>${tableBody || `<tr><td colspan="${emptyColspan}">No votes yet.</td></tr>`}</tbody>
+              <tbody>${tableBody || `<tr><td colspan="${emptyColspan}">No votes have been submitted yet.</td></tr>`}</tbody>
             </table>
           </div>
         `;
@@ -1802,18 +1827,21 @@
 
         const poll = data.poll;
         els.pollModalTitle.textContent = poll.title;
-        els.pollDescription.textContent = poll.description || "No description provided.";
+        const hasDescription = typeof poll.description === "string" && poll.description.trim().length > 0;
+        els.pollDescription.textContent = hasDescription
+          ? poll.description
+          : "No additional details were added for this poll.";
         els.pollMeta.innerHTML = `
-          <span>Type: ${poll.poll_type}</span>
-          <span>Scope: ${pollScopeLabel(poll)}</span>
-          <span>Status: ${poll.status}</span>
-          <span>Start: ${formatPollDate(poll.start_date)}</span>
-          <span>End: ${formatPollDate(poll.end_date)}</span>
+          <span>Type: ${pollTypeLabel(poll.poll_type)}</span>
+          <span>Audience: ${pollScopeLabel(poll)}</span>
+          <span>Status: ${titleize(poll.status)}</span>
+          <span>Opens: ${formatPollDate(poll.start_date)}</span>
+          <span>Closes: ${formatPollDate(poll.end_date)}</span>
         `;
 
         const attachments = data.attachments || [];
         if (!attachments.length) {
-          els.pollAttachments.innerHTML = `<span class="poll-note">No attachments provided.</span>`;
+          els.pollAttachments.innerHTML = `<span class="poll-note">No files were attached to this poll.</span>`;
         } else {
           els.pollAttachments.innerHTML = attachments
             .map((item) => `<span class="pill">${item.file_name} (${item.file_type})</span>`)
@@ -1825,14 +1853,14 @@
         const canViewResults =
           poll.status === "closed" || poll.show_results_before_close || (currentUser && currentUser.role === "admin");
         if (!canViewResults) {
-          els.pollResultsSection.innerHTML = `<p class="poll-note">Results will be available after the poll closes.</p>`;
+          els.pollResultsSection.innerHTML = `<p class="poll-note">Results are hidden until this poll closes.</p>`;
           return;
         }
         try {
           const results = await api(`/api/polls/${pollId}/results`);
           renderPollResults(results);
         } catch (error) {
-          els.pollResultsSection.innerHTML = `<p class="poll-note">Results are not available yet.</p>`;
+          els.pollResultsSection.innerHTML = `<p class="poll-note">Results are not available yet. Please check again later.</p>`;
         }
       }
 
