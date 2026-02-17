@@ -154,9 +154,9 @@ class ParkingService:
     def _default_db_path() -> str:
         configured = (
             os.getenv("PARKING_DB_PATH")
+            or os.getenv("POSTGRES_URL")
             or os.getenv("DATABASE_URL")
             or os.getenv("POSTGRES_URL_NON_POOLING")
-            or os.getenv("POSTGRES_URL")
         )
         if configured:
             return configured

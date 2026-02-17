@@ -153,9 +153,9 @@ class VotingService:
         configured = (
             os.getenv("VOTING_DB_PATH")
             or os.getenv("PARKING_DB_PATH")
+            or os.getenv("POSTGRES_URL")
             or os.getenv("DATABASE_URL")
             or os.getenv("POSTGRES_URL_NON_POOLING")
-            or os.getenv("POSTGRES_URL")
         )
         if configured:
             return configured
@@ -496,6 +496,29 @@ class VotingService:
             ).fetchall()
 
         return [self._poll_from_row(row) for row in rows]
+
+    def list_user_voted_poll_ids(
+        self,
+        *,
+        user_id: int,
+        poll_ids: Iterable[str],
+    ) -> set[str]:
+        normalized_ids = [str(poll_id) for poll_id in poll_ids if str(poll_id).strip()]
+        if not normalized_ids:
+            return set()
+
+        placeholders = ",".join("?" for _ in normalized_ids)
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT DISTINCT poll_id
+                FROM votes
+                WHERE user_id = ?
+                  AND poll_id IN ({placeholders})
+                """,
+                [user_id, *normalized_ids],
+            ).fetchall()
+        return {str(row["poll_id"]) for row in rows}
 
     def get_poll(self, poll_id: str) -> Poll:
         with self._connect() as conn:

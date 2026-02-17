@@ -1785,17 +1785,18 @@
         document.getElementById("claimUntil").value = slot.available_until;
       }
 
-      async function fetchOpenSpotOptionsData() {
+      function deriveOpenSpotOptionsFromDashboard() {
         if (!currentUser) return [];
-        const params = new URLSearchParams();
         const building = document.getElementById("claimBuilding").value;
         const type = document.getElementById("claimType").value;
-
-        if (building) params.set("building_number", building);
-        if (type) params.set("parking_type", type);
-        params.set("exclude_self", "1");
-
-        return api(`/api/slots/open?${params.toString()}`);
+        return currentFreeSpots.filter((slot) => {
+          if (!slot) return false;
+          if (slot.status && String(slot.status).toUpperCase() !== "OPEN") return false;
+          if (slot.owner_username === currentUser.username) return false;
+          if (building && String(slot.building_number) !== String(building)) return false;
+          if (type && slot.parking_type !== type) return false;
+          return true;
+        });
       }
 
       function applyOpenSpotOptions(slots) {
@@ -1803,16 +1804,15 @@
         fillAvailableSpotSelect(currentOpenSlots);
       }
 
-      async function refreshOpenSpotOptions() {
-        const slots = await fetchOpenSpotOptionsData();
-        applyOpenSpotOptions(slots);
+      function refreshOpenSpotOptions() {
+        applyOpenSpotOptions(deriveOpenSpotOptionsFromDashboard());
       }
 
       async function refreshDashboard() {
-        const [data, openSlots] = await Promise.all([api("/api/dashboard"), fetchOpenSpotOptionsData()]);
+        const data = await api("/api/dashboard");
         refreshStats(data.building_stats);
         refreshTables(data);
-        applyOpenSpotOptions(openSlots);
+        refreshOpenSpotOptions();
       }
 
       async function refreshAdminUsers() {
@@ -1852,12 +1852,10 @@
 
       async function refreshVoting() {
         if (!currentUser) return;
-        const [active, closed] = await Promise.all([
-          api("/api/polls?status=active"),
-          api("/api/polls?status=closed"),
-        ]);
-        const activePolls = Array.isArray(active) ? active : [];
-        const closedPolls = Array.isArray(closed) ? closed : [];
+        const polls = await api("/api/polls");
+        const allPolls = Array.isArray(polls) ? polls : [];
+        const activePolls = allPolls.filter((poll) => poll.status === "active");
+        const closedPolls = allPolls.filter((poll) => poll.status === "closed");
         renderPollList(
           els.activePolls,
           activePolls,
@@ -2417,13 +2415,9 @@
         if (!currentUser) return;
         document.getElementById("claimBuilding").value = String(buildingNumber);
         setActiveTab("action", "actionClaimPanel");
-        try {
-          await refreshOpenSpotOptions();
-          document.getElementById("actionPanel").scrollIntoView({ behavior: "smooth", block: "start" });
-          showToast(`Claim form filtered for Bloc ${buildingNumber}.`);
-        } catch (error) {
-          setStatus(error.message, true);
-        }
+        refreshOpenSpotOptions();
+        document.getElementById("actionPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+        showToast(`Claim form filtered for Bloc ${buildingNumber}.`);
       }
 
       els.stats.addEventListener("click", async (event) => {
@@ -2453,7 +2447,7 @@
           setActiveTab("action", "actionClaimPanel");
           document.getElementById("claimBuilding").value = String(slot.building_number);
           document.getElementById("claimType").value = slot.parking_type || "";
-          await refreshOpenSpotOptions();
+          refreshOpenSpotOptions();
 
           const available = currentOpenSlots.find((s) => s.id === slotId);
           if (!available) {
@@ -2477,20 +2471,12 @@
         }
       });
 
-      document.getElementById("claimBuilding").addEventListener("change", async () => {
-        try {
-          await refreshOpenSpotOptions();
-        } catch (error) {
-          setStatus(error.message, true);
-        }
+      document.getElementById("claimBuilding").addEventListener("change", () => {
+        refreshOpenSpotOptions();
       });
 
-      document.getElementById("claimType").addEventListener("change", async () => {
-        try {
-          await refreshOpenSpotOptions();
-        } catch (error) {
-          setStatus(error.message, true);
-        }
+      document.getElementById("claimType").addEventListener("change", () => {
+        refreshOpenSpotOptions();
       });
 
       els.availableSlot.addEventListener("change", () => {

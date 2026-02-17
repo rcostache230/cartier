@@ -614,16 +614,16 @@ def list_polls():
         viewer_role=user.role,
         viewer_building=user.building_number if user.role != "admin" else None,
     )
+    poll_ids = [poll.id for poll in polls]
+    voted_poll_ids = _voting_service().list_user_voted_poll_ids(user_id=user.id, poll_ids=poll_ids)
 
-    payload = []
-    for poll in polls:
-        votes = _voting_service().list_votes_for_user(poll.id, user.id)
-        payload.append(
-            {
-                **asdict(poll),
-                "has_voted": bool(votes),
-            }
-        )
+    payload = [
+        {
+            **asdict(poll),
+            "has_voted": poll.id in voted_poll_ids,
+        }
+        for poll in polls
+    ]
     return jsonify(payload), 200
 
 
