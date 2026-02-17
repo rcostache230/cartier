@@ -9,15 +9,16 @@ function buildListingHtml(listingId) {
     <title>Marketplace Listing #${listingId}</title>
     <style>
       :root {
-        --bg: #f3f4f3;
+        --bg: #f6f4ee;
         --card: #ffffff;
-        --line: #e3e5e4;
-        --ink: #093e41;
-        --muted: #6f7677;
-        --accent: #ff7b69;
-        --accent-2: #0a4c85;
-        --soft-btn: #eef0ea;
-        --buy-btn: #b4de71;
+        --line: #d7d2c8;
+        --ink: #1d2730;
+        --muted: #55626e;
+        --teal: #0e7568;
+        --teal-2: #0c8f7f;
+        --amber: #da7c1b;
+        --soft: #eef3f1;
+        --chip: #f4efe4;
       }
 
       * {
@@ -27,14 +28,17 @@ function buildListingHtml(listingId) {
       body {
         margin: 0;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: var(--bg);
         color: var(--ink);
+        background:
+          radial-gradient(circle at 12% -12%, #fce9ce 0%, #fce9ce00 30%),
+          radial-gradient(circle at 110% 110%, #d6f0eb 0%, #d6f0eb00 36%),
+          var(--bg);
       }
 
       .container {
-        max-width: 1380px;
+        max-width: 1240px;
         margin: 0 auto;
-        padding: 30px 34px 46px;
+        padding: 22px;
       }
 
       .crumb-row {
@@ -42,73 +46,77 @@ function buildListingHtml(listingId) {
         align-items: center;
         justify-content: space-between;
         gap: 10px;
+        flex-wrap: wrap;
       }
 
       .crumb {
         margin: 0;
-        font-size: 52px;
-        line-height: 1.08;
+        font-size: 1.9rem;
+        line-height: 1.2;
         font-weight: 800;
         color: #0a3d40;
       }
 
       .crumb small {
-        font-size: 0.5em;
+        font-size: 0.82rem;
         color: #6a7475;
         font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
       }
 
       .back-link {
         text-decoration: none;
         border-radius: 999px;
-        background: #5f6f7f;
+        background: #687684;
         color: #fff;
         font-weight: 700;
-        padding: 10px 16px;
-        font-size: 0.95rem;
-      }
-
-      .layout {
-        margin-top: 24px;
-        display: grid;
-        grid-template-columns: minmax(380px, 1fr) minmax(360px, 0.95fr);
-        gap: 34px;
-      }
-
-      .gallery-col,
-      .detail-col {
-        min-width: 0;
+        padding: 8px 12px;
+        font-size: 0.88rem;
       }
 
       .error-card {
-        margin-top: 16px;
-        border: 1px solid #f4b1ab;
-        border-radius: 14px;
-        background: #fff1ef;
+        margin-top: 12px;
+        border: 1px solid #f0c7bf;
+        border-radius: 10px;
+        background: #fff4f2;
         color: #b42318;
-        padding: 16px;
+        padding: 12px;
         font-weight: 700;
+      }
+
+      .layout {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: minmax(340px, 1fr) minmax(340px, 0.95fr);
+        gap: 16px;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
       }
 
       .gallery-shell {
         position: relative;
-        border-radius: 26px;
-        border: 1px solid var(--line);
-        background: #ecefed;
+        border-radius: 12px;
+        border: 1px solid #ddd8ce;
+        background: #f2f4f2;
         overflow: hidden;
       }
 
-      .delivery-badge {
+      .badge {
         position: absolute;
-        top: 0;
-        left: 0;
-        border-radius: 0 0 22px 0;
-        background: var(--accent-2);
+        top: 10px;
+        left: 10px;
+        border-radius: 999px;
+        background: #114e87;
         color: #fff;
-        padding: 14px 26px;
+        padding: 6px 10px;
+        font-size: 0.82rem;
         font-weight: 700;
-        font-size: 2rem;
-        line-height: 1;
       }
 
       .gallery-main {
@@ -116,152 +124,119 @@ function buildListingHtml(listingId) {
         aspect-ratio: 1 / 1;
         object-fit: contain;
         display: block;
-        background: #ecefed;
-        padding: 58px 20px 24px;
+        background: #f2f4f2;
+        padding: 36px 14px 12px;
       }
 
       .thumb-row {
-        margin-top: 18px;
+        margin-top: 10px;
         display: grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 14px;
+        gap: 8px;
       }
 
       .thumb-btn {
-        border: 2px solid #e4e7e5;
-        border-radius: 12px;
+        border: 2px solid #e2e6e4;
+        border-radius: 8px;
         padding: 0;
-        background: #ecefed;
+        background: #f2f4f2;
         cursor: pointer;
         overflow: hidden;
       }
 
       .thumb-btn.active {
-        border-color: #0b6f6e;
-        box-shadow: 0 0 0 2px rgba(11, 111, 110, 0.14);
+        border-color: var(--teal);
       }
 
       .thumb-btn img {
         width: 100%;
-        height: 112px;
+        height: 72px;
         object-fit: contain;
-        background: #ecefed;
         display: block;
-      }
-
-      .countdown {
-        color: var(--accent);
-        font-weight: 800;
-        font-size: 2.2rem;
-        letter-spacing: 0.01em;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        background: #f2f4f2;
       }
 
       .vendor {
-        margin-top: 18px;
         color: #7b8184;
-        font-size: 2rem;
+        font-size: 0.86rem;
       }
 
       .title {
-        margin: 10px 0 0;
+        margin: 6px 0 0;
         color: #0a3d40;
-        font-size: 5rem;
-        line-height: 1.08;
-        letter-spacing: -0.02em;
-      }
-
-      .rating-row {
-        margin-top: 14px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #204f52;
         font-size: 2rem;
-      }
-
-      .rating-row .star {
-        color: #f0c84b;
-      }
-
-      .rating-row .reviews {
-        color: #80888a;
-        text-decoration: underline;
+        line-height: 1.18;
       }
 
       .price-row {
-        margin-top: 18px;
+        margin-top: 12px;
         display: flex;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: baseline;
+        gap: 8px;
       }
 
       .price-main {
-        font-size: 7rem;
-        line-height: 0.95;
+        font-size: 2.35rem;
+        line-height: 1;
         font-weight: 800;
         color: #083f40;
       }
 
       .price-currency {
-        font-size: 3.6rem;
+        font-size: 1.1rem;
         font-weight: 800;
-        margin-top: 2px;
         color: #083f40;
       }
 
       .separator {
-        margin: 24px 0;
+        margin: 14px 0;
         border: 0;
         border-top: 1px solid #e2e4e3;
       }
 
       .policy-box {
         border: 1px solid #e3e5e4;
-        border-radius: 16px;
+        border-radius: 10px;
         background: #f8f9f7;
-        padding: 14px 16px;
+        padding: 10px;
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 10px;
       }
 
       .policy-tag {
         background: #ffd8df;
         color: #74273a;
-        border-radius: 10px;
-        padding: 6px 12px;
+        border-radius: 8px;
+        padding: 5px 9px;
         font-weight: 800;
-        font-size: 1.8rem;
+        font-size: 0.8rem;
       }
 
       .policy-text {
-        color: #7a8183;
-        font-size: 1.85rem;
-        line-height: 1.2;
+        color: #667174;
+        font-size: 0.88rem;
       }
 
       .policy-text strong {
-        color: #174346;
+        color: #194749;
       }
 
       .actions {
-        margin-top: 18px;
+        margin-top: 12px;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
+        gap: 8px;
       }
 
       button,
       .action-link {
         border: 0;
         border-radius: 999px;
-        padding: 15px 16px;
+        padding: 10px 12px;
         font: inherit;
+        font-size: 0.92rem;
         font-weight: 700;
-        font-size: 1.9rem;
         text-align: center;
       }
 
@@ -275,12 +250,12 @@ function buildListingHtml(listingId) {
       }
 
       .action-contact {
-        background: var(--soft-btn);
+        background: var(--soft);
         color: #1a4f52;
       }
 
       .action-claim {
-        background: var(--buy-btn);
+        background: #b4de71;
         color: #0d483f;
       }
 
@@ -294,36 +269,36 @@ function buildListingHtml(listingId) {
       }
 
       .quick-links {
-        margin-top: 14px;
+        margin-top: 10px;
         display: flex;
         flex-wrap: wrap;
-        gap: 18px;
+        gap: 12px;
         align-items: center;
       }
 
       .quick-links .sep {
         width: 1px;
-        height: 22px;
+        height: 18px;
         background: #d8dcdb;
       }
 
       .chips-row {
-        margin-top: 20px;
+        margin-top: 12px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
+        gap: 10px;
       }
 
       .chips {
         display: flex;
-        gap: 8px;
+        gap: 6px;
         align-items: center;
       }
 
       .chip {
-        width: 22px;
-        height: 22px;
+        width: 14px;
+        height: 14px;
         border-radius: 50%;
       }
 
@@ -340,41 +315,41 @@ function buildListingHtml(listingId) {
       }
 
       .sold-note {
-        color: #a54040;
+        color: #8f3f3f;
         font-weight: 700;
-        font-size: 1.9rem;
+        font-size: 0.9rem;
       }
 
       .meta {
-        margin-top: 14px;
+        margin-top: 12px;
         color: #596265;
-        font-size: 1.75rem;
-        line-height: 1.5;
+        font-size: 0.88rem;
+        line-height: 1.55;
       }
 
-      .meta b,
-      .meta strong {
+      .meta strong,
+      .meta b {
         color: #214c4f;
       }
 
       .desc {
-        margin-top: 14px;
-        color: #666f73;
-        font-size: 1.85rem;
-        line-height: 1.45;
+        margin-top: 12px;
+        color: #606b70;
+        font-size: 0.92rem;
+        line-height: 1.5;
       }
 
       .benefits {
-        margin-top: 18px;
+        margin-top: 14px;
         border: 1px solid #e3e5e4;
-        border-radius: 14px;
+        border-radius: 10px;
         background: #fff;
         display: grid;
         grid-template-columns: 1fr 1fr;
       }
 
       .benefit {
-        padding: 16px;
+        padding: 12px;
       }
 
       .benefit + .benefit {
@@ -384,36 +359,21 @@ function buildListingHtml(listingId) {
       .benefit b {
         display: block;
         color: #194749;
-        font-size: 2rem;
+        font-size: 0.95rem;
       }
 
       .benefit span {
-        color: #7a8285;
-        font-size: 1.8rem;
+        color: #748084;
+        font-size: 0.86rem;
       }
 
       .hidden {
         display: none !important;
       }
 
-      @media (max-width: 1120px) {
-        html {
-          font-size: 12px;
-        }
-      }
-
-      @media (max-width: 860px) {
-        html {
-          font-size: 11px;
-        }
-
-        .container {
-          padding: 20px 14px 30px;
-        }
-
+      @media (max-width: 900px) {
         .layout {
           grid-template-columns: 1fr;
-          gap: 20px;
         }
 
         .thumb-row {
@@ -438,26 +398,24 @@ function buildListingHtml(listingId) {
   <body>
     <div class="container">
       <section class="crumb-row">
-        <h1 class="crumb"><small id="crumbPrefix">All category</small> / <span id="crumbTitle">Listing</span></h1>
+        <h1 class="crumb"><small>Marketplace Listing</small> / <span id="crumbTitle">Item</span></h1>
         <a class="back-link" href="/">Back To Dashboard</a>
       </section>
 
       <section id="errorCard" class="error-card hidden"></section>
 
       <section id="listingCard" class="layout hidden">
-        <div class="gallery-col">
+        <div class="panel">
           <div class="gallery-shell">
-            <div id="deliveryBadge" class="delivery-badge">In Person</div>
+            <div id="deliveryBadge" class="badge">In Person Only</div>
             <img id="galleryMain" class="gallery-main" alt="Listing photo" />
           </div>
           <div id="thumbRow" class="thumb-row"></div>
         </div>
 
-        <div class="detail-col">
-          <div class="countdown"><span>⏰</span><span id="countdownValue">00 : 00 : 00 : 00</span></div>
-          <div id="vendorLine" class="vendor">Neighbourhood marketplace</div>
+        <div class="panel">
+          <div class="vendor">Neighbourhood marketplace</div>
           <h2 id="listingTitle" class="title">Listing</h2>
-          <div class="rating-row"><span class="star">★</span><span id="ratingValue">4.8 Rating</span><span id="reviewsValue" class="reviews">(20 reviews)</span></div>
 
           <div class="price-row">
             <div id="priceMain" class="price-main">0</div>
@@ -468,10 +426,7 @@ function buildListingHtml(listingId) {
 
           <div class="policy-box">
             <div class="policy-tag">Policy</div>
-            <div class="policy-text">
-              <span>In-person transaction only.</span>
-              <strong>No online payment.</strong>
-            </div>
+            <div class="policy-text">In-person transaction only. <strong>No online payment.</strong></div>
           </div>
 
           <div class="actions">
@@ -504,11 +459,11 @@ function buildListingHtml(listingId) {
           <div class="benefits">
             <div class="benefit">
               <b>In-Person Handoff</b>
-              <span>Meet at pickup location and confirm item condition before completing exchange.</span>
+              <span>Meet at pickup location and check item condition before finalizing.</span>
             </div>
             <div class="benefit">
               <b>Resident Marketplace</b>
-              <span>Created for neighbours: direct contact, quick coordination, no platform checkout.</span>
+              <span>Direct neighbour-to-neighbour coordination without platform checkout.</span>
             </div>
           </div>
         </div>
@@ -520,7 +475,7 @@ function buildListingHtml(listingId) {
       const PLACEHOLDER_THUMB =
         "data:image/svg+xml;utf8," +
         encodeURIComponent(
-          '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200"><rect width="1200" height="1200" fill="#ecefed"/><rect x="230" y="200" width="740" height="740" rx="28" fill="#ffffff" stroke="#d7dbda" stroke-width="16"/><circle cx="470" cy="420" r="64" fill="#d4d7d6"/><path d="M300 860l200-220 120 120 100-102 180 202H300z" fill="#c6dad7"/><text x="600" y="1030" text-anchor="middle" font-size="58" fill="#8a8f95" font-family="Arial, sans-serif">No Photo</text></svg>'
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200"><rect width="1200" height="1200" fill="#f2f4f2"/><rect x="230" y="200" width="740" height="740" rx="28" fill="#ffffff" stroke="#d7dbda" stroke-width="16"/><circle cx="470" cy="420" r="64" fill="#d4d7d6"/><path d="M300 860l200-220 120 120 100-102 180 202H300z" fill="#c6dad7"/><text x="600" y="1030" text-anchor="middle" font-size="58" fill="#8a8f95" font-family="Arial, sans-serif">No Photo</text></svg>'
         );
 
       const BUCHAREST_DISPLAY_FORMATTER = new Intl.DateTimeFormat("ro-RO", {
@@ -540,11 +495,7 @@ function buildListingHtml(listingId) {
         galleryMain: document.getElementById("galleryMain"),
         deliveryBadge: document.getElementById("deliveryBadge"),
         thumbRow: document.getElementById("thumbRow"),
-        countdownValue: document.getElementById("countdownValue"),
-        vendorLine: document.getElementById("vendorLine"),
         listingTitle: document.getElementById("listingTitle"),
-        ratingValue: document.getElementById("ratingValue"),
-        reviewsValue: document.getElementById("reviewsValue"),
         priceMain: document.getElementById("priceMain"),
         priceCurrency: document.getElementById("priceCurrency"),
         contactBtn: document.getElementById("contactBtn"),
@@ -563,8 +514,6 @@ function buildListingHtml(listingId) {
         listingDescription: document.getElementById("listingDescription"),
       };
 
-      let currentPost = null;
-      let countdownTimer = null;
       let galleryBound = false;
 
       function showError(message) {
@@ -596,16 +545,6 @@ function buildListingHtml(listingId) {
         return "Active";
       }
 
-      function seededRatingValue(id) {
-        const base = Number(id || 0);
-        const rating = 4.2 + ((base % 7) * 0.1);
-        const reviews = 8 + (base % 25);
-        return {
-          rating: rating.toFixed(1),
-          reviews,
-        };
-      }
-
       function parsePriceParts(post) {
         if (!post || post.listing_type !== "sale") {
           return { value: "0", currency: "FREE" };
@@ -613,47 +552,14 @@ function buildListingHtml(listingId) {
         const raw = String(post.price_text || "").trim();
         if (!raw) return { value: "0", currency: "RON" };
 
-        const numberMatch = raw.match(/\d+(?:[.,]\d+)?/);
+        const numberMatch = raw.match(/\\d+(?:[.,]\\d+)?/);
         const value = numberMatch ? numberMatch[0].replace(",", ".") : raw;
 
-        if (/\beur\b/i.test(raw)) return { value, currency: "EUR" };
-        if (/\busd\b/i.test(raw)) return { value, currency: "USD" };
-        if (/\bron\b/i.test(raw)) return { value, currency: "RON" };
+        if (/\\beur\\b/i.test(raw)) return { value, currency: "EUR" };
+        if (/\\busd\\b/i.test(raw)) return { value, currency: "USD" };
+        if (/\\bron\\b/i.test(raw)) return { value, currency: "RON" };
 
         return { value, currency: "RON" };
-      }
-
-      function countdownParts(targetDate) {
-        const now = Date.now();
-        const delta = Math.max(0, targetDate - now);
-        const totalSec = Math.floor(delta / 1000);
-        const days = Math.floor(totalSec / 86400);
-        const hours = Math.floor((totalSec % 86400) / 3600);
-        const minutes = Math.floor((totalSec % 3600) / 60);
-        const seconds = totalSec % 60;
-        return [days, hours, minutes, seconds].map((v) => String(v).padStart(2, "0")).join(" : ");
-      }
-
-      function setupCountdown(post) {
-        if (countdownTimer) {
-          clearInterval(countdownTimer);
-          countdownTimer = null;
-        }
-
-        const anchorRaw = post.updated_at || post.created_at;
-        const anchorDate = new Date(anchorRaw);
-        if (Number.isNaN(anchorDate.getTime())) {
-          els.countdownValue.textContent = "00 : 00 : 00 : 00";
-          return;
-        }
-
-        const target = anchorDate.getTime() + 7 * 24 * 60 * 60 * 1000;
-        const render = () => {
-          els.countdownValue.textContent = countdownParts(target);
-        };
-
-        render();
-        countdownTimer = setInterval(render, 1000);
       }
 
       function setupGallery(urls) {
@@ -730,18 +636,12 @@ function buildListingHtml(listingId) {
       }
 
       function renderListing(post) {
-        currentPost = post;
         els.errorCard.classList.add("hidden");
         els.listingCard.classList.remove("hidden");
 
-        els.crumbTitle.textContent = post.title || "Listing";
-        els.deliveryBadge.textContent = post.listing_type === "donation" ? "Donation" : "In Person";
-        els.vendorLine.textContent = "Neighbourhood marketplace";
+        els.crumbTitle.textContent = post.title || "Item";
+        els.deliveryBadge.textContent = post.listing_type === "donation" ? "Donation" : "In Person Only";
         els.listingTitle.textContent = post.title || "Listing";
-
-        const seeded = seededRatingValue(post.id);
-        els.ratingValue.textContent = seeded.rating + " Rating";
-        els.reviewsValue.textContent = "(" + seeded.reviews + " reviews)";
 
         const price = parsePriceParts(post);
         els.priceMain.textContent = price.value;
@@ -777,7 +677,7 @@ function buildListingHtml(listingId) {
         els.contactBtn.textContent = contactPhone ? "Contact owner" : "No phone shared";
         els.contactBtn.onclick = () => {
           if (!contactPhone) return;
-          window.location.href = "tel:" + contactPhone.replace(/\s+/g, "");
+          window.location.href = "tel:" + contactPhone.replace(/\\s+/g, "");
         };
 
         setClaimButton(post);
@@ -795,8 +695,6 @@ function buildListingHtml(listingId) {
             alert(error.message || "Could not claim donation");
           }
         };
-
-        setupCountdown(post);
       }
 
       async function loadListing() {
