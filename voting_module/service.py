@@ -6,6 +6,7 @@ import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Iterable, Optional
+from zoneinfo import ZoneInfo
 
 try:
     import psycopg
@@ -20,6 +21,7 @@ POLL_STATUSES = {"draft", "active", "closed", "archived"}
 MIN_OPTIONS = 2
 MAX_OPTIONS = 10
 TOTAL_BUILDINGS = 10
+BUCHAREST_TZ = ZoneInfo("Europe/Bucharest")
 
 
 class VotingModuleError(Exception):
@@ -249,8 +251,8 @@ class VotingService:
         except ValueError as exc:
             raise PollValidationError(f"{field_name} must be ISO datetime") from exc
         if parsed.tzinfo is None:
-            return parsed.replace(tzinfo=timezone.utc)
-        return parsed
+            parsed = parsed.replace(tzinfo=BUCHAREST_TZ)
+        return parsed.astimezone(timezone.utc).replace(microsecond=0)
 
     @staticmethod
     def _validate_building_number(building_id: int) -> None:

@@ -126,8 +126,79 @@
         flex-wrap: wrap;
         gap: 8px;
         margin-top: 6px;
-        color: var(--muted);
         font-size: 0.86rem;
+      }
+
+      .poll-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 4px 10px;
+        border: 1px solid #d7d2c8;
+        background: #f6f1e7;
+        color: #2b3b46;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .poll-chip.type {
+        background: #e8f6f5;
+        border-color: #b9ddd8;
+        color: #155a52;
+      }
+
+      .poll-chip.scope {
+        background: #eef0fa;
+        border-color: #c9d0ee;
+        color: #334070;
+      }
+
+      .poll-chip.status-active {
+        background: #e6f8ee;
+        border-color: #b8e4ca;
+        color: #1b7d46;
+      }
+
+      .poll-chip.status-active-voted {
+        background: #ddf0e8;
+        border-color: #93d7b1;
+        color: #17663c;
+      }
+
+      .poll-chip.status-closed {
+        background: #eceff3;
+        border-color: #d2d8de;
+        color: #48535d;
+      }
+
+      .poll-chip.status-draft {
+        background: #fff2e3;
+        border-color: #f3d2a4;
+        color: #8c5415;
+      }
+
+      .poll-chip.status-archived {
+        background: #efefef;
+        border-color: #dddddd;
+        color: #666;
+      }
+
+      .poll-chip.time {
+        background: #f7f7f7;
+        border-color: #dedede;
+        color: #4e5e67;
+      }
+
+      .poll-title {
+        display: grid;
+        gap: 4px;
+      }
+
+      .poll-title small {
+        color: var(--muted);
+        font-size: 0.75rem;
+        font-weight: 600;
       }
 
       .poll-options {
@@ -158,6 +229,67 @@
       .poll-note {
         font-size: 0.86rem;
         color: var(--muted);
+      }
+
+      .tz-note {
+        margin-top: 6px;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .poll-summary {
+        border: 1px solid #e4ddd2;
+        border-radius: 10px;
+        background: #fffcf6;
+        padding: 10px;
+        display: grid;
+        gap: 6px;
+        color: #31414c;
+      }
+
+      .poll-result-list {
+        margin-top: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .poll-result-item {
+        border: 1px solid #e8e2d8;
+        border-radius: 10px;
+        background: #fff;
+        padding: 8px 10px;
+      }
+
+      .poll-result-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .poll-result-head b {
+        font-size: 0.92rem;
+      }
+
+      .poll-result-metric {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .poll-result-bar {
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: #e8ecec;
+        overflow: hidden;
+      }
+
+      .poll-result-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #0e7568, #0c8f7f);
       }
 
       .modal-head {
@@ -598,6 +730,7 @@
         <p>
           Share your parking spot, claim available shared spots, and track claimed periods.
         </p>
+        <p class="tz-note">All dates and times are in Bucharest time (Europe/Bucharest).</p>
       </section>
 
       <section id="loginCard" class="card" style="margin-top: 14px; max-width: 420px">
@@ -689,6 +822,7 @@
                   <label for="untilAt">Available Until</label>
                   <input id="untilAt" type="datetime-local" required />
                 </div>
+                <p class="tz-note">All share times are Bucharest time.</p>
                 <button id="shareBtn" type="submit" data-default-text="Share Spot">Share Spot</button>
               </form>
             </section>
@@ -729,6 +863,7 @@
                   <label for="claimPhone">Contact Phone (for owner)</label>
                   <input id="claimPhone" placeholder="07xx xxx xxx" />
                 </div>
+                <p class="tz-note">All claim times are Bucharest time.</p>
                 <button id="claimBtn" class="alt" type="submit" data-default-text="Claim Selected Spot">Claim Selected Spot</button>
               </form>
             </section>
@@ -830,6 +965,7 @@
                   <div><label for="adminSpaceType">Type</label><select id="adminSpaceType"><option value="underground">Underground</option><option value="above_ground">Above Ground</option></select></div>
                   <div><label for="adminFromAt">Available From</label><input id="adminFromAt" type="datetime-local" required /></div>
                   <div><label for="adminUntilAt">Available Until</label><input id="adminUntilAt" type="datetime-local" required /></div>
+                  <p class="tz-note">All admin slot times are Bucharest time.</p>
                   <button id="adminShareBtn" type="submit" data-default-text="Create Shared Slot">Create Shared Slot</button>
                 </form>
               </section>
@@ -902,6 +1038,7 @@
                   <input id="pollEnd" type="datetime-local" required />
                 </div>
               </div>
+              <p class="tz-note">Poll start/end uses Bucharest time.</p>
               <div>
                 <label for="pollStatus">Initial Status</label>
                 <select id="pollStatus">
@@ -998,6 +1135,10 @@
               <p>Use your apartment account (for example <code>bloc1_apt1</code>) and your assigned password. Usernames are lowercase.</p>
             </details>
             <details class="faq-item">
+              <summary>1.1) What timezone is used?</summary>
+              <p>All dates and times across parking and voting are shown and managed in Bucharest time.</p>
+            </details>
+            <details class="faq-item">
               <summary>2) How do I share my parking spot?</summary>
               <p>In <b>Share my spot</b>, enter your parking spot number, choose underground/above ground, set start/end date-time and submit.</p>
             </details>
@@ -1037,6 +1178,28 @@
 
     <script>
       const HELP_SEEN_KEY = "cartier_help_seen_v1";
+      const BUCHAREST_TIMEZONE = "Europe/Bucharest";
+      const BUCHAREST_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
+        timeZone: BUCHAREST_TIMEZONE,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        weekday: "short",
+      });
+      const BUCHAREST_DISPLAY_FORMATTER = new Intl.DateTimeFormat("ro-RO", {
+        timeZone: BUCHAREST_TIMEZONE,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+      const WEEKDAY_INDEX = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 
       const els = {
         loginCard: document.getElementById("loginCard"),
@@ -1161,9 +1324,52 @@
         return `<td>${value ?? "-"}</td>`;
       }
 
-      function formatPollDate(value) {
+      function formatNaiveDateTime(value) {
+        const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+        if (!match) return null;
+        return `${match[3]}.${match[2]}.${match[1]} ${match[4]}:${match[5]}`;
+      }
+
+      function formatBucharestDateTime(value) {
         if (!value) return "-";
-        return value.replace("T", " ").replace("+00:00", " UTC");
+        const raw = String(value).trim();
+        const hasOffset = /(Z|[+-]\d{2}:\d{2})$/i.test(raw);
+        if (hasOffset) {
+          const parsed = new Date(raw);
+          if (!Number.isNaN(parsed.getTime())) {
+            return BUCHAREST_DISPLAY_FORMATTER.format(parsed).replace(",", "");
+          }
+        }
+        const naive = formatNaiveDateTime(raw);
+        if (naive) {
+          return naive;
+        }
+        return raw.replace("T", " ");
+      }
+
+      function formatPollDate(value) {
+        return formatBucharestDateTime(value);
+      }
+
+      function pollStatusClass(poll) {
+        if (poll.status === "active" && poll.has_voted) return "status-active-voted";
+        if (poll.status === "active") return "status-active";
+        if (poll.status === "closed") return "status-closed";
+        if (poll.status === "draft") return "status-draft";
+        if (poll.status === "archived") return "status-archived";
+        return "status-closed";
+      }
+
+      function pollStatusChip(poll) {
+        return `<span class="poll-chip ${pollStatusClass(poll)}">${pollStatusLabel(poll)}</span>`;
+      }
+
+      function pollTypeChip(type) {
+        return `<span class="poll-chip type">${pollTypeLabel(type)}</span>`;
+      }
+
+      function pollScopeChip(poll) {
+        return `<span class="poll-chip scope">${pollScopeLabel(poll)}</span>`;
       }
 
       function titleize(rawValue) {
@@ -1195,7 +1401,7 @@
 
       function resultStatusLabel(value) {
         if (value === "valid") return "Valid result";
-        if (value === "invalid_no_quorum") return "Invalid (quorum not met)";
+        if (value === "invalid_no_quorum" || value === "quorum_not_met") return "Invalid (quorum not met)";
         if (value === "pending") return "Pending";
         return titleize(value);
       }
@@ -1246,44 +1452,68 @@
         }
       }
 
+      function bucharestParts(dateObj = new Date()) {
+        const partMap = {};
+        BUCHAREST_PARTS_FORMATTER.formatToParts(dateObj).forEach((part) => {
+          if (part.type !== "literal") {
+            partMap[part.type] = part.value;
+          }
+        });
+        return {
+          year: Number(partMap.year),
+          month: Number(partMap.month),
+          day: Number(partMap.day),
+          hour: Number(partMap.hour),
+          minute: Number(partMap.minute),
+          second: Number(partMap.second || "0"),
+          weekday: partMap.weekday || "Mon",
+        };
+      }
+
+      function bucharestAnchorNow() {
+        const parts = bucharestParts();
+        return new Date(Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second));
+      }
+
       function toInputValue(dateObj) {
         const pad = (v) => String(v).padStart(2, "0");
-        const y = dateObj.getFullYear();
-        const m = pad(dateObj.getMonth() + 1);
-        const d = pad(dateObj.getDate());
-        const hh = pad(dateObj.getHours());
-        const mm = pad(dateObj.getMinutes());
+        const y = dateObj.getUTCFullYear();
+        const m = pad(dateObj.getUTCMonth() + 1);
+        const d = pad(dateObj.getUTCDate());
+        const hh = pad(dateObj.getUTCHours());
+        const mm = pad(dateObj.getUTCMinutes());
         return `${y}-${m}-${d}T${hh}:${mm}`;
       }
 
       function rangeFromPreset(preset) {
-        const now = new Date();
+        const now = bucharestAnchorNow();
         const start = new Date(now);
         const end = new Date(now);
 
         if (preset === "today") {
-          start.setHours(8, 0, 0, 0);
-          end.setHours(18, 0, 0, 0);
+          start.setUTCHours(8, 0, 0, 0);
+          end.setUTCHours(18, 0, 0, 0);
           return { from: toInputValue(start), until: toInputValue(end) };
         }
 
         if (preset === "tomorrow") {
-          start.setDate(start.getDate() + 1);
-          end.setDate(end.getDate() + 1);
-          start.setHours(8, 0, 0, 0);
-          end.setHours(18, 0, 0, 0);
+          start.setUTCDate(start.getUTCDate() + 1);
+          end.setUTCDate(end.getUTCDate() + 1);
+          start.setUTCHours(8, 0, 0, 0);
+          end.setUTCHours(18, 0, 0, 0);
           return { from: toInputValue(start), until: toInputValue(end) };
         }
 
-        const day = now.getDay();
+        const dayLabel = bucharestParts().weekday;
+        const day = WEEKDAY_INDEX[dayLabel] ?? now.getUTCDay();
         let daysToSaturday = (6 - day + 7) % 7;
         if (day === 0) {
           daysToSaturday = 6;
         }
-        start.setDate(start.getDate() + daysToSaturday);
-        end.setDate(start.getDate() + 1);
-        start.setHours(8, 0, 0, 0);
-        end.setHours(18, 0, 0, 0);
+        start.setUTCDate(start.getUTCDate() + daysToSaturday);
+        end.setUTCDate(start.getUTCDate() + 1);
+        start.setUTCHours(8, 0, 0, 0);
+        end.setUTCHours(18, 0, 0, 0);
         return { from: toInputValue(start), until: toInputValue(end) };
       }
 
@@ -1311,13 +1541,13 @@
       }
 
       function pollDefaultWindow() {
-        const now = new Date();
+        const now = bucharestAnchorNow();
         const start = new Date(now);
-        start.setMinutes(0, 0, 0);
-        start.setHours(start.getHours() + 1);
+        start.setUTCMinutes(0, 0, 0);
+        start.setUTCHours(start.getUTCHours() + 1);
         const end = new Date(start);
-        end.setDate(end.getDate() + 3);
-        end.setHours(20, 0, 0, 0);
+        end.setUTCDate(end.getUTCDate() + 3);
+        end.setUTCHours(20, 0, 0, 0);
         return { start: toInputValue(start), end: toInputValue(end) };
       }
 
@@ -1412,8 +1642,8 @@
 
       function requestClaimConfirmation(slot, requestedFrom, requestedUntil) {
         closeHelpModal();
-        const fromText = (requestedFrom || "").replace("T", " ");
-        const untilText = (requestedUntil || "").replace("T", " ");
+        const fromText = formatBucharestDateTime(requestedFrom);
+        const untilText = formatBucharestDateTime(requestedUntil);
         els.claimConfirmText.textContent =
           `Confirm claim for Bloc ${slot.building_number}, spot ${slot.parking_space_number} (${slot.parking_type}) from ${fromText} to ${untilText}?`;
         els.claimConfirmModal.classList.remove("hidden");
@@ -1490,8 +1720,8 @@
                     ${td(s.parking_type)}
                     ${td(s.owner_username)}
                     ${td(s.owner_phone_number || "-")}
-                    ${td((s.available_from || "").replace("T", " "))}
-                    ${td((s.available_until || "").replace("T", " "))}
+                    ${td(formatBucharestDateTime(s.available_from))}
+                    ${td(formatBucharestDateTime(s.available_until))}
                     <td><button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Claim</button></td>
                   </tr>`
               )
@@ -1502,7 +1732,7 @@
           ? myShared
               .map(
                 (s) =>
-                  `<tr>${td(s.parking_space_number)}${td(s.parking_type)}${td(s.status)}${td((s.available_from || "").replace("T", " "))}${td((s.available_until || "").replace("T", " "))}</tr>`
+                  `<tr>${td(s.parking_space_number)}${td(s.parking_type)}${td(s.status)}${td(formatBucharestDateTime(s.available_from))}${td(formatBucharestDateTime(s.available_until))}</tr>`
               )
               .join("")
           : `<tr><td colspan="5">You have not shared any spot yet.</td></tr>`;
@@ -1511,7 +1741,7 @@
           ? claimedByOthers
               .map(
                 (s) =>
-                  `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
+                  `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
               )
               .join("")
           : `<tr><td colspan="5">No one has claimed your shared spots yet.</td></tr>`;
@@ -1520,7 +1750,7 @@
           ? myClaims
               .map(
                 (s) =>
-                  `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td((s.reservation_from || "").replace("T", " "))}${td((s.reservation_until || "").replace("T", " "))}</tr>`
+                  `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
               )
               .join("")
           : `<tr><td colspan="7">You have not claimed any shared spot yet.</td></tr>`;
@@ -1602,10 +1832,10 @@
               .map((poll) => {
                 const actionLabel = actionLabelGetter(poll);
                 return `<tr>
-                  ${td(poll.title)}
-                  ${td(pollScopeLabel(poll))}
+                  ${td(`<div class="poll-title"><strong>${poll.title}</strong><small>${pollTypeLabel(poll.poll_type)}</small></div>`)}
+                  ${td(pollScopeChip(poll))}
                   ${td(formatPollDate(poll.end_date))}
-                  ${td(pollStatusLabel(poll))}
+                  ${td(pollStatusChip(poll))}
                   <td><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">${actionLabel}</button></td>
                 </tr>`;
               })
@@ -1731,25 +1961,39 @@
             }.`
           : `Turnout: ${results.turnout_percentage}% (${results.unique_voters} of ${results.eligible_voters} residents).`;
 
-        let tableHead = "";
-        let tableBody = "";
-        let emptyColspan = 3;
-        if (poll.poll_type === "weighted") {
-          emptyColspan = 2;
-          tableHead = "<tr><th>Option</th><th>Points</th></tr>";
-          tableBody = (results.options || [])
-            .map((opt) => `<tr>${td(opt.label)}${td(opt.points)}</tr>`)
-            .join("");
-        } else {
-          tableHead = "<tr><th>Option</th><th>Votes</th><th>%</th></tr>";
-          tableBody = (results.options || [])
-            .map((opt) => `<tr>${td(opt.label)}${td(opt.votes)}${td(opt.percentage)}</tr>`)
-            .join("");
-        }
+        const options = results.options || [];
+        const maxPoints = Math.max(
+          1,
+          ...options.map((opt) => Number(opt.points || 0))
+        );
+
+        const resultVisuals = options
+          .map((opt) => {
+            const ratio =
+              poll.poll_type === "weighted"
+                ? Math.max(0, Math.min(100, Math.round((Number(opt.points || 0) / maxPoints) * 100)))
+                : Math.max(0, Math.min(100, Math.round(Number(opt.percentage || 0))));
+            const metric =
+              poll.poll_type === "weighted"
+                ? `${opt.points} points`
+                : `${opt.votes} votes - ${opt.percentage}%`;
+            return `
+              <article class="poll-result-item">
+                <div class="poll-result-head">
+                  <b>${opt.label}</b>
+                  <span class="poll-result-metric">${metric}</span>
+                </div>
+                <div class="poll-result-bar">
+                  <span class="poll-result-fill" style="width:${ratio}%"></span>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
 
         const winnerLabelList = (results.winners || [])
           .map((id) => {
-            const match = (results.options || []).find((opt) => opt.id === id);
+            const match = options.find((opt) => opt.id === id);
             return match ? match.label : id;
           });
         let winnerText = "No winner yet";
@@ -1761,16 +2005,16 @@
 
         els.pollResultsSection.innerHTML = `
           <h3>Results</h3>
-          <div class="poll-meta">
+          <div class="poll-summary">
             <span>${quorumLine}</span>
-            <span>Result: ${resultStatusLabel(results.result_status)}</span>
-            <span>Winner: ${winnerText}</span>
+            <span><b>Result:</b> ${resultStatusLabel(results.result_status)}</span>
+            <span><b>Winner:</b> ${winnerText}</span>
           </div>
-          <div class="table-wrap" style="margin-top: 8px">
-            <table>
-              <thead>${tableHead}</thead>
-              <tbody>${tableBody || `<tr><td colspan="${emptyColspan}">No votes have been submitted yet.</td></tr>`}</tbody>
-            </table>
+          <div class="poll-result-list">
+            ${
+              resultVisuals ||
+              `<p class="poll-note">No votes have been submitted yet.</p>`
+            }
           </div>
         `;
       }
@@ -1832,11 +2076,12 @@
           ? poll.description
           : "No additional details were added for this poll.";
         els.pollMeta.innerHTML = `
-          <span>Type: ${pollTypeLabel(poll.poll_type)}</span>
-          <span>Audience: ${pollScopeLabel(poll)}</span>
-          <span>Status: ${titleize(poll.status)}</span>
-          <span>Opens: ${formatPollDate(poll.start_date)}</span>
-          <span>Closes: ${formatPollDate(poll.end_date)}</span>
+          ${pollTypeChip(poll.poll_type)}
+          ${pollScopeChip(poll)}
+          ${pollStatusChip({ ...poll, has_voted: data.has_voted })}
+          <span class="poll-chip time">Opens: ${formatPollDate(poll.start_date)}</span>
+          <span class="poll-chip time">Closes: ${formatPollDate(poll.end_date)}</span>
+          <span class="poll-chip time">Timezone: Bucharest</span>
         `;
 
         const attachments = data.attachments || [];
