@@ -3,4 +3,6 @@ __pycache__/
 .pytest_cache/
 parking_module.db
 .DS_Store
-
+node_modules/
+.next/
+.env

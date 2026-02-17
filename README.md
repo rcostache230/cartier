@@ -1,6 +1,6 @@
-# Neighbourhood Parking Dashboard (Auth + Admin)
+# Cartier Neighbourhood App (Next.js + Node)
 
-This project is a Vercel-ready Flask app for parking spot sharing between neighbours.
+This project now runs on **Next.js (Node runtime)** with PostgreSQL (Neon on Vercel).
 
 ## Defaults
 
@@ -10,68 +10,67 @@ This project is a Vercel-ready Flask app for parking spot sharing between neighb
 - Admin user: `admin`
 - Admin password: `adex123#`
 - Usernames are normalized to lowercase automatically.
-- If a username starts with `blocN` (example: `bloc3_maria`), building is auto-assigned to that building.
-- Building capacity shown in dashboard:
-  - 10 underground spots
-  - 6 above-ground spots
 
-## What changed
+## Stack
 
-- Authentication required for all parking actions.
-- Free-text parking spot number when sharing (no fixed slot lookup).
-- Dashboard sections:
-  - Shared parking spots
-  - My shared spots
-  - My shared spots claimed by neighbours (+ claimed period)
-  - My claimed spots (+ claimed period)
-- Claim flow:
-  - choose from currently available shared spots
-  - claim a selected spot for an exact period
-- Admin-only user management:
-  - List users
-  - Create resident/admin users (with phone number)
+- Next.js App Router
+- Node.js route handlers (`/app/api/...`)
+- PostgreSQL (`pg`)
+- Luxon (Bucharest timezone conversions for poll dates)
 
-## API
+## Required Environment Variables
 
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
-- `GET /api/auth/me`
-- `GET /api/dashboard` (login required)
-- `POST /api/slots` (login required)
-- `GET /api/slots/open` (login required)
-- `POST /api/slots/auto-reserve` (login required)
-- `POST /api/slots/claim` (login required, selected slot)
-- `GET /api/buildings/stats` (login required)
-- `GET /api/users` (admin)
-- `POST /api/users` (admin)
-- `POST /api/admin/slots` (admin, create slot for any resident)
-- `GET /api/polls` (login required)
-- `POST /api/polls` (admin)
-- `GET /api/polls/<poll_id>` (login required)
-- `POST /api/polls/<poll_id>/attachments` (admin)
-- `POST /api/polls/<poll_id>/activate` (admin)
-- `POST /api/polls/<poll_id>/close` (admin)
-- `POST /api/polls/<poll_id>/archive` (admin)
-- `POST /api/polls/<poll_id>/vote` (login required)
-- `GET /api/polls/<poll_id>/results` (login required)
+Set one of:
 
-## Local run
+- `POSTGRES_URL` (recommended, pooled Neon URL)
+- `DATABASE_URL`
+- `POSTGRES_URL_NON_POOLING`
+
+Optional:
+
+- `FLASK_SECRET_KEY` (used as session signing secret for compatibility)
+
+## Local Development
 
 ```bash
-pip install -r requirements.txt
-python api/index.py
+npm install
+npm run dev
 ```
 
-Open `http://localhost:8000`.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Deploy
+## Production Deploy (Vercel)
 
 ```bash
 vercel
 vercel --prod
 ```
 
-## Production note
+Vercel auto-detects Next.js. No custom `vercel.json` is required.
 
-This app supports persistent Postgres via `DATABASE_URL` / `POSTGRES_URL`.
-If no Postgres URL is configured, it falls back to SQLite (`/tmp` on Vercel, which is ephemeral).
+## API Surface
+
+- `GET /api`
+- `GET /health`
+- `GET /api/health`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+- `GET /api/dashboard`
+- `POST /api/slots`
+- `GET /api/slots/open`
+- `POST /api/slots/auto-reserve`
+- `POST /api/slots/claim`
+- `GET /api/buildings/stats`
+- `GET /api/users` (admin)
+- `POST /api/users` (admin)
+- `POST /api/admin/slots` (admin)
+- `GET /api/polls`
+- `POST /api/polls` (admin)
+- `GET /api/polls/:poll_id`
+- `POST /api/polls/:poll_id/attachments` (admin)
+- `POST /api/polls/:poll_id/activate` (admin)
+- `POST /api/polls/:poll_id/close` (admin)
+- `POST /api/polls/:poll_id/archive` (admin)
+- `POST /api/polls/:poll_id/vote`
+- `GET /api/polls/:poll_id/results`
