@@ -568,7 +568,7 @@ function profileHtml() {
         </div>
 
         <section id="summaryPanel" class="stack" style="margin-top:14px">
-          <details class="card" id="passwordCard" open>
+          <details class="card" id="passwordCard">
             <summary style="cursor:pointer; font-weight:800">Change Password</summary>
             <form id="passwordForm" class="stack" style="margin-top:10px">
               <div>
@@ -587,8 +587,9 @@ function profileHtml() {
             </form>
           </details>
 
-          <section class="card">
-            <h3 class="section-title">My Activity Summary</h3>
+          <details class="card" open>
+            <summary style="cursor:pointer; font-weight:800">My Activity</summary>
+            <h3 class="section-title" style="margin-top:10px">My Activity Summary</h3>
             <div class="activity-tabs">
               <button type="button" class="activity-tab-btn active" data-activity-target="listingsPanel">Listings</button>
               <button type="button" class="activity-tab-btn" data-activity-target="parkingPanel">Parking</button>
@@ -648,12 +649,13 @@ function profileHtml() {
               </div>
               <div id="pollCards" class="mobile-card-list"></div>
             </section>
-          </section>
+          </details>
 
-          <section class="danger-zone">
-            <h3>Quick Delete Actions</h3>
+          <details class="danger-zone">
+            <summary style="cursor:pointer; font-weight:800">Danger Zone</summary>
+            <h3 style="margin-top:10px">Quick Delete Actions</h3>
             <div id="dangerList" class="danger-list"></div>
-          </section>
+          </details>
         </section>
 
         <section id="adminPanel" class="stack hidden" style="margin-top:14px">

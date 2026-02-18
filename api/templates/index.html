@@ -53,9 +53,21 @@
       }
 
       .brand {
+        display: grid;
+        gap: 0;
+        line-height: 1.05;
+      }
+
+      .brand-title {
         font-size: 1.08rem;
         font-weight: 800;
         letter-spacing: 0.01em;
+      }
+
+      .brand-subtitle {
+        font-size: 0.7rem;
+        color: rgba(226, 232, 240, 0.9);
+        font-weight: 500;
       }
 
       .nav-actions {
@@ -68,13 +80,31 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 10px;
+        padding: 5px 9px;
         border-radius: 999px;
         border: 1px solid rgba(255, 255, 255, 0.22);
         background: rgba(255, 255, 255, 0.08);
         color: #fff;
         font-size: 0.82rem;
         font-weight: 600;
+      }
+
+      .nav-user-initials {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #10b981;
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
+      .nav-user-text {
+        white-space: nowrap;
       }
 
       .nav-logout {
@@ -145,11 +175,11 @@
         display: grid;
         gap: 10px;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
       }
 
       .module-card:hover {
-        transform: translateY(-3px);
+        transform: translateY(-2px);
         box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
       }
 
@@ -766,8 +796,9 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
+        min-height: 44px;
         width: auto;
-        padding: 6px 10px;
+        padding: 8px 12px;
         font-size: 0.8rem;
         line-height: 1.2;
         border-radius: 8px;
@@ -1616,6 +1647,393 @@
         color: var(--muted);
       }
 
+      a:focus-visible,
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible,
+      [role="button"]:focus-visible {
+        outline: 2px solid #10b981;
+        outline-offset: 2px;
+      }
+
+      .module-breadcrumb a {
+        color: inherit;
+        text-decoration: underline;
+      }
+
+      .module-title {
+        font-weight: 800;
+      }
+
+      .refresh-meta {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.8rem;
+        min-height: 1.2em;
+      }
+
+      .refresh-meta.is-updated {
+        color: #047857;
+      }
+
+      .refresh-btn.is-refreshing .lucide {
+        animation: refresh-pulse 0.9s ease-in-out infinite;
+      }
+
+      @keyframes refresh-pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.45;
+        }
+      }
+
+      .mode-banner {
+        margin-top: 10px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        padding: 8px 12px;
+        font-weight: 700;
+        position: sticky;
+        top: 62px;
+        z-index: 5;
+      }
+
+      .mode-banner.sharing {
+        border-color: #86efac;
+        background: #ecfdf5;
+        color: #166534;
+      }
+
+      .mode-banner.claiming {
+        border-color: #93c5fd;
+        background: #eff6ff;
+        color: #1d4ed8;
+      }
+
+      .capacity-card.is-selected {
+        border-color: var(--teal);
+        background: #ecfdf5;
+      }
+
+      .capacity-skeleton .capacity-skeleton-line {
+        width: 100%;
+        height: 12px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #e2e8f0 20%, #f1f5f9 40%, #e2e8f0 60%);
+        background-size: 200% 100%;
+        animation: shimmer 1.2s linear infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      .parking-status-badge.pending {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-color: #bfdbfe;
+      }
+
+      .parking-status-badge.expired {
+        background: #f1f5f9;
+        color: #64748b;
+        border-color: #cbd5e1;
+      }
+
+      #adminPanel.admin-zone {
+        border-left: 4px solid #ef4444;
+        background: #fff;
+      }
+
+      #adminPanel .admin-zone-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .admin-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        border: 1px solid #fecaca;
+        background: #fef2f2;
+        color: #b91c1c;
+        padding: 3px 9px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .market-filter-row {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: 1fr 210px;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .market-sort-control {
+        display: flex;
+        gap: 6px;
+      }
+
+      .market-sort-control .market-sort-btn {
+        width: auto;
+      }
+
+      .market-building-filter {
+        display: grid;
+        gap: 6px;
+      }
+
+      .market-listing-card {
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .market-listing-body {
+        padding: 12px 14px 14px;
+        display: grid;
+        gap: 9px;
+      }
+
+      .market-listing-head {
+        display: block;
+      }
+
+      .market-listing-thumb {
+        width: 100%;
+        height: 160px;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        border-radius: 0;
+        background: #f1f5f9;
+        position: relative;
+      }
+
+      .market-listing-thumb .market-thumb {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .market-thumb-placeholder {
+        background: #f8fafc;
+        font-size: 2rem;
+      }
+
+      .market-status-corner {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+      }
+
+      .market-owner-line {
+        color: var(--muted);
+        font-size: 0.81rem;
+      }
+
+      .market-notice-banner {
+        border: 1px solid #bfdbfe;
+        background: #eff6ff;
+        color: #1e40af;
+      }
+
+      .market-dropzone {
+        margin-top: 8px;
+        border: 1px dashed #93c5fd;
+        border-radius: 12px;
+        min-height: 110px;
+        background: #f8fbff;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        color: #1e3a8a;
+        padding: 12px;
+        cursor: pointer;
+      }
+
+      .market-dropzone.dragover {
+        background: #eff6ff;
+        border-color: #10b981;
+      }
+
+      .market-upload-warning {
+        margin-top: 8px;
+        border: 1px solid #fcd34d;
+        border-radius: 8px;
+        background: #fffbeb;
+        color: #92400e;
+        padding: 8px 10px;
+        font-size: 0.82rem;
+      }
+
+      .market-upload-progress {
+        margin-top: 8px;
+        border: 1px solid #dbeafe;
+        border-radius: 999px;
+        height: 10px;
+        background: #eff6ff;
+        overflow: hidden;
+      }
+
+      .market-upload-progress-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #10b981, #059669);
+        transition: width 0.2s ease;
+      }
+
+      .market-preview-grid {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+        gap: 8px;
+      }
+
+      .market-preview-item {
+        position: relative;
+        border: 1px solid #dbe5f2;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+        height: 84px;
+      }
+
+      .market-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .market-preview-remove {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 44px;
+        min-height: 44px;
+        border-radius: 999px;
+        padding: 0;
+        background: rgba(15, 23, 42, 0.85);
+        border-color: rgba(15, 23, 42, 0.85);
+        color: #fff;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .poll-chip.scope.neighbourhood {
+        background: #f3e8ff;
+        border-color: #e9d5ff;
+        color: #6b21a8;
+      }
+
+      .poll-chip.scope.building {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1d4ed8;
+      }
+
+      .poll-status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+      }
+
+      .poll-voted-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 999px;
+        border: 1px solid #a7f3d0;
+        background: #ecfdf5;
+        color: #047857;
+        font-size: 0.76rem;
+        font-weight: 700;
+        padding: 3px 8px;
+      }
+
+      .poll-vote-tile {
+        min-height: 48px;
+      }
+
+      .poll-vote-tile.is-yes {
+        border-color: #86efac;
+        background: #f0fdf4;
+      }
+
+      .poll-vote-tile.is-no {
+        border-color: #fca5a5;
+        background: #fef2f2;
+      }
+
+      .toast-wrap {
+        top: 16px;
+        right: 16px;
+        bottom: auto;
+      }
+
+      .toast {
+        animation: toast-in 0.2s ease;
+      }
+
+      .toast.closing {
+        animation: toast-out 0.3s ease forwards;
+      }
+
+      .toast.info {
+        background: #1d4ed8;
+      }
+
+      .toast.warning {
+        background: #f59e0b;
+      }
+
+      @keyframes toast-in {
+        from {
+          opacity: 0;
+          transform: translateX(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes toast-out {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      .module-panel {
+        transform: translateY(8px);
+      }
+
       @media (max-width: 780px) {
         .module-grid {
           grid-template-columns: 1fr;
@@ -1648,6 +2066,22 @@
           padding-bottom: 20px;
         }
 
+        .poll-modal-card {
+          max-height: 100vh;
+          border-radius: 0;
+        }
+
+        #pollModal {
+          align-items: stretch;
+          padding: 0;
+        }
+
+        #pollModal .modal-card {
+          height: 100vh;
+          border-radius: 0;
+          border-bottom: 0;
+        }
+
         #votingModule .table-wrap {
           display: none;
         }
@@ -1677,11 +2111,58 @@
           gap: 10px;
           margin-top: 8px;
         }
+
+        #parkingModule .tab-panel .table-wrap {
+          display: none;
+        }
+
+        #parkingModule .parking-card-list {
+          display: grid;
+          gap: 10px;
+        }
+
+        .market-filter-row {
+          grid-template-columns: 1fr;
+        }
+
+        .tabs.segmented-control,
+        .market-sort-control {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 6px;
+          background: transparent;
+          padding: 0;
+        }
+
+        .tabs.segmented-control .tab-btn,
+        .market-sort-control .tab-btn {
+          width: 100%;
+        }
+
+        .toast-wrap {
+          left: 12px;
+          right: 12px;
+          top: 12px;
+          bottom: auto;
+        }
+
+        .toast {
+          min-width: 0;
+          max-width: none;
+        }
       }
 
       @media (max-width: 560px) {
         .global-nav-inner {
           padding: 0 12px;
+        }
+
+        .nav-user-text {
+          display: none;
+        }
+
+        .brand-subtitle {
+          display: none;
         }
 
         .capacity-grid {
@@ -1715,36 +2196,7 @@
         }
 
         .segmented-control {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 6px;
-          background: transparent;
-          padding: 0;
           overflow: visible;
-        }
-
-        .segmented-control .tab-btn {
-          width: 100%;
-        }
-
-        #parkingModule .tab-panel .table-wrap {
-          display: none;
-        }
-
-        #parkingModule .parking-card-list {
-          display: grid;
-          gap: 10px;
-        }
-
-        .toast-wrap {
-          left: 12px;
-          right: 12px;
-          bottom: 12px;
-        }
-
-        .toast {
-          min-width: 0;
-          max-width: none;
         }
       }
     </style>
@@ -1752,9 +2204,15 @@
   <body>
     <header class="global-nav">
       <div class="global-nav-inner">
-        <div class="brand">Cartier</div>
+        <div class="brand">
+          <div class="brand-title">Cartier</div>
+          <div class="brand-subtitle">Neighbourhood community</div>
+        </div>
         <div class="nav-actions">
-          <div id="navUserBadge" class="nav-user-badge hidden"></div>
+          <div id="navUserBadge" class="nav-user-badge hidden">
+            <span id="navUserInitials" class="nav-user-initials">--</span>
+            <span id="navUserText" class="nav-user-text"></span>
+          </div>
           <button id="logoutBtn" class="nav-logout hidden" type="button">Logout</button>
         </div>
       </div>
@@ -1791,7 +2249,7 @@
         <section id="modulesCard" class="card module-panel is-visible" style="margin-top: 12px">
           <div class="welcome-banner">
             <h2 id="welcomeTitle" class="welcome-title">Hello 👋</h2>
-            <p class="welcome-note">Choose which module you want to work in. All modules require authenticated access.</p>
+            <p id="welcomeResidence" class="welcome-note">Choose which module you want to work in. All modules require authenticated access.</p>
           </div>
           <div class="quick-stats">
             <span class="quick-stat"><i data-lucide="car-front" aria-hidden="true"></i><span id="quickStatFree">0 free parking spots</span></span>
@@ -1853,11 +2311,15 @@
         <div id="parkingModule" class="hidden module-panel">
           <section class="module-header">
             <div>
-              <div class="module-breadcrumb">Home &gt; Parking</div>
-              <h2 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parking</h2>
+              <div class="module-breadcrumb"><a href="#" data-back-modules>Home</a> &gt; Parking</div>
+              <h1 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parking</h1>
             </div>
-            <a href="#" class="module-back-link" data-back-modules>Back to Modules</a>
+            <div class="module-actions">
+              <a href="#" class="module-back-link" data-back-modules>Back to Modules</a>
+              <button id="refreshParkingBtn" class="ghost refresh-btn" type="button">Refresh</button>
+            </div>
           </section>
+          <p id="parkingLastRefreshed" class="refresh-meta">Last refreshed: -</p>
 
           <section class="card" style="margin-top: 12px">
             <h2>Building Capacity</h2>
@@ -1871,6 +2333,9 @@
             <div class="tabs segmented-control" style="margin-top: 8px">
               <button type="button" class="tab-btn active" data-tab-group="action" data-tab-target="actionSharePanel">Share my spot</button>
               <button type="button" class="tab-btn" data-tab-group="action" data-tab-target="actionClaimPanel">Claim a spot</button>
+            </div>
+            <div id="parkingModeBanner" class="mode-banner sharing">
+              <span>Mode: Sharing your spot</span>
             </div>
 
             <section id="actionSharePanel" class="tab-panel" data-tab-group="action">
@@ -2045,8 +2510,11 @@
             </section>
           </section>
 
-          <section id="adminPanel" class="card hidden" style="margin-top: 14px">
-            <h2>Admin Panel</h2>
+          <section id="adminPanel" class="card admin-zone hidden" style="margin-top: 14px">
+            <div class="admin-zone-head">
+              <h2><i data-lucide="lock" aria-hidden="true"></i>Admin Zone</h2>
+              <span class="admin-badge"><i data-lucide="shield-check" aria-hidden="true"></i>Admin Only</span>
+            </div>
             <div class="grid" style="margin-top: 10px">
               <section class="card">
                 <h3>Create User</h3>
@@ -2093,17 +2561,18 @@
         <section id="marketplaceModule" class="card hidden module-panel" style="margin-top: 14px">
           <div class="module-header">
             <div>
-              <div class="module-breadcrumb">Home &gt; Marketplace</div>
-              <h2 class="module-title"><i data-lucide="store" aria-hidden="true"></i>Marketplace</h2>
+              <div class="module-breadcrumb"><a href="#" data-back-modules>Home</a> &gt; Marketplace</div>
+              <h1 class="module-title"><i data-lucide="store" aria-hidden="true"></i>Marketplace</h1>
               <p class="poll-note">
                 Sell items in person only or donate items. No lending. Donations can be claimed.
               </p>
             </div>
             <div class="module-actions">
               <a href="#" class="module-back-link" data-back-modules>Back to Modules</a>
-              <button id="refreshMarketplaceBtn" class="ghost" type="button">Refresh</button>
+              <button id="refreshMarketplaceBtn" class="ghost refresh-btn" type="button">Refresh</button>
             </div>
           </div>
+          <p id="marketplaceLastRefreshed" class="refresh-meta">Last refreshed: -</p>
 
           <div id="marketplaceCategoryTabs" class="tabs market-filter-tabs" style="margin-top: 10px">
             <button type="button" class="tab-btn market-filter-btn active" data-market-category="all">
@@ -2130,6 +2599,19 @@
               <span class="market-filter-emoji" aria-hidden="true">📦</span>
               <span>Other</span>
             </button>
+          </div>
+          <div class="market-filter-row">
+            <div id="marketplaceSortTabs" class="segmented-control market-sort-control">
+              <button type="button" class="tab-btn market-sort-btn active" data-market-sort="newest">Newest</button>
+              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_asc">Price ↑</button>
+              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_desc">Price ↓</button>
+            </div>
+            <div class="market-building-filter">
+              <label for="marketplaceBuildingFilter">Building</label>
+              <select id="marketplaceBuildingFilter">
+                <option value="all">All</option>
+              </select>
+            </div>
           </div>
 
           <div class="grid" style="margin-top: 12px">
@@ -2224,7 +2706,15 @@
                 <h4>Photos</h4>
                 <div>
                   <label for="marketplacePhotos">Photos</label>
-                  <input id="marketplacePhotos" type="file" accept="image/*" multiple />
+                  <input id="marketplacePhotos" class="visually-hidden" type="file" accept="image/*" multiple />
+                  <div id="marketplaceDropzone" class="market-dropzone" role="button" tabindex="0" aria-label="Add marketplace photos">
+                    <span><b>Drag & drop</b> photos here, or click to browse.</span>
+                  </div>
+                  <div id="marketplaceFileWarning" class="market-upload-warning hidden"></div>
+                  <div id="marketplaceUploadProgress" class="market-upload-progress hidden" aria-live="polite">
+                    <div id="marketplaceUploadProgressFill" class="market-upload-progress-fill" style="width:0%"></div>
+                  </div>
+                  <div id="marketplacePhotoPreviews" class="market-preview-grid"></div>
                   <p class="poll-note">Uploads use secure storage. Keep photos clear and recent.</p>
                   <p id="marketplaceUploadStatus" class="upload-status">No photos selected.</p>
                 </div>
@@ -2237,23 +2727,24 @@
         <section id="votingModule" class="card hidden module-panel" style="margin-top: 14px">
           <div class="module-header">
             <div>
-              <div class="module-breadcrumb">Home &gt; Voting</div>
-              <h2 class="module-title"><i data-lucide="vote" aria-hidden="true"></i>Voting</h2>
+              <div class="module-breadcrumb"><a href="#" data-back-modules>Home</a> &gt; Voting</div>
+              <h1 class="module-title"><i data-lucide="vote" aria-hidden="true"></i>Voting</h1>
               <p class="poll-note">Participate in neighbourhood or building-specific polls.</p>
             </div>
             <div class="module-actions">
               <a href="#" class="module-back-link" data-back-modules>Back to Modules</a>
-              <button id="refreshPollsBtn" class="ghost" type="button">Refresh</button>
+              <button id="refreshPollsBtn" class="ghost refresh-btn" type="button">Refresh</button>
             </div>
           </div>
+          <p id="votingLastRefreshed" class="refresh-meta">Last refreshed: -</p>
           <section id="createPollCard" class="card hidden" style="margin-top: 12px">
             <h3>Create Poll (Admin Wizard)</h3>
             <form id="createPollForm" class="stack" style="margin-top: 8px">
               <div class="poll-wizard-header">
                 <span class="poll-wizard-step-chip active" data-poll-step-chip="1">1. Basics</span>
                 <span class="poll-wizard-step-chip" data-poll-step-chip="2">2. Scope & Dates</span>
-                <span class="poll-wizard-step-chip" data-poll-step-chip="3">3. Options & Files</span>
-                <span class="poll-wizard-step-chip" data-poll-step-chip="4">4. Review & Publish</span>
+                <span class="poll-wizard-step-chip" data-poll-step-chip="3">3. Options & Settings</span>
+                <span class="poll-wizard-step-chip" data-poll-step-chip="4">4. Attachments & Review</span>
               </div>
 
               <section id="pollWizardStep1" class="poll-wizard-step">
@@ -2325,15 +2816,15 @@
                   <label for="pollQuorumPercentage">Quorum Percentage</label>
                   <input id="pollQuorumPercentage" type="number" min="1" max="100" placeholder="e.g. 50" />
                 </div>
+              </section>
+
+              <section id="pollWizardStep4" class="poll-wizard-step hidden">
                 <div>
                   <label for="pollFiles">Attachments (photos, PDFs, documents)</label>
                   <input id="pollFiles" type="file" multiple />
                   <p class="poll-note">Files are uploaded to secure Cloudflare R2 storage before poll creation.</p>
                   <p id="pollUploadStatus" class="upload-status">No files selected.</p>
                 </div>
-              </section>
-
-              <section id="pollWizardStep4" class="poll-wizard-step hidden">
                 <div class="poll-review-box" id="pollReviewBox"></div>
               </section>
 
@@ -2359,6 +2850,7 @@
                       <th>Scope</th>
                       <th>Closed</th>
                       <th>Status</th>
+                      <th>Winner / Result</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -2395,32 +2887,7 @@
       <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
         <div class="modal-card">
           <h2 id="helpModalTitle">How To Use This Website</h2>
-          <section class="faq">
-            <details class="faq-item" open>
-              <summary>1) How do I log in?</summary>
-              <p>Use your apartment account (for example <code>bloc1_apt1</code>) and your assigned password. Usernames are lowercase.</p>
-            </details>
-            <details class="faq-item">
-              <summary>1.1) What timezone is used?</summary>
-              <p>All dates and times across parking and voting are shown and managed in Bucharest time.</p>
-            </details>
-            <details class="faq-item">
-              <summary>2) How do I share my parking spot?</summary>
-              <p>In <b>Share my spot</b>, enter your parking spot number, choose underground/above ground, set start/end date-time and submit.</p>
-            </details>
-            <details class="faq-item">
-              <summary>3) How do I claim a spot quickly?</summary>
-              <p>Use the <b>Claim</b> button directly in a free-spot row, or use the claim form with filters.</p>
-            </details>
-            <details class="faq-item">
-              <summary>4) What if I claim only part of the period?</summary>
-              <p>Your claimed interval is reserved, and the remaining time stays available for other neighbours.</p>
-            </details>
-            <details class="faq-item">
-              <summary>5) What can admin do?</summary>
-              <p>Admin can manage users, create shared spots, and monitor activity.</p>
-            </details>
-          </section>
+          <section id="helpFaq" class="faq"></section>
           <div class="modal-actions">
             <button id="helpCloseBtn" class="ghost" type="button">Close</button>
           </div>
@@ -2505,14 +2972,66 @@
         marketplace: "marketplaceModule",
         voting: "votingModule",
       };
+      const MODULE_ID_TO_TITLE = {
+        parkingModule: "Parking",
+        marketplaceModule: "Marketplace",
+        votingModule: "Voting",
+      };
+      const MARKETPLACE_MAX_FILE_BYTES = 5 * 1024 * 1024;
+      const HELP_ITEMS = {
+        global: [
+          {
+            question: "How do I log in?",
+            answer:
+              "Use your apartment account (for example bloc1_apt1) and your assigned password. Usernames are lowercase.",
+          },
+          {
+            question: "What timezone is used?",
+            answer: "All module dates and times are shown and managed in Bucharest time.",
+          },
+        ],
+        parking: [
+          {
+            question: "How do I share my parking spot?",
+            answer: "Use Share my spot, fill number/type/time interval, then submit.",
+          },
+          {
+            question: "How do I claim quickly?",
+            answer: "Use Claim on any free-spot row/card or claim from the filtered form.",
+          },
+        ],
+        marketplace: [
+          {
+            question: "Can I pay online through the app?",
+            answer: "No. All marketplace transactions are coordinated in person only.",
+          },
+          {
+            question: "How do donation claims work?",
+            answer: "Donation listings can be claimed from the listing card when still available.",
+          },
+        ],
+        voting: [
+          {
+            question: "Who can see each poll?",
+            answer: "Poll scope defines visibility: neighbourhood-wide or building-specific.",
+          },
+          {
+            question: "When are results visible?",
+            answer: "Results are visible after close unless early results are explicitly enabled.",
+          },
+        ],
+      };
 
       const els = {
         loginCard: document.getElementById("loginCard"),
         app: document.getElementById("app"),
         status: document.getElementById("status"),
         navUserBadge: document.getElementById("navUserBadge"),
+        navUserInitials: document.getElementById("navUserInitials"),
+        navUserText: document.getElementById("navUserText"),
         logoutBtn: document.getElementById("logoutBtn"),
         welcomeTitle: document.getElementById("welcomeTitle"),
+        welcomeResidence: document.getElementById("welcomeResidence"),
         quickStatFree: document.getElementById("quickStatFree"),
         quickStatListings: document.getElementById("quickStatListings"),
         quickStatPolls: document.getElementById("quickStatPolls"),
@@ -2523,7 +3042,11 @@
         closedPollCards: document.getElementById("closedPollCards"),
         countActivePolls: document.getElementById("countActivePolls"),
         countClosedPolls: document.getElementById("countClosedPolls"),
+        refreshParkingBtn: document.getElementById("refreshParkingBtn"),
         refreshPollsBtn: document.getElementById("refreshPollsBtn"),
+        parkingLastRefreshed: document.getElementById("parkingLastRefreshed"),
+        marketplaceLastRefreshed: document.getElementById("marketplaceLastRefreshed"),
+        votingLastRefreshed: document.getElementById("votingLastRefreshed"),
         pollModal: document.getElementById("pollModal"),
         pollModalTitle: document.getElementById("pollModalTitle"),
         pollCloseBtn: document.getElementById("pollCloseBtn"),
@@ -2537,10 +3060,13 @@
         pollVoteBtn: document.getElementById("pollVoteBtn"),
         pollResultsSection: document.getElementById("pollResultsSection"),
         parkingModule: document.getElementById("parkingModule"),
+        parkingModeBanner: document.getElementById("parkingModeBanner"),
         marketplaceModule: document.getElementById("marketplaceModule"),
         votingModule: document.getElementById("votingModule"),
         refreshMarketplaceBtn: document.getElementById("refreshMarketplaceBtn"),
         marketplaceCategoryTabs: document.getElementById("marketplaceCategoryTabs"),
+        marketplaceSortTabs: document.getElementById("marketplaceSortTabs"),
+        marketplaceBuildingFilter: document.getElementById("marketplaceBuildingFilter"),
         marketplaceCreateForm: document.getElementById("marketplaceCreateForm"),
         marketplaceCreateBtn: document.getElementById("marketplaceCreateBtn"),
         marketplaceListingType: document.getElementById("marketplaceListingType"),
@@ -2551,6 +3077,11 @@
         marketplaceContactPhone: document.getElementById("marketplaceContactPhone"),
         marketplacePickupDetails: document.getElementById("marketplacePickupDetails"),
         marketplacePhotos: document.getElementById("marketplacePhotos"),
+        marketplaceDropzone: document.getElementById("marketplaceDropzone"),
+        marketplaceFileWarning: document.getElementById("marketplaceFileWarning"),
+        marketplaceUploadProgress: document.getElementById("marketplaceUploadProgress"),
+        marketplaceUploadProgressFill: document.getElementById("marketplaceUploadProgressFill"),
+        marketplacePhotoPreviews: document.getElementById("marketplacePhotoPreviews"),
         marketplaceUploadStatus: document.getElementById("marketplaceUploadStatus"),
         marketplaceActiveCards: document.getElementById("marketplaceActiveCards"),
         marketplaceActiveBody: document.getElementById("marketplaceActiveBody"),
@@ -2605,6 +3136,7 @@
         kpiMyClaims: document.getElementById("kpiMyClaims"),
         helpBtn: document.getElementById("helpBtn"),
         helpModal: document.getElementById("helpModal"),
+        helpFaq: document.getElementById("helpFaq"),
         helpCloseBtn: document.getElementById("helpCloseBtn"),
         claimConfirmModal: document.getElementById("claimConfirmModal"),
         claimConfirmText: document.getElementById("claimConfirmText"),
@@ -2631,9 +3163,17 @@
       let marketplaceUploadedPhotos = [];
       let marketplaceUploadPromise = null;
       let marketplaceUploadToken = 0;
+      let marketplaceSelectedFiles = [];
+      let marketplacePreviewUrls = [];
       let marketplaceSelectedCategory = "all";
+      let marketplaceSelectedSort = "newest";
+      let marketplaceSelectedBuilding = "all";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
       let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
+      let autoRefreshIntervalId = null;
+      let refreshTickerIntervalId = null;
+      const lastRefreshAt = { parking: null, marketplace: null, voting: null };
+      const closedPollSummaryCache = {};
       let actionConfirmResolver = null;
       const initialModuleParam = new URLSearchParams(window.location.search).get("module");
       const STATIC_ACTION_ICON_MAP = [
@@ -2644,6 +3184,7 @@
         ['button[data-module-target="marketplaceModule"]', "store"],
         ['button[data-module-target="votingModule"]', "vote"],
         ['button[data-go-profile]', "user-cog"],
+        ["#refreshParkingBtn", "refresh-cw"],
         ["#refreshMarketplaceBtn", "refresh-cw"],
         ["#refreshPollsBtn", "refresh-cw"],
         ["#shareBtn", "share-2"],
@@ -2664,10 +3205,19 @@
       ];
 
       function showToast(message, kind = "success") {
+        const safeKind = ["success", "error", "info", "warning"].includes(kind) ? kind : "info";
         const toast = document.createElement("div");
-        toast.className = `toast ${kind}`;
+        toast.className = `toast ${safeKind}`;
         toast.textContent = message;
+        const toasts = Array.from(els.toastContainer.querySelectorAll(".toast"));
+        while (toasts.length >= 3) {
+          const oldest = toasts.shift();
+          if (oldest) oldest.remove();
+        }
         els.toastContainer.appendChild(toast);
+        setTimeout(() => {
+          toast.classList.add("closing");
+        }, 2700);
         setTimeout(() => {
           toast.remove();
         }, 3000);
@@ -2681,26 +3231,95 @@
         const building = Number(user?.building_number || 0);
         const apartment = Number(user?.apartment_number || 0);
         if (building > 0 && apartment > 0) {
-          return `Building ${building}, Apt ${apartment}`;
+          return `Bloc ${building}, Apt ${apartment}`;
         }
         if (building > 0) {
-          return `Building ${building}`;
+          return `Bloc ${building}`;
         }
         return "Residence n/a";
+      }
+
+      function userInitials(username) {
+        const cleaned = String(username || "").trim();
+        if (!cleaned) return "--";
+        const parts = cleaned.split(/[_\s-]+/).filter(Boolean);
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[1][0]).toUpperCase();
       }
 
       function renderWelcomeBanner(user) {
         if (!user) {
           els.welcomeTitle.textContent = "Hello 👋";
+          els.welcomeResidence.textContent = "Choose which module you want to work in. All modules require authenticated access.";
           return;
         }
-        els.welcomeTitle.textContent = `Hello, ${user.username} 👋 — ${displayResidence(user)}`;
+        els.welcomeTitle.textContent = `Hello, ${user.username} 👋`;
+        els.welcomeResidence.textContent = displayResidence(user);
       }
 
       function renderQuickStats() {
         els.quickStatFree.textContent = `${moduleQuickStats.freeSpots} free parking spots`;
         els.quickStatListings.textContent = `${moduleQuickStats.activeListings} active listings`;
         els.quickStatPolls.textContent = `${moduleQuickStats.openPolls} open polls`;
+      }
+
+      function moduleKeyFromId(moduleId) {
+        if (moduleId === "parkingModule") return "parking";
+        if (moduleId === "marketplaceModule") return "marketplace";
+        if (moduleId === "votingModule") return "voting";
+        return "global";
+      }
+
+      function setDocumentTitle(moduleId = null) {
+        const moduleTitle = moduleId ? MODULE_ID_TO_TITLE[moduleId] : null;
+        document.title = moduleTitle ? `Cartier - ${moduleTitle}` : "Cartier - Modules";
+      }
+
+      function formatSecondsAgo(dateValue) {
+        if (!dateValue) return "-";
+        const elapsedSeconds = Math.max(0, Math.round((Date.now() - dateValue.getTime()) / 1000));
+        return `${elapsedSeconds}s ago`;
+      }
+
+      function updateRefreshMetaLabels() {
+        const labels = [
+          ["parking", els.parkingLastRefreshed],
+          ["marketplace", els.marketplaceLastRefreshed],
+          ["voting", els.votingLastRefreshed],
+        ];
+        labels.forEach(([key, labelEl]) => {
+          if (!labelEl) return;
+          const lastValue = lastRefreshAt[key];
+          labelEl.textContent = `Last refreshed: ${formatSecondsAgo(lastValue)}`;
+        });
+      }
+
+      function markModuleRefreshed(key) {
+        lastRefreshAt[key] = new Date();
+        const labelMap = {
+          parking: els.parkingLastRefreshed,
+          marketplace: els.marketplaceLastRefreshed,
+          voting: els.votingLastRefreshed,
+        };
+        const labelEl = labelMap[key];
+        if (labelEl) {
+          labelEl.classList.add("is-updated");
+          setTimeout(() => labelEl.classList.remove("is-updated"), 900);
+        }
+        updateRefreshMetaLabels();
+      }
+
+      async function withRefreshPulse(button, run) {
+        if (!button) {
+          await run();
+          return;
+        }
+        button.classList.add("is-refreshing");
+        try {
+          await run();
+        } finally {
+          button.classList.remove("is-refreshing");
+        }
       }
 
       async function api(path, opts = {}) {
@@ -2760,7 +3379,9 @@
           document.querySelectorAll(selector).forEach((button) => setButtonActionIcon(button, iconName));
         });
         setLinkActionIcon(document.querySelector('a[href="/?module=marketplace"]'), "store");
-        document.querySelectorAll("[data-back-modules]").forEach((link) => setLinkActionIcon(link, "arrow-left"));
+        document
+          .querySelectorAll(".module-back-link[data-back-modules]")
+          .forEach((link) => setLinkActionIcon(link, "arrow-left"));
         hydrateLucideIcons();
       }
 
@@ -2810,8 +3431,12 @@
             ? "free"
             : normalized === "claimed" || normalized === "reserved"
               ? "claimed"
+              : normalized === "pending"
+                ? "pending"
+                : normalized === "expired"
+                  ? "expired"
               : normalized === "full" || normalized === "closed"
-                ? "full"
+                ? "expired"
                 : "default";
         const text = label || titleize(normalized || "status");
         return `<span class="parking-status-badge ${badgeClass}">${text}</span>`;
@@ -2892,7 +3517,8 @@
 
       function pollScopeChip(poll) {
         const iconName = poll.scope === "building" ? "building-2" : "map-pinned";
-        return `<span class="poll-chip scope">${iconMarkup(iconName)}<span>${pollScopeLabel(poll)}</span></span>`;
+        const scopeClass = poll.scope === "building" ? "building" : "neighbourhood";
+        return `<span class="poll-chip scope ${scopeClass}">${iconMarkup(iconName)}<span>${pollScopeLabel(poll)}</span></span>`;
       }
 
       function titleize(rawValue) {
@@ -2948,7 +3574,7 @@
       }
 
       function inferBuildingFromUsername(username) {
-        const match = normalizeUsername(username).match(/^bloc([1-9]|10)\b/);
+        const match = normalizeUsername(username).match(/^bloc([1-9]|10)(?:_|\b)/);
         return match ? Number(match[1]) : null;
       }
 
@@ -2970,10 +3596,23 @@
         document.querySelectorAll(`.tab-panel[data-tab-group="${tabGroup}"]`).forEach((panel) => {
           panel.classList.toggle("hidden", panel.id !== targetId);
         });
+        if (tabGroup === "action") {
+          updateParkingModeBanner(targetId);
+        }
+      }
+
+      function updateParkingModeBanner(targetPanelId) {
+        const isClaimMode = targetPanelId === "actionClaimPanel";
+        els.parkingModeBanner.classList.toggle("claiming", isClaimMode);
+        els.parkingModeBanner.classList.toggle("sharing", !isClaimMode);
+        els.parkingModeBanner.innerHTML = `<span>Mode: ${
+          isClaimMode ? "Claiming a spot" : "Sharing your spot"
+        }</span>`;
       }
 
       function showModuleChooser() {
         currentModule = null;
+        setDocumentTitle(null);
         els.modulesCard.classList.remove("hidden");
         requestAnimationFrame(() => {
           els.modulesCard.classList.add("is-visible");
@@ -2988,6 +3627,7 @@
 
       function openModule(moduleId) {
         currentModule = moduleId;
+        setDocumentTitle(moduleId);
         els.modulesCard.classList.add("hidden");
         els.modulesCard.classList.remove("is-visible");
         const modules = [els.parkingModule, els.marketplaceModule, els.votingModule];
@@ -3000,6 +3640,9 @@
             moduleEl.classList.add("hidden");
           }
         });
+        if (moduleId === "parkingModule") {
+          refreshDashboard().catch((error) => setStatus(error.message, true));
+        }
         if (moduleId === "marketplaceModule") {
           refreshMarketplace().catch((error) => setStatus(error.message, true));
         }
@@ -3362,10 +4005,26 @@
         return pollUploadPromise;
       }
 
+      function renderHelpFaq() {
+        const moduleKey = moduleKeyFromId(currentModule);
+        const items = [...(HELP_ITEMS.global || []), ...((HELP_ITEMS[moduleKey] || []))];
+        els.helpFaq.innerHTML = items
+          .map(
+            (item, idx) => `
+              <details class="faq-item" ${idx === 0 ? "open" : ""}>
+                <summary>${item.question}</summary>
+                <p>${item.answer}</p>
+              </details>
+            `
+          )
+          .join("");
+      }
+
       function openHelpModal() {
         if (!els.claimConfirmModal.classList.contains("hidden")) {
           closeClaimConfirmation(false);
         }
+        renderHelpFaq();
         els.helpModal.classList.remove("hidden");
       }
 
@@ -3439,10 +4098,24 @@
         }
       }
 
+      function showCapacitySkeleton() {
+        els.stats.innerHTML = Array.from({ length: 4 })
+          .map(
+            () => `
+              <article class="capacity-card capacity-skeleton" aria-hidden="true">
+                <div class="capacity-skeleton-line" style="width:44%"></div>
+                <div class="capacity-skeleton-line" style="margin-top:10px"></div>
+                <div class="capacity-skeleton-line" style="margin-top:8px; width:70%"></div>
+              </article>
+            `
+          )
+          .join("");
+      }
+
       function refreshStats(stats) {
         currentBuildingStats = Array.isArray(stats) ? stats : [];
         if (!currentBuildingStats.length) {
-          els.stats.innerHTML = renderParkingEmptyCard("No building capacity data available yet.");
+          els.stats.innerHTML = `<div class="parking-empty">${iconMarkup("info")}<span>No capacity data available.</span></div>`;
           return;
         }
 
@@ -3532,7 +4205,7 @@
                   </tr>`
               )
               .join("")
-          : renderParkingEmptyRow(9, "No spots shared yet. Be the first!");
+          : renderParkingEmptyRow(9, "No spots available right now. Check back later.");
 
         els.myShared.innerHTML = myShared.length
           ? myShared
@@ -3541,7 +4214,7 @@
                   `<tr>${td(s.parking_space_number)}${td(parkingTypeWithIcon(s.parking_type))}${td(parkingStatusBadge(s.status || "open"))}${td(formatBucharestDateTime(s.available_from))}${td(formatBucharestDateTime(s.available_until))}</tr>`
               )
               .join("")
-          : renderParkingEmptyRow(5, "You have not shared any spot yet.");
+          : renderParkingEmptyRow(5, "You haven't shared any spots yet.");
 
         els.claimedOnMine.innerHTML = claimedByOthers.length
           ? claimedByOthers
@@ -3550,7 +4223,7 @@
                   `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
               )
               .join("")
-          : renderParkingEmptyRow(5, "No one has claimed your shared spots yet.");
+          : renderParkingEmptyRow(5, "None of your spots have been claimed.");
 
         els.myClaimed.innerHTML = myClaims.length
           ? myClaims
@@ -3559,7 +4232,7 @@
                   `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
               )
               .join("")
-          : renderParkingEmptyRow(7, "You have not claimed any shared spot yet.");
+          : renderParkingEmptyRow(7, "You haven't claimed any spots.");
 
         els.sharedSpotsCards.innerHTML = freeSpots.length
           ? freeSpots
@@ -3582,7 +4255,7 @@
                 `
               )
               .join("")
-          : renderParkingEmptyCard("No spots shared yet. Be the first!");
+          : renderParkingEmptyCard("No spots available right now. Check back later.");
 
         els.mySharedCards.innerHTML = myShared.length
           ? myShared
@@ -3600,7 +4273,7 @@
                 `
               )
               .join("")
-          : renderParkingEmptyCard("You have not shared any spot yet.");
+          : renderParkingEmptyCard("You haven't shared any spots yet.");
 
         els.claimedOnMineCards.innerHTML = claimedByOthers.length
           ? claimedByOthers
@@ -3620,7 +4293,7 @@
                 `
               )
               .join("")
-          : renderParkingEmptyCard("No one has claimed your shared spots yet.");
+          : renderParkingEmptyCard("None of your spots have been claimed.");
 
         els.myClaimedCards.innerHTML = myClaims.length
           ? myClaims
@@ -3641,7 +4314,7 @@
                 `
               )
               .join("")
-          : renderParkingEmptyCard("You have not claimed any shared spot yet.");
+          : renderParkingEmptyCard("You haven't claimed any spots.");
 
         els.countFree.textContent = String(freeSpots.length);
         els.countShared.textContent = String(myShared.length);
@@ -3705,9 +4378,11 @@
       }
 
       async function refreshDashboard() {
+        showCapacitySkeleton();
         const data = await api("/api/dashboard");
         refreshTables(data);
         refreshOpenSpotOptions();
+        markModuleRefreshed("parking");
       }
 
       async function refreshAdminUsers() {
@@ -3762,6 +4437,40 @@
         return MARKETPLACE_CATEGORY_ICONS[normalized] || "📦";
       }
 
+      function marketplaceOwnerBuilding(post) {
+        const fromPayload = Number(post?.building_number || 0);
+        if (fromPayload > 0) return fromPayload;
+        return inferBuildingFromUsername(post?.owner_username) || 0;
+      }
+
+      function marketplaceBuildingMatches(post) {
+        if (marketplaceSelectedBuilding === "all") return true;
+        return String(marketplaceOwnerBuilding(post)) === marketplaceSelectedBuilding;
+      }
+
+      function parseMarketplacePriceValue(post) {
+        if (!post || post.listing_type === "donation") return 0;
+        const raw = String(post.price_text || "").replace(",", ".").match(/(\d+(\.\d+)?)/);
+        if (!raw) return Number.POSITIVE_INFINITY;
+        return Number(raw[1] || Number.POSITIVE_INFINITY);
+      }
+
+      function sortMarketplaceListings(listings) {
+        const sorted = listings.slice();
+        sorted.sort((a, b) => {
+          if (marketplaceSelectedSort === "price_asc") {
+            return parseMarketplacePriceValue(a) - parseMarketplacePriceValue(b);
+          }
+          if (marketplaceSelectedSort === "price_desc") {
+            return parseMarketplacePriceValue(b) - parseMarketplacePriceValue(a);
+          }
+          const da = new Date(String(a.updated_at || a.created_at || 0)).getTime() || 0;
+          const db = new Date(String(b.updated_at || b.created_at || 0)).getTime() || 0;
+          return db - da;
+        });
+        return sorted;
+      }
+
       function marketplaceCategoryMatches(post) {
         if (marketplaceSelectedCategory === "all") return true;
         return normalizeMarketplaceCategory(post?.category) === marketplaceSelectedCategory;
@@ -3781,6 +4490,22 @@
         if (rerender) {
           renderMarketplace(marketplaceDashboardData);
         }
+      }
+
+      function setMarketplaceSort(sortKey, { rerender = true } = {}) {
+        const normalized =
+          sortKey === "price_asc" || sortKey === "price_desc" ? sortKey : "newest";
+        marketplaceSelectedSort = normalized;
+        els.marketplaceSortTabs.querySelectorAll("[data-market-sort]").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.marketSort === normalized);
+        });
+        if (rerender) renderMarketplace(marketplaceDashboardData);
+      }
+
+      function setMarketplaceBuildingFilter(buildingValue, { rerender = true } = {}) {
+        marketplaceSelectedBuilding = buildingValue || "all";
+        els.marketplaceBuildingFilter.value = marketplaceSelectedBuilding;
+        if (rerender) renderMarketplace(marketplaceDashboardData);
       }
 
       function marketplaceStatusLabel(status) {
@@ -3841,7 +4566,60 @@
         marketplaceUploadedPhotos = [];
         marketplaceUploadPromise = null;
         marketplaceUploadToken += 1;
+        marketplaceSelectedFiles = [];
+        marketplacePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+        marketplacePreviewUrls = [];
+        els.marketplacePhotoPreviews.innerHTML = "";
+        els.marketplacePhotos.value = "";
+        els.marketplaceFileWarning.classList.add("hidden");
+        els.marketplaceFileWarning.textContent = "";
+        els.marketplaceUploadProgress.classList.add("hidden");
+        els.marketplaceUploadProgressFill.style.width = "0%";
         setMarketplaceUploadStatus("No photos selected.");
+      }
+
+      function renderMarketplacePhotoPreviews() {
+        marketplacePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+        marketplacePreviewUrls = [];
+        els.marketplacePhotoPreviews.innerHTML = marketplaceSelectedFiles
+          .map((file, index) => {
+            const url = URL.createObjectURL(file);
+            marketplacePreviewUrls.push(url);
+            return `
+              <div class="market-preview-item">
+                <img src="${url}" alt="Selected photo ${index + 1}" />
+                <button type="button" class="market-preview-remove" data-remove-market-file="${index}" aria-label="Remove photo">
+                  ×
+                </button>
+              </div>
+            `;
+          })
+          .join("");
+
+        const oversized = marketplaceSelectedFiles.filter((file) => file.size > MARKETPLACE_MAX_FILE_BYTES);
+        if (oversized.length) {
+          els.marketplaceFileWarning.classList.remove("hidden");
+          els.marketplaceFileWarning.textContent =
+            `${oversized.length} file(s) are larger than 5MB. Upload may fail or be slow.`;
+        } else {
+          els.marketplaceFileWarning.classList.add("hidden");
+          els.marketplaceFileWarning.textContent = "";
+        }
+        hydrateLucideIcons();
+      }
+
+      function setMarketplaceSelectedFiles(fileList, { append = false } = {}) {
+        const incoming = Array.from(fileList || []).filter((file) => file && String(file.type || "").startsWith("image/"));
+        marketplaceUploadToken += 1;
+        marketplaceUploadPromise = null;
+        marketplaceSelectedFiles = append ? [...marketplaceSelectedFiles, ...incoming] : incoming;
+        marketplaceUploadedPhotos = [];
+        els.marketplaceUploadProgress.classList.add("hidden");
+        els.marketplaceUploadProgressFill.style.width = "0%";
+        setMarketplaceUploadStatus(
+          marketplaceSelectedFiles.length ? `${marketplaceSelectedFiles.length} photo(s) selected.` : "No photos selected."
+        );
+        renderMarketplacePhotoPreviews();
       }
 
       function updateMarketplaceFormVisibility() {
@@ -3899,14 +4677,19 @@
       }
 
       async function startMarketplacePhotoUpload() {
-        const files = Array.from(els.marketplacePhotos.files || []);
+        const files = marketplaceSelectedFiles.slice();
         const token = ++marketplaceUploadToken;
 
         if (!files.length) {
-          clearMarketplaceUploadState();
+          marketplaceUploadedPhotos = [];
+          els.marketplaceUploadProgress.classList.add("hidden");
+          els.marketplaceUploadProgressFill.style.width = "0%";
+          setMarketplaceUploadStatus("No photos selected.");
           return;
         }
 
+        els.marketplaceUploadProgress.classList.remove("hidden");
+        els.marketplaceUploadProgressFill.style.width = "0%";
         setMarketplaceUploadStatus(`Uploading ${files.length} photo(s)...`);
 
         marketplaceUploadPromise = uploadMarketplacePhotos(files, (progress) => {
@@ -3914,18 +4697,23 @@
             throw new Error("__upload_cancelled__");
           }
           if (progress.stage === "upload") {
+            const percent = Math.min(99, Math.round((progress.index / progress.total) * 100));
+            els.marketplaceUploadProgressFill.style.width = `${percent}%`;
             setMarketplaceUploadStatus(
               `Uploading ${progress.index + 1}/${progress.total}: ${progress.fileName}...`
             );
             return;
           }
           if (progress.stage === "done") {
+            const percent = Math.min(100, Math.round((progress.index / progress.total) * 100));
+            els.marketplaceUploadProgressFill.style.width = `${percent}%`;
             setMarketplaceUploadStatus(`Uploaded ${progress.index}/${progress.total} photo(s)...`);
           }
         })
           .then((photos) => {
             if (token !== marketplaceUploadToken) return;
             marketplaceUploadedPhotos = photos;
+            els.marketplaceUploadProgressFill.style.width = "100%";
             setMarketplaceUploadStatus(
               `Upload complete: ${photos.length} photo(s) ready.`,
               "success"
@@ -3936,6 +4724,8 @@
               return;
             }
             marketplaceUploadedPhotos = [];
+            els.marketplaceUploadProgress.classList.add("hidden");
+            els.marketplaceUploadProgressFill.style.width = "0%";
             setMarketplaceUploadStatus(
               `Upload failed: ${error.message || "unknown error"}`,
               "error"
@@ -4011,8 +4801,21 @@
           my_listings: myListingsAll,
         };
 
-        const activeListings = activeListingsAll.filter((post) => marketplaceCategoryMatches(post));
-        const myListings = myListingsAll.filter((post) => marketplaceCategoryMatches(post));
+        const buildingOptions = ["<option value=\"all\">All</option>"]
+          .concat(Array.from({ length: 10 }, (_, idx) => idx + 1).map((building) => `<option value="${building}">Bloc ${building}</option>`))
+          .join("");
+        els.marketplaceBuildingFilter.innerHTML = buildingOptions;
+        if (!Array.from(els.marketplaceBuildingFilter.options).some((opt) => opt.value === marketplaceSelectedBuilding)) {
+          marketplaceSelectedBuilding = "all";
+        }
+        els.marketplaceBuildingFilter.value = marketplaceSelectedBuilding;
+
+        const activeListings = sortMarketplaceListings(
+          activeListingsAll.filter((post) => marketplaceCategoryMatches(post) && marketplaceBuildingMatches(post))
+        );
+        const myListings = sortMarketplaceListings(
+          myListingsAll.filter((post) => marketplaceCategoryMatches(post) && marketplaceBuildingMatches(post))
+        );
 
         els.marketplaceActiveCards.innerHTML = activeListings.length
           ? activeListings
@@ -4026,18 +4829,25 @@
                   !post.claimed_by_username &&
                   !isOwner;
                 const contactId = `market-contact-${post.id}`;
+                const ownerBuilding = marketplaceOwnerBuilding(post);
                 return `
                   <article class="market-listing-card">
                     <div class="market-listing-head">
-                      <div class="market-listing-thumb">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}</div>
-                      <div class="market-listing-main">
+                      <div class="market-listing-thumb">
+                        <div class="market-status-corner">
+                          <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
+                        </div>
+                        ${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}
+                      </div>
+                      <div class="market-listing-body">
                         <div class="market-title-line">
                           <strong>${post.title}</strong>
                           ${marketplacePriceBadge(post)}
                         </div>
-                        <div class="market-owner-line">Owner: ${post.owner_username}</div>
+                        <div class="market-owner-line">Owner: ${post.owner_username} ${
+                          ownerBuilding ? `· Bloc ${ownerBuilding}` : ""
+                        }</div>
                         <div class="market-card-badges">
-                          <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
                           <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
                         </div>
                       </div>
@@ -4089,20 +4899,25 @@
               .map((post) => {
                 const isActive = post.status === "active";
                 const statusTag = marketplaceStatusTag(post);
+                const ownerBuilding = marketplaceOwnerBuilding(post);
                 return `
                   <article class="market-listing-card">
                     <div class="market-listing-head">
-                      <div class="market-listing-thumb">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}</div>
-                      <div class="market-listing-main">
+                      <div class="market-listing-thumb">
+                        <div class="market-status-corner">
+                          <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
+                        </div>
+                        ${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}
+                      </div>
+                      <div class="market-listing-body">
                         <div class="market-title-line">
                           <strong>${post.title}</strong>
                           ${marketplacePriceBadge(post)}
                         </div>
                         <div class="market-card-badges">
-                          <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
                           <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
                         </div>
-                        <div class="market-owner-line">Updated: ${formatBucharestDateTime(post.updated_at || post.created_at)}</div>
+                        <div class="market-owner-line">Bloc ${ownerBuilding || "-"} · Updated: ${formatBucharestDateTime(post.updated_at || post.created_at)}</div>
                       </div>
                     </div>
                     <div class="market-card-actions">
@@ -4137,6 +4952,7 @@
         moduleQuickStats.activeListings = Array.isArray(data.active_listings) ? data.active_listings.length : 0;
         renderQuickStats();
         renderMarketplace(data);
+        markModuleRefreshed("marketplace");
       }
 
       function renderActivePollCards(polls) {
@@ -4151,8 +4967,10 @@
                       <span class="poll-countdown">${iconMarkup("clock-3")}<span>${pollCountdownLabel(poll)}</span></span>
                     </div>
                     <div class="poll-meta">
+                      <span class="poll-chip"><span class="poll-status-dot" aria-hidden="true"></span><span>${poll.has_voted ? "Voted" : "Open"}</span></span>
                       ${pollScopeChip(poll)}
                       ${status}
+                      ${poll.has_voted ? `<span class="poll-voted-badge">${iconMarkup("check-check")}<span>Already voted</span></span>` : ""}
                     </div>
                     <div>
                       <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">
@@ -4167,6 +4985,42 @@
         decorateDynamicActionIcons(els.activePolls);
       }
 
+      function closedPollSummaryText(pollId) {
+        const cached = closedPollSummaryCache[String(pollId)];
+        if (!cached) return "Loading...";
+        return `${cached.winner} / ${cached.result}`;
+      }
+
+      async function warmClosedPollSummaries(polls) {
+        const missing = polls.filter((poll) => !closedPollSummaryCache[String(poll.id)]);
+        if (!missing.length) return;
+        await Promise.all(
+          missing.map(async (poll) => {
+            try {
+              const results = await api(`/api/polls/${poll.id}/results`);
+              const options = Array.isArray(results.options) ? results.options : [];
+              const winnerIds = Array.isArray(results.winners) ? results.winners : [];
+              const winnerLabels = winnerIds
+                .map((id) => options.find((opt) => opt.id === id)?.label || id)
+                .filter(Boolean);
+              let winner = "No winner";
+              if (winnerLabels.length === 1) winner = winnerLabels[0];
+              if (winnerLabels.length > 1) winner = `Tie: ${winnerLabels.join(", ")}`;
+              closedPollSummaryCache[String(poll.id)] = {
+                winner,
+                result: resultStatusLabel(results.result_status),
+              };
+            } catch {
+              closedPollSummaryCache[String(poll.id)] = {
+                winner: "Unavailable",
+                result: "Pending",
+              };
+            }
+          })
+        );
+        renderClosedPollRows(polls);
+      }
+
       function renderClosedPollRows(polls) {
         els.closedPolls.innerHTML = polls.length
           ? polls
@@ -4176,11 +5030,12 @@
                   ${td(pollScopeChip(poll))}
                   ${td(formatPollDate(poll.end_date))}
                   ${td(pollStatusChip(poll))}
+                  ${td(closedPollSummaryText(poll.id))}
                   <td><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button></td>
                 </tr>`;
               })
               .join("")
-          : `<tr><td colspan="5">No closed polls yet.</td></tr>`;
+          : `<tr><td colspan="6">No closed polls yet.</td></tr>`;
         els.closedPollCards.innerHTML = polls.length
           ? polls
               .map(
@@ -4194,6 +5049,7 @@
                       ${pollStatusChip(poll)}
                     </div>
                     <div style="color:var(--muted); font-size:0.82rem">Closed: ${formatPollDate(poll.end_date)}</div>
+                    <div style="color:var(--muted); font-size:0.82rem">Result: ${closedPollSummaryText(poll.id)}</div>
                     <div><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button></div>
                   </article>
                 `
@@ -4206,7 +5062,7 @@
 
       function clearPollLists() {
         els.activePolls.innerHTML = `<div class="poll-card-empty">${iconMarkup("vote")}<span>No active polls.</span></div>`;
-        els.closedPolls.innerHTML = `<tr><td colspan="5">No closed polls.</td></tr>`;
+        els.closedPolls.innerHTML = `<tr><td colspan="6">No closed polls.</td></tr>`;
         els.closedPollCards.innerHTML = `<div class="poll-card-empty">${iconMarkup("archive")}<span>No closed polls.</span></div>`;
         els.countActivePolls.textContent = "0";
         els.countClosedPolls.textContent = "0";
@@ -4225,6 +5081,47 @@
         renderClosedPollRows(closedPolls);
         els.countActivePolls.textContent = String(activePolls.length);
         els.countClosedPolls.textContent = String(closedPolls.length);
+        markModuleRefreshed("voting");
+        warmClosedPollSummaries(closedPolls).catch(() => {});
+      }
+
+      function stopAutoRefresh() {
+        if (autoRefreshIntervalId) {
+          clearInterval(autoRefreshIntervalId);
+          autoRefreshIntervalId = null;
+        }
+        if (refreshTickerIntervalId) {
+          clearInterval(refreshTickerIntervalId);
+          refreshTickerIntervalId = null;
+        }
+      }
+
+      async function autoRefreshNow() {
+        if (!currentUser) return;
+        try {
+          if (!currentModule || currentModule === "parkingModule") {
+            await withRefreshPulse(els.refreshParkingBtn, async () => refreshDashboard());
+          }
+          if (!currentModule || currentModule === "marketplaceModule") {
+            await withRefreshPulse(els.refreshMarketplaceBtn, async () => refreshMarketplace());
+          }
+          if (!currentModule || currentModule === "votingModule") {
+            await withRefreshPulse(els.refreshPollsBtn, async () => refreshVoting());
+          }
+        } catch {
+          // silent auto-refresh errors to avoid interrupting user flow
+        }
+      }
+
+      function startAutoRefresh() {
+        stopAutoRefresh();
+        updateRefreshMetaLabels();
+        refreshTickerIntervalId = setInterval(() => {
+          updateRefreshMetaLabels();
+        }, 1000);
+        autoRefreshIntervalId = setInterval(() => {
+          autoRefreshNow();
+        }, 60000);
       }
 
       function closePollModal() {
@@ -4232,9 +5129,31 @@
         currentPollDetail = null;
       }
 
+      function updatePollVoteSubmitState() {
+        if (!currentPollDetail || currentPollDetail.poll.status !== "active" || currentPollDetail.has_voted) {
+          els.pollVoteBtn.disabled = true;
+          return;
+        }
+        const poll = currentPollDetail.poll;
+        if (poll.poll_type === "weighted") {
+          const selects = Array.from(els.pollVoteOptions.querySelectorAll("select[data-option-id]"));
+          const allFilled = selects.length > 0 && selects.every((select) => Number(select.value || 0) > 0);
+          els.pollVoteBtn.disabled = !allFilled;
+          return;
+        }
+        if (poll.poll_type === "multiple_choice" && poll.allow_multiple_selections) {
+          const checked = els.pollVoteOptions.querySelector("input[type=checkbox]:checked");
+          els.pollVoteBtn.disabled = !checked;
+          return;
+        }
+        const selected = els.pollVoteOptions.querySelector("input[type=radio]:checked");
+        els.pollVoteBtn.disabled = !selected;
+      }
+
       function renderPollVote(data) {
         const poll = data.poll;
         const options = data.options || [];
+        els.pollVoteBtn.disabled = true;
 
         els.pollVoteHint.textContent = "";
         els.pollVoteForm.classList.remove("hidden");
@@ -4270,9 +5189,13 @@
                     </div>
                   `
                 )
-                .join("")}
+              .join("")}
             </div>
           `;
+          els.pollVoteOptions.querySelectorAll("select[data-option-id]").forEach((input) => {
+            input.addEventListener("change", updatePollVoteSubmitState);
+          });
+          updatePollVoteSubmitState();
           return;
         }
 
@@ -4288,6 +5211,10 @@
               `
             )
             .join("");
+          els.pollVoteOptions.querySelectorAll("input[type=checkbox]").forEach((input) => {
+            input.addEventListener("change", updatePollVoteSubmitState);
+          });
+          updatePollVoteSubmitState();
           return;
         }
 
@@ -4295,13 +5222,23 @@
         els.pollVoteOptions.innerHTML = options
           .map(
             (opt) => `
-              <label class="poll-vote-tile">
+              <label class="poll-vote-tile ${
+                poll.poll_type === "yes_no" && String(opt.label || "").toLowerCase() === "yes"
+                  ? "is-yes"
+                  : poll.poll_type === "yes_no" && String(opt.label || "").toLowerCase() === "no"
+                    ? "is-no"
+                    : ""
+              }">
                 <input type="radio" name="pollOption" value="${opt.id}" required />
                 <span class="tile-label">${opt.label}</span>
               </label>
             `
           )
           .join("");
+        els.pollVoteOptions.querySelectorAll("input[type=radio]").forEach((input) => {
+          input.addEventListener("change", updatePollVoteSubmitState);
+        });
+        updatePollVoteSubmitState();
       }
 
       function renderPollResults(results) {
@@ -4519,15 +5456,21 @@
       function applyAuthState(user) {
         currentUser = user;
         if (!user) {
+          stopAutoRefresh();
+          lastRefreshAt.parking = null;
+          lastRefreshAt.marketplace = null;
+          lastRefreshAt.voting = null;
           closeAllModals();
           els.loginCard.classList.remove("hidden");
           els.app.classList.add("hidden");
           els.navUserBadge.classList.add("hidden");
           els.logoutBtn.classList.add("hidden");
-          els.navUserBadge.textContent = "";
+          els.navUserText.textContent = "";
+          els.navUserInitials.textContent = "--";
           moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
           renderWelcomeBanner(null);
           renderQuickStats();
+          updateRefreshMetaLabels();
           showModuleChooser();
           clearPollLists();
           clearMarketplaceTables();
@@ -4540,11 +5483,13 @@
         els.app.classList.remove("hidden");
         els.navUserBadge.classList.remove("hidden");
         els.logoutBtn.classList.remove("hidden");
-        els.navUserBadge.textContent = `${user.username} · ${displayResidence(user)}`;
+        els.navUserText.textContent = `${user.username} · ${displayResidence(user)}`;
+        els.navUserInitials.textContent = userInitials(user.username);
         moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
         showModuleChooser();
         renderWelcomeBanner(user);
         renderQuickStats();
+        updateRefreshMetaLabels();
         document.getElementById("claimBuilding").value = "";
         document.getElementById("claimPhone").value = user.phone_number || "";
         els.marketplaceContactPhone.value = user.phone_number || "";
@@ -4562,6 +5507,7 @@
         }
 
         maybeShowHelpOnce();
+        startAutoRefresh();
       }
 
       document.getElementById("loginForm").addEventListener("submit", async (event) => {
@@ -4726,10 +5672,19 @@
         });
       });
 
+      els.refreshParkingBtn.addEventListener("click", async () => {
+        try {
+          await withRefreshPulse(els.refreshParkingBtn, async () => refreshDashboard());
+          showToast("Parking refreshed.", "info");
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
       els.refreshMarketplaceBtn.addEventListener("click", async () => {
         try {
-          await refreshMarketplace();
-          showToast("Marketplace refreshed.");
+          await withRefreshPulse(els.refreshMarketplaceBtn, async () => refreshMarketplace());
+          showToast("Marketplace refreshed.", "info");
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -4749,12 +5704,56 @@
         setMarketplaceCategory(els.marketplaceCategory.value, { syncForm: false, rerender: true });
       });
 
-      els.marketplacePhotos.addEventListener("change", async () => {
-        try {
-          await startMarketplacePhotoUpload();
-        } catch (error) {
-          setStatus(error.message, true);
-        }
+      els.marketplaceSortTabs.addEventListener("click", (event) => {
+        const sortBtn = event.target.closest("[data-market-sort]");
+        if (!sortBtn) return;
+        setMarketplaceSort(sortBtn.dataset.marketSort, { rerender: true });
+      });
+
+      els.marketplaceBuildingFilter.addEventListener("change", () => {
+        setMarketplaceBuildingFilter(els.marketplaceBuildingFilter.value, { rerender: true });
+      });
+
+      els.marketplaceDropzone.addEventListener("click", () => {
+        els.marketplacePhotos.click();
+      });
+
+      els.marketplaceDropzone.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        els.marketplacePhotos.click();
+      });
+
+      els.marketplaceDropzone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        els.marketplaceDropzone.classList.add("dragover");
+      });
+
+      els.marketplaceDropzone.addEventListener("dragleave", () => {
+        els.marketplaceDropzone.classList.remove("dragover");
+      });
+
+      els.marketplaceDropzone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        els.marketplaceDropzone.classList.remove("dragover");
+        setMarketplaceSelectedFiles(event.dataTransfer?.files || [], { append: true });
+      });
+
+      els.marketplacePhotos.addEventListener("change", () => {
+        setMarketplaceSelectedFiles(els.marketplacePhotos.files || [], { append: false });
+      });
+
+      els.marketplacePhotoPreviews.addEventListener("click", (event) => {
+        const removeBtn = event.target.closest("[data-remove-market-file]");
+        if (!removeBtn) return;
+        const removeIndex = Number(removeBtn.dataset.removeMarketFile || -1);
+        if (removeIndex < 0) return;
+        marketplaceSelectedFiles = marketplaceSelectedFiles.filter((_, idx) => idx !== removeIndex);
+        marketplaceUploadedPhotos = [];
+        renderMarketplacePhotoPreviews();
+        setMarketplaceUploadStatus(
+          marketplaceSelectedFiles.length ? `${marketplaceSelectedFiles.length} photo(s) selected.` : "No photos selected."
+        );
       });
 
       els.marketplaceCreateForm.addEventListener("submit", async (event) => {
@@ -4775,7 +5774,7 @@
               pickup_details: (els.marketplacePickupDetails.value || "").trim(),
             };
 
-            const files = Array.from(els.marketplacePhotos.files || []);
+            const files = marketplaceSelectedFiles.slice();
             if (files.length) {
               if (marketplaceUploadPromise) {
                 await marketplaceUploadPromise;
@@ -4890,8 +5889,8 @@
 
       els.refreshPollsBtn.addEventListener("click", async () => {
         try {
-          await refreshVoting();
-          showToast("Polls refreshed.");
+          await withRefreshPulse(els.refreshPollsBtn, async () => refreshVoting());
+          showToast("Polls refreshed.", "info");
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -5191,9 +6190,12 @@
         updatePollFormVisibility();
         updateMarketplaceFormVisibility();
         setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: false, rerender: false });
+        setMarketplaceSort(marketplaceSelectedSort, { rerender: false });
+        setMarketplaceBuildingFilter("all", { rerender: false });
         applyStaticActionIcons();
         clearMarketplaceTables();
         clearMarketplaceUploadState();
+        updateRefreshMetaLabels();
         showModuleChooser();
 
         try {
