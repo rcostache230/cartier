@@ -9,14 +9,14 @@ function profileHtml() {
     <title>Profile Management</title>
     <style>
       :root {
-        --bg: #f6f4ee;
+        --bg: #f8fafc;
         --card: #ffffff;
-        --line: #d7d2c8;
-        --ink: #1d2730;
-        --muted: #55626e;
-        --teal: #0e7568;
-        --amber: #da7c1b;
-        --danger: #b42318;
+        --line: #e2e8f0;
+        --ink: #1a2332;
+        --muted: #64748b;
+        --teal: #10b981;
+        --amber: #f59e0b;
+        --danger: #ef4444;
       }
 
       * {
@@ -25,25 +25,24 @@ function profileHtml() {
 
       body {
         margin: 0;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 14px;
         color: var(--ink);
-        background:
-          radial-gradient(circle at 12% -12%, #fce9ce 0%, #fce9ce00 30%),
-          radial-gradient(circle at 110% 110%, #d6f0eb 0%, #d6f0eb00 36%),
-          var(--bg);
+        background: var(--bg);
       }
 
       .container {
         max-width: 1240px;
         margin: 0 auto;
-        padding: 22px;
+        padding: 24px;
       }
 
       .hero {
-        border-radius: 16px;
+        border-radius: 12px;
         border: 1px solid var(--line);
-        background: linear-gradient(115deg, #fff, #f9f4e8);
-        padding: 18px;
+        background: var(--card);
+        padding: 24px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
       .hero-head {
@@ -65,28 +64,32 @@ function profileHtml() {
 
       .back-link {
         text-decoration: none;
-        border: 0;
+        border: 1px solid transparent;
         color: #fff;
         cursor: pointer;
-        font-weight: 600;
-        background: #687684;
+        font-weight: 700;
+        background: #1a2332;
         width: auto;
         padding: 8px 12px;
         border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
       }
 
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 14px;
-        margin-top: 14px;
+        gap: 16px;
+        margin-top: 16px;
       }
 
       .card {
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 12px;
-        padding: 14px;
+        padding: 22px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
       .card h2,
@@ -96,7 +99,7 @@ function profileHtml() {
 
       .stack {
         display: grid;
-        gap: 10px;
+        gap: 12px;
       }
 
       .meta-list {
@@ -109,23 +112,28 @@ function profileHtml() {
       label {
         font-size: 0.86rem;
         color: var(--muted);
+        font-weight: 600;
       }
 
       input,
       button {
         width: 100%;
-        border: 1px solid #c9c2b5;
+        border: 1px solid var(--line);
         border-radius: 8px;
-        padding: 9px 10px;
+        padding: 10px 12px;
         font: inherit;
       }
 
       button {
-        border: 0;
+        border: 1px solid transparent;
         color: #fff;
         cursor: pointer;
-        font-weight: 600;
+        font-weight: 700;
         background: var(--teal);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
 
       button.alt {
@@ -155,7 +163,7 @@ function profileHtml() {
       th,
       td {
         text-align: left;
-        border-bottom: 1px solid #eee7db;
+        border-bottom: 1px solid var(--line);
         padding: 7px 5px;
         vertical-align: top;
       }
@@ -167,7 +175,9 @@ function profileHtml() {
       }
 
       .link-btn {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         text-decoration: underline;
         color: #185355;
         font-weight: 700;
@@ -177,11 +187,15 @@ function profileHtml() {
         width: auto;
         padding: 6px 10px;
         font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
 
       .poll-chip {
         display: inline-flex;
         align-items: center;
+        gap: 6px;
         border-radius: 999px;
         padding: 4px 10px;
         border: 1px solid #d7d2c8;
@@ -221,8 +235,14 @@ function profileHtml() {
 
       .status.error {
         border-color: #f0c7bf;
-        background: #fff4f2;
-        color: #b42318;
+        background: #fef2f2;
+        color: #b91c1c;
+      }
+
+      .lucide {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2.2;
       }
 
       .hidden {
@@ -332,6 +352,7 @@ function profileHtml() {
       </main>
     </div>
 
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>
       const BUCHAREST_DISPLAY_FORMATTER = new Intl.DateTimeFormat("ro-RO", {
         timeZone: "Europe/Bucharest",
@@ -342,6 +363,10 @@ function profileHtml() {
         minute: "2-digit",
         hour12: false,
       });
+      const PROFILE_ICON_MAP = [
+        [".back-link", "arrow-left"],
+        ["#changePasswordBtn", "key-round"],
+      ];
 
       const els = {
         errorCard: document.getElementById("errorCard"),
@@ -390,9 +415,9 @@ function profileHtml() {
 
       function pollScopeChip(poll) {
         if (poll.scope === "building") {
-          return '<span class="poll-chip building">Bloc ' + poll.building_id + "</span>";
+          return '<span class="poll-chip building">' + iconMarkup("building-2") + "<span>Bloc " + poll.building_id + "</span></span>";
         }
-        return '<span class="poll-chip neighbourhood">Neighbourhood</span>';
+        return '<span class="poll-chip neighbourhood">' + iconMarkup("map-pinned") + "<span>Neighbourhood</span></span>";
       }
 
       async function api(path, opts = {}) {
@@ -422,8 +447,52 @@ function profileHtml() {
           await run();
         } finally {
           button.disabled = false;
-          button.textContent = button.dataset.defaultText || previous;
+          if (button.dataset.defaultHtml) {
+            button.innerHTML = button.dataset.defaultHtml;
+          } else {
+            button.textContent = button.dataset.defaultText || previous;
+          }
+          hydrateLucideIcons();
         }
+      }
+
+      function iconMarkup(name) {
+        return '<i data-lucide="' + name + '" aria-hidden="true"></i>';
+      }
+
+      function setButtonIcon(button, iconName) {
+        if (!button || button.dataset.iconLocked === "1") return;
+        const label = button.dataset.defaultText || button.textContent.trim();
+        button.dataset.defaultText = label;
+        button.innerHTML = iconMarkup(iconName) + "<span>" + label + "</span>";
+        button.dataset.defaultHtml = button.innerHTML;
+      }
+
+      function setLinkIcon(link, iconName) {
+        if (!link || link.dataset.iconLocked === "1") return;
+        const label = link.textContent.trim();
+        link.innerHTML = iconMarkup(iconName) + "<span>" + label + "</span>";
+      }
+
+      function hydrateLucideIcons() {
+        if (!window.lucide || typeof window.lucide.createIcons !== "function") return;
+        window.lucide.createIcons();
+      }
+
+      function applyStaticIcons() {
+        PROFILE_ICON_MAP.forEach(([selector, iconName]) => {
+          document.querySelectorAll(selector).forEach((button) => setButtonIcon(button, iconName));
+        });
+        setLinkIcon(document.querySelector('a.link-btn[href="/"]'), "vote");
+        hydrateLucideIcons();
+      }
+
+      function decorateDynamicIcons(root) {
+        if (!root) return;
+        root.querySelectorAll(".delete-listing-btn").forEach((button) => setButtonIcon(button, "trash-2"));
+        root.querySelectorAll(".delete-slot-btn").forEach((button) => setButtonIcon(button, "trash-2"));
+        root.querySelectorAll('a.link-btn[href^="/marketplace/listings/"]').forEach((link) => setLinkIcon(link, "arrow-up-right"));
+        hydrateLucideIcons();
       }
 
       function renderAccount(user) {
@@ -457,6 +526,7 @@ function profileHtml() {
               })
               .join("")
           : '<tr><td colspan="5">No marketplace listings yet.</td></tr>';
+        decorateDynamicIcons(els.marketplaceBody);
       }
 
       function renderParking(slots) {
@@ -478,6 +548,7 @@ function profileHtml() {
               })
               .join("")
           : '<tr><td colspan="6">No shared parking spots currently active.</td></tr>';
+        decorateDynamicIcons(els.parkingBody);
       }
 
       function renderPolls(polls) {
@@ -485,8 +556,8 @@ function profileHtml() {
           ? polls
               .map((poll) => {
                 const statusChip = poll.has_voted
-                  ? '<span class="poll-chip voted">Voted</span>'
-                  : '<span class="poll-chip">Not Voted</span>';
+                  ? '<span class="poll-chip voted">' + iconMarkup("check-check") + "<span>Voted</span></span>"
+                  : '<span class="poll-chip">' + iconMarkup("circle") + "<span>Not Voted</span></span>";
                 return "<tr>" +
                   td("<strong>" + poll.title + "</strong>") +
                   td(pollScopeChip(poll)) +
@@ -496,6 +567,7 @@ function profileHtml() {
               })
               .join("")
           : '<tr><td colspan="4">No active polls relevant to you right now.</td></tr>';
+        hydrateLucideIcons();
       }
 
       async function loadOverview() {
@@ -582,6 +654,7 @@ function profileHtml() {
       });
 
       loadOverview();
+      applyStaticIcons();
     </script>
   </body>
 </html>`;

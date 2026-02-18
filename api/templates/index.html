@@ -6,17 +6,17 @@
     <title>Neighbourhood Community Dashboard</title>
     <style>
       :root {
-        --bg: #f6f4ee;
+        --bg: #f8fafc;
         --card: #ffffff;
-        --line: #d7d2c8;
-        --ink: #1d2730;
-        --muted: #55626e;
-        --teal: #0e7568;
-        --teal-2: #0c8f7f;
-        --amber: #da7c1b;
-        --danger: #b42318;
-        --free-bg: #e8f7ef;
-        --free-text: #1f8a4d;
+        --line: #e2e8f0;
+        --ink: #1a2332;
+        --muted: #64748b;
+        --teal: #10b981;
+        --teal-2: #059669;
+        --amber: #f59e0b;
+        --danger: #ef4444;
+        --free-bg: #ecfdf5;
+        --free-text: #047857;
       }
 
       * {
@@ -25,25 +25,24 @@
 
       body {
         margin: 0;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 14px;
         color: var(--ink);
-        background:
-          radial-gradient(circle at 12% -12%, #fce9ce 0%, #fce9ce00 30%),
-          radial-gradient(circle at 110% 110%, #d6f0eb 0%, #d6f0eb00 36%),
-          var(--bg);
+        background: var(--bg);
       }
 
       .container {
         max-width: 1240px;
         margin: 0 auto;
-        padding: 22px;
+        padding: 24px;
       }
 
       .hero {
-        border-radius: 16px;
+        border-radius: 12px;
         border: 1px solid var(--line);
-        background: linear-gradient(115deg, #fff, #f9f4e8);
-        padding: 18px;
+        background: var(--card);
+        padding: 24px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
       .hero h1 {
@@ -65,31 +64,33 @@
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 14px;
-        margin-top: 14px;
+        gap: 16px;
+        margin-top: 16px;
       }
 
       .card {
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 12px;
-        padding: 14px;
+        padding: 22px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
       .module-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-        gap: 12px;
-        margin-top: 10px;
+        gap: 16px;
+        margin-top: 16px;
       }
 
       .module-card {
         border: 1px solid var(--line);
         border-radius: 12px;
-        padding: 12px;
-        background: linear-gradient(135deg, #ffffff, #eef7f5);
+        padding: 20px;
+        background: var(--card);
         display: grid;
-        gap: 8px;
+        gap: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
       .module-card h3 {
@@ -115,8 +116,8 @@
         margin-left: 6px;
         border-radius: 999px;
         padding: 1px 7px;
-        background: #eef1eb;
-        border: 1px solid #d8d2c5;
+        background: #f1f5f9;
+        border: 1px solid var(--line);
         font-size: 0.75rem;
         color: var(--muted);
       }
@@ -173,9 +174,9 @@
       }
 
       .poll-chip.status-draft {
-        background: #fff2e3;
-        border-color: #f3d2a4;
-        color: #8c5415;
+        background: #fef3c7;
+        border-color: #fcd34d;
+        color: #92400e;
       }
 
       .poll-chip.status-archived {
@@ -314,11 +315,11 @@
 
       .stack {
         display: grid;
-        gap: 10px;
+        gap: 12px;
       }
 
       .topbar {
-        margin-top: 14px;
+        margin-top: 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -337,6 +338,7 @@
       label {
         font-size: 0.86rem;
         color: var(--muted);
+        font-weight: 600;
       }
 
       input,
@@ -344,9 +346,9 @@
       textarea,
       button {
         width: 100%;
-        border: 1px solid #c9c2b5;
+        border: 1px solid var(--line);
         border-radius: 8px;
-        padding: 9px 10px;
+        padding: 10px 12px;
         font: inherit;
       }
 
@@ -361,11 +363,15 @@
       }
 
       button {
-        border: 0;
+        border: 1px solid transparent;
         color: #fff;
         cursor: pointer;
-        font-weight: 600;
+        font-weight: 700;
         background: var(--teal);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
 
       button:disabled {
@@ -378,7 +384,7 @@
       }
 
       button.ghost {
-        background: #687684;
+        background: #1a2332;
         width: auto;
         padding: 8px 12px;
       }
@@ -396,10 +402,15 @@
         width: auto;
         padding: 6px 10px;
         font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
 
       .table-action-link {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         width: auto;
         padding: 6px 10px;
         font-size: 0.8rem;
@@ -411,7 +422,13 @@
       }
 
       .table-action-link.ghost {
-        background: #687684;
+        background: #1a2332;
+      }
+
+      .market-delete-btn {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: #fff;
       }
 
       .market-item {
@@ -454,11 +471,11 @@
       }
 
       .market-row-link:hover td {
-        background: #f8f3ea;
+        background: #f1f5f9;
       }
 
       .market-row-link:focus-within td {
-        background: #f3eee3;
+        background: #e2e8f0;
       }
 
       table {
@@ -470,8 +487,14 @@
       th,
       td {
         text-align: left;
-        border-bottom: 1px solid #eee7db;
+        border-bottom: 1px solid #e2e8f0;
         padding: 7px 5px;
+      }
+
+      .lucide {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2.2;
       }
 
       .badge {
@@ -505,16 +528,17 @@
 
       .capacity-card {
         border-radius: 12px;
-        border: 1px solid #d8e3e2;
-        background: linear-gradient(180deg, #f7fbfb 0%, #eef8f7 100%);
-        padding: 12px;
+        border: 1px solid var(--line);
+        background: #f8fafc;
+        padding: 16px;
         cursor: pointer;
         transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
       .capacity-card:hover {
         transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       }
 
       .capacity-card.available {
@@ -522,8 +546,8 @@
       }
 
       .capacity-card.unavailable {
-        border-color: #d5d5d5;
-        background: linear-gradient(180deg, #f8f8f8 0%, #efefef 100%);
+        border-color: #d1d5db;
+        background: #f1f5f9;
       }
 
       .capacity-card b {
@@ -552,9 +576,9 @@
       }
 
       .availability.unavailable {
-        background: #efefef;
-        color: #666;
-        border: 1px solid #d7d7d7;
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
       }
 
       .bar-track {
@@ -574,7 +598,7 @@
 
       .bar-reserved {
         height: 100%;
-        background: linear-gradient(90deg, #d4932f, #e4aa4d);
+        background: linear-gradient(90deg, #f59e0b, #fbbf24);
       }
 
       .capacity-help {
@@ -591,9 +615,9 @@
       .tab-btn {
         width: auto;
         border-radius: 999px;
-        border: 1px solid #c9c2b5;
-        background: #f2ede3;
-        color: #3b4b55;
+        border: 1px solid var(--line);
+        background: #f8fafc;
+        color: #334155;
         padding: 7px 12px;
         font-size: 0.84rem;
         font-weight: 700;
@@ -618,7 +642,7 @@
       }
 
       .action-shell {
-        margin-top: 14px;
+        margin-top: 16px;
       }
 
       .action-shell h2,
@@ -647,9 +671,9 @@
 
       .preset-btn {
         width: auto;
-        border: 1px solid #b9ddd8;
-        color: #155a52;
-        background: #e8f6f5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+        background: #ecfdf5;
         border-radius: 999px;
         padding: 5px 10px;
         font-size: 0.78rem;
@@ -658,9 +682,9 @@
 
       .help-btn {
         width: auto;
-        border: 1px solid #b9ddd8;
-        background: #e8f6f5;
-        color: #155a52;
+        border: 1px solid #a7f3d0;
+        background: #ecfdf5;
+        color: #065f46;
         border-radius: 999px;
         padding: 6px 10px;
         font-size: 0.82rem;
@@ -691,11 +715,11 @@
       }
 
       .toast.success {
-        background: #1f8a4d;
+        background: #10b981;
       }
 
       .toast.error {
-        background: #b42318;
+        background: #ef4444;
       }
 
       .modal {
@@ -713,10 +737,11 @@
         width: min(720px, 100%);
         max-height: min(82vh, 820px);
         overflow: auto;
-        border-radius: 14px;
+        border-radius: 12px;
         border: 1px solid var(--line);
         background: #fff;
-        padding: 14px;
+        padding: 20px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
       .modal-actions {
@@ -1395,6 +1420,7 @@
       <div id="toastContainer" class="toast-wrap"></div>
     </div>
 
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>
       const HELP_SEEN_KEY = "cartier_help_seen_v1";
       const BUCHAREST_TIMEZONE = "Europe/Bucharest";
@@ -1540,6 +1566,30 @@
       let marketplaceSelectedCategory = "other";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
       const initialModuleParam = new URLSearchParams(window.location.search).get("module");
+      const STATIC_ACTION_ICON_MAP = [
+        ["#helpBtn", "circle-help"],
+        ["#loginBtn", "log-in"],
+        ["#profileBtn", "user-round"],
+        ["#logoutBtn", "log-out"],
+        ['button[data-module-target="parkingModule"]', "car"],
+        ['button[data-module-target="marketplaceModule"]', "store"],
+        ['button[data-module-target="votingModule"]', "vote"],
+        ['button[data-go-profile]', "user-cog"],
+        ['button[data-back-modules]', "arrow-left"],
+        ["#refreshMarketplaceBtn", "refresh-cw"],
+        ["#refreshPollsBtn", "refresh-cw"],
+        ["#shareBtn", "share-2"],
+        ["#claimBtn", "hand"],
+        ["#createUserBtn", "user-plus"],
+        ["#adminShareBtn", "plus-circle"],
+        ["#marketplaceCreateBtn", "package-plus"],
+        ["#createPollBtn", "list-plus"],
+        ["#pollVoteBtn", "check-check"],
+        ["#pollCloseBtn", "x"],
+        ["#helpCloseBtn", "x"],
+        ["#claimConfirmCancelBtn", "x"],
+        ["#claimConfirmOkBtn", "check"],
+      ];
 
       function showToast(message, kind = "success") {
         const toast = document.createElement("div");
@@ -1575,8 +1625,58 @@
           await run();
         } finally {
           buttonEl.disabled = false;
-          buttonEl.textContent = buttonEl.dataset.defaultText || previous;
+          if (buttonEl.dataset.defaultHtml) {
+            buttonEl.innerHTML = buttonEl.dataset.defaultHtml;
+          } else {
+            buttonEl.textContent = buttonEl.dataset.defaultText || previous;
+          }
+          hydrateLucideIcons();
         }
+      }
+
+      function iconMarkup(name) {
+        return `<i data-lucide="${name}" aria-hidden="true"></i>`;
+      }
+
+      function setButtonActionIcon(button, iconName) {
+        if (!button || button.dataset.iconLocked === "1") return;
+        const label = button.dataset.defaultText || button.textContent.trim();
+        button.dataset.defaultText = label;
+        button.innerHTML = `${iconMarkup(iconName)}<span>${label}</span>`;
+        button.dataset.defaultHtml = button.innerHTML;
+      }
+
+      function setLinkActionIcon(link, iconName) {
+        if (!link || link.dataset.iconLocked === "1") return;
+        const label = link.textContent.trim();
+        link.innerHTML = `${iconMarkup(iconName)}<span>${label}</span>`;
+      }
+
+      function hydrateLucideIcons() {
+        if (!window.lucide || typeof window.lucide.createIcons !== "function") return;
+        window.lucide.createIcons();
+      }
+
+      function applyStaticActionIcons() {
+        STATIC_ACTION_ICON_MAP.forEach(([selector, iconName]) => {
+          document.querySelectorAll(selector).forEach((button) => setButtonActionIcon(button, iconName));
+        });
+        setLinkActionIcon(document.querySelector('a[href="/profile"]'), "user-cog");
+        setLinkActionIcon(document.querySelector('a[href="/?module=marketplace"]'), "store");
+        hydrateLucideIcons();
+      }
+
+      function decorateDynamicActionIcons(root = document) {
+        root.querySelectorAll(".quick-claim-btn").forEach((button) => setButtonActionIcon(button, "hand"));
+        root.querySelectorAll(".market-claim-btn").forEach((button) => setButtonActionIcon(button, "hand-heart"));
+        root.querySelectorAll(".market-complete-btn").forEach((button) => setButtonActionIcon(button, "badge-check"));
+        root.querySelectorAll(".market-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
+        root.querySelectorAll(".poll-open-btn").forEach((button) => setButtonActionIcon(button, "vote"));
+        root.querySelectorAll(".table-action-link").forEach((link) => {
+          const iconName = link.classList.contains("ghost") ? "arrow-up-right" : "external-link";
+          setLinkActionIcon(link, iconName);
+        });
+        hydrateLucideIcons();
       }
 
       function option(value, label) {
@@ -1627,15 +1727,27 @@
       }
 
       function pollStatusChip(poll) {
-        return `<span class="poll-chip ${pollStatusClass(poll)}">${pollStatusLabel(poll)}</span>`;
+        const statusClass = pollStatusClass(poll);
+        const iconName =
+          statusClass === "status-active-voted"
+            ? "check-check"
+            : statusClass === "status-active"
+              ? "play-circle"
+              : statusClass === "status-closed"
+                ? "lock"
+                : statusClass === "status-draft"
+                  ? "file-pen-line"
+                  : "archive";
+        return `<span class="poll-chip ${statusClass}">${iconMarkup(iconName)}<span>${pollStatusLabel(poll)}</span></span>`;
       }
 
       function pollTypeChip(type) {
-        return `<span class="poll-chip type">${pollTypeLabel(type)}</span>`;
+        return `<span class="poll-chip type">${iconMarkup("list-checks")}<span>${pollTypeLabel(type)}</span></span>`;
       }
 
       function pollScopeChip(poll) {
-        return `<span class="poll-chip scope">${pollScopeLabel(poll)}</span>`;
+        const iconName = poll.scope === "building" ? "building-2" : "map-pinned";
+        return `<span class="poll-chip scope">${iconMarkup(iconName)}<span>${pollScopeLabel(poll)}</span></span>`;
       }
 
       function titleize(rawValue) {
@@ -2162,6 +2274,7 @@
         els.countShared.textContent = String(myShared.length);
         els.countClaimedByOthers.textContent = String(claimedByOthers.length);
         els.countMyClaims.textContent = String(myClaims.length);
+        decorateDynamicActionIcons(els.sharedSpots);
       }
 
       function fillAvailableSpotSelect(slots) {
@@ -2518,6 +2631,8 @@
 
         els.marketplaceActiveCount.textContent = String(activeListings.length);
         els.marketplaceMineCount.textContent = String(myListings.length);
+        decorateDynamicActionIcons(els.marketplaceActiveBody);
+        decorateDynamicActionIcons(els.marketplaceMineBody);
       }
 
       async function refreshMarketplace() {
@@ -2541,6 +2656,7 @@
               })
               .join("")
           : `<tr><td colspan="5">${emptyText}</td></tr>`;
+        decorateDynamicActionIcons(targetEl);
       }
 
       function clearPollLists() {
@@ -2777,9 +2893,9 @@
           ${pollTypeChip(poll.poll_type)}
           ${pollScopeChip(poll)}
           ${pollStatusChip({ ...poll, has_voted: data.has_voted })}
-          <span class="poll-chip time">Opens: ${formatPollDate(poll.start_date)}</span>
-          <span class="poll-chip time">Closes: ${formatPollDate(poll.end_date)}</span>
-          <span class="poll-chip time">Timezone: Bucharest</span>
+          <span class="poll-chip time">${iconMarkup("calendar-clock")}<span>Opens: ${formatPollDate(poll.start_date)}</span></span>
+          <span class="poll-chip time">${iconMarkup("calendar-check")}<span>Closes: ${formatPollDate(poll.end_date)}</span></span>
+          <span class="poll-chip time">${iconMarkup("map-pin")}<span>Timezone: Bucharest</span></span>
         `;
 
         const attachments = data.attachments || [];
@@ -2793,6 +2909,7 @@
             )
             .join("");
         }
+        hydrateLucideIcons();
 
         renderPollVote(data);
 
@@ -3420,6 +3537,7 @@
         updatePollFormVisibility();
         updateMarketplaceFormVisibility();
         setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: true, rerender: false });
+        applyStaticActionIcons();
         clearMarketplaceTables();
         clearMarketplaceUploadState();
         showModuleChooser();

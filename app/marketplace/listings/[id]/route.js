@@ -9,16 +9,17 @@ function buildListingHtml(listingId) {
     <title>Marketplace Listing #${listingId}</title>
     <style>
       :root {
-        --bg: #f6f4ee;
+        --bg: #f8fafc;
         --card: #ffffff;
-        --line: #d7d2c8;
-        --ink: #1d2730;
-        --muted: #55626e;
-        --teal: #0e7568;
-        --teal-2: #0c8f7f;
-        --amber: #da7c1b;
-        --soft: #eef3f1;
-        --chip: #f4efe4;
+        --line: #e2e8f0;
+        --ink: #1a2332;
+        --muted: #64748b;
+        --teal: #10b981;
+        --teal-2: #059669;
+        --amber: #f59e0b;
+        --danger: #ef4444;
+        --soft: #ecfdf5;
+        --chip: #f1f5f9;
       }
 
       * {
@@ -27,18 +28,16 @@ function buildListingHtml(listingId) {
 
       body {
         margin: 0;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 14px;
         color: var(--ink);
-        background:
-          radial-gradient(circle at 12% -12%, #fce9ce 0%, #fce9ce00 30%),
-          radial-gradient(circle at 110% 110%, #d6f0eb 0%, #d6f0eb00 36%),
-          var(--bg);
+        background: var(--bg);
       }
 
       .container {
         max-width: 1240px;
         margin: 0 auto;
-        padding: 22px;
+        padding: 24px;
       }
 
       .crumb-row {
@@ -51,10 +50,10 @@ function buildListingHtml(listingId) {
 
       .crumb {
         margin: 0;
-        font-size: 1.9rem;
+        font-size: 2rem;
         line-height: 1.2;
         font-weight: 800;
-        color: #0a3d40;
+        color: var(--ink);
       }
 
       .crumb small {
@@ -67,12 +66,15 @@ function buildListingHtml(listingId) {
 
       .back-link {
         text-decoration: none;
-        border-radius: 999px;
-        background: #687684;
+        border-radius: 8px;
+        background: #1a2332;
         color: #fff;
         font-weight: 700;
         padding: 8px 12px;
         font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
       }
 
       .back-links {
@@ -88,10 +90,10 @@ function buildListingHtml(listingId) {
 
       .error-card {
         margin-top: 12px;
-        border: 1px solid #f0c7bf;
-        border-radius: 10px;
-        background: #fff4f2;
-        color: #b42318;
+        border: 1px solid #fecaca;
+        border-radius: 12px;
+        background: #fef2f2;
+        color: #b91c1c;
         padding: 12px;
         font-weight: 700;
       }
@@ -107,14 +109,15 @@ function buildListingHtml(listingId) {
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 12px;
-        padding: 12px;
+        padding: 22px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
       .gallery-shell {
         position: relative;
         border-radius: 12px;
-        border: 1px solid #ddd8ce;
-        background: #f2f4f2;
+        border: 1px solid var(--line);
+        background: #f8fafc;
         overflow: hidden;
       }
 
@@ -123,7 +126,7 @@ function buildListingHtml(listingId) {
         top: 10px;
         left: 10px;
         border-radius: 999px;
-        background: #114e87;
+        background: #1a2332;
         color: #fff;
         padding: 6px 10px;
         font-size: 0.82rem;
@@ -135,7 +138,7 @@ function buildListingHtml(listingId) {
         aspect-ratio: 1 / 1;
         object-fit: contain;
         display: block;
-        background: #f2f4f2;
+        background: #f8fafc;
         padding: 36px 14px 12px;
       }
 
@@ -147,10 +150,10 @@ function buildListingHtml(listingId) {
       }
 
       .thumb-btn {
-        border: 2px solid #e2e6e4;
+        border: 2px solid #cbd5e1;
         border-radius: 8px;
         padding: 0;
-        background: #f2f4f2;
+        background: #f8fafc;
         cursor: pointer;
         overflow: hidden;
       }
@@ -164,17 +167,17 @@ function buildListingHtml(listingId) {
         height: 72px;
         object-fit: contain;
         display: block;
-        background: #f2f4f2;
+        background: #f8fafc;
       }
 
       .vendor {
-        color: #7b8184;
+        color: var(--muted);
         font-size: 0.86rem;
       }
 
       .title {
         margin: 6px 0 0;
-        color: #0a3d40;
+        color: var(--ink);
         font-size: 2rem;
         line-height: 1.18;
       }
@@ -190,13 +193,13 @@ function buildListingHtml(listingId) {
         font-size: 2.35rem;
         line-height: 1;
         font-weight: 800;
-        color: #083f40;
+        color: var(--ink);
       }
 
       .price-currency {
         font-size: 1.1rem;
         font-weight: 800;
-        color: #083f40;
+        color: var(--ink);
       }
 
       .separator {
@@ -206,9 +209,9 @@ function buildListingHtml(listingId) {
       }
 
       .policy-box {
-        border: 1px solid #e3e5e4;
-        border-radius: 10px;
-        background: #f8f9f7;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #f8fafc;
         padding: 10px;
         display: flex;
         align-items: center;
@@ -216,8 +219,8 @@ function buildListingHtml(listingId) {
       }
 
       .policy-tag {
-        background: #ffd8df;
-        color: #74273a;
+        background: #fef3c7;
+        color: #92400e;
         border-radius: 8px;
         padding: 5px 9px;
         font-weight: 800;
@@ -225,12 +228,12 @@ function buildListingHtml(listingId) {
       }
 
       .policy-text {
-        color: #667174;
+        color: var(--muted);
         font-size: 0.88rem;
       }
 
       .policy-text strong {
-        color: #194749;
+        color: var(--ink);
       }
 
       .actions {
@@ -242,13 +245,17 @@ function buildListingHtml(listingId) {
 
       button,
       .action-link {
-        border: 0;
-        border-radius: 999px;
+        border: 1px solid transparent;
+        border-radius: 8px;
         padding: 10px 12px;
         font: inherit;
         font-size: 0.92rem;
         font-weight: 700;
         text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
 
       button {
@@ -262,19 +269,19 @@ function buildListingHtml(listingId) {
 
       .action-contact {
         background: var(--soft);
-        color: #1a4f52;
+        color: #065f46;
       }
 
       .action-claim {
-        background: #b4de71;
-        color: #0d483f;
+        background: #10b981;
+        color: #ffffff;
       }
 
       .action-link {
-        display: inline-block;
+        display: inline-flex;
         text-decoration: underline;
         background: transparent;
-        color: #1b4f53;
+        color: #1a2332;
         padding-left: 0;
         padding-right: 0;
       }
@@ -314,46 +321,46 @@ function buildListingHtml(listingId) {
       }
 
       .chip.c1 {
-        background: #8b1b7b;
+        background: #10b981;
       }
 
       .chip.c2 {
-        background: #b86d1d;
+        background: #f59e0b;
       }
 
       .chip.c3 {
-        background: #105f92;
+        background: #1a2332;
       }
 
       .sold-note {
-        color: #8f3f3f;
+        color: #1a2332;
         font-weight: 700;
         font-size: 0.9rem;
       }
 
       .meta {
         margin-top: 12px;
-        color: #596265;
+        color: var(--muted);
         font-size: 0.88rem;
         line-height: 1.55;
       }
 
       .meta strong,
       .meta b {
-        color: #214c4f;
+        color: var(--ink);
       }
 
       .desc {
         margin-top: 12px;
-        color: #606b70;
+        color: var(--muted);
         font-size: 0.92rem;
         line-height: 1.5;
       }
 
       .benefits {
         margin-top: 14px;
-        border: 1px solid #e3e5e4;
-        border-radius: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
         background: #fff;
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -369,13 +376,19 @@ function buildListingHtml(listingId) {
 
       .benefit b {
         display: block;
-        color: #194749;
+        color: var(--ink);
         font-size: 0.95rem;
       }
 
       .benefit span {
-        color: #748084;
+        color: var(--muted);
         font-size: 0.86rem;
+      }
+
+      .lucide {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2.2;
       }
 
       .hidden {
@@ -484,6 +497,7 @@ function buildListingHtml(listingId) {
       </section>
     </div>
 
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>
       const listingId = ${listingId};
       const PLACEHOLDER_THUMB =
@@ -529,6 +543,38 @@ function buildListingHtml(listingId) {
       };
 
       let galleryBound = false;
+
+      function iconMarkup(name) {
+        return '<i data-lucide="' + name + '" aria-hidden="true"></i>';
+      }
+
+      function hydrateLucideIcons() {
+        if (!window.lucide || typeof window.lucide.createIcons !== "function") return;
+        window.lucide.createIcons();
+      }
+
+      function setActionButton(button, iconName, label) {
+        if (!button) return;
+        button.dataset.defaultText = label;
+        button.innerHTML = iconMarkup(iconName) + "<span>" + label + "</span>";
+        button.dataset.defaultHtml = button.innerHTML;
+      }
+
+      function setActionLink(link, iconName) {
+        if (!link) return;
+        const label = link.textContent.trim();
+        link.innerHTML = iconMarkup(iconName) + "<span>" + label + "</span>";
+      }
+
+      function applyStaticIcons() {
+        document.querySelectorAll(".back-link.market").forEach((link) => setActionLink(link, "store"));
+        document.querySelectorAll(".back-link:not(.market)").forEach((link) => setActionLink(link, "arrow-left"));
+        document.querySelectorAll('.quick-links a[href="/?module=marketplace"]').forEach((link) => setActionLink(link, "store"));
+        setActionLink(els.openMainPhotoLink, "image");
+        setActionButton(els.contactBtn, "phone", "Contact owner");
+        setActionButton(els.claimBtn, "hand-heart", "Claim donation");
+        hydrateLucideIcons();
+      }
 
       function showError(message) {
         els.listingCard.classList.add("hidden");
@@ -638,12 +684,14 @@ function buildListingHtml(listingId) {
 
         if (!canClaim) {
           els.claimBtn.disabled = true;
-          els.claimBtn.textContent = post.listing_type === "donation" ? "Already claimed" : "Not a donation";
+          setActionButton(els.claimBtn, "ban", post.listing_type === "donation" ? "Already claimed" : "Not a donation");
+          hydrateLucideIcons();
           return;
         }
 
         els.claimBtn.disabled = false;
-        els.claimBtn.textContent = "Claim donation";
+        setActionButton(els.claimBtn, "hand-heart", "Claim donation");
+        hydrateLucideIcons();
       }
 
       function renderListing(post) {
@@ -685,7 +733,8 @@ function buildListingHtml(listingId) {
 
         const contactPhone = post.contact_phone || post.owner_phone_number || "";
         els.contactBtn.disabled = !contactPhone;
-        els.contactBtn.textContent = contactPhone ? "Contact owner" : "No phone shared";
+        setActionButton(els.contactBtn, contactPhone ? "phone" : "phone-off", contactPhone ? "Contact owner" : "No phone shared");
+        hydrateLucideIcons();
         els.contactBtn.onclick = () => {
           if (!contactPhone) return;
           window.location.href = "tel:" + contactPhone.replace(/\\s+/g, "");
@@ -694,7 +743,7 @@ function buildListingHtml(listingId) {
         setClaimButton(post);
         els.claimBtn.onclick = async () => {
           if (els.claimBtn.disabled) return;
-          const previous = els.claimBtn.textContent;
+          const previousHtml = els.claimBtn.innerHTML;
           els.claimBtn.disabled = true;
           els.claimBtn.textContent = "Claiming...";
           try {
@@ -702,7 +751,8 @@ function buildListingHtml(listingId) {
             renderListing(updated);
           } catch (error) {
             els.claimBtn.disabled = false;
-            els.claimBtn.textContent = previous;
+            els.claimBtn.innerHTML = previousHtml;
+            hydrateLucideIcons();
             alert(error.message || "Could not claim donation");
           }
         };
@@ -737,6 +787,7 @@ function buildListingHtml(listingId) {
         }
       }
 
+      applyStaticIcons();
       loadListing();
     </script>
   </body>
