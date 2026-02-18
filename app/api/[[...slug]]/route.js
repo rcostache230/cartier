@@ -2465,6 +2465,12 @@ async function run(request, context) {
     if (error instanceof AppError) {
       return jsonError(error.message, error.status, error.details || null);
     }
+    if (error instanceof Error && /Missing Postgres connection string/i.test(error.message || "")) {
+      return jsonError(
+        "Missing Postgres connection string. Set POSTGRES_URL or DATABASE_URL in Vercel project env vars.",
+        503
+      );
+    }
     console.error("Unhandled API error", error);
     return jsonError("internal server error", 500);
   }
