@@ -278,6 +278,48 @@ async function authenticateUser(username, password) {
   return mapUser(row);
 }
 
+async function getUserAuthById(userId) {
+  const result = await query(
+    `
+      SELECT id, username, password_hash
+      FROM users
+      WHERE id = $1
+    `,
+    [userId]
+  );
+  if (!result.rowCount) throw new AppError(404, "user not found");
+  return result.rows[0];
+}
+
+async function changePassword({ user, currentPassword, newPassword, confirmPassword }) {
+  const current = String(currentPassword || "");
+  const next = String(newPassword || "");
+  const confirm = String(confirmPassword || "");
+
+  if (!current) throw new AppError(400, "current_password is required");
+  if (!next) throw new AppError(400, "new_password is required");
+  if (next.length < 6) throw new AppError(400, "new_password must be at least 6 characters");
+  if (next.length > 128) throw new AppError(400, "new_password must be at most 128 characters");
+  if (next !== confirm) throw new AppError(400, "confirm_password does not match new_password");
+  if (current === next) throw new AppError(400, "new_password must be different from current_password");
+
+  const authRow = await getUserAuthById(user.id);
+  if (!authRow.password_hash || !verifyPassword(current, String(authRow.password_hash))) {
+    throw new AppError(401, "current password is incorrect");
+  }
+
+  await query(
+    `
+      UPDATE users
+      SET password_hash = $1
+      WHERE id = $2
+    `,
+    [hashPassword(next), user.id]
+  );
+
+  return { ok: true };
+}
+
 function getSessionUserId(request) {
   const cookie = request.cookies.get(SESSION_COOKIE)?.value;
   if (!cookie) return null;
@@ -662,6 +704,32 @@ async function autoReserveSlot({ requesterUser, requestedFrom, requestedUntil, p
   return getSlotById(reservedSlotId);
 }
 
+async function deleteParkingSlot({ actorUser, slotId }) {
+  await withTransaction(async (client) => {
+    const result = await client.query(
+      `
+        SELECT id, owner_user_id, status
+        FROM parking_slots
+        WHERE id = $1
+        FOR UPDATE
+      `,
+      [slotId]
+    );
+    if (!result.rowCount) {
+      throw new AppError(404, `slot ${slotId} not found`);
+    }
+
+    const row = result.rows[0];
+    if (actorUser.role !== "admin" && Number(row.owner_user_id) !== Number(actorUser.id)) {
+      throw new AppError(403, "only the slot owner can delete this shared slot");
+    }
+
+    await client.query("DELETE FROM parking_slots WHERE id = $1", [slotId]);
+  });
+
+  return { deleted: true, slot_id: slotId };
+}
+
 async function listSlots(whereClause, params) {
   const result = await query(
     `
@@ -771,6 +839,7 @@ function shouldRefreshParkingLifecycle(path) {
   if (!Array.isArray(path) || !path.length) return false;
   if (path[0] === "slots" || path[0] === "buildings" || path[0] === "dashboard") return true;
   if (path[0] === "admin" && path[1] === "slots") return true;
+  if (path[0] === "profile") return true;
   return false;
 }
 
@@ -1079,6 +1148,21 @@ async function getMarketplaceDashboard(user) {
     active_listings: activeListings,
     my_listings: myListings,
     my_claimed_donations: myClaimedDonations,
+  };
+}
+
+async function getProfileOverview(user) {
+  const [marketplaceListings, sharedParkingSpots, activePolls] = await Promise.all([
+    queryMarketplacePosts("mp.owner_user_id = $1", [user.id]),
+    listSlots("ps.owner_user_id = $1 AND ps.status IN ('OPEN', 'RESERVED')", [user.id]),
+    listPollsForViewer({ status: "active", viewer: user }),
+  ]);
+
+  return {
+    current_user: user,
+    marketplace_listings: marketplaceListings,
+    shared_parking_spots: sharedParkingSpots,
+    active_interest_polls: activePolls,
   };
 }
 
@@ -1825,6 +1909,9 @@ async function handleRequest(request, slug) {
       marketplace_listing_types: [...MARKETPLACE_LISTING_TYPES],
       endpoints: {
         claim_specific_slot: "POST /api/slots/claim",
+        delete_shared_slot: "POST /api/slots/<slot_id>/delete",
+        profile_overview: "GET /api/profile/overview",
+        profile_change_password: "POST /api/profile/password",
         marketplace_dashboard: "GET /api/marketplace/dashboard",
         marketplace_posts: "GET /api/marketplace/posts",
         marketplace_create_post: "POST /api/marketplace/posts",
@@ -1869,6 +1956,25 @@ async function handleRequest(request, slug) {
     } catch {
       return json({ authenticated: false }, 200);
     }
+  }
+
+  if (method === "GET" && path[0] === "profile" && path[1] === "overview" && path.length === 2) {
+    const user = await requireUser(request);
+    return json(await getProfileOverview(user), 200);
+  }
+
+  if (method === "POST" && path[0] === "profile" && path[1] === "password" && path.length === 2) {
+    const user = await requireUser(request);
+    const payload = await parseJsonBody(request);
+    return json(
+      await changePassword({
+        user,
+        currentPassword: payload.current_password,
+        newPassword: payload.new_password,
+        confirmPassword: payload.confirm_password,
+      }),
+      200
+    );
   }
 
   if (method === "POST" && path[0] === "uploads" && path[1] === "presign") {
@@ -2121,6 +2227,15 @@ async function handleRequest(request, slug) {
       claimPhoneNumber: String(payload.claim_phone_number || ""),
     });
     return json(slot, 200);
+  }
+
+  if (method === "POST" && path[0] === "slots" && path[2] === "delete" && path.length === 3) {
+    const user = await requireUser(request);
+    const slotId = Number(path[1]);
+    if (!Number.isInteger(slotId) || slotId <= 0) {
+      throw new AppError(400, "slot_id must be a valid integer");
+    }
+    return json(await deleteParkingSlot({ actorUser: user, slotId }), 200);
   }
 
   if (method === "GET" && path[0] === "buildings" && path[1] === "stats") {

@@ -83,11 +83,14 @@ Vercel auto-detects Next.js. No custom `vercel.json` is required.
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
 - `GET /api/auth/me`
+- `GET /api/profile/overview`
+- `POST /api/profile/password`
 - `GET /api/dashboard`
 - `POST /api/slots`
 - `GET /api/slots/open`
 - `POST /api/slots/auto-reserve`
 - `POST /api/slots/claim`
+- `POST /api/slots/:slot_id/delete`
 - `GET /api/buildings/stats`
 - `GET /api/users` (admin)
 - `POST /api/users` (admin)
@@ -115,3 +118,4 @@ Vercel auto-detects Next.js. No custom `vercel.json` is required.
 ## Marketplace Listing Page
 
 - `GET /marketplace/listings/:id` (full listing details + photo gallery)
+- `GET /profile` (profile management with activity + quick actions)

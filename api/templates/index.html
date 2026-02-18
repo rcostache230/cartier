@@ -802,7 +802,10 @@
       <main id="app" class="hidden">
         <div class="topbar">
           <div class="pill" id="whoami"></div>
-          <button id="logoutBtn" class="ghost" type="button">Logout</button>
+          <div class="module-actions">
+            <button id="profileBtn" class="ghost" type="button">Profile</button>
+            <button id="logoutBtn" class="ghost" type="button">Logout</button>
+          </div>
         </div>
 
         <section id="modulesCard" class="card" style="margin-top: 12px">
@@ -828,6 +831,13 @@
               <p>Join building and neighbourhood polls, submit votes, and review results.</p>
               <div class="module-actions">
                 <button type="button" class="alt" data-module-target="votingModule">Open Voting</button>
+              </div>
+            </article>
+            <article class="module-card">
+              <h3>Profile Management</h3>
+              <p>Change password, review your activity, and use quick delete actions for your items.</p>
+              <div class="module-actions">
+                <button type="button" class="ghost" data-go-profile>Open Profile</button>
               </div>
             </article>
           </div>
@@ -2758,6 +2768,10 @@
         }
       });
 
+      document.getElementById("profileBtn").addEventListener("click", () => {
+        window.location.href = "/profile";
+      });
+
       document.getElementById("shareForm").addEventListener("submit", async (event) => {
         event.preventDefault();
         const button = document.getElementById("shareBtn");
@@ -2860,6 +2874,12 @@
       document.querySelectorAll("[data-module-target]").forEach((btn) => {
         btn.addEventListener("click", () => {
           openModule(btn.dataset.moduleTarget);
+        });
+      });
+
+      document.querySelectorAll("[data-go-profile]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          window.location.href = "/profile";
         });
       });
 
