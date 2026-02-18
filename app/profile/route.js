@@ -1033,7 +1033,7 @@ function profileHtml() {
               .map(function (poll) {
                 const statusChip = poll.has_voted
                   ? '<span class="poll-chip voted">' + iconMarkup("check-check") + "<span>Voted</span></span>"
-                  : '<span class="poll-chip">' + iconMarkup("circle") + "<span>Not Voted</span></span>';
+                  : '<span class="poll-chip">' + iconMarkup("circle") + "<span>Not Voted</span></span>";
                 return "<tr>" +
                   td("<strong>" + poll.title + "</strong>") +
                   td(pollScopeChip(poll)) +
@@ -1049,7 +1049,7 @@ function profileHtml() {
               .map(function (poll) {
                 const statusChip = poll.has_voted
                   ? '<span class="poll-chip voted">' + iconMarkup("check-check") + "<span>Voted</span></span>"
-                  : '<span class="poll-chip">' + iconMarkup("circle") + "<span>Not Voted</span></span>';
+                  : '<span class="poll-chip">' + iconMarkup("circle") + "<span>Not Voted</span></span>";
                 return '<article class="mini-card">' +
                   '<div class="mini-card-title">' + poll.title + "</div>" +
                   '<div class="mini-card-meta">' +
