@@ -725,6 +725,55 @@ async function listBuildingStats() {
   return stats;
 }
 
+async function expirePastParkingSlots() {
+  const result = await query(
+    `
+      SELECT id, available_until
+      FROM parking_slots
+      WHERE status IN ('OPEN', 'RESERVED')
+    `
+  );
+
+  if (!result.rowCount) return 0;
+
+  const nowMillis = DateTime.utc().toMillis();
+  const expiredIds = [];
+
+  for (const row of result.rows) {
+    try {
+      const untilDt = parseSlotDateTime(String(row.available_until || ""), "available_until");
+      if (untilDt.toUTC().toMillis() <= nowMillis) {
+        expiredIds.push(Number(row.id));
+      }
+    } catch {
+      expiredIds.push(Number(row.id));
+    }
+  }
+
+  if (!expiredIds.length) return 0;
+
+  const uniqueIds = [...new Set(expiredIds.filter((value) => Number.isInteger(value) && value > 0))];
+  if (!uniqueIds.length) return 0;
+
+  await query(
+    `
+      UPDATE parking_slots
+      SET status = 'EXPIRED'
+      WHERE id = ANY($1::BIGINT[])
+    `,
+    [uniqueIds]
+  );
+
+  return uniqueIds.length;
+}
+
+function shouldRefreshParkingLifecycle(path) {
+  if (!Array.isArray(path) || !path.length) return false;
+  if (path[0] === "slots" || path[0] === "buildings" || path[0] === "dashboard") return true;
+  if (path[0] === "admin" && path[1] === "slots") return true;
+  return false;
+}
+
 function validateMarketplaceListingType(listingType) {
   if (!MARKETPLACE_LISTING_TYPES.includes(listingType)) {
     throw new AppError(400, `listing_type must be one of: ${MARKETPLACE_LISTING_TYPES.join(", ")}`);
@@ -1763,6 +1812,10 @@ async function handleRequest(request, slug) {
   const method = request.method.toUpperCase();
   const path = slug;
 
+  if (shouldRefreshParkingLifecycle(path)) {
+    await expirePastParkingSlots();
+  }
+
   if (method === "GET" && path.length === 0) {
     return json({
       service: "neighbourhood-app-api",
@@ -2084,8 +2137,8 @@ async function handleRequest(request, slug) {
       buildingNumber,
       excludeOwnerUserId: null,
     });
-    const myShared = await listSlots("ps.owner_user_id = $1", [user.id]);
-    const myClaimed = await listSlots("ps.reserved_by_user_id = $1", [user.id]);
+    const myShared = await listSlots("ps.owner_user_id = $1 AND ps.status IN ('OPEN', 'RESERVED')", [user.id]);
+    const myClaimed = await listSlots("ps.reserved_by_user_id = $1 AND ps.status = 'RESERVED'", [user.id]);
     const claimedOnMy = await listSlots("ps.owner_user_id = $1 AND ps.status = 'RESERVED'", [user.id]);
 
     return json(
