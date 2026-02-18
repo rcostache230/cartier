@@ -645,6 +645,10 @@
         padding: 7px 5px;
       }
 
+      tbody tr:hover td {
+        background: #f8fafc;
+      }
+
       .lucide {
         width: 16px;
         height: 16px;
@@ -675,19 +679,33 @@
       }
 
       .capacity-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        display: flex;
+        overflow-x: auto;
         gap: 10px;
+        padding-bottom: 6px;
+        scroll-snap-type: x proximity;
+      }
+
+      .capacity-grid::-webkit-scrollbar {
+        height: 7px;
+      }
+
+      .capacity-grid::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 999px;
       }
 
       .capacity-card {
         border-radius: 12px;
         border: 1px solid var(--line);
-        background: #f8fafc;
-        padding: 16px;
+        background: #fff;
+        padding: 12px;
         cursor: pointer;
         transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        min-width: 210px;
+        flex: 0 0 210px;
+        scroll-snap-align: start;
       }
 
       .capacity-card:hover {
@@ -706,14 +724,19 @@
 
       .capacity-card b {
         display: block;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
+      }
+
+      .capacity-card.is-selected {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35), 0 4px 12px rgba(15, 23, 42, 0.1);
       }
 
       .capacity-meta {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
 
       .availability {
@@ -735,29 +758,46 @@
         border: 1px solid #cbd5e1;
       }
 
-      .bar-track {
-        width: 100%;
-        height: 8px;
-        border-radius: 999px;
-        background: #e5e5e5;
-        overflow: hidden;
-        margin: 8px 0 6px;
-        display: flex;
-      }
-
-      .bar-open {
-        height: 100%;
-        background: linear-gradient(90deg, #229e60, #29b36d);
-      }
-
-      .bar-reserved {
-        height: 100%;
-        background: linear-gradient(90deg, #f59e0b, #fbbf24);
-      }
-
       .capacity-help {
         color: var(--muted);
+        font-size: 0.76rem;
+        margin-top: 6px;
+      }
+
+      .capacity-type-line {
+        margin-top: 6px;
+        display: grid;
+        gap: 4px;
+      }
+
+      .capacity-type {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         font-size: 0.8rem;
+      }
+
+      .capacity-spot-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 600;
+      }
+
+      .capacity-spot-indicator::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .capacity-spot-indicator.available {
+        color: #16a34a;
+      }
+
+      .capacity-spot-indicator.full {
+        color: #ef4444;
       }
 
       .tabs {
@@ -781,6 +821,20 @@
         color: #fff;
         border-color: var(--teal);
         background: var(--teal);
+      }
+
+      .segmented-control {
+        background: #f1f5f9;
+        border-radius: 999px;
+        padding: 4px;
+      }
+
+      .segmented-control .tab-btn {
+        border-radius: 999px;
+      }
+
+      .segmented-control .tab-btn.active {
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
       }
 
       .tab-count {
@@ -825,13 +879,25 @@
 
       .preset-btn {
         width: auto;
-        border: 1px solid #a7f3d0;
-        color: #065f46;
-        background: #ecfdf5;
+        border: 1px solid #94a3b8;
+        color: #334155;
+        background: transparent;
         border-radius: 999px;
         padding: 5px 10px;
         font-size: 0.78rem;
         font-weight: 700;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+
+      .preset-btn:hover {
+        background: #e2e8f0;
+        border-color: #64748b;
+      }
+
+      .preset-btn.active {
+        background: #ecfdf5;
+        color: #065f46;
+        border-color: #10b981;
       }
 
       .help-btn {
@@ -843,6 +909,156 @@
         padding: 6px 10px;
         font-size: 0.82rem;
         font-weight: 700;
+      }
+
+      .parking-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .parking-kpi-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        padding: 12px;
+        text-align: left;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+
+      .parking-kpi-icon {
+        color: #64748b;
+      }
+
+      .parking-kpi-value {
+        margin-top: 8px;
+        font-size: 1.55rem;
+        line-height: 1;
+        font-weight: 800;
+        color: var(--ink);
+      }
+
+      .parking-kpi-label {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .parking-status-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 0.73rem;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+
+      .parking-status-badge.open,
+      .parking-status-badge.free {
+        background: #ecfdf5;
+        color: #047857;
+        border-color: #a7f3d0;
+      }
+
+      .parking-status-badge.claimed,
+      .parking-status-badge.reserved {
+        background: #fffbeb;
+        color: #b45309;
+        border-color: #fde68a;
+      }
+
+      .parking-status-badge.full,
+      .parking-status-badge.closed {
+        background: #fef2f2;
+        color: #b91c1c;
+        border-color: #fecaca;
+      }
+
+      .parking-status-badge.default {
+        background: #f1f5f9;
+        color: #475569;
+        border-color: #cbd5e1;
+      }
+
+      .parking-card-list {
+        display: none;
+      }
+
+      .parking-empty-row td {
+        text-align: center;
+        padding: 14px 8px;
+        color: var(--muted);
+      }
+
+      .parking-empty-inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+      }
+
+      .parking-empty-inline .lucide {
+        width: 16px;
+        height: 16px;
+        color: #94a3b8;
+      }
+
+      .parking-empty {
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 18px 14px;
+        text-align: center;
+        color: var(--muted);
+        display: grid;
+        gap: 8px;
+        place-items: center;
+      }
+
+      .parking-empty .lucide {
+        width: 24px;
+        height: 24px;
+        color: #94a3b8;
+      }
+
+      .parking-spot-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        padding: 12px;
+        display: grid;
+        gap: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+
+      .parking-spot-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .spot-number-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 4px 10px;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        font-weight: 700;
+      }
+
+      .parking-spot-meta {
+        color: #334155;
+        font-size: 0.82rem;
+        display: grid;
+        gap: 4px;
+      }
+
+      .parking-card-action {
+        margin-top: 4px;
       }
 
       #status {
@@ -935,12 +1151,12 @@
       }
 
       @media (max-width: 780px) {
-        .capacity-grid {
-          grid-template-columns: repeat(2, minmax(145px, 1fr));
-        }
-
         .module-grid {
           grid-template-columns: 1fr;
+        }
+
+        .parking-kpi-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
 
@@ -968,6 +1184,28 @@
 
         .tab-btn {
           flex: 0 0 auto;
+        }
+
+        .segmented-control {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 6px;
+          background: transparent;
+          padding: 0;
+          overflow: visible;
+        }
+
+        .segmented-control .tab-btn {
+          width: 100%;
+        }
+
+        #parkingModule .tab-panel .table-wrap {
+          display: none;
+        }
+
+        #parkingModule .parking-card-list {
+          display: grid;
+          gap: 10px;
         }
 
         .toast-wrap {
@@ -1102,7 +1340,7 @@
           <section class="card action-shell" id="actionPanel">
             <h2>Parking Actions</h2>
             <p style="margin: 8px 0 0; color: var(--muted)">I want to:</p>
-            <div class="tabs" style="margin-top: 8px">
+            <div class="tabs segmented-control" style="margin-top: 8px">
               <button type="button" class="tab-btn active" data-tab-group="action" data-tab-target="actionSharePanel">Share my spot</button>
               <button type="button" class="tab-btn" data-tab-group="action" data-tab-target="actionClaimPanel">Claim a spot</button>
             </div>
@@ -1183,6 +1421,28 @@
 
           <section class="card activity-shell" style="margin-top: 14px">
             <h2>My Activity</h2>
+            <div class="parking-kpi-grid" style="margin-top: 10px">
+              <article class="parking-kpi-card">
+                <div class="parking-kpi-icon"><i data-lucide="car-front" aria-hidden="true"></i></div>
+                <div id="kpiFree" class="parking-kpi-value">0</div>
+                <div class="parking-kpi-label">Free Spots</div>
+              </article>
+              <article class="parking-kpi-card">
+                <div class="parking-kpi-icon"><i data-lucide="share-2" aria-hidden="true"></i></div>
+                <div id="kpiShared" class="parking-kpi-value">0</div>
+                <div class="parking-kpi-label">My Shared</div>
+              </article>
+              <article class="parking-kpi-card">
+                <div class="parking-kpi-icon"><i data-lucide="hand" aria-hidden="true"></i></div>
+                <div id="kpiClaimedByOthers" class="parking-kpi-value">0</div>
+                <div class="parking-kpi-label">Claimed</div>
+              </article>
+              <article class="parking-kpi-card">
+                <div class="parking-kpi-icon"><i data-lucide="badge-check" aria-hidden="true"></i></div>
+                <div id="kpiMyClaims" class="parking-kpi-value">0</div>
+                <div class="parking-kpi-label">My Claims</div>
+              </article>
+            </div>
             <div class="tabs" style="margin-top: 10px">
               <button type="button" class="tab-btn active" data-tab-group="activity" data-tab-target="activityFreePanel">
                 Free Spots <span class="tab-count" id="countFree">0</span>
@@ -1217,6 +1477,7 @@
                   <tbody id="sharedSpots"></tbody>
                 </table>
               </div>
+              <div id="sharedSpotsCards" class="parking-card-list"></div>
             </section>
 
             <section id="activitySharedPanel" class="tab-panel hidden" data-tab-group="activity">
@@ -1228,6 +1489,7 @@
                   <tbody id="myShared"></tbody>
                 </table>
               </div>
+              <div id="mySharedCards" class="parking-card-list"></div>
             </section>
 
             <section id="activityClaimedByOthersPanel" class="tab-panel hidden" data-tab-group="activity">
@@ -1239,6 +1501,7 @@
                   <tbody id="claimedOnMine"></tbody>
                 </table>
               </div>
+              <div id="claimedOnMineCards" class="parking-card-list"></div>
             </section>
 
             <section id="activityMyClaimsPanel" class="tab-panel hidden" data-tab-group="activity">
@@ -1250,6 +1513,7 @@
                   <tbody id="myClaimed"></tbody>
                 </table>
               </div>
+              <div id="myClaimedCards" class="parking-card-list"></div>
             </section>
           </section>
 
@@ -1732,9 +1996,13 @@
         pollFiles: document.getElementById("pollFiles"),
         pollUploadStatus: document.getElementById("pollUploadStatus"),
         sharedSpots: document.getElementById("sharedSpots"),
+        sharedSpotsCards: document.getElementById("sharedSpotsCards"),
         myShared: document.getElementById("myShared"),
+        mySharedCards: document.getElementById("mySharedCards"),
         claimedOnMine: document.getElementById("claimedOnMine"),
+        claimedOnMineCards: document.getElementById("claimedOnMineCards"),
         myClaimed: document.getElementById("myClaimed"),
+        myClaimedCards: document.getElementById("myClaimedCards"),
         stats: document.getElementById("stats"),
         allUsers: document.getElementById("allUsers"),
         availableSlot: document.getElementById("availableSlot"),
@@ -1742,6 +2010,10 @@
         countShared: document.getElementById("countShared"),
         countClaimedByOthers: document.getElementById("countClaimedByOthers"),
         countMyClaims: document.getElementById("countMyClaims"),
+        kpiFree: document.getElementById("kpiFree"),
+        kpiShared: document.getElementById("kpiShared"),
+        kpiClaimedByOthers: document.getElementById("kpiClaimedByOthers"),
+        kpiMyClaims: document.getElementById("kpiMyClaims"),
         helpBtn: document.getElementById("helpBtn"),
         helpModal: document.getElementById("helpModal"),
         helpCloseBtn: document.getElementById("helpCloseBtn"),
@@ -1755,6 +2027,7 @@
       let currentUser = null;
       let currentOpenSlots = [];
       let currentFreeSpots = [];
+      let currentBuildingStats = [];
       let claimConfirmResolver = null;
       let currentPollDetail = null;
       let currentModule = null;
@@ -1914,6 +2187,50 @@
 
       function td(value) {
         return `<td>${value ?? "-"}</td>`;
+      }
+
+      function parkingTypeShort(type) {
+        if (type === "underground") return "UG";
+        if (type === "above_ground") return "AG";
+        return String(type || "-");
+      }
+
+      function parkingTypeWithIcon(type) {
+        return `🅿 ${parkingTypeShort(type)}`;
+      }
+
+      function parkingStatusBadge(status, label = "") {
+        const normalized = String(status || "")
+          .trim()
+          .toLowerCase();
+        const badgeClass =
+          normalized === "open" || normalized === "free"
+            ? "free"
+            : normalized === "claimed" || normalized === "reserved"
+              ? "claimed"
+              : normalized === "full" || normalized === "closed"
+                ? "full"
+                : "default";
+        const text = label || titleize(normalized || "status");
+        return `<span class="parking-status-badge ${badgeClass}">${text}</span>`;
+      }
+
+      function renderParkingEmptyRow(colspan, message) {
+        return `<tr class="parking-empty-row"><td colspan="${colspan}"><span class="parking-empty-inline">${iconMarkup("circle-off")}<span>${message}</span></span></td></tr>`;
+      }
+
+      function renderParkingEmptyCard(message) {
+        return `<div class="parking-empty">${iconMarkup("car-front")}<span>${message}</span></div>`;
+      }
+
+      function updateCapacitySelectionHighlight() {
+        const selectedBuilding = String(document.getElementById("claimBuilding")?.value || "");
+        els.stats.querySelectorAll(".capacity-card").forEach((card) => {
+          const isSelected =
+            selectedBuilding && String(card.dataset.buildingNumber || "") === selectedBuilding;
+          card.classList.toggle("is-selected", Boolean(isSelected));
+          card.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        });
       }
 
       function formatNaiveDateTime(value) {
@@ -2403,22 +2720,42 @@
       }
 
       function refreshStats(stats) {
-        els.stats.innerHTML = stats
+        currentBuildingStats = Array.isArray(stats) ? stats : [];
+        if (!currentBuildingStats.length) {
+          els.stats.innerHTML = renderParkingEmptyCard("No building capacity data available yet.");
+          return;
+        }
+
+        els.stats.innerHTML = currentBuildingStats
           .map((s) => {
-            const total = s.underground_spaces + s.above_ground_spaces;
-            const open = s.open_shared_slots;
-            const reserved = s.reserved_shared_slots;
-            const sharedTotal = open + reserved;
-            const openPct = total > 0 ? Math.min(100, Math.round((open / total) * 100)) : 0;
-            const reservedPct = total > 0 ? Math.min(100, Math.round((reserved / total) * 100)) : 0;
+            const open = Number(s.open_shared_slots || 0);
+            const reserved = Number(s.reserved_shared_slots || 0);
+            const total = Number(s.underground_spaces || 0) + Number(s.above_ground_spaces || 0);
             const availabilityClass = open > 0 ? "available" : "unavailable";
+            const selectedBuilding = String(document.getElementById("claimBuilding")?.value || "");
+            const isSelected = selectedBuilding === String(s.building_number);
+
+            const hasOpenUnderground = currentFreeSpots.some(
+              (slot) =>
+                String(slot.building_number) === String(s.building_number) &&
+                slot.parking_type === "underground" &&
+                String(slot.status || "OPEN").toUpperCase() === "OPEN"
+            );
+            const hasOpenAboveGround = currentFreeSpots.some(
+              (slot) =>
+                String(slot.building_number) === String(s.building_number) &&
+                slot.parking_type === "above_ground" &&
+                String(slot.status || "OPEN").toUpperCase() === "OPEN"
+            );
+
             return `
               <article
-                class="capacity-card ${availabilityClass}"
+                class="capacity-card ${availabilityClass} ${isSelected ? "is-selected" : ""}"
                 data-building-number="${s.building_number}"
                 role="button"
                 tabindex="0"
                 aria-label="Filter claims for Bloc ${s.building_number}"
+                aria-pressed="${isSelected ? "true" : "false"}"
               >
                 <div class="capacity-meta">
                   <b>Bloc ${s.building_number}</b>
@@ -2426,21 +2763,26 @@
                     ${open > 0 ? `${open} available` : "none available"}
                   </span>
                 </div>
-                <div style="font-size:0.82rem; color: var(--muted)">
-                  UG ${s.underground_spaces} | AG ${s.above_ground_spaces}
+                <div class="capacity-type-line">
+                  <div class="capacity-type">
+                    <span>UG ${Number(s.underground_spaces || 0)}</span>
+                    <span class="capacity-spot-indicator ${hasOpenUnderground ? "available" : "full"}">
+                      ${hasOpenUnderground ? "available" : "full"}
+                    </span>
+                  </div>
+                  <div class="capacity-type">
+                    <span>AG ${Number(s.above_ground_spaces || 0)}</span>
+                    <span class="capacity-spot-indicator ${hasOpenAboveGround ? "available" : "full"}">
+                      ${hasOpenAboveGround ? "available" : "full"}
+                    </span>
+                  </div>
                 </div>
-                <div style="font-size:0.82rem; color: var(--muted)">
-                  Free ${open} | Claimed ${reserved}
-                </div>
-                <div class="bar-track">
-                  <span class="bar-open" style="width:${openPct}%"></span>
-                  <span class="bar-reserved" style="width:${reservedPct}%"></span>
-                </div>
-                <div class="capacity-help">Shared usage ${sharedTotal}/${total}. Tap to claim in this bloc.</div>
+                <div class="capacity-help">Shared usage ${open + reserved}/${total || 0}. Tap to claim in this bloc.</div>
               </article>
             `;
           })
           .join("");
+        updateCapacitySelectionHighlight();
       }
 
       function refreshTables(data) {
@@ -2448,6 +2790,9 @@
         const myShared = data.my_shared_parking_spots || [];
         const claimedByOthers = data.my_shared_claimed_by_neighbours || [];
         const myClaims = data.my_claimed_parking_spots || [];
+        if (Array.isArray(data.building_stats)) {
+          currentBuildingStats = data.building_stats;
+        }
         currentFreeSpots = freeSpots;
 
         els.sharedSpots.innerHTML = freeSpots.length
@@ -2455,10 +2800,10 @@
               .map(
                 (s) =>
                   `<tr>
-                    <td><span class="badge free"><span class="dot"></span>FREE</span></td>
+                    <td>${parkingStatusBadge("free", "Free")}</td>
                     ${td(s.building_number)}
                     ${td(s.parking_space_number)}
-                    ${td(s.parking_type)}
+                    ${td(parkingTypeWithIcon(s.parking_type))}
                     ${td(s.owner_username)}
                     ${td(s.owner_phone_number || "-")}
                     ${td(formatBucharestDateTime(s.available_from))}
@@ -2467,16 +2812,16 @@
                   </tr>`
               )
               .join("")
-          : `<tr><td colspan="9">No free shared spots right now.</td></tr>`;
+          : renderParkingEmptyRow(9, "No spots shared yet. Be the first!");
 
         els.myShared.innerHTML = myShared.length
           ? myShared
               .map(
                 (s) =>
-                  `<tr>${td(s.parking_space_number)}${td(s.parking_type)}${td(s.status)}${td(formatBucharestDateTime(s.available_from))}${td(formatBucharestDateTime(s.available_until))}</tr>`
+                  `<tr>${td(s.parking_space_number)}${td(parkingTypeWithIcon(s.parking_type))}${td(parkingStatusBadge(s.status || "open"))}${td(formatBucharestDateTime(s.available_from))}${td(formatBucharestDateTime(s.available_until))}</tr>`
               )
               .join("")
-          : `<tr><td colspan="5">You have not shared any spot yet.</td></tr>`;
+          : renderParkingEmptyRow(5, "You have not shared any spot yet.");
 
         els.claimedOnMine.innerHTML = claimedByOthers.length
           ? claimedByOthers
@@ -2485,7 +2830,7 @@
                   `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
               )
               .join("")
-          : `<tr><td colspan="5">No one has claimed your shared spots yet.</td></tr>`;
+          : renderParkingEmptyRow(5, "No one has claimed your shared spots yet.");
 
         els.myClaimed.innerHTML = myClaims.length
           ? myClaims
@@ -2494,15 +2839,102 @@
                   `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
               )
               .join("")
-          : `<tr><td colspan="7">You have not claimed any shared spot yet.</td></tr>`;
+          : renderParkingEmptyRow(7, "You have not claimed any shared spot yet.");
+
+        els.sharedSpotsCards.innerHTML = freeSpots.length
+          ? freeSpots
+              .map(
+                (s) => `
+                  <article class="parking-spot-card">
+                    <div class="parking-spot-head">
+                      <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
+                      ${parkingStatusBadge("free", "Free")}
+                    </div>
+                    <div class="parking-spot-meta">
+                      <div><strong>Bloc ${s.building_number}</strong> · ${s.owner_username}</div>
+                      <div>Contact: ${s.owner_phone_number || "-"}</div>
+                      <div>${formatBucharestDateTime(s.available_from)} - ${formatBucharestDateTime(s.available_until)}</div>
+                    </div>
+                    <div class="parking-card-action">
+                      <button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Claim</button>
+                    </div>
+                  </article>
+                `
+              )
+              .join("")
+          : renderParkingEmptyCard("No spots shared yet. Be the first!");
+
+        els.mySharedCards.innerHTML = myShared.length
+          ? myShared
+              .map(
+                (s) => `
+                  <article class="parking-spot-card">
+                    <div class="parking-spot-head">
+                      <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
+                      ${parkingStatusBadge(s.status || "open")}
+                    </div>
+                    <div class="parking-spot-meta">
+                      <div>${formatBucharestDateTime(s.available_from)} - ${formatBucharestDateTime(s.available_until)}</div>
+                    </div>
+                  </article>
+                `
+              )
+              .join("")
+          : renderParkingEmptyCard("You have not shared any spot yet.");
+
+        els.claimedOnMineCards.innerHTML = claimedByOthers.length
+          ? claimedByOthers
+              .map(
+                (s) => `
+                  <article class="parking-spot-card">
+                    <div class="parking-spot-head">
+                      <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
+                      ${parkingStatusBadge("claimed", "Claimed")}
+                    </div>
+                    <div class="parking-spot-meta">
+                      <div>By: ${s.reserved_by_username}</div>
+                      <div>Contact: ${s.reservation_contact_phone || s.reserved_by_phone_number || "-"}</div>
+                      <div>${formatBucharestDateTime(s.reservation_from)} - ${formatBucharestDateTime(s.reservation_until)}</div>
+                    </div>
+                  </article>
+                `
+              )
+              .join("")
+          : renderParkingEmptyCard("No one has claimed your shared spots yet.");
+
+        els.myClaimedCards.innerHTML = myClaims.length
+          ? myClaims
+              .map(
+                (s) => `
+                  <article class="parking-spot-card">
+                    <div class="parking-spot-head">
+                      <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
+                      ${parkingStatusBadge("claimed", "Claimed")}
+                    </div>
+                    <div class="parking-spot-meta">
+                      <div>Bloc ${s.building_number} · Owner ${s.owner_username}</div>
+                      <div>Owner phone: ${s.owner_phone_number || "-"}</div>
+                      <div>Claim phone: ${s.reservation_contact_phone || s.reserved_by_phone_number || "-"}</div>
+                      <div>${formatBucharestDateTime(s.reservation_from)} - ${formatBucharestDateTime(s.reservation_until)}</div>
+                    </div>
+                  </article>
+                `
+              )
+              .join("")
+          : renderParkingEmptyCard("You have not claimed any shared spot yet.");
 
         els.countFree.textContent = String(freeSpots.length);
         els.countShared.textContent = String(myShared.length);
         els.countClaimedByOthers.textContent = String(claimedByOthers.length);
         els.countMyClaims.textContent = String(myClaims.length);
+        els.kpiFree.textContent = String(freeSpots.length);
+        els.kpiShared.textContent = String(myShared.length);
+        els.kpiClaimedByOthers.textContent = String(claimedByOthers.length);
+        els.kpiMyClaims.textContent = String(myClaims.length);
         moduleQuickStats.freeSpots = freeSpots.length;
         renderQuickStats();
-        decorateDynamicActionIcons(els.sharedSpots);
+        refreshStats(currentBuildingStats);
+        decorateDynamicActionIcons(els.parkingModule);
       }
 
       function fillAvailableSpotSelect(slots) {
@@ -2554,7 +2986,6 @@
 
       async function refreshDashboard() {
         const data = await api("/api/dashboard");
-        refreshStats(data.building_stats);
         refreshTables(data);
         refreshOpenSpotOptions();
       }
@@ -3394,6 +3825,9 @@
       document.querySelectorAll(".preset-btn[data-target-form][data-preset]").forEach((btn) => {
         btn.addEventListener("click", () => {
           applyPreset(btn.dataset.targetForm, btn.dataset.preset);
+          document
+            .querySelectorAll(`.preset-btn[data-target-form="${btn.dataset.targetForm}"]`)
+            .forEach((chip) => chip.classList.toggle("active", chip === btn));
         });
       });
 
@@ -3655,6 +4089,7 @@
         if (!currentUser) return;
         document.getElementById("claimBuilding").value = String(buildingNumber);
         setActiveTab("action", "actionClaimPanel");
+        updateCapacitySelectionHighlight();
         refreshOpenSpotOptions();
         document.getElementById("actionPanel").scrollIntoView({ behavior: "smooth", block: "start" });
         showToast(`Claim form filtered for Bloc ${buildingNumber}.`);
@@ -3674,9 +4109,7 @@
         await filterClaimsByBuilding(Number(card.dataset.buildingNumber));
       });
 
-      els.sharedSpots.addEventListener("click", async (event) => {
-        const button = event.target.closest(".quick-claim-btn");
-        if (!button) return;
+      async function handleQuickClaimButton(button) {
         try {
           const slotId = Number(button.dataset.slotId || 0);
           const slot = currentFreeSpots.find((s) => s.id === slotId);
@@ -3709,10 +4142,23 @@
         } catch (error) {
           setStatus(error.message, true);
         }
+      }
+
+      els.sharedSpots.addEventListener("click", async (event) => {
+        const button = event.target.closest(".quick-claim-btn");
+        if (!button) return;
+        await handleQuickClaimButton(button);
+      });
+
+      els.sharedSpotsCards.addEventListener("click", async (event) => {
+        const button = event.target.closest(".quick-claim-btn");
+        if (!button) return;
+        await handleQuickClaimButton(button);
       });
 
       document.getElementById("claimBuilding").addEventListener("change", () => {
         refreshOpenSpotOptions();
+        updateCapacitySelectionHighlight();
       });
 
       document.getElementById("claimType").addEventListener("change", () => {
