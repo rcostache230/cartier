@@ -12,6 +12,7 @@ import {
   ABOVE_GROUND_CAPACITY_PER_BUILDING,
   BUCHAREST_TIMEZONE,
   DEFAULT_ADMIN_USERNAME,
+  MARKETPLACE_CATEGORIES,
   MARKETPLACE_LISTING_TYPES,
   MARKETPLACE_POST_STATUSES,
   PARKING_TYPES,
@@ -216,6 +217,7 @@ function mapMarketplacePost(row) {
   return {
     id: Number(row.id),
     listing_type: String(row.listing_type),
+    category: String(row.category || "other"),
     title: String(row.title),
     description: String(row.description || ""),
     price_text: String(row.price_text || ""),
@@ -849,6 +851,12 @@ function validateMarketplaceListingType(listingType) {
   }
 }
 
+function validateMarketplaceCategory(category) {
+  if (!MARKETPLACE_CATEGORIES.includes(category)) {
+    throw new AppError(400, `category must be one of: ${MARKETPLACE_CATEGORIES.join(", ")}`);
+  }
+}
+
 function validateMarketplaceStatus(status) {
   if (!MARKETPLACE_POST_STATUSES.includes(status)) {
     throw new AppError(400, `status must be one of: ${MARKETPLACE_POST_STATUSES.join(", ")}`);
@@ -889,6 +897,8 @@ function normalizeMarketplaceCreatePayload(payload, ownerUser) {
 
   const listingType = String(payload.listing_type || "").trim().toLowerCase();
   validateMarketplaceListingType(listingType);
+  const category = String(payload.category || "other").trim().toLowerCase() || "other";
+  validateMarketplaceCategory(category);
 
   const title = String(payload.title || "").trim();
   if (!title) {
@@ -929,6 +939,7 @@ function normalizeMarketplaceCreatePayload(payload, ownerUser) {
 
   return {
     listing_type: listingType,
+    category,
     title,
     description,
     price_text: priceText,
@@ -1025,6 +1036,7 @@ async function createMarketplacePost({ ownerUser, payload }) {
         INSERT INTO marketplace_posts (
           owner_user_id,
           listing_type,
+          category,
           title,
           description,
           price_text,
@@ -1034,12 +1046,13 @@ async function createMarketplacePost({ ownerUser, payload }) {
           in_person_only,
           updated_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, 'active', TRUE, $8)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'active', TRUE, $9)
         RETURNING id
       `,
       [
         ownerUser.id,
         cleaned.listing_type,
+        cleaned.category,
         cleaned.title,
         cleaned.description,
         cleaned.price_text,

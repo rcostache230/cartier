@@ -420,6 +420,19 @@
         gap: 10px;
       }
 
+      .market-item-main {
+        min-width: 0;
+      }
+
+      .market-item-main strong {
+        display: block;
+      }
+
+      .market-item-main small {
+        color: var(--muted);
+        font-size: 0.76rem;
+      }
+
       .market-thumb {
         width: 56px;
         height: 56px;
@@ -434,6 +447,18 @@
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
+      }
+
+      .market-row-link {
+        cursor: pointer;
+      }
+
+      .market-row-link:hover td {
+        background: #f8f3ea;
+      }
+
+      .market-row-link:focus-within td {
+        background: #f3eee3;
       }
 
       table {
@@ -1067,6 +1092,14 @@
             </div>
           </div>
 
+          <div id="marketplaceCategoryTabs" class="tabs" style="margin-top: 10px">
+            <button type="button" class="tab-btn" data-market-category="furniture">Furniture</button>
+            <button type="button" class="tab-btn" data-market-category="toys">Toys</button>
+            <button type="button" class="tab-btn" data-market-category="clothes">Clothes</button>
+            <button type="button" class="tab-btn" data-market-category="brico">Brico</button>
+            <button type="button" class="tab-btn active" data-market-category="other">Other</button>
+          </div>
+
           <div class="grid" style="margin-top: 12px">
             <section class="card">
               <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
@@ -1118,6 +1151,16 @@
                   <select id="marketplaceListingType">
                     <option value="sale">Sale</option>
                     <option value="donation">Donation</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="marketplaceCategory">Category</label>
+                  <select id="marketplaceCategory">
+                    <option value="furniture">Furniture</option>
+                    <option value="toys">Toys</option>
+                    <option value="clothes">Clothes</option>
+                    <option value="brico">Brico</option>
+                    <option value="other" selected>Other</option>
                   </select>
                 </div>
                 <div>
@@ -1381,6 +1424,14 @@
         encodeURIComponent(
           '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><rect width="240" height="240" fill="#f3efe7"/><rect x="38" y="46" width="164" height="148" rx="14" fill="#ffffff" stroke="#d7d2c8" stroke-width="6"/><circle cx="92" cy="98" r="16" fill="#d8d2c8"/><path d="M58 174l44-46 28 28 24-23 28 41H58z" fill="#c6d9d4"/><text x="120" y="220" text-anchor="middle" font-size="18" fill="#8a8f95" font-family="Arial, sans-serif">No Photo</text></svg>'
         );
+      const MARKETPLACE_CATEGORY_ORDER = ["furniture", "toys", "clothes", "brico", "other"];
+      const MARKETPLACE_CATEGORY_LABELS = {
+        furniture: "Furniture",
+        toys: "Toys",
+        clothes: "Clothes",
+        brico: "Brico",
+        other: "Other",
+      };
 
       const els = {
         loginCard: document.getElementById("loginCard"),
@@ -1410,9 +1461,11 @@
         marketplaceModule: document.getElementById("marketplaceModule"),
         votingModule: document.getElementById("votingModule"),
         refreshMarketplaceBtn: document.getElementById("refreshMarketplaceBtn"),
+        marketplaceCategoryTabs: document.getElementById("marketplaceCategoryTabs"),
         marketplaceCreateForm: document.getElementById("marketplaceCreateForm"),
         marketplaceCreateBtn: document.getElementById("marketplaceCreateBtn"),
         marketplaceListingType: document.getElementById("marketplaceListingType"),
+        marketplaceCategory: document.getElementById("marketplaceCategory"),
         marketplaceTitle: document.getElementById("marketplaceTitle"),
         marketplaceDescription: document.getElementById("marketplaceDescription"),
         marketplacePriceText: document.getElementById("marketplacePriceText"),
@@ -1479,6 +1532,8 @@
       let marketplaceUploadedPhotos = [];
       let marketplaceUploadPromise = null;
       let marketplaceUploadToken = 0;
+      let marketplaceSelectedCategory = "other";
+      let marketplaceDashboardData = { active_listings: [], my_listings: [] };
 
       function showToast(message, kind = "success") {
         const toast = document.createElement("div");
@@ -2159,6 +2214,37 @@
         return type === "donation" ? "Donation" : "Sale";
       }
 
+      function normalizeMarketplaceCategory(category) {
+        const normalized = String(category || "other")
+          .trim()
+          .toLowerCase();
+        return MARKETPLACE_CATEGORY_ORDER.includes(normalized) ? normalized : "other";
+      }
+
+      function marketplaceCategoryLabel(category) {
+        return MARKETPLACE_CATEGORY_LABELS[normalizeMarketplaceCategory(category)] || "Other";
+      }
+
+      function marketplaceCategoryMatches(post) {
+        return normalizeMarketplaceCategory(post?.category) === marketplaceSelectedCategory;
+      }
+
+      function setMarketplaceCategory(category, { syncForm = true, rerender = true } = {}) {
+        const nextCategory = normalizeMarketplaceCategory(category);
+        marketplaceSelectedCategory = nextCategory;
+        if (els.marketplaceCategoryTabs) {
+          els.marketplaceCategoryTabs.querySelectorAll("[data-market-category]").forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.marketCategory === nextCategory);
+          });
+        }
+        if (syncForm && els.marketplaceCategory) {
+          els.marketplaceCategory.value = nextCategory;
+        }
+        if (rerender) {
+          renderMarketplace(marketplaceDashboardData);
+        }
+      }
+
       function marketplaceStatusLabel(status) {
         if (status === "sold") return "Sold";
         if (status === "donated") return "Donated";
@@ -2311,16 +2397,53 @@
         return `/marketplace/listings/${postId}`;
       }
 
+      function shouldSkipMarketplaceRowNavigation(target) {
+        return Boolean(target.closest("button, a, input, select, textarea, label"));
+      }
+
+      function maybeNavigateMarketplaceRow(event) {
+        const row = event.target.closest("tr[data-listing-url]");
+        if (!row) return false;
+        if (shouldSkipMarketplaceRowNavigation(event.target)) return false;
+        const url = String(row.dataset.listingUrl || "").trim();
+        if (!url) return false;
+        window.location.href = url;
+        return true;
+      }
+
+      function maybeNavigateMarketplaceRowFromKeyboard(event) {
+        if (event.key !== "Enter" && event.key !== " ") return false;
+        const row = event.target.closest("tr[data-listing-url]");
+        if (!row) return false;
+        if (shouldSkipMarketplaceRowNavigation(event.target)) return false;
+        event.preventDefault();
+        const url = String(row.dataset.listingUrl || "").trim();
+        if (!url) return false;
+        window.location.href = url;
+        return true;
+      }
+
       function clearMarketplaceTables() {
-        els.marketplaceActiveBody.innerHTML = `<tr><td colspan="8">No active listings.</td></tr>`;
-        els.marketplaceMineBody.innerHTML = `<tr><td colspan="7">No listings created yet.</td></tr>`;
+        els.marketplaceActiveBody.innerHTML = `<tr><td colspan="8">No active listings in ${marketplaceCategoryLabel(
+          marketplaceSelectedCategory
+        )}.</td></tr>`;
+        els.marketplaceMineBody.innerHTML = `<tr><td colspan="7">No listings created in ${marketplaceCategoryLabel(
+          marketplaceSelectedCategory
+        )}.</td></tr>`;
         els.marketplaceActiveCount.textContent = "0";
         els.marketplaceMineCount.textContent = "0";
       }
 
       function renderMarketplace(data) {
-        const activeListings = Array.isArray(data.active_listings) ? data.active_listings : [];
-        const myListings = Array.isArray(data.my_listings) ? data.my_listings : [];
+        const activeListingsAll = Array.isArray(data.active_listings) ? data.active_listings : [];
+        const myListingsAll = Array.isArray(data.my_listings) ? data.my_listings : [];
+        marketplaceDashboardData = {
+          active_listings: activeListingsAll,
+          my_listings: myListingsAll,
+        };
+
+        const activeListings = activeListingsAll.filter((post) => marketplaceCategoryMatches(post));
+        const myListings = myListingsAll.filter((post) => marketplaceCategoryMatches(post));
 
         els.marketplaceActiveBody.innerHTML = activeListings.length
           ? activeListings
@@ -2337,9 +2460,9 @@
                   : isOwner
                     ? `<div class="market-actions"><span class="poll-note">Your listing</span>${openLink}</div>`
                     : `<div class="market-actions"><span class="poll-note">${post.claimed_by_username ? "Already claimed" : "Contact owner"}</span>${openLink}</div>`;
-                return `<tr>
+                return `<tr class="market-row-link" data-listing-url="${marketplaceListingUrl(post.id)}" role="link" tabindex="0">
                   ${td(marketplaceTypeLabel(post.listing_type))}
-                  ${td(`<div class="market-item">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}<div><strong>${post.title}</strong></div></div>`)}
+                  ${td(`<div class="market-item">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}<div class="market-item-main"><strong>${post.title}</strong><small>${marketplaceCategoryLabel(post.category)}</small></div></div>`)}
                   ${td(post.listing_type === "sale" ? post.price_text || "-" : "Free")}
                   ${td(post.owner_username)}
                   ${td(post.contact_phone || post.owner_phone_number || "-")}
@@ -2349,7 +2472,7 @@
                 </tr>`;
               })
               .join("")
-          : `<tr><td colspan="8">No active listings right now.</td></tr>`;
+          : `<tr><td colspan="8">No active listings in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.</td></tr>`;
 
         els.marketplaceMineBody.innerHTML = myListings.length
           ? myListings
@@ -2359,9 +2482,9 @@
                 const action = isActive
                   ? `<div class="market-actions"><button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark ${post.listing_type === "sale" ? "Sold" : "Donated"}</button><button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>${openLink}</div>`
                   : `<div class="market-actions"><button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>${openLink}</div>`;
-                return `<tr>
+                return `<tr class="market-row-link" data-listing-url="${marketplaceListingUrl(post.id)}" role="link" tabindex="0">
                   ${td(marketplaceTypeLabel(post.listing_type))}
-                  ${td(`<div class="market-item">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}<div><strong>${post.title}</strong><br>${marketplacePhotoLinks(post)}</div></div>`)}
+                  ${td(`<div class="market-item">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}<div class="market-item-main"><strong>${post.title}</strong><small>${marketplaceCategoryLabel(post.category)}</small><br>${marketplacePhotoLinks(post)}</div></div>`)}
                   ${td(post.listing_type === "sale" ? post.price_text || "-" : "Free")}
                   ${td(marketplaceStatusLabel(post.status))}
                   ${td(post.claimed_by_username || "-")}
@@ -2370,7 +2493,9 @@
                 </tr>`;
               })
               .join("")
-          : `<tr><td colspan="7">You have not created any listings yet.</td></tr>`;
+          : `<tr><td colspan="7">You have not created listings in ${marketplaceCategoryLabel(
+              marketplaceSelectedCategory
+            )}.</td></tr>`;
 
         els.marketplaceActiveCount.textContent = String(activeListings.length);
         els.marketplaceMineCount.textContent = String(myListings.length);
@@ -2908,6 +3033,16 @@
         updateMarketplaceFormVisibility();
       });
 
+      els.marketplaceCategoryTabs.addEventListener("click", (event) => {
+        const tabButton = event.target.closest("[data-market-category]");
+        if (!tabButton) return;
+        setMarketplaceCategory(tabButton.dataset.marketCategory, { syncForm: true, rerender: true });
+      });
+
+      els.marketplaceCategory.addEventListener("change", () => {
+        setMarketplaceCategory(els.marketplaceCategory.value, { syncForm: false, rerender: true });
+      });
+
       els.marketplacePhotos.addEventListener("change", async () => {
         try {
           await startMarketplacePhotoUpload();
@@ -2926,6 +3061,7 @@
           try {
             const payload = {
               listing_type: els.marketplaceListingType.value,
+              category: normalizeMarketplaceCategory(els.marketplaceCategory.value),
               title: els.marketplaceTitle.value.trim(),
               description: (els.marketplaceDescription.value || "").trim(),
               price_text: (els.marketplacePriceText.value || "").trim(),
@@ -2953,6 +3089,7 @@
             showToast("Marketplace listing created.");
             els.marketplaceCreateForm.reset();
             els.marketplaceContactPhone.value = currentUser.phone_number || "";
+            setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: true, rerender: false });
             clearMarketplaceUploadState();
             updateMarketplaceFormVisibility();
             await refreshMarketplace();
@@ -2964,19 +3101,26 @@
 
       els.marketplaceActiveBody.addEventListener("click", async (event) => {
         const button = event.target.closest(".market-claim-btn");
-        if (!button) return;
-        const postId = Number(button.dataset.postId || 0);
-        if (!postId) return;
+        if (button) {
+          const postId = Number(button.dataset.postId || 0);
+          if (!postId) return;
 
-        await withButtonProgress(button, "Claiming...", async () => {
-          try {
-            await api(`/api/marketplace/posts/${postId}/claim`, { method: "POST" });
-            await refreshMarketplace();
-            showToast("Donation claimed.");
-          } catch (error) {
-            setStatus(error.message, true);
-          }
-        });
+          await withButtonProgress(button, "Claiming...", async () => {
+            try {
+              await api(`/api/marketplace/posts/${postId}/claim`, { method: "POST" });
+              await refreshMarketplace();
+              showToast("Donation claimed.");
+            } catch (error) {
+              setStatus(error.message, true);
+            }
+          });
+          return;
+        }
+        maybeNavigateMarketplaceRow(event);
+      });
+
+      els.marketplaceActiveBody.addEventListener("keydown", (event) => {
+        maybeNavigateMarketplaceRowFromKeyboard(event);
       });
 
       els.marketplaceMineBody.addEventListener("click", async (event) => {
@@ -3010,7 +3154,13 @@
               setStatus(error.message, true);
             }
           });
+          return;
         }
+        maybeNavigateMarketplaceRow(event);
+      });
+
+      els.marketplaceMineBody.addEventListener("keydown", (event) => {
+        maybeNavigateMarketplaceRowFromKeyboard(event);
       });
 
       els.refreshPollsBtn.addEventListener("click", async () => {
@@ -3249,6 +3399,7 @@
         setPollFormDefaults();
         updatePollFormVisibility();
         updateMarketplaceFormVisibility();
+        setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: true, rerender: false });
         clearMarketplaceTables();
         clearMarketplaceUploadState();
         showModuleChooser();
