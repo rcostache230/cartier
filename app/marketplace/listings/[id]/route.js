@@ -75,6 +75,17 @@ function buildListingHtml(listingId) {
         font-size: 0.88rem;
       }
 
+      .back-links {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .back-link.market {
+        background: var(--teal);
+      }
+
       .error-card {
         margin-top: 12px;
         border: 1px solid #f0c7bf;
@@ -399,7 +410,10 @@ function buildListingHtml(listingId) {
     <div class="container">
       <section class="crumb-row">
         <h1 class="crumb"><small>Marketplace Listing</small> / <span id="crumbTitle">Item</span></h1>
-        <a class="back-link" href="/">Back To Dashboard</a>
+        <div class="back-links">
+          <a class="back-link market" href="/?module=marketplace">Back To Marketplace</a>
+          <a class="back-link" href="/">Back To Dashboard</a>
+        </div>
       </section>
 
       <section id="errorCard" class="error-card hidden"></section>
@@ -437,7 +451,7 @@ function buildListingHtml(listingId) {
           <div class="quick-links">
             <a id="openMainPhotoLink" class="action-link" href="#" target="_blank" rel="noopener noreferrer">View full photo</a>
             <span class="sep"></span>
-            <a class="action-link" href="/">Back to listings</a>
+            <a class="action-link" href="/?module=marketplace">Back to marketplace</a>
           </div>
 
           <div class="chips-row">
@@ -525,14 +539,11 @@ function buildListingHtml(listingId) {
       function formatDate(value) {
         if (!value) return "-";
         const raw = String(value).trim();
-        const hasOffset = /(Z|[+-]\\d{2}:\\d{2})$/i.test(raw);
-        if (hasOffset) {
-          const parsed = new Date(raw);
-          if (!Number.isNaN(parsed.getTime())) {
-            return BUCHAREST_DISPLAY_FORMATTER.format(parsed).replace(",", "");
-          }
+        const parsed = new Date(raw);
+        if (!Number.isNaN(parsed.getTime())) {
+          return BUCHAREST_DISPLAY_FORMATTER.format(parsed).replace(",", "");
         }
-        return raw.replace("T", " ");
+        return "-";
       }
 
       function listingTypeLabel(type) {

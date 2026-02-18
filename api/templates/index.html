@@ -1432,6 +1432,11 @@
         brico: "Brico",
         other: "Other",
       };
+      const MODULE_QUERY_TO_ID = {
+        parking: "parkingModule",
+        marketplace: "marketplaceModule",
+        voting: "votingModule",
+      };
 
       const els = {
         loginCard: document.getElementById("loginCard"),
@@ -1534,6 +1539,7 @@
       let marketplaceUploadToken = 0;
       let marketplaceSelectedCategory = "other";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
+      const initialModuleParam = new URLSearchParams(window.location.search).get("module");
 
       function showToast(message, kind = "success") {
         const toast = document.createElement("div");
@@ -1715,6 +1721,19 @@
         if (moduleId === "votingModule") {
           refreshVoting().catch((error) => setStatus(error.message, true));
         }
+      }
+
+      function requestedModuleFromQuery() {
+        const normalized = String(initialModuleParam || "")
+          .trim()
+          .toLowerCase();
+        return MODULE_QUERY_TO_ID[normalized] || null;
+      }
+
+      function applyRequestedModuleFromQuery() {
+        const moduleId = requestedModuleFromQuery();
+        if (!moduleId) return;
+        openModule(moduleId);
       }
 
       function bucharestParts(dateObj = new Date()) {
@@ -2876,6 +2895,7 @@
             await refreshAdminUsers();
             await refreshMarketplace();
             await refreshVoting();
+            applyRequestedModuleFromQuery();
             showToast("Login successful.");
           } catch (error) {
             setStatus(error.message, true);
@@ -3415,6 +3435,7 @@
           await refreshAdminUsers();
           await refreshMarketplace();
           await refreshVoting();
+          applyRequestedModuleFromQuery();
         } catch (error) {
           setStatus(error.message, true);
         }
