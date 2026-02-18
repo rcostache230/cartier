@@ -338,6 +338,60 @@
         margin-top: 10px;
       }
 
+      .poll-card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .poll-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        padding: 14px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        display: grid;
+        gap: 10px;
+      }
+
+      .poll-card h4 {
+        margin: 0;
+        font-size: 0.98rem;
+      }
+
+      .poll-card-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .poll-countdown {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #b45309;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 999px;
+        padding: 3px 9px;
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      .poll-card-empty {
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 20px 14px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .poll-closed-card-list {
+        display: none;
+      }
+
       .poll-option-row {
         display: flex;
         align-items: center;
@@ -355,6 +409,79 @@
       .poll-rank-grid {
         display: grid;
         gap: 8px;
+      }
+
+      .poll-vote-tiles {
+        display: grid;
+        gap: 10px;
+      }
+
+      .poll-vote-tile {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        min-height: 44px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #fff;
+        cursor: pointer;
+      }
+
+      .poll-vote-tile:hover {
+        border-color: #94a3b8;
+        background: #f8fafc;
+      }
+
+      .poll-vote-tile:has(input:checked) {
+        border-color: #10b981;
+        background: #ecfdf5;
+      }
+
+      .poll-vote-tile input {
+        margin-top: 2px;
+      }
+
+      .poll-vote-tile .tile-label {
+        color: #0f172a;
+        font-weight: 600;
+      }
+
+      .poll-quorum {
+        margin-top: 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f8fafc;
+      }
+
+      .poll-quorum-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        color: #334155;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .poll-quorum-track {
+        margin-top: 8px;
+        width: 100%;
+        height: 10px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+      }
+
+      .poll-quorum-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #10b981, #059669);
+      }
+
+      .poll-quorum-fill.low {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
       }
 
       .poll-note {
@@ -436,6 +563,64 @@
         background: linear-gradient(90deg, #0e7568, #0c8f7f);
       }
 
+      .poll-wizard-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .poll-wizard-step-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        padding: 4px 9px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      .poll-wizard-step-chip.active {
+        border-color: #10b981;
+        background: #ecfdf5;
+        color: #047857;
+      }
+
+      .poll-wizard-step {
+        border-top: 1px solid #e2e8f0;
+        padding-top: 12px;
+      }
+
+      .poll-wizard-step:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .poll-wizard-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .poll-wizard-nav button {
+        width: auto;
+        min-width: 120px;
+      }
+
+      .poll-review-box {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #f8fafc;
+        padding: 12px;
+        display: grid;
+        gap: 6px;
+        color: #334155;
+      }
+
       .modal-head {
         display: flex;
         justify-content: space-between;
@@ -503,6 +688,7 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         padding: 10px 12px;
+        min-height: 44px;
         font: inherit;
       }
 
@@ -531,6 +717,21 @@
       button:disabled {
         opacity: 0.6;
         cursor: wait;
+      }
+
+      .btn-spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.45);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       button.alt {
@@ -799,6 +1000,10 @@
         width: 24px;
         height: 24px;
         color: #94a3b8;
+      }
+
+      .market-mobile-list {
+        display: none;
       }
 
       .market-item {
@@ -1302,6 +1507,10 @@
         margin-top: 4px;
       }
 
+      .admin-mobile-list {
+        display: none;
+      }
+
       #status {
         display: none;
       }
@@ -1355,6 +1564,22 @@
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
+      .poll-modal-card {
+        width: min(980px, 100%);
+        max-height: 92vh;
+      }
+
+      .module-panel {
+        opacity: 0;
+        transform: translateY(4px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+
+      .module-panel.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
       .modal-actions {
         margin-top: 12px;
         display: flex;
@@ -1402,6 +1627,55 @@
 
         .market-active-grid {
           grid-template-columns: 1fr;
+        }
+
+        .poll-card-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .modal {
+          align-items: flex-end;
+          padding: 0;
+        }
+
+        .modal-card {
+          width: 100%;
+          max-height: 88vh;
+          border-radius: 14px 14px 0 0;
+          border-bottom: 0;
+          padding-bottom: 20px;
+        }
+
+        #votingModule .table-wrap {
+          display: none;
+        }
+
+        .poll-closed-card-list {
+          display: grid;
+          gap: 10px;
+          margin-top: 8px;
+        }
+
+        #marketplaceModule .table-wrap {
+          display: none;
+        }
+
+        .market-mobile-list {
+          display: grid;
+          gap: 10px;
+          margin-top: 8px;
+        }
+
+        #adminPanel .table-wrap {
+          display: none;
+        }
+
+        .admin-mobile-list {
+          display: grid;
+          gap: 10px;
+          margin-top: 8px;
         }
       }
 
@@ -1514,7 +1788,7 @@
       </section>
 
       <main id="app" class="hidden">
-        <section id="modulesCard" class="card" style="margin-top: 12px">
+        <section id="modulesCard" class="card module-panel is-visible" style="margin-top: 12px">
           <div class="welcome-banner">
             <h2 id="welcomeTitle" class="welcome-title">Hello 👋</h2>
             <p class="welcome-note">Choose which module you want to work in. All modules require authenticated access.</p>
@@ -1576,7 +1850,7 @@
           </div>
         </section>
 
-        <div id="parkingModule" class="hidden">
+        <div id="parkingModule" class="hidden module-panel">
           <section class="module-header">
             <div>
               <div class="module-breadcrumb">Home &gt; Parking</div>
@@ -1810,12 +2084,13 @@
                     <tbody id="allUsers"></tbody>
                   </table>
                 </div>
+                <div id="allUsersCards" class="admin-mobile-list"></div>
               </section>
             </div>
           </section>
         </div>
 
-        <section id="marketplaceModule" class="card hidden" style="margin-top: 14px">
+        <section id="marketplaceModule" class="card hidden module-panel" style="margin-top: 14px">
           <div class="module-header">
             <div>
               <div class="module-breadcrumb">Home &gt; Marketplace</div>
@@ -1885,6 +2160,7 @@
                   <tbody id="marketplaceMineBody"></tbody>
                 </table>
               </div>
+              <div id="marketplaceMineCards" class="market-mobile-list"></div>
             </section>
           </div>
 
@@ -1958,7 +2234,7 @@
           </section>
         </section>
 
-        <section id="votingModule" class="card hidden" style="margin-top: 14px">
+        <section id="votingModule" class="card hidden module-panel" style="margin-top: 14px">
           <div class="module-header">
             <div>
               <div class="module-breadcrumb">Home &gt; Voting</div>
@@ -1971,17 +2247,24 @@
             </div>
           </div>
           <section id="createPollCard" class="card hidden" style="margin-top: 12px">
-            <h3>Create Poll (Admin)</h3>
+            <h3>Create Poll (Admin Wizard)</h3>
             <form id="createPollForm" class="stack" style="margin-top: 8px">
-              <div>
-                <label for="pollTitle">Title</label>
-                <input id="pollTitle" maxlength="200" placeholder="e.g. Upgrade Entrance Lighting" required />
+              <div class="poll-wizard-header">
+                <span class="poll-wizard-step-chip active" data-poll-step-chip="1">1. Basics</span>
+                <span class="poll-wizard-step-chip" data-poll-step-chip="2">2. Scope & Dates</span>
+                <span class="poll-wizard-step-chip" data-poll-step-chip="3">3. Options & Files</span>
+                <span class="poll-wizard-step-chip" data-poll-step-chip="4">4. Review & Publish</span>
               </div>
-              <div>
-                <label for="pollDescriptionInput">Description</label>
-                <textarea id="pollDescriptionInput" placeholder="Optional context for residents"></textarea>
-              </div>
-              <div class="grid" style="margin-top: 0">
+
+              <section id="pollWizardStep1" class="poll-wizard-step">
+                <div>
+                  <label for="pollTitle">Title</label>
+                  <input id="pollTitle" maxlength="200" placeholder="e.g. Upgrade Entrance Lighting" required />
+                </div>
+                <div>
+                  <label for="pollDescriptionInput">Description</label>
+                  <textarea id="pollDescriptionInput" placeholder="Optional context for residents"></textarea>
+                </div>
                 <div>
                   <label for="pollType">Poll Type</label>
                   <select id="pollType">
@@ -1990,6 +2273,9 @@
                     <option value="weighted">Weighted Ranking</option>
                   </select>
                 </div>
+              </section>
+
+              <section id="pollWizardStep2" class="poll-wizard-step hidden">
                 <div>
                   <label for="pollScope">Scope</label>
                   <select id="pollScope">
@@ -1997,72 +2283,71 @@
                     <option value="building">Building</option>
                   </select>
                 </div>
-              </div>
-              <div id="pollBuildingRow" class="hidden">
-                <label for="pollBuilding">Building</label>
-                <select id="pollBuilding"></select>
-              </div>
-              <div class="grid" style="margin-top: 0">
+                <div id="pollBuildingRow" class="hidden">
+                  <label for="pollBuilding">Building</label>
+                  <select id="pollBuilding"></select>
+                </div>
+                <div class="grid" style="margin-top: 0">
+                  <div>
+                    <label for="pollStart">Start</label>
+                    <input id="pollStart" type="datetime-local" required />
+                  </div>
+                  <div>
+                    <label for="pollEnd">End</label>
+                    <input id="pollEnd" type="datetime-local" required />
+                  </div>
+                </div>
+                <p class="tz-note">Poll start/end uses Bucharest time.</p>
                 <div>
-                  <label for="pollStart">Start</label>
-                  <input id="pollStart" type="datetime-local" required />
+                  <label for="pollStatus">Initial Status</label>
+                  <select id="pollStatus">
+                    <option value="active">Active</option>
+                    <option value="draft">Draft</option>
+                  </select>
+                </div>
+              </section>
+
+              <section id="pollWizardStep3" class="poll-wizard-step hidden">
+                <div id="pollOptionsRow" class="hidden">
+                  <label for="pollOptions">Options (one per line)</label>
+                  <textarea id="pollOptions" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+                </div>
+                <div id="pollAllowMultipleRow" class="hidden">
+                  <label><input id="pollAllowMultiple" type="checkbox" /> Allow multiple selections</label>
                 </div>
                 <div>
-                  <label for="pollEnd">End</label>
-                  <input id="pollEnd" type="datetime-local" required />
+                  <label><input id="pollShowResultsEarly" type="checkbox" /> Show results before poll closes</label>
                 </div>
+                <div>
+                  <label><input id="pollRequiresQuorum" type="checkbox" /> Requires quorum</label>
+                </div>
+                <div id="pollQuorumRow" class="hidden">
+                  <label for="pollQuorumPercentage">Quorum Percentage</label>
+                  <input id="pollQuorumPercentage" type="number" min="1" max="100" placeholder="e.g. 50" />
+                </div>
+                <div>
+                  <label for="pollFiles">Attachments (photos, PDFs, documents)</label>
+                  <input id="pollFiles" type="file" multiple />
+                  <p class="poll-note">Files are uploaded to secure Cloudflare R2 storage before poll creation.</p>
+                  <p id="pollUploadStatus" class="upload-status">No files selected.</p>
+                </div>
+              </section>
+
+              <section id="pollWizardStep4" class="poll-wizard-step hidden">
+                <div class="poll-review-box" id="pollReviewBox"></div>
+              </section>
+
+              <div class="poll-wizard-nav">
+                <button id="pollWizardPrevBtn" type="button" class="ghost hidden">Back</button>
+                <button id="pollWizardNextBtn" type="button">Next</button>
+                <button id="createPollBtn" class="alt hidden" type="submit" data-default-text="Publish Poll">Publish Poll</button>
               </div>
-              <p class="tz-note">Poll start/end uses Bucharest time.</p>
-              <div>
-                <label for="pollStatus">Initial Status</label>
-                <select id="pollStatus">
-                  <option value="active">Active</option>
-                  <option value="draft">Draft</option>
-                </select>
-              </div>
-              <div id="pollOptionsRow" class="hidden">
-                <label for="pollOptions">Options (one per line)</label>
-                <textarea id="pollOptions" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
-              </div>
-              <div id="pollAllowMultipleRow" class="hidden">
-                <label><input id="pollAllowMultiple" type="checkbox" /> Allow multiple selections</label>
-              </div>
-              <div>
-                <label><input id="pollShowResultsEarly" type="checkbox" /> Show results before poll closes</label>
-              </div>
-              <div>
-                <label><input id="pollRequiresQuorum" type="checkbox" /> Requires quorum</label>
-              </div>
-              <div id="pollQuorumRow" class="hidden">
-                <label for="pollQuorumPercentage">Quorum Percentage</label>
-                <input id="pollQuorumPercentage" type="number" min="1" max="100" placeholder="e.g. 50" />
-              </div>
-              <div>
-                <label for="pollFiles">Attachments (photos, PDFs, documents)</label>
-                <input id="pollFiles" type="file" multiple />
-                <p class="poll-note">Files are uploaded to secure Cloudflare R2 storage before poll creation.</p>
-                <p id="pollUploadStatus" class="upload-status">No files selected.</p>
-              </div>
-              <button id="createPollBtn" class="alt" type="submit" data-default-text="Create Poll">Create Poll</button>
             </form>
           </section>
           <div class="grid" style="margin-top: 10px">
             <section class="card">
               <h3>Active Polls <span class="count-pill" id="countActivePolls">0</span></h3>
-              <div class="table-wrap" style="margin-top: 8px">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Scope</th>
-                      <th>Ends</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="activePolls"></tbody>
-                </table>
-              </div>
+              <div id="activePolls" class="poll-card-grid"></div>
             </section>
             <section class="card">
               <h3>Closed Polls <span class="count-pill" id="countClosedPolls">0</span></h3>
@@ -2080,13 +2365,14 @@
                   <tbody id="closedPolls"></tbody>
                 </table>
               </div>
+              <div id="closedPollCards" class="poll-closed-card-list"></div>
             </section>
           </div>
         </section>
       </main>
 
       <div id="pollModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pollModalTitle">
-        <div class="modal-card">
+        <div class="modal-card poll-modal-card">
           <div class="modal-head">
             <h2 id="pollModalTitle">Poll</h2>
             <button id="pollCloseBtn" class="ghost" type="button">Close</button>
@@ -2148,6 +2434,17 @@
           <div class="modal-actions">
             <button id="claimConfirmCancelBtn" class="ghost" type="button">Cancel</button>
             <button id="claimConfirmOkBtn" class="alt" type="button">Confirm Claim</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="actionConfirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="actionConfirmTitle">
+        <div class="modal-card">
+          <h2 id="actionConfirmTitle">Please Confirm</h2>
+          <p id="actionConfirmText" style="margin-top: 8px; color: var(--muted)"></p>
+          <div class="modal-actions">
+            <button id="actionConfirmCancelBtn" class="ghost" type="button">Cancel</button>
+            <button id="actionConfirmOkBtn" class="danger" type="button">Confirm</button>
           </div>
         </div>
       </div>
@@ -2223,6 +2520,7 @@
         modulesCard: document.getElementById("modulesCard"),
         activePolls: document.getElementById("activePolls"),
         closedPolls: document.getElementById("closedPolls"),
+        closedPollCards: document.getElementById("closedPollCards"),
         countActivePolls: document.getElementById("countActivePolls"),
         countClosedPolls: document.getElementById("countClosedPolls"),
         refreshPollsBtn: document.getElementById("refreshPollsBtn"),
@@ -2257,11 +2555,15 @@
         marketplaceActiveCards: document.getElementById("marketplaceActiveCards"),
         marketplaceActiveBody: document.getElementById("marketplaceActiveBody"),
         marketplaceMineBody: document.getElementById("marketplaceMineBody"),
+        marketplaceMineCards: document.getElementById("marketplaceMineCards"),
         marketplaceActiveCount: document.getElementById("marketplaceActiveCount"),
         marketplaceMineCount: document.getElementById("marketplaceMineCount"),
         createPollCard: document.getElementById("createPollCard"),
         createPollForm: document.getElementById("createPollForm"),
         createPollBtn: document.getElementById("createPollBtn"),
+        pollWizardPrevBtn: document.getElementById("pollWizardPrevBtn"),
+        pollWizardNextBtn: document.getElementById("pollWizardNextBtn"),
+        pollReviewBox: document.getElementById("pollReviewBox"),
         pollTitle: document.getElementById("pollTitle"),
         pollDescriptionInput: document.getElementById("pollDescriptionInput"),
         pollType: document.getElementById("pollType"),
@@ -2291,6 +2593,7 @@
         myClaimedCards: document.getElementById("myClaimedCards"),
         stats: document.getElementById("stats"),
         allUsers: document.getElementById("allUsers"),
+        allUsersCards: document.getElementById("allUsersCards"),
         availableSlot: document.getElementById("availableSlot"),
         countFree: document.getElementById("countFree"),
         countShared: document.getElementById("countShared"),
@@ -2307,6 +2610,10 @@
         claimConfirmText: document.getElementById("claimConfirmText"),
         claimConfirmCancelBtn: document.getElementById("claimConfirmCancelBtn"),
         claimConfirmOkBtn: document.getElementById("claimConfirmOkBtn"),
+        actionConfirmModal: document.getElementById("actionConfirmModal"),
+        actionConfirmText: document.getElementById("actionConfirmText"),
+        actionConfirmCancelBtn: document.getElementById("actionConfirmCancelBtn"),
+        actionConfirmOkBtn: document.getElementById("actionConfirmOkBtn"),
         toastContainer: document.getElementById("toastContainer"),
       };
 
@@ -2317,6 +2624,7 @@
       let claimConfirmResolver = null;
       let currentPollDetail = null;
       let currentModule = null;
+      let pollWizardStep = 1;
       let pollUploadedAttachments = [];
       let pollUploadPromise = null;
       let pollUploadToken = 0;
@@ -2326,6 +2634,7 @@
       let marketplaceSelectedCategory = "all";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
       let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
+      let actionConfirmResolver = null;
       const initialModuleParam = new URLSearchParams(window.location.search).get("module");
       const STATIC_ACTION_ICON_MAP = [
         ["#helpBtn", "circle-help"],
@@ -2343,11 +2652,15 @@
         ["#adminShareBtn", "plus-circle"],
         ["#marketplaceCreateBtn", "package-plus"],
         ["#createPollBtn", "list-plus"],
+        ["#pollWizardNextBtn", "arrow-right"],
+        ["#pollWizardPrevBtn", "arrow-left"],
         ["#pollVoteBtn", "check-check"],
         ["#pollCloseBtn", "x"],
         ["#helpCloseBtn", "x"],
         ["#claimConfirmCancelBtn", "x"],
         ["#claimConfirmOkBtn", "check"],
+        ["#actionConfirmCancelBtn", "x"],
+        ["#actionConfirmOkBtn", "check"],
       ];
 
       function showToast(message, kind = "success") {
@@ -2357,7 +2670,7 @@
         els.toastContainer.appendChild(toast);
         setTimeout(() => {
           toast.remove();
-        }, 3600);
+        }, 3000);
       }
 
       function setStatus(message, isError = false) {
@@ -2405,7 +2718,7 @@
       async function withButtonProgress(buttonEl, inProgressText, run) {
         const previous = buttonEl.textContent;
         buttonEl.disabled = true;
-        buttonEl.textContent = inProgressText;
+        buttonEl.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span><span>${inProgressText}</span>`;
         try {
           await run();
         } finally {
@@ -2609,6 +2922,20 @@
         return titleize(poll.status);
       }
 
+      function pollCountdownLabel(poll) {
+        const end = new Date(String(poll?.end_date || ""));
+        if (Number.isNaN(end.getTime())) return "Closes soon";
+        const now = new Date();
+        const diffMs = end.getTime() - now.getTime();
+        if (diffMs <= 0) return "Closed";
+        const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const days = Math.floor(totalHours / 24);
+        const hours = totalHours % 24;
+        if (days > 0) return `Closes in ${days}d ${hours}h`;
+        const mins = Math.max(1, Math.floor(diffMs / (1000 * 60)));
+        return `Closes in ${mins}m`;
+      }
+
       function resultStatusLabel(value) {
         if (value === "valid") return "Valid result";
         if (value === "invalid_no_quorum" || value === "quorum_not_met") return "Invalid (quorum not met)";
@@ -2648,17 +2975,31 @@
       function showModuleChooser() {
         currentModule = null;
         els.modulesCard.classList.remove("hidden");
+        requestAnimationFrame(() => {
+          els.modulesCard.classList.add("is-visible");
+        });
         els.parkingModule.classList.add("hidden");
+        els.parkingModule.classList.remove("is-visible");
         els.marketplaceModule.classList.add("hidden");
+        els.marketplaceModule.classList.remove("is-visible");
         els.votingModule.classList.add("hidden");
+        els.votingModule.classList.remove("is-visible");
       }
 
       function openModule(moduleId) {
         currentModule = moduleId;
         els.modulesCard.classList.add("hidden");
-        els.parkingModule.classList.toggle("hidden", moduleId !== "parkingModule");
-        els.marketplaceModule.classList.toggle("hidden", moduleId !== "marketplaceModule");
-        els.votingModule.classList.toggle("hidden", moduleId !== "votingModule");
+        els.modulesCard.classList.remove("is-visible");
+        const modules = [els.parkingModule, els.marketplaceModule, els.votingModule];
+        modules.forEach((moduleEl) => {
+          if (moduleEl.id === moduleId) {
+            moduleEl.classList.remove("hidden");
+            requestAnimationFrame(() => moduleEl.classList.add("is-visible"));
+          } else {
+            moduleEl.classList.remove("is-visible");
+            moduleEl.classList.add("hidden");
+          }
+        });
         if (moduleId === "marketplaceModule") {
           refreshMarketplace().catch((error) => setStatus(error.message, true));
         }
@@ -2804,6 +3145,75 @@
         els.pollQuorumRow.classList.toggle("hidden", !requiresQuorum);
         if (!requiresQuorum) {
           els.pollQuorumPercentage.value = "";
+        }
+      }
+
+      function renderPollReviewSummary() {
+        const rawOptions = (els.pollOptions.value || "")
+          .split("\n")
+          .map((item) => item.trim())
+          .filter(Boolean);
+        const optionList = rawOptions.length
+          ? rawOptions.map((item) => `<li>${item}</li>`).join("")
+          : "<li>Auto-generated from poll type</li>";
+        const attachmentsCount = Array.from(els.pollFiles.files || []).length;
+        els.pollReviewBox.innerHTML = `
+          <div><b>Title:</b> ${els.pollTitle.value.trim() || "-"}</div>
+          <div><b>Type:</b> ${pollTypeLabel(els.pollType.value)}</div>
+          <div><b>Scope:</b> ${
+            els.pollScope.value === "building"
+              ? `Building ${els.pollBuilding.value || "-"}`
+              : "Neighbourhood"
+          }</div>
+          <div><b>Window:</b> ${formatBucharestDateTime(els.pollStart.value)} - ${formatBucharestDateTime(
+            els.pollEnd.value
+          )}</div>
+          <div><b>Status on publish:</b> ${titleize(els.pollStatus.value || "active")}</div>
+          <div><b>Options:</b><ul style="margin:6px 0 0 18px">${optionList}</ul></div>
+          <div><b>Attachments:</b> ${attachmentsCount} file(s)</div>
+        `;
+      }
+
+      function validatePollWizardStep(step) {
+        if (step === 1) {
+          if (!els.pollTitle.value.trim()) throw new Error("Title is required.");
+          if (!els.pollType.value) throw new Error("Poll type is required.");
+          return;
+        }
+        if (step === 2) {
+          if (!els.pollScope.value) throw new Error("Scope is required.");
+          if (els.pollScope.value === "building" && !els.pollBuilding.value) {
+            throw new Error("Select a building for building-scope polls.");
+          }
+          if (!els.pollStart.value || !els.pollEnd.value) throw new Error("Start and end dates are required.");
+          return;
+        }
+        if (step === 3) {
+          const type = els.pollType.value;
+          const hasCustomOptions = type === "multiple_choice" || type === "weighted";
+          if (hasCustomOptions) {
+            const labels = (els.pollOptions.value || "")
+              .split("\n")
+              .map((item) => item.trim())
+              .filter(Boolean);
+            if (labels.length < 2) throw new Error("Add at least 2 options.");
+          }
+        }
+      }
+
+      function setPollWizardStep(step) {
+        pollWizardStep = Math.min(4, Math.max(1, Number(step || 1)));
+        document.querySelectorAll("[id^='pollWizardStep']").forEach((panel) => {
+          panel.classList.toggle("hidden", panel.id !== `pollWizardStep${pollWizardStep}`);
+        });
+        document.querySelectorAll("[data-poll-step-chip]").forEach((chip) => {
+          chip.classList.toggle("active", Number(chip.dataset.pollStepChip) === pollWizardStep);
+        });
+        els.pollWizardPrevBtn.classList.toggle("hidden", pollWizardStep === 1);
+        els.pollWizardNextBtn.classList.toggle("hidden", pollWizardStep >= 4);
+        els.createPollBtn.classList.toggle("hidden", pollWizardStep !== 4);
+        if (pollWizardStep === 4) {
+          renderPollReviewSummary();
         }
       }
 
@@ -2970,6 +3380,11 @@
         } else {
           els.claimConfirmModal.classList.add("hidden");
         }
+        if (!els.actionConfirmModal.classList.contains("hidden")) {
+          closeActionConfirmation(false);
+        } else {
+          els.actionConfirmModal.classList.add("hidden");
+        }
         if (!els.pollModal.classList.contains("hidden")) {
           closePollModal();
         }
@@ -3005,6 +3420,22 @@
         if (claimConfirmResolver) {
           claimConfirmResolver(confirmed);
           claimConfirmResolver = null;
+        }
+      }
+
+      function requestActionConfirmation(message) {
+        els.actionConfirmText.textContent = message;
+        els.actionConfirmModal.classList.remove("hidden");
+        return new Promise((resolve) => {
+          actionConfirmResolver = resolve;
+        });
+      }
+
+      function closeActionConfirmation(confirmed) {
+        els.actionConfirmModal.classList.add("hidden");
+        if (actionConfirmResolver) {
+          actionConfirmResolver(confirmed);
+          actionConfirmResolver = null;
         }
       }
 
@@ -3288,6 +3719,25 @@
               `<tr>${td(u.username)}${td(u.role)}${td(u.building_number)}${td(u.apartment_number)}${td(u.phone_number || "-")}</tr>`
           )
           .join("");
+        els.allUsersCards.innerHTML = users.length
+          ? users
+              .map(
+                (u) => `
+                  <article class="parking-spot-card">
+                    <div class="parking-spot-head">
+                      <span class="spot-number-badge">${u.username}</span>
+                      <span class="parking-status-badge default">${u.role}</span>
+                    </div>
+                    <div class="parking-spot-meta">
+                      <div>Building: ${u.building_number} | Apt: ${u.apartment_number}</div>
+                      <div>Phone: ${u.phone_number || "-"}</div>
+                    </div>
+                  </article>
+                `
+              )
+              .join("")
+          : `<div class="parking-empty">${iconMarkup("users")}<span>No users found.</span></div>`;
+        hydrateLucideIcons();
       }
 
       function marketplaceTypeLabel(type) {
@@ -3547,6 +3997,7 @@
         els.marketplaceActiveCards.innerHTML = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No active listings in ${categoryLabel}.</span></div>`;
         els.marketplaceActiveBody.innerHTML = "";
         els.marketplaceMineBody.innerHTML = `<tr><td colspan="7">No listings created in ${categoryLabel}.</td></tr>`;
+        els.marketplaceMineCards.innerHTML = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No listings created in ${categoryLabel}.</span></div>`;
         els.marketplaceActiveCount.textContent = "0";
         els.marketplaceMineCount.textContent = "0";
         hydrateLucideIcons();
@@ -3633,10 +4084,51 @@
                 : `in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
             }</td></tr>`;
 
+        els.marketplaceMineCards.innerHTML = myListings.length
+          ? myListings
+              .map((post) => {
+                const isActive = post.status === "active";
+                const statusTag = marketplaceStatusTag(post);
+                return `
+                  <article class="market-listing-card">
+                    <div class="market-listing-head">
+                      <div class="market-listing-thumb">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}</div>
+                      <div class="market-listing-main">
+                        <div class="market-title-line">
+                          <strong>${post.title}</strong>
+                          ${marketplacePriceBadge(post)}
+                        </div>
+                        <div class="market-card-badges">
+                          <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
+                          <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
+                        </div>
+                        <div class="market-owner-line">Updated: ${formatBucharestDateTime(post.updated_at || post.created_at)}</div>
+                      </div>
+                    </div>
+                    <div class="market-card-actions">
+                      ${
+                        isActive
+                          ? `<button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark ${post.listing_type === "sale" ? "Sold" : "Donated"}</button>`
+                          : ""
+                      }
+                      <button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>
+                      <a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">View details</a>
+                    </div>
+                  </article>
+                `;
+              })
+              .join("")
+          : `<div class="market-empty-state">${iconMarkup("package-search")}<span>You have not created listings ${
+              marketplaceSelectedCategory === "all"
+                ? "yet."
+                : `in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
+            }</span></div>`;
+
         els.marketplaceActiveCount.textContent = String(activeListings.length);
         els.marketplaceMineCount.textContent = String(myListings.length);
         decorateDynamicActionIcons(els.marketplaceActiveCards);
         decorateDynamicActionIcons(els.marketplaceMineBody);
+        decorateDynamicActionIcons(els.marketplaceMineCards);
       }
 
       async function refreshMarketplace() {
@@ -3647,29 +4139,78 @@
         renderMarketplace(data);
       }
 
-      function renderPollList(targetEl, polls, emptyText, actionLabelGetter) {
-        targetEl.innerHTML = polls.length
+      function renderActivePollCards(polls) {
+        els.activePolls.innerHTML = polls.length
           ? polls
               .map((poll) => {
-                const actionLabel = actionLabelGetter(poll);
+                const status = pollStatusChip(poll);
+                return `
+                  <article class="poll-card">
+                    <div class="poll-card-head">
+                      <h4>${poll.title}</h4>
+                      <span class="poll-countdown">${iconMarkup("clock-3")}<span>${pollCountdownLabel(poll)}</span></span>
+                    </div>
+                    <div class="poll-meta">
+                      ${pollScopeChip(poll)}
+                      ${status}
+                    </div>
+                    <div>
+                      <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">
+                        ${poll.has_voted ? "View Poll" : "Vote Now"}
+                      </button>
+                    </div>
+                  </article>
+                `;
+              })
+              .join("")
+          : `<div class="poll-card-empty">${iconMarkup("vote")}<span>No active polls at the moment.</span></div>`;
+        decorateDynamicActionIcons(els.activePolls);
+      }
+
+      function renderClosedPollRows(polls) {
+        els.closedPolls.innerHTML = polls.length
+          ? polls
+              .map((poll) => {
                 return `<tr>
                   ${td(`<div class="poll-title"><strong>${poll.title}</strong><small>${pollTypeLabel(poll.poll_type)}</small></div>`)}
                   ${td(pollScopeChip(poll))}
                   ${td(formatPollDate(poll.end_date))}
                   ${td(pollStatusChip(poll))}
-                  <td><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">${actionLabel}</button></td>
+                  <td><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button></td>
                 </tr>`;
               })
               .join("")
-          : `<tr><td colspan="5">${emptyText}</td></tr>`;
-        decorateDynamicActionIcons(targetEl);
+          : `<tr><td colspan="5">No closed polls yet.</td></tr>`;
+        els.closedPollCards.innerHTML = polls.length
+          ? polls
+              .map(
+                (poll) => `
+                  <article class="poll-card">
+                    <div class="poll-card-head">
+                      <h4>${poll.title}</h4>
+                    </div>
+                    <div class="poll-meta">
+                      ${pollScopeChip(poll)}
+                      ${pollStatusChip(poll)}
+                    </div>
+                    <div style="color:var(--muted); font-size:0.82rem">Closed: ${formatPollDate(poll.end_date)}</div>
+                    <div><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button></div>
+                  </article>
+                `
+              )
+              .join("")
+          : `<div class="poll-card-empty">${iconMarkup("archive")}<span>No closed polls yet.</span></div>`;
+        decorateDynamicActionIcons(els.closedPolls);
+        decorateDynamicActionIcons(els.closedPollCards);
       }
 
       function clearPollLists() {
-        els.activePolls.innerHTML = `<tr><td colspan="5">No active polls.</td></tr>`;
+        els.activePolls.innerHTML = `<div class="poll-card-empty">${iconMarkup("vote")}<span>No active polls.</span></div>`;
         els.closedPolls.innerHTML = `<tr><td colspan="5">No closed polls.</td></tr>`;
+        els.closedPollCards.innerHTML = `<div class="poll-card-empty">${iconMarkup("archive")}<span>No closed polls.</span></div>`;
         els.countActivePolls.textContent = "0";
         els.countClosedPolls.textContent = "0";
+        hydrateLucideIcons();
       }
 
       async function refreshVoting() {
@@ -3680,18 +4221,8 @@
         const closedPolls = allPolls.filter((poll) => poll.status === "closed");
         moduleQuickStats.openPolls = activePolls.length;
         renderQuickStats();
-        renderPollList(
-          els.activePolls,
-          activePolls,
-          "No active polls at the moment.",
-          (poll) => (poll.has_voted ? "View" : "Vote")
-        );
-        renderPollList(
-          els.closedPolls,
-          closedPolls,
-          "No closed polls yet.",
-          () => "View"
-        );
+        renderActivePollCards(activePolls);
+        renderClosedPollRows(closedPolls);
         els.countActivePolls.textContent = String(activePolls.length);
         els.countClosedPolls.textContent = String(closedPolls.length);
       }
@@ -3726,13 +4257,13 @@
             .map((_, idx) => `<option value="${idx + 1}">${idx + 1}</option>`)
             .join("");
           els.pollVoteOptions.innerHTML = `
-            <div class="poll-rank-grid">
+            <div class="poll-rank-grid poll-vote-tiles">
               ${options
                 .map(
                   (opt) => `
-                    <div class="poll-option-row">
-                      <label>${opt.label}</label>
-                      <select data-option-id="${opt.id}" required>
+                    <div class="poll-vote-tile">
+                      <div class="tile-label">${opt.label}</div>
+                      <select data-option-id="${opt.id}" required style="width:110px; margin-left:auto">
                         <option value="">Rank</option>
                         ${rankOptions}
                       </select>
@@ -3750,9 +4281,9 @@
           els.pollVoteOptions.innerHTML = options
             .map(
               (opt) => `
-                <label class="poll-option-row">
+                <label class="poll-vote-tile">
                   <input type="checkbox" value="${opt.id}" />
-                  <span>${opt.label}</span>
+                  <span class="tile-label">${opt.label}</span>
                 </label>
               `
             )
@@ -3764,9 +4295,9 @@
         els.pollVoteOptions.innerHTML = options
           .map(
             (opt) => `
-              <label class="poll-option-row">
+              <label class="poll-vote-tile">
                 <input type="radio" name="pollOption" value="${opt.id}" required />
-                <span>${opt.label}</span>
+                <span class="tile-label">${opt.label}</span>
               </label>
             `
           )
@@ -3788,6 +4319,9 @@
           1,
           ...options.map((opt) => Number(opt.points || 0))
         );
+        const quorumTarget = Number(poll.quorum_percentage || 0);
+        const turnoutValue = Number(results.turnout_percentage || 0);
+        const quorumRatio = quorumTarget > 0 ? Math.min(100, Math.round((turnoutValue / quorumTarget) * 100)) : 0;
 
         const resultVisuals = options
           .map((opt) => {
@@ -3832,6 +4366,21 @@
             <span><b>Result:</b> ${resultStatusLabel(results.result_status)}</span>
             <span><b>Winner:</b> ${winnerText}</span>
           </div>
+          ${
+            poll.requires_quorum
+              ? `
+                <div class="poll-quorum">
+                  <div class="poll-quorum-head">
+                    <span>Quorum progress</span>
+                    <span>${turnoutValue}% / ${quorumTarget}%</span>
+                  </div>
+                  <div class="poll-quorum-track">
+                    <span class="poll-quorum-fill ${results.quorum_met ? "" : "low"}" style="width:${quorumRatio}%"></span>
+                  </div>
+                </div>
+              `
+              : ""
+          }
           <div class="poll-result-list">
             ${
               resultVisuals ||
@@ -4001,6 +4550,7 @@
         els.marketplaceContactPhone.value = user.phone_number || "";
         applyDefaultTimeValues();
         setPollFormDefaults();
+        setPollWizardStep(1);
         updateMarketplaceFormVisibility();
 
         if (user.role === "admin") {
@@ -4288,7 +4838,7 @@
         }
       });
 
-      els.marketplaceMineBody.addEventListener("click", async (event) => {
+      async function handleMarketplaceMineActions(event, { allowRowNav = false } = {}) {
         const completeBtn = event.target.closest(".market-complete-btn");
         const deleteBtn = event.target.closest(".market-delete-btn");
         if (completeBtn) {
@@ -4308,7 +4858,7 @@
         if (deleteBtn) {
           const postId = Number(deleteBtn.dataset.postId || 0);
           if (!postId) return;
-          const confirmed = window.confirm("Delete this listing permanently?");
+          const confirmed = await requestActionConfirmation("Delete this listing permanently?");
           if (!confirmed) return;
           await withButtonProgress(deleteBtn, "Deleting...", async () => {
             try {
@@ -4321,7 +4871,17 @@
           });
           return;
         }
-        maybeNavigateMarketplaceRow(event);
+        if (allowRowNav) {
+          maybeNavigateMarketplaceRow(event);
+        }
+      }
+
+      els.marketplaceMineBody.addEventListener("click", async (event) => {
+        await handleMarketplaceMineActions(event, { allowRowNav: true });
+      });
+
+      els.marketplaceMineCards.addEventListener("click", async (event) => {
+        await handleMarketplaceMineActions(event, { allowRowNav: false });
       });
 
       els.marketplaceMineBody.addEventListener("keydown", (event) => {
@@ -4339,19 +4899,44 @@
 
       els.pollType.addEventListener("change", () => {
         updatePollFormVisibility();
+        if (pollWizardStep === 4) renderPollReviewSummary();
       });
 
       els.pollScope.addEventListener("change", () => {
         updatePollFormVisibility();
+        if (pollWizardStep === 4) renderPollReviewSummary();
       });
 
       els.pollRequiresQuorum.addEventListener("change", () => {
         updatePollFormVisibility();
+        if (pollWizardStep === 4) renderPollReviewSummary();
+      });
+
+      [els.pollTitle, els.pollDescriptionInput, els.pollStart, els.pollEnd, els.pollStatus, els.pollOptions].forEach(
+        (field) => {
+          field.addEventListener("input", () => {
+            if (pollWizardStep === 4) renderPollReviewSummary();
+          });
+        }
+      );
+
+      els.pollWizardNextBtn.addEventListener("click", () => {
+        try {
+          validatePollWizardStep(pollWizardStep);
+          setPollWizardStep(pollWizardStep + 1);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
+      els.pollWizardPrevBtn.addEventListener("click", () => {
+        setPollWizardStep(pollWizardStep - 1);
       });
 
       els.pollFiles.addEventListener("change", async () => {
         try {
           await startPollAttachmentUpload();
+          if (pollWizardStep === 4) renderPollReviewSummary();
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -4361,6 +4946,14 @@
         event.preventDefault();
         if (!currentUser || currentUser.role !== "admin") {
           setStatus("Only admin can create polls.", true);
+          return;
+        }
+        try {
+          validatePollWizardStep(1);
+          validatePollWizardStep(2);
+          validatePollWizardStep(3);
+        } catch (error) {
+          setStatus(error.message, true);
           return;
         }
         await withButtonProgress(els.createPollBtn, "Creating...", async () => {
@@ -4387,6 +4980,7 @@
             clearPollUploadState();
             setPollFormDefaults();
             updatePollFormVisibility();
+            setPollWizardStep(1);
             await refreshVoting();
           } catch (error) {
             setStatus(error.message, true);
@@ -4405,6 +4999,16 @@
       });
 
       els.closedPolls.addEventListener("click", async (event) => {
+        const button = event.target.closest(".poll-open-btn");
+        if (!button) return;
+        try {
+          await openPollModal(button.dataset.pollId);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
+      els.closedPollCards.addEventListener("click", async (event) => {
         const button = event.target.closest(".poll-open-btn");
         if (!button) return;
         try {
@@ -4548,9 +5152,15 @@
 
       els.claimConfirmCancelBtn.addEventListener("click", () => closeClaimConfirmation(false));
       els.claimConfirmOkBtn.addEventListener("click", () => closeClaimConfirmation(true));
+      els.actionConfirmCancelBtn.addEventListener("click", () => closeActionConfirmation(false));
+      els.actionConfirmOkBtn.addEventListener("click", () => closeActionConfirmation(true));
 
       els.claimConfirmModal.addEventListener("click", (event) => {
         if (event.target === els.claimConfirmModal) closeClaimConfirmation(false);
+      });
+
+      els.actionConfirmModal.addEventListener("click", (event) => {
+        if (event.target === els.actionConfirmModal) closeActionConfirmation(false);
       });
 
       document.addEventListener("keydown", (event) => {
@@ -4560,6 +5170,9 @@
         }
         if (!els.claimConfirmModal.classList.contains("hidden")) {
           closeClaimConfirmation(false);
+        }
+        if (!els.actionConfirmModal.classList.contains("hidden")) {
+          closeActionConfirmation(false);
         }
         if (!els.pollModal.classList.contains("hidden")) {
           closePollModal();
@@ -4574,6 +5187,7 @@
         setActiveTab("activity", "activityFreePanel");
         applyDefaultTimeValues();
         setPollFormDefaults();
+        setPollWizardStep(1);
         updatePollFormVisibility();
         updateMarketplaceFormVisibility();
         setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: false, rerender: false });

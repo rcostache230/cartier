@@ -322,6 +322,101 @@ async function changePassword({ user, currentPassword, newPassword, confirmPassw
   return { ok: true };
 }
 
+async function updatePhoneNumber({ user, phoneNumber }) {
+  const normalizedPhone = String(phoneNumber || "").trim();
+  if (normalizedPhone.length > 64) {
+    throw new AppError(400, "phone_number must be at most 64 characters");
+  }
+  const result = await query(
+    `
+      UPDATE users
+      SET phone_number = $1
+      WHERE id = $2
+      RETURNING id, username, role, building_number, apartment_number, phone_number
+    `,
+    [normalizedPhone, user.id]
+  );
+  if (!result.rowCount) throw new AppError(404, "user not found");
+  return { ok: true, user: mapUser(result.rows[0]) };
+}
+
+async function updateUserByAdmin({ targetUserId, payload }) {
+  const existingResult = await query(
+    `
+      SELECT id, username, role, building_number, apartment_number, phone_number
+      FROM users
+      WHERE id = $1
+    `,
+    [targetUserId]
+  );
+  if (!existingResult.rowCount) throw new AppError(404, "user not found");
+  const existing = existingResult.rows[0];
+
+  const role =
+    payload.role == null || payload.role === ""
+      ? String(existing.role)
+      : String(payload.role).trim().toLowerCase();
+  if (!["resident", "admin"].includes(role)) {
+    throw new AppError(400, "role must be resident or admin");
+  }
+
+  let buildingNumber =
+    payload.building_number == null || payload.building_number === ""
+      ? Number(existing.building_number)
+      : Number(payload.building_number);
+  let apartmentNumber =
+    payload.apartment_number == null || payload.apartment_number === ""
+      ? Number(existing.apartment_number)
+      : Number(payload.apartment_number);
+  const phoneNumber =
+    payload.phone_number == null ? String(existing.phone_number || "") : String(payload.phone_number || "").trim();
+
+  if (phoneNumber.length > 64) {
+    throw new AppError(400, "phone_number must be at most 64 characters");
+  }
+
+  if (role === "admin") {
+    buildingNumber = 0;
+    apartmentNumber = 0;
+  } else {
+    validateBuildingNumber(buildingNumber);
+    if (!Number.isInteger(apartmentNumber) || apartmentNumber < 1 || apartmentNumber > 16) {
+      throw new AppError(400, "apartment_number must be between 1 and 16");
+    }
+  }
+
+  const updated = await query(
+    `
+      UPDATE users
+      SET role = $1,
+          building_number = $2,
+          apartment_number = $3,
+          phone_number = $4
+      WHERE id = $5
+      RETURNING id, username, role, building_number, apartment_number, phone_number
+    `,
+    [role, buildingNumber, apartmentNumber, phoneNumber, targetUserId]
+  );
+  if (!updated.rowCount) throw new AppError(404, "user not found");
+  return mapUser(updated.rows[0]);
+}
+
+async function deleteUserByAdmin({ actorUser, targetUserId }) {
+  if (Number(actorUser.id) === Number(targetUserId)) {
+    throw new AppError(400, "you cannot delete your own user");
+  }
+  try {
+    const deleted = await query("DELETE FROM users WHERE id = $1 RETURNING id", [targetUserId]);
+    if (!deleted.rowCount) throw new AppError(404, "user not found");
+    return { deleted: true, user_id: Number(deleted.rows[0].id) };
+  } catch (error) {
+    if (error?.code === "23503") {
+      throw new AppError(400, "user has related activity and cannot be deleted");
+    }
+    throw error;
+  }
+}
+
 function getSessionUserId(request) {
   const cookie = request.cookies.get(SESSION_COOKIE)?.value;
   if (!cookie) return null;
@@ -1925,6 +2020,9 @@ async function handleRequest(request, slug) {
         delete_shared_slot: "POST /api/slots/<slot_id>/delete",
         profile_overview: "GET /api/profile/overview",
         profile_change_password: "POST /api/profile/password",
+        profile_update_phone: "POST /api/profile/phone",
+        admin_update_user: "POST /api/users/<user_id>/update",
+        admin_delete_user: "POST /api/users/<user_id>/delete",
         marketplace_dashboard: "GET /api/marketplace/dashboard",
         marketplace_posts: "GET /api/marketplace/posts",
         marketplace_create_post: "POST /api/marketplace/posts",
@@ -1985,6 +2083,18 @@ async function handleRequest(request, slug) {
         currentPassword: payload.current_password,
         newPassword: payload.new_password,
         confirmPassword: payload.confirm_password,
+      }),
+      200
+    );
+  }
+
+  if (method === "POST" && path[0] === "profile" && path[1] === "phone" && path.length === 2) {
+    const user = await requireUser(request);
+    const payload = await parseJsonBody(request);
+    return json(
+      await updatePhoneNumber({
+        user,
+        phoneNumber: payload.phone_number,
       }),
       200
     );
@@ -2158,6 +2268,28 @@ async function handleRequest(request, slug) {
       }
       throw error;
     }
+  }
+
+  if (method === "POST" && path[0] === "users" && path[2] === "update" && path.length === 3) {
+    await requireAdmin(request);
+    const targetUserId = Number(path[1]);
+    if (!Number.isInteger(targetUserId) || targetUserId <= 0) {
+      throw new AppError(400, "user_id must be a valid integer");
+    }
+    const payload = await parseJsonBody(request);
+    if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+      return jsonError("invalid payload", 400, { payload: "object required" });
+    }
+    return json(await updateUserByAdmin({ targetUserId, payload }), 200);
+  }
+
+  if (method === "POST" && path[0] === "users" && path[2] === "delete" && path.length === 3) {
+    const adminUser = await requireAdmin(request);
+    const targetUserId = Number(path[1]);
+    if (!Number.isInteger(targetUserId) || targetUserId <= 0) {
+      throw new AppError(400, "user_id must be a valid integer");
+    }
+    return json(await deleteUserByAdmin({ actorUser: adminUser, targetUserId }), 200);
   }
 
   if (method === "POST" && path[0] === "users" && path[1] === "reset-defaults") {
