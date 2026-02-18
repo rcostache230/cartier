@@ -585,6 +585,222 @@
         color: #fff;
       }
 
+      .market-filter-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .market-filter-btn {
+        width: auto;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        color: #334155;
+        padding: 7px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .market-filter-btn.active {
+        border-color: #10b981;
+        background: #10b981;
+        color: #fff;
+      }
+
+      .market-filter-emoji {
+        line-height: 1;
+        font-size: 0.95rem;
+      }
+
+      .market-active-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .market-listing-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        padding: 14px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        display: grid;
+        gap: 10px;
+      }
+
+      .market-listing-head {
+        display: flex;
+        gap: 10px;
+      }
+
+      .market-listing-thumb {
+        width: 64px;
+        height: 64px;
+        border-radius: 10px;
+        border: 1px solid #d8d2c5;
+        background: #f4f1ea;
+        overflow: hidden;
+        flex: 0 0 64px;
+      }
+
+      .market-thumb {
+        width: 56px;
+        height: 56px;
+        flex: 0 0 56px;
+        border-radius: 8px;
+        border: 1px solid #d8d2c5;
+        object-fit: cover;
+        background: #f4f1ea;
+      }
+
+      .market-listing-thumb .market-thumb {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .market-thumb-placeholder {
+        width: 100%;
+        height: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+
+      .market-item .market-thumb-placeholder {
+        width: 56px;
+        height: 56px;
+        border-radius: 8px;
+        border: 1px solid #d8d2c5;
+        background: #f4f1ea;
+        font-size: 1.2rem;
+      }
+
+      .market-listing-main {
+        min-width: 0;
+        display: grid;
+        gap: 4px;
+      }
+
+      .market-title-line {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .market-title-line strong {
+        font-size: 0.98rem;
+        line-height: 1.25;
+      }
+
+      .market-owner-line {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .market-card-badges {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .market-price-badge,
+      .market-status-badge,
+      .market-category-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 3px 9px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border: 1px solid transparent;
+        line-height: 1.2;
+      }
+
+      .market-price-badge.paid {
+        background: #ecfdf5;
+        color: #047857;
+        border-color: #a7f3d0;
+      }
+
+      .market-price-badge.free {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-color: #bfdbfe;
+      }
+
+      .market-status-badge.available {
+        background: #ecfdf5;
+        color: #047857;
+        border-color: #a7f3d0;
+      }
+
+      .market-status-badge.claimed {
+        background: #fffbeb;
+        color: #b45309;
+        border-color: #fde68a;
+      }
+
+      .market-status-badge.completed {
+        background: #f1f5f9;
+        color: #475569;
+        border-color: #cbd5e1;
+      }
+
+      .market-category-badge {
+        background: #f8fafc;
+        color: #334155;
+        border-color: #cbd5e1;
+      }
+
+      .market-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .market-card-actions .table-action-btn,
+      .market-card-actions .table-action-link {
+        padding: 7px 10px;
+      }
+
+      .market-contact-meta {
+        border: 1px dashed #cbd5e1;
+        border-radius: 10px;
+        padding: 8px 10px;
+        background: #f8fafc;
+        color: #334155;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .market-empty-state {
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 22px 14px;
+        color: var(--muted);
+        text-align: center;
+        display: grid;
+        place-items: center;
+        gap: 8px;
+      }
+
+      .market-empty-state .lucide {
+        width: 24px;
+        height: 24px;
+        color: #94a3b8;
+      }
+
       .market-item {
         display: flex;
         align-items: center;
@@ -630,6 +846,31 @@
 
       .market-row-link:focus-within td {
         background: #e2e8f0;
+      }
+
+      .market-notice-banner {
+        border: 1px solid #fcd34d;
+        background: #fffbeb;
+        color: #92400e;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .market-form-section {
+        border-top: 1px solid #e2e8f0;
+        padding-top: 12px;
+      }
+
+      .market-form-section:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .market-form-section h4 {
+        margin: 0 0 8px;
+        font-size: 0.9rem;
       }
 
       table {
@@ -1158,6 +1399,10 @@
         .parking-kpi-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
+        .market-active-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (max-width: 560px) {
@@ -1184,6 +1429,15 @@
 
         .tab-btn {
           flex: 0 0 auto;
+        }
+
+        .market-filter-tabs {
+          gap: 6px;
+        }
+
+        .market-filter-btn {
+          width: calc(50% - 3px);
+          justify-content: center;
         }
 
         .segmented-control {
@@ -1576,31 +1830,39 @@
             </div>
           </div>
 
-          <div id="marketplaceCategoryTabs" class="tabs" style="margin-top: 10px">
-            <button type="button" class="tab-btn" data-market-category="furniture">Furniture</button>
-            <button type="button" class="tab-btn" data-market-category="toys">Toys</button>
-            <button type="button" class="tab-btn" data-market-category="clothes">Clothes</button>
-            <button type="button" class="tab-btn" data-market-category="brico">Brico</button>
-            <button type="button" class="tab-btn active" data-market-category="other">Other</button>
+          <div id="marketplaceCategoryTabs" class="tabs market-filter-tabs" style="margin-top: 10px">
+            <button type="button" class="tab-btn market-filter-btn active" data-market-category="all">
+              <span class="market-filter-emoji" aria-hidden="true">📋</span>
+              <span>All</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="furniture">
+              <span class="market-filter-emoji" aria-hidden="true">🪑</span>
+              <span>Furniture</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="toys">
+              <span class="market-filter-emoji" aria-hidden="true">🧸</span>
+              <span>Toys</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="clothes">
+              <span class="market-filter-emoji" aria-hidden="true">👕</span>
+              <span>Clothes</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="brico">
+              <span class="market-filter-emoji" aria-hidden="true">🔧</span>
+              <span>Brico</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="other">
+              <span class="market-filter-emoji" aria-hidden="true">📦</span>
+              <span>Other</span>
+            </button>
           </div>
 
           <div class="grid" style="margin-top: 12px">
             <section class="card">
               <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
-              <div class="table-wrap" style="margin-top: 8px">
+              <div id="marketplaceActiveCards" class="market-active-grid"></div>
+              <div class="table-wrap hidden" style="margin-top: 8px">
                 <table>
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Item</th>
-                      <th>Price</th>
-                      <th>Owner</th>
-                      <th>Contact</th>
-                      <th>Details</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
                   <tbody id="marketplaceActiveBody"></tbody>
                 </table>
               </div>
@@ -1628,55 +1890,69 @@
 
           <section class="card" style="margin-top: 12px">
             <h3>Create Listing</h3>
+            <div class="market-notice-banner" style="margin-top: 8px">
+              💡 All sales are in person only. No online payment.
+            </div>
             <form id="marketplaceCreateForm" class="stack" style="margin-top: 8px">
-              <div class="grid" style="margin-top: 0">
-                <div>
-                  <label for="marketplaceListingType">Listing Type</label>
-                  <select id="marketplaceListingType">
-                    <option value="sale">Sale</option>
-                    <option value="donation">Donation</option>
-                  </select>
+              <section class="market-form-section">
+                <h4>Type &amp; Category</h4>
+                <div class="grid" style="margin-top: 0">
+                  <div>
+                    <label for="marketplaceListingType">Listing Type</label>
+                    <select id="marketplaceListingType">
+                      <option value="sale">Sale</option>
+                      <option value="donation">Donation</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="marketplaceCategory">Category</label>
+                    <select id="marketplaceCategory">
+                      <option value="furniture">Furniture</option>
+                      <option value="toys">Toys</option>
+                      <option value="clothes">Clothes</option>
+                      <option value="brico">Brico</option>
+                      <option value="other" selected>Other</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label for="marketplaceCategory">Category</label>
-                  <select id="marketplaceCategory">
-                    <option value="furniture">Furniture</option>
-                    <option value="toys">Toys</option>
-                    <option value="clothes">Clothes</option>
-                    <option value="brico">Brico</option>
-                    <option value="other" selected>Other</option>
-                  </select>
-                </div>
-                <div>
+              </section>
+              <section class="market-form-section">
+                <h4>Details</h4>
+                <div style="margin-top: 0">
                   <label for="marketplacePriceText">Price (for sale)</label>
                   <input id="marketplacePriceText" maxlength="120" placeholder="e.g. 150 RON, negotiable" />
                 </div>
-              </div>
-              <div>
-                <label for="marketplaceTitle">Title</label>
-                <input id="marketplaceTitle" maxlength="160" placeholder="e.g. Dining table - solid wood" required />
-              </div>
-              <div>
-                <label for="marketplaceDescription">Description</label>
-                <textarea id="marketplaceDescription" maxlength="2500" placeholder="Condition, dimensions, details"></textarea>
-              </div>
-              <div class="grid" style="margin-top: 0">
                 <div>
-                  <label for="marketplaceContactPhone">Contact Phone</label>
-                  <input id="marketplaceContactPhone" maxlength="64" placeholder="07xx xxx xxx" />
+                  <label for="marketplaceTitle">Title</label>
+                  <input id="marketplaceTitle" maxlength="160" placeholder="e.g. Dining table - solid wood" required />
                 </div>
                 <div>
-                  <label for="marketplacePickupDetails">Pickup Details</label>
-                  <input id="marketplacePickupDetails" maxlength="600" placeholder="Bloc, floor, pickup interval" />
+                  <label for="marketplaceDescription">Description</label>
+                  <textarea id="marketplaceDescription" maxlength="2500" placeholder="Condition, dimensions, details"></textarea>
                 </div>
-              </div>
-              <div>
-                <label for="marketplacePhotos">Photos</label>
-                <input id="marketplacePhotos" type="file" accept="image/*" multiple />
-                <p class="poll-note">Uploads use secure storage. Keep photos clear and recent.</p>
-                <p id="marketplaceUploadStatus" class="upload-status">No photos selected.</p>
-              </div>
-              <p class="tz-note">Marketplace sales are in person only. No online payment is supported.</p>
+              </section>
+              <section class="market-form-section">
+                <h4>Contact &amp; Pickup</h4>
+                <div class="grid" style="margin-top: 0">
+                  <div>
+                    <label for="marketplaceContactPhone">Contact Phone</label>
+                    <input id="marketplaceContactPhone" maxlength="64" placeholder="07xx xxx xxx" />
+                  </div>
+                  <div>
+                    <label for="marketplacePickupDetails">Pickup Details</label>
+                    <input id="marketplacePickupDetails" maxlength="600" placeholder="Bloc, floor, pickup interval" />
+                  </div>
+                </div>
+              </section>
+              <section class="market-form-section">
+                <h4>Photos</h4>
+                <div>
+                  <label for="marketplacePhotos">Photos</label>
+                  <input id="marketplacePhotos" type="file" accept="image/*" multiple />
+                  <p class="poll-note">Uploads use secure storage. Keep photos clear and recent.</p>
+                  <p id="marketplaceUploadStatus" class="upload-status">No photos selected.</p>
+                </div>
+              </section>
               <button id="marketplaceCreateBtn" type="submit" data-default-text="Create Listing">Create Listing</button>
             </form>
           </section>
@@ -1912,11 +2188,20 @@
         );
       const MARKETPLACE_CATEGORY_ORDER = ["furniture", "toys", "clothes", "brico", "other"];
       const MARKETPLACE_CATEGORY_LABELS = {
+        all: "All",
         furniture: "Furniture",
         toys: "Toys",
         clothes: "Clothes",
         brico: "Brico",
         other: "Other",
+      };
+      const MARKETPLACE_CATEGORY_ICONS = {
+        all: "📋",
+        furniture: "🪑",
+        toys: "🧸",
+        clothes: "👕",
+        brico: "🔧",
+        other: "📦",
       };
       const MODULE_QUERY_TO_ID = {
         parking: "parkingModule",
@@ -1969,6 +2254,7 @@
         marketplacePickupDetails: document.getElementById("marketplacePickupDetails"),
         marketplacePhotos: document.getElementById("marketplacePhotos"),
         marketplaceUploadStatus: document.getElementById("marketplaceUploadStatus"),
+        marketplaceActiveCards: document.getElementById("marketplaceActiveCards"),
         marketplaceActiveBody: document.getElementById("marketplaceActiveBody"),
         marketplaceMineBody: document.getElementById("marketplaceMineBody"),
         marketplaceActiveCount: document.getElementById("marketplaceActiveCount"),
@@ -2037,7 +2323,7 @@
       let marketplaceUploadedPhotos = [];
       let marketplaceUploadPromise = null;
       let marketplaceUploadToken = 0;
-      let marketplaceSelectedCategory = "other";
+      let marketplaceSelectedCategory = "all";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
       let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
       const initialModuleParam = new URLSearchParams(window.location.search).get("module");
@@ -2167,6 +2453,9 @@
 
       function decorateDynamicActionIcons(root = document) {
         root.querySelectorAll(".quick-claim-btn").forEach((button) => setButtonActionIcon(button, "hand"));
+        root.querySelectorAll(".market-contact-btn").forEach((button) =>
+          setButtonActionIcon(button, "phone")
+        );
         root.querySelectorAll(".market-claim-btn").forEach((button) => setButtonActionIcon(button, "hand-heart"));
         root.querySelectorAll(".market-complete-btn").forEach((button) => setButtonActionIcon(button, "badge-check"));
         root.querySelectorAll(".market-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
@@ -3009,14 +3298,22 @@
         const normalized = String(category || "other")
           .trim()
           .toLowerCase();
+        if (normalized === "all") return "all";
         return MARKETPLACE_CATEGORY_ORDER.includes(normalized) ? normalized : "other";
       }
 
       function marketplaceCategoryLabel(category) {
-        return MARKETPLACE_CATEGORY_LABELS[normalizeMarketplaceCategory(category)] || "Other";
+        const normalized = normalizeMarketplaceCategory(category);
+        return MARKETPLACE_CATEGORY_LABELS[normalized] || "Other";
+      }
+
+      function marketplaceCategoryIcon(category) {
+        const normalized = normalizeMarketplaceCategory(category);
+        return MARKETPLACE_CATEGORY_ICONS[normalized] || "📦";
       }
 
       function marketplaceCategoryMatches(post) {
+        if (marketplaceSelectedCategory === "all") return true;
         return normalizeMarketplaceCategory(post?.category) === marketplaceSelectedCategory;
       }
 
@@ -3028,7 +3325,7 @@
             btn.classList.toggle("active", btn.dataset.marketCategory === nextCategory);
           });
         }
-        if (syncForm && els.marketplaceCategory) {
+        if (syncForm && els.marketplaceCategory && nextCategory !== "all") {
           els.marketplaceCategory.value = nextCategory;
         }
         if (rerender) {
@@ -3042,16 +3339,44 @@
         return "Active";
       }
 
+      function marketplaceStatusTag(post) {
+        const status = String(post?.status || "active")
+          .trim()
+          .toLowerCase();
+        if (status === "active") {
+          if (post?.listing_type === "donation" && post?.claimed_by_username) {
+            return { label: "Claimed", className: "claimed" };
+          }
+          return { label: "Available", className: "available" };
+        }
+        return { label: "Completed", className: "completed" };
+      }
+
       function marketplacePrimaryPhotoUrl(post) {
         const photos = Array.isArray(post?.photos) ? post.photos : [];
-        if (!photos.length) return MARKETPLACE_PLACEHOLDER_THUMB;
+        if (!photos.length) return "";
         const first = photos[0];
-        return first && first.file_url ? first.file_url : MARKETPLACE_PLACEHOLDER_THUMB;
+        return first && first.file_url ? first.file_url : "";
       }
 
       function marketplaceThumbHtml(post, title = "Listing photo") {
         const thumbUrl = marketplacePrimaryPhotoUrl(post);
-        return `<img class="market-thumb" src="${thumbUrl}" alt="${title}" loading="lazy" />`;
+        if (thumbUrl) {
+          return `<img class="market-thumb" src="${thumbUrl}" alt="${title}" loading="lazy" />`;
+        }
+        return `<div class="market-thumb-placeholder" aria-hidden="true">${marketplaceCategoryIcon(post?.category)}</div>`;
+      }
+
+      function marketplacePriceBadge(post) {
+        if (post.listing_type === "donation") {
+          return `<span class="market-price-badge free">FREE</span>`;
+        }
+        const priceLabel = post.price_text ? post.price_text : "Paid";
+        return `<span class="market-price-badge paid">${priceLabel}</span>`;
+      }
+
+      function marketplaceContactLabel(post) {
+        return post.contact_phone || post.owner_phone_number || "No phone provided";
       }
 
       function setMarketplaceUploadStatus(message, kind = "") {
@@ -3215,14 +3540,16 @@
       }
 
       function clearMarketplaceTables() {
-        els.marketplaceActiveBody.innerHTML = `<tr><td colspan="8">No active listings in ${marketplaceCategoryLabel(
-          marketplaceSelectedCategory
-        )}.</td></tr>`;
-        els.marketplaceMineBody.innerHTML = `<tr><td colspan="7">No listings created in ${marketplaceCategoryLabel(
-          marketplaceSelectedCategory
-        )}.</td></tr>`;
+        const categoryLabel =
+          marketplaceSelectedCategory === "all"
+            ? "all categories"
+            : marketplaceCategoryLabel(marketplaceSelectedCategory);
+        els.marketplaceActiveCards.innerHTML = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No active listings in ${categoryLabel}.</span></div>`;
+        els.marketplaceActiveBody.innerHTML = "";
+        els.marketplaceMineBody.innerHTML = `<tr><td colspan="7">No listings created in ${categoryLabel}.</td></tr>`;
         els.marketplaceActiveCount.textContent = "0";
         els.marketplaceMineCount.textContent = "0";
+        hydrateLucideIcons();
       }
 
       function renderMarketplace(data) {
@@ -3236,34 +3563,50 @@
         const activeListings = activeListingsAll.filter((post) => marketplaceCategoryMatches(post));
         const myListings = myListingsAll.filter((post) => marketplaceCategoryMatches(post));
 
-        els.marketplaceActiveBody.innerHTML = activeListings.length
+        els.marketplaceActiveCards.innerHTML = activeListings.length
           ? activeListings
               .map((post) => {
                 const isOwner = currentUser && post.owner_username === currentUser.username;
-                const openLink = `<a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Open</a>`;
+                const statusTag = marketplaceStatusTag(post);
+                const openLink = `<a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">View details</a>`;
                 const canClaim =
                   post.status === "active" &&
                   post.listing_type === "donation" &&
                   !post.claimed_by_username &&
                   !isOwner;
-                const action = canClaim
-                  ? `<div class="market-actions"><button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Claim</button>${openLink}</div>`
-                  : isOwner
-                    ? `<div class="market-actions"><span class="poll-note">Your listing</span>${openLink}</div>`
-                    : `<div class="market-actions"><span class="poll-note">${post.claimed_by_username ? "Already claimed" : "Contact owner"}</span>${openLink}</div>`;
-                return `<tr class="market-row-link" data-listing-url="${marketplaceListingUrl(post.id)}" role="link" tabindex="0">
-                  ${td(marketplaceTypeLabel(post.listing_type))}
-                  ${td(`<div class="market-item">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}<div class="market-item-main"><strong>${post.title}</strong><small>${marketplaceCategoryLabel(post.category)}</small></div></div>`)}
-                  ${td(post.listing_type === "sale" ? post.price_text || "-" : "Free")}
-                  ${td(post.owner_username)}
-                  ${td(post.contact_phone || post.owner_phone_number || "-")}
-                  ${td(post.pickup_details || "-")}
-                  ${td(post.claimed_by_username ? `Claimed by ${post.claimed_by_username}` : marketplaceStatusLabel(post.status))}
-                  <td>${action}</td>
-                </tr>`;
+                const contactId = `market-contact-${post.id}`;
+                return `
+                  <article class="market-listing-card">
+                    <div class="market-listing-head">
+                      <div class="market-listing-thumb">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}</div>
+                      <div class="market-listing-main">
+                        <div class="market-title-line">
+                          <strong>${post.title}</strong>
+                          ${marketplacePriceBadge(post)}
+                        </div>
+                        <div class="market-owner-line">Owner: ${post.owner_username}</div>
+                        <div class="market-card-badges">
+                          <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
+                          <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="market-card-actions">
+                      <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contact owner</button>
+                      ${canClaim ? `<button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Claim Donation</button>` : ""}
+                      ${openLink}
+                    </div>
+                    <div id="${contactId}" class="market-contact-meta hidden">${iconMarkup("phone")}<span>${marketplaceContactLabel(post)}</span></div>
+                  </article>
+                `;
               })
               .join("")
-          : `<tr><td colspan="8">No active listings in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.</td></tr>`;
+          : `<div class="market-empty-state">${iconMarkup("package-search")}<span>No active listings ${
+              marketplaceSelectedCategory === "all"
+                ? "yet."
+                : `in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
+            }</span></div>`;
+        els.marketplaceActiveBody.innerHTML = "";
 
         els.marketplaceMineBody.innerHTML = myListings.length
           ? myListings
@@ -3284,13 +3627,15 @@
                 </tr>`;
               })
               .join("")
-          : `<tr><td colspan="7">You have not created listings in ${marketplaceCategoryLabel(
-              marketplaceSelectedCategory
-            )}.</td></tr>`;
+          : `<tr><td colspan="7">You have not created listings ${
+              marketplaceSelectedCategory === "all"
+                ? "yet."
+                : `in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
+            }</td></tr>`;
 
         els.marketplaceActiveCount.textContent = String(activeListings.length);
         els.marketplaceMineCount.textContent = String(myListings.length);
-        decorateDynamicActionIcons(els.marketplaceActiveBody);
+        decorateDynamicActionIcons(els.marketplaceActiveCards);
         decorateDynamicActionIcons(els.marketplaceMineBody);
       }
 
@@ -3910,7 +4255,21 @@
         });
       });
 
-      els.marketplaceActiveBody.addEventListener("click", async (event) => {
+      els.marketplaceActiveCards.addEventListener("click", async (event) => {
+        const contactBtn = event.target.closest(".market-contact-btn");
+        if (contactBtn) {
+          const contactId = String(contactBtn.dataset.contactId || "").trim();
+          if (!contactId) return;
+          const detailsEl = document.getElementById(contactId);
+          if (!detailsEl) return;
+          const isHidden = detailsEl.classList.contains("hidden");
+          detailsEl.classList.toggle("hidden", !isHidden);
+          contactBtn.dataset.defaultText = isHidden ? "Hide phone" : "Contact owner";
+          contactBtn.innerHTML = `${iconMarkup("phone")}<span>${contactBtn.dataset.defaultText}</span>`;
+          hydrateLucideIcons();
+          return;
+        }
+
         const button = event.target.closest(".market-claim-btn");
         if (button) {
           const postId = Number(button.dataset.postId || 0);
@@ -3927,11 +4286,6 @@
           });
           return;
         }
-        maybeNavigateMarketplaceRow(event);
-      });
-
-      els.marketplaceActiveBody.addEventListener("keydown", (event) => {
-        maybeNavigateMarketplaceRowFromKeyboard(event);
       });
 
       els.marketplaceMineBody.addEventListener("click", async (event) => {
@@ -4222,7 +4576,7 @@
         setPollFormDefaults();
         updatePollFormVisibility();
         updateMarketplaceFormVisibility();
-        setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: true, rerender: false });
+        setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: false, rerender: false });
         applyStaticActionIcons();
         clearMarketplaceTables();
         clearMarketplaceUploadState();
