@@ -23,6 +23,12 @@
         box-sizing: border-box;
       }
 
+      html,
+      body {
+        width: 100%;
+        max-width: 100%;
+      }
+
       body {
         margin: 0;
         font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -1583,14 +1589,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow-x: hidden;
         padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
         z-index: 2100;
       }
 
       .modal-card {
         width: min(720px, 100%);
+        max-width: 100vw;
         max-height: min(82vh, 820px);
         overflow: auto;
+        overflow-x: hidden;
         border-radius: 12px;
         border: 1px solid var(--line);
         background: #fff;
@@ -1653,6 +1662,7 @@
       .help-modal-card {
         display: flex;
         flex-direction: column;
+        overflow-x: hidden;
       }
 
       .help-modal-card .faq {
@@ -1660,6 +1670,25 @@
         max-height: min(62vh, calc(100dvh - 210px));
         overflow: auto;
         padding-right: 2px;
+      }
+
+      #helpModal .faq-item,
+      #helpModal .faq-item p,
+      #helpModal .faq-item summary {
+        max-width: 100%;
+      }
+
+      .help-section-title {
+        margin: 8px 0 6px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .faq-item {
+        overflow-wrap: anywhere;
       }
 
       a:focus-visible,
@@ -2106,6 +2135,7 @@
           width: 100%;
           height: 100dvh;
           max-height: 100dvh;
+          max-width: 100vw;
           border-radius: 0;
           border: 0;
           padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
@@ -2232,6 +2262,11 @@
 
         .nav-logout span {
           display: none;
+        }
+
+        .container {
+          padding-left: 12px;
+          padding-right: 12px;
         }
 
         .capacity-grid {
@@ -2956,6 +2991,7 @@
       <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
         <div class="modal-card help-modal-card">
           <h2 id="helpModalTitle">How To Use This Website</h2>
+          <p id="helpModalSubtitle" class="poll-note"></p>
           <section id="helpFaq" class="faq"></section>
           <div class="modal-actions">
             <button id="helpCloseBtn" class="ghost" type="button">Close</button>
@@ -3205,6 +3241,7 @@
         kpiMyClaims: document.getElementById("kpiMyClaims"),
         helpBtn: document.getElementById("helpBtn"),
         helpModal: document.getElementById("helpModal"),
+        helpModalSubtitle: document.getElementById("helpModalSubtitle"),
         helpFaq: document.getElementById("helpFaq"),
         helpCloseBtn: document.getElementById("helpCloseBtn"),
         claimConfirmModal: document.getElementById("claimConfirmModal"),
@@ -3244,7 +3281,6 @@
       const lastRefreshAt = { parking: null, marketplace: null, voting: null };
       const closedPollSummaryCache = {};
       let actionConfirmResolver = null;
-      const initialModuleParam = new URLSearchParams(window.location.search).get("module");
       const STATIC_ACTION_ICON_MAP = [
         ["#helpBtn", "circle-help"],
         ["#loginBtn", "log-in"],
@@ -3721,7 +3757,7 @@
       }
 
       function requestedModuleFromQuery() {
-        const normalized = String(initialModuleParam || "")
+        const normalized = String(new URLSearchParams(window.location.search).get("module") || "")
           .trim()
           .toLowerCase();
         return MODULE_QUERY_TO_ID[normalized] || null;
@@ -4076,17 +4112,37 @@
 
       function renderHelpFaq() {
         const moduleKey = moduleKeyFromId(currentModule);
-        const items = [...(HELP_ITEMS.global || []), ...((HELP_ITEMS[moduleKey] || []))];
-        els.helpFaq.innerHTML = items
-          .map(
-            (item, idx) => `
-              <details class="faq-item" ${idx === 0 ? "open" : ""}>
-                <summary>${item.question}</summary>
-                <p>${item.answer}</p>
-              </details>
-            `
-          )
-          .join("");
+        const generalItems = HELP_ITEMS.global || [];
+        const moduleItems = moduleKey !== "global" ? HELP_ITEMS[moduleKey] || [] : [];
+        const moduleLabel = MODULE_ID_TO_TITLE[currentModule] || titleize(moduleKey);
+
+        const makeItems = (items, startOpen = false) =>
+          items
+            .map(
+              (item, idx) => `
+                <details class="faq-item" ${startOpen && idx === 0 ? "open" : ""}>
+                  <summary>${item.question}</summary>
+                  <p>${item.answer}</p>
+                </details>
+              `
+            )
+            .join("");
+
+        let html = "";
+        if (generalItems.length) {
+          html += `<h3 class="help-section-title">General</h3>${makeItems(generalItems, true)}`;
+        }
+        if (moduleItems.length) {
+          html += `<h3 class="help-section-title">${moduleLabel}</h3>${makeItems(moduleItems, !generalItems.length)}`;
+        }
+        if (!html) {
+          html = `<div class="faq-item"><p>No help items configured yet.</p></div>`;
+        }
+
+        els.helpModalSubtitle.textContent = moduleItems.length
+          ? `General + ${moduleLabel.toLowerCase()} module guidance`
+          : "General guidance";
+        els.helpFaq.innerHTML = html;
       }
 
       function openHelpModal() {
@@ -5592,11 +5648,13 @@
               }),
             });
             applyAuthState(response.user);
-            await refreshDashboard();
-            await refreshAdminUsers();
-            await refreshMarketplace();
-            await refreshVoting();
             applyRequestedModuleFromQuery();
+            await Promise.allSettled([
+              refreshDashboard(),
+              refreshAdminUsers(),
+              refreshMarketplace(),
+              refreshVoting(),
+            ]);
             showToast("Login successful.");
           } catch (error) {
             setStatus(error.message, true);
@@ -6274,11 +6332,13 @@
             return;
           }
           applyAuthState(me.user);
-          await refreshDashboard();
-          await refreshAdminUsers();
-          await refreshMarketplace();
-          await refreshVoting();
           applyRequestedModuleFromQuery();
+          await Promise.allSettled([
+            refreshDashboard(),
+            refreshAdminUsers(),
+            refreshMarketplace(),
+            refreshVoting(),
+          ]);
         } catch (error) {
           setStatus(error.message, true);
         }
