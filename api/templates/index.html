@@ -281,6 +281,17 @@
         font-size: 0.82rem;
       }
 
+      .stat-loading {
+        display: inline-block;
+        width: 24px;
+        height: 14px;
+        background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+        background-size: 200px 100%;
+        animation: shimmer 1.2s infinite;
+        border-radius: 4px;
+        vertical-align: middle;
+      }
+
       .count-pill {
         margin-left: 6px;
         border-radius: 999px;
@@ -425,6 +436,25 @@
         padding: 20px 14px;
         text-align: center;
         color: var(--muted);
+      }
+
+      .empty-state {
+        padding: 32px;
+        text-align: center;
+        color: #64748b;
+        font-size: 14px;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px dashed #e2e8f0;
+      }
+
+      .locked-notice {
+        padding: 16px;
+        background: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        border-radius: 8px;
+        color: #92400e;
+        font-size: 14px;
       }
 
       .poll-closed-card-list {
@@ -609,6 +639,65 @@
         margin-bottom: 6px;
       }
 
+      .wizard-steps {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .wizard-steps .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .step-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .wizard-steps .step.active .step-circle,
+      .wizard-steps .step.completed .step-circle {
+        background: #10b981;
+        color: #fff;
+      }
+
+      .wizard-steps .step.completed .step-circle::after {
+        content: "✓";
+      }
+
+      .step-label {
+        font-size: 11px;
+        color: #64748b;
+        white-space: nowrap;
+      }
+
+      .wizard-steps .step.active .step-label {
+        color: #10b981;
+        font-weight: 600;
+      }
+
+      .step-connector {
+        flex: 1;
+        height: 2px;
+        background: #e2e8f0;
+        margin: 0 8px;
+        margin-bottom: 16px;
+      }
+
+      .step-connector.completed {
+        background: #10b981;
+      }
+
       .poll-wizard-step-chip {
         display: inline-flex;
         align-items: center;
@@ -743,24 +832,46 @@
         padding: 0;
       }
 
-      .remember-row {
+      .remember-label {
         display: flex;
         align-items: center;
         gap: 8px;
-      }
-
-      .remember-row input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        margin: 0;
-      }
-
-      .remember-row label {
-        margin: 0;
-        color: #334155;
-        font-size: 0.86rem;
-        font-weight: 600;
         cursor: pointer;
+        font-size: 14px;
+        color: #475569;
+      }
+
+      .remember-label input[type="checkbox"] {
+        display: none;
+      }
+
+      .remember-toggle {
+        width: 36px;
+        height: 20px;
+        background: #cbd5e1;
+        border-radius: 10px;
+        position: relative;
+        transition: background 0.2s;
+      }
+
+      .remember-toggle::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.2s;
+      }
+
+      .remember-label input:checked + .remember-toggle {
+        background: #10b981;
+      }
+
+      .remember-label input:checked + .remember-toggle::after {
+        transform: translateX(16px);
       }
 
       button {
@@ -880,6 +991,13 @@
       }
 
       .market-active-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .market-my-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
@@ -1033,6 +1151,11 @@
       .market-card-actions .table-action-btn,
       .market-card-actions .table-action-link {
         padding: 7px 10px;
+      }
+
+      .market-my-meta {
+        color: var(--muted);
+        font-size: 0.81rem;
       }
 
       .market-contact-meta {
@@ -1743,18 +1866,10 @@
         color: #047857;
       }
 
-      .refresh-btn.is-refreshing .lucide {
-        animation: refresh-pulse 0.9s ease-in-out infinite;
-      }
-
-      @keyframes refresh-pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.45;
-        }
+      .btn-refresh.refreshing svg,
+      .btn-refresh.refreshing .lucide,
+      .btn-refresh.refreshing .refresh-icon {
+        animation: spin 0.8s linear infinite;
       }
 
       .mode-banner {
@@ -1790,16 +1905,16 @@
         height: 12px;
         border-radius: 999px;
         background: linear-gradient(90deg, #e2e8f0 20%, #f1f5f9 40%, #e2e8f0 60%);
-        background-size: 200% 100%;
+        background-size: 200px 100%;
         animation: shimmer 1.2s linear infinite;
       }
 
       @keyframes shimmer {
         0% {
-          background-position: 200% 0;
+          background-position: -200px 0;
         }
         100% {
-          background-position: -200% 0;
+          background-position: calc(200px + 100%) 0;
         }
       }
 
@@ -2113,6 +2228,10 @@
           grid-template-columns: 1fr;
         }
 
+        .market-my-grid {
+          grid-template-columns: 1fr;
+        }
+
         .poll-card-grid {
           grid-template-columns: 1fr;
         }
@@ -2367,10 +2486,11 @@
             <label for="loginPassword">Password</label>
             <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" autocapitalize="none" spellcheck="false" required />
           </div>
-          <div class="remember-row">
+          <label class="remember-label">
             <input id="keepLoggedIn" type="checkbox" checked />
-            <label for="keepLoggedIn">Keep me logged in</label>
-          </div>
+            <div class="remember-toggle"></div>
+            Keep me logged in
+          </label>
           <button id="loginBtn" type="submit">Sign In</button>
         </form>
       </section>
@@ -2382,9 +2502,9 @@
             <p id="welcomeResidence" class="welcome-note">Choose which module you want to work in. All modules require authenticated access.</p>
           </div>
           <div class="quick-stats">
-            <span class="quick-stat"><i data-lucide="car-front" aria-hidden="true"></i><span id="quickStatFree">0 free parking spots</span></span>
-            <span class="quick-stat"><i data-lucide="store" aria-hidden="true"></i><span id="quickStatListings">0 active listings</span></span>
-            <span class="quick-stat"><i data-lucide="vote" aria-hidden="true"></i><span id="quickStatPolls">0 open polls</span></span>
+            <span class="quick-stat"><i data-lucide="car-front" aria-hidden="true"></i><span id="quickStatFree"><span class="stat-loading"></span></span></span>
+            <span class="quick-stat"><i data-lucide="store" aria-hidden="true"></i><span id="quickStatListings"><span class="stat-loading"></span></span></span>
+            <span class="quick-stat"><i data-lucide="vote" aria-hidden="true"></i><span id="quickStatPolls"><span class="stat-loading"></span></span></span>
           </div>
           <div class="module-grid">
             <article class="module-card">
@@ -2453,12 +2573,12 @@
         <div id="parkingModule" class="hidden module-panel">
           <section class="module-header">
             <div>
-              <div class="module-breadcrumb"><a href="#" data-back-modules>Home</a> &gt; Parking</div>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Parking</div>
               <h1 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parking</h1>
             </div>
             <div class="module-actions">
               <a href="#" class="module-back-link" data-back-modules>Back Home</a>
-              <button id="refreshParkingBtn" class="ghost refresh-btn" type="button">Refresh</button>
+              <button id="refreshParkingBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
             </div>
           </section>
           <p id="parkingLastRefreshed" class="refresh-meta">Last refreshed: -</p>
@@ -2594,7 +2714,7 @@
             </div>
 
             <section id="activityFreePanel" class="tab-panel" data-tab-group="activity">
-              <div class="table-wrap">
+              <div id="sharedSpotsTableWrap" class="table-wrap">
                 <table>
                   <thead>
                     <tr>
@@ -2612,11 +2732,12 @@
                   <tbody id="sharedSpots"></tbody>
                 </table>
               </div>
+              <div id="sharedSpotsEmpty" class="empty-state hidden">🅿️ No spots available right now.</div>
               <div id="sharedSpotsCards" class="parking-card-list"></div>
             </section>
 
             <section id="activitySharedPanel" class="tab-panel hidden" data-tab-group="activity">
-              <div class="table-wrap">
+              <div id="mySharedTableWrap" class="table-wrap">
                 <table>
                   <thead>
                     <tr><th>Spot</th><th>Type</th><th>Status</th><th>From</th><th>Until</th></tr>
@@ -2624,11 +2745,12 @@
                   <tbody id="myShared"></tbody>
                 </table>
               </div>
+              <div id="mySharedEmpty" class="empty-state hidden">📤 You haven't shared any spots yet.</div>
               <div id="mySharedCards" class="parking-card-list"></div>
             </section>
 
             <section id="activityClaimedByOthersPanel" class="tab-panel hidden" data-tab-group="activity">
-              <div class="table-wrap">
+              <div id="claimedOnMineTableWrap" class="table-wrap">
                 <table>
                   <thead>
                     <tr><th>Spot</th><th>Claimed By</th><th>Phone</th><th>Claim From</th><th>Claim Until</th></tr>
@@ -2636,11 +2758,12 @@
                   <tbody id="claimedOnMine"></tbody>
                 </table>
               </div>
+              <div id="claimedOnMineEmpty" class="empty-state hidden">📥 None of your spots have been claimed.</div>
               <div id="claimedOnMineCards" class="parking-card-list"></div>
             </section>
 
             <section id="activityMyClaimsPanel" class="tab-panel hidden" data-tab-group="activity">
-              <div class="table-wrap">
+              <div id="myClaimedTableWrap" class="table-wrap">
                 <table>
                   <thead>
                     <tr><th>Building</th><th>Spot</th><th>Owner</th><th>Owner Phone</th><th>Contact Used</th><th>Claim From</th><th>Claim Until</th></tr>
@@ -2648,6 +2771,7 @@
                   <tbody id="myClaimed"></tbody>
                 </table>
               </div>
+              <div id="myClaimedEmpty" class="empty-state hidden">🔖 You haven't claimed any spots.</div>
               <div id="myClaimedCards" class="parking-card-list"></div>
             </section>
           </section>
@@ -2711,7 +2835,7 @@
         <section id="marketplaceModule" class="card hidden module-panel" style="margin-top: 14px">
           <div class="module-header">
             <div>
-              <div class="module-breadcrumb"><a href="#" data-back-modules>Home</a> &gt; Marketplace</div>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Marketplace</div>
               <h1 class="module-title"><i data-lucide="store" aria-hidden="true"></i>Marketplace</h1>
               <p class="poll-note">
                 Sell items in person only or donate items. No lending. Donations can be claimed.
@@ -2719,7 +2843,7 @@
             </div>
             <div class="module-actions">
               <a href="#" class="module-back-link" data-back-modules>Back Home</a>
-              <button id="refreshMarketplaceBtn" class="ghost refresh-btn" type="button">Refresh</button>
+              <button id="refreshMarketplaceBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
             </div>
           </div>
           <p id="marketplaceLastRefreshed" class="refresh-meta">Last refreshed: -</p>
@@ -2776,7 +2900,7 @@
             </section>
             <section class="card">
               <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
-              <div class="table-wrap" style="margin-top: 8px">
+              <div id="marketplaceMineTableWrap" class="table-wrap hidden" style="margin-top: 8px">
                 <table>
                   <thead>
                     <tr>
@@ -2792,7 +2916,8 @@
                   <tbody id="marketplaceMineBody"></tbody>
                 </table>
               </div>
-              <div id="marketplaceMineCards" class="market-mobile-list"></div>
+              <div id="myListingsCards" class="market-my-grid"></div>
+              <div id="marketplaceMineCards" class="market-mobile-list hidden"></div>
             </section>
           </div>
 
@@ -2856,7 +2981,7 @@
                 <h4>Photos</h4>
                 <div>
                   <label for="marketplacePhotos">Photos</label>
-                  <input id="marketplacePhotos" class="visually-hidden" type="file" accept="image/*" multiple />
+                  <input id="marketplacePhotos" class="visually-hidden" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/jpg,image/png,image/webp" multiple />
                   <div id="marketplaceDropzone" class="market-dropzone" role="button" tabindex="0" aria-label="Add marketplace photos">
                     <span><b>Drag & drop</b> photos here, or click to browse.</span>
                   </div>
@@ -2877,13 +3002,13 @@
         <section id="avizierModule" class="card hidden module-panel" style="margin-top: 14px">
           <div class="module-header">
             <div>
-              <div class="module-breadcrumb"><a href="#" data-back-modules>Home</a> &gt; Avizier</div>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Avizier</div>
               <h1 class="module-title"><i data-lucide="newspaper" aria-hidden="true"></i>Avizier</h1>
               <p class="poll-note">General and per-building announcements for all residents.</p>
             </div>
             <div class="module-actions">
               <a href="#" class="module-back-link" data-back-modules>Back Home</a>
-              <button id="refreshAvizierBtn" class="ghost refresh-btn" type="button">Refresh</button>
+              <button id="refreshAvizierBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
             </div>
           </div>
           <p id="avizierLastRefreshed" class="refresh-meta">Last refreshed: -</p>
@@ -2919,8 +3044,28 @@
             </form>
           </section>
 
+          <section id="avizierLockedCard" class="card hidden" style="margin-top: 12px">
+            <div class="locked-notice">
+              🔒 Only Reprezentant Bloc and Comitet members can post announcements.
+            </div>
+          </section>
+
           <section class="card" style="margin-top: 12px">
             <h3>Announcements <span class="count-pill" id="avizierCount">0</span></h3>
+            <div id="avizierScopeFilters" class="tabs market-filter-tabs" style="margin-top: 8px">
+              <button type="button" class="tab-btn market-filter-btn active" data-avizier-filter="all">
+                <span class="market-filter-emoji" aria-hidden="true">📋</span>
+                <span>All</span>
+              </button>
+              <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="general">
+                <span class="market-filter-emoji" aria-hidden="true">🌐</span>
+                <span>General</span>
+              </button>
+              <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="building">
+                <span class="market-filter-emoji" aria-hidden="true">🏢</span>
+                <span>Per Building</span>
+              </button>
+            </div>
             <div id="avizierList" class="stack" style="margin-top: 8px"></div>
           </section>
         </section>
@@ -2928,13 +3073,13 @@
         <section id="votingModule" class="card hidden module-panel" style="margin-top: 14px">
           <div class="module-header">
             <div>
-              <div class="module-breadcrumb"><a href="#" data-back-modules>Home</a> &gt; Voting</div>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Voting</div>
               <h1 class="module-title"><i data-lucide="vote" aria-hidden="true"></i>Voting</h1>
               <p class="poll-note">Participate in neighbourhood or building-specific polls.</p>
             </div>
             <div class="module-actions">
               <a href="#" class="module-back-link" data-back-modules>Back Home</a>
-              <button id="refreshPollsBtn" class="ghost refresh-btn" type="button">Refresh</button>
+              <button id="refreshPollsBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
             </div>
           </div>
           <p id="votingLastRefreshed" class="refresh-meta">Last refreshed: -</p>
@@ -2942,10 +3087,27 @@
             <h3>Create Poll (Admin Wizard)</h3>
             <form id="createPollForm" class="stack" style="margin-top: 8px">
               <div class="poll-wizard-header">
-                <span class="poll-wizard-step-chip active" data-poll-step-chip="1">1. Basics</span>
-                <span class="poll-wizard-step-chip" data-poll-step-chip="2">2. Scope & Dates</span>
-                <span class="poll-wizard-step-chip" data-poll-step-chip="3">3. Options & Settings</span>
-                <span class="poll-wizard-step-chip" data-poll-step-chip="4">4. Attachments & Review</span>
+                <div class="wizard-steps">
+                  <div class="step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Basics</div>
+                  </div>
+                  <div class="step-connector"></div>
+                  <div class="step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Scope &amp; Dates</div>
+                  </div>
+                  <div class="step-connector"></div>
+                  <div class="step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Options</div>
+                  </div>
+                  <div class="step-connector"></div>
+                  <div class="step" data-step="4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Review</div>
+                  </div>
+                </div>
               </div>
 
               <section id="pollWizardStep1" class="poll-wizard-step">
@@ -3043,7 +3205,7 @@
             </section>
             <section class="card">
               <h3>Closed Polls <span class="count-pill" id="countClosedPolls">0</span></h3>
-              <div class="table-wrap" style="margin-top: 8px">
+              <div id="closedPollsTableWrap" class="table-wrap" style="margin-top: 8px">
                 <table>
                   <thead>
                     <tr>
@@ -3058,6 +3220,7 @@
                   <tbody id="closedPolls"></tbody>
                 </table>
               </div>
+              <div id="closedPollsEmpty" class="empty-state hidden">📁 No closed polls yet.</div>
               <div id="closedPollCards" class="poll-closed-card-list"></div>
             </section>
           </div>
@@ -3182,6 +3345,12 @@
         votingModule: "Voting",
       };
       const MARKETPLACE_MAX_FILE_BYTES = 5 * 1024 * 1024;
+      const MARKETPLACE_ALLOWED_FILE_TYPES = new Set([
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ]);
       const AVIZIER_MAX_FILE_BYTES = 10 * 1024 * 1024;
       const AVIZIER_ALLOWED_FILE_TYPES = new Set(["image/jpeg", "image/jpg", "application/pdf"]);
       const HELP_ITEMS = {
@@ -3306,10 +3475,12 @@
         marketplaceActiveCards: document.getElementById("marketplaceActiveCards"),
         marketplaceActiveBody: document.getElementById("marketplaceActiveBody"),
         marketplaceMineBody: document.getElementById("marketplaceMineBody"),
+        myListingsCards: document.getElementById("myListingsCards"),
         marketplaceMineCards: document.getElementById("marketplaceMineCards"),
         marketplaceActiveCount: document.getElementById("marketplaceActiveCount"),
         marketplaceMineCount: document.getElementById("marketplaceMineCount"),
         createAvizierCard: document.getElementById("createAvizierCard"),
+        avizierLockedCard: document.getElementById("avizierLockedCard"),
         createAvizierForm: document.getElementById("createAvizierForm"),
         createAvizierBtn: document.getElementById("createAvizierBtn"),
         avizierTitle: document.getElementById("avizierTitle"),
@@ -3319,6 +3490,7 @@
         avizierBuilding: document.getElementById("avizierBuilding"),
         avizierFiles: document.getElementById("avizierFiles"),
         avizierUploadStatus: document.getElementById("avizierUploadStatus"),
+        avizierScopeFilters: document.getElementById("avizierScopeFilters"),
         avizierList: document.getElementById("avizierList"),
         avizierCount: document.getElementById("avizierCount"),
         createPollCard: document.getElementById("createPollCard"),
@@ -3347,13 +3519,23 @@
         pollFiles: document.getElementById("pollFiles"),
         pollUploadStatus: document.getElementById("pollUploadStatus"),
         sharedSpots: document.getElementById("sharedSpots"),
+        sharedSpotsTableWrap: document.getElementById("sharedSpotsTableWrap"),
+        sharedSpotsEmpty: document.getElementById("sharedSpotsEmpty"),
         sharedSpotsCards: document.getElementById("sharedSpotsCards"),
         myShared: document.getElementById("myShared"),
+        mySharedTableWrap: document.getElementById("mySharedTableWrap"),
+        mySharedEmpty: document.getElementById("mySharedEmpty"),
         mySharedCards: document.getElementById("mySharedCards"),
         claimedOnMine: document.getElementById("claimedOnMine"),
+        claimedOnMineTableWrap: document.getElementById("claimedOnMineTableWrap"),
+        claimedOnMineEmpty: document.getElementById("claimedOnMineEmpty"),
         claimedOnMineCards: document.getElementById("claimedOnMineCards"),
         myClaimed: document.getElementById("myClaimed"),
+        myClaimedTableWrap: document.getElementById("myClaimedTableWrap"),
+        myClaimedEmpty: document.getElementById("myClaimedEmpty"),
         myClaimedCards: document.getElementById("myClaimedCards"),
+        closedPollsTableWrap: document.getElementById("closedPollsTableWrap"),
+        closedPollsEmpty: document.getElementById("closedPollsEmpty"),
         stats: document.getElementById("stats"),
         allUsers: document.getElementById("allUsers"),
         allUsersCards: document.getElementById("allUsersCards"),
@@ -3403,7 +3585,9 @@
       let marketplaceSelectedBuilding = "all";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
       let avizierAnnouncements = [];
+      let avizierScopeFilter = "all";
       let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
+      let quickStatsLoading = true;
       let autoRefreshIntervalId = null;
       let refreshTickerIntervalId = null;
       const lastRefreshAt = { parking: null, marketplace: null, avizier: null, voting: null };
@@ -3494,9 +3678,21 @@
       }
 
       function renderQuickStats() {
+        if (quickStatsLoading) {
+          const loadingHtml = `<span class="stat-loading"></span>`;
+          els.quickStatFree.innerHTML = loadingHtml;
+          els.quickStatListings.innerHTML = loadingHtml;
+          els.quickStatPolls.innerHTML = loadingHtml;
+          return;
+        }
         els.quickStatFree.textContent = `${moduleQuickStats.freeSpots} free parking spots`;
         els.quickStatListings.textContent = `${moduleQuickStats.activeListings} active listings`;
         els.quickStatPolls.textContent = `${moduleQuickStats.openPolls} open polls`;
+      }
+
+      function setQuickStatsLoading(isLoading) {
+        quickStatsLoading = Boolean(isLoading);
+        renderQuickStats();
       }
 
       function moduleKeyFromId(moduleId) {
@@ -3553,11 +3749,11 @@
           await run();
           return;
         }
-        button.classList.add("is-refreshing");
+        button.classList.add("refreshing");
         try {
           await run();
         } finally {
-          button.classList.remove("is-refreshing");
+          button.classList.remove("refreshing");
         }
       }
 
@@ -3630,6 +3826,7 @@
           setButtonActionIcon(button, "phone")
         );
         root.querySelectorAll(".market-claim-btn").forEach((button) => setButtonActionIcon(button, "hand-heart"));
+        root.querySelectorAll(".market-edit-btn").forEach((button) => setButtonActionIcon(button, "square-pen"));
         root.querySelectorAll(".market-complete-btn").forEach((button) => setButtonActionIcon(button, "badge-check"));
         root.querySelectorAll(".market-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll(".poll-open-btn").forEach((button) => setButtonActionIcon(button, "vote"));
@@ -3866,6 +4063,10 @@
         els.votingModule.classList.remove("is-visible");
       }
 
+      function showModuleSelector() {
+        showModuleChooser();
+      }
+
       function openModule(moduleId) {
         currentModule = moduleId;
         setDocumentTitle(moduleId);
@@ -4093,8 +4294,13 @@
         document.querySelectorAll("[id^='pollWizardStep']").forEach((panel) => {
           panel.classList.toggle("hidden", panel.id !== `pollWizardStep${pollWizardStep}`);
         });
-        document.querySelectorAll("[data-poll-step-chip]").forEach((chip) => {
-          chip.classList.toggle("active", Number(chip.dataset.pollStepChip) === pollWizardStep);
+        document.querySelectorAll(".wizard-steps .step").forEach((stepEl) => {
+          const stepNumber = Number(stepEl.dataset.step || 0);
+          stepEl.classList.toggle("active", stepNumber === pollWizardStep);
+          stepEl.classList.toggle("completed", stepNumber < pollWizardStep);
+        });
+        document.querySelectorAll(".wizard-steps .step-connector").forEach((connectorEl, index) => {
+          connectorEl.classList.toggle("completed", index + 1 < pollWizardStep);
         });
         els.pollWizardPrevBtn.classList.toggle("hidden", pollWizardStep === 1);
         els.pollWizardNextBtn.classList.toggle("hidden", pollWizardStep >= 4);
@@ -4452,51 +4658,51 @@
         }
         currentFreeSpots = freeSpots;
 
-        els.sharedSpots.innerHTML = freeSpots.length
-          ? freeSpots
-              .map(
-                (s) =>
-                  `<tr>
-                    <td>${parkingStatusBadge("free", "Free")}</td>
-                    ${td(s.building_number)}
-                    ${td(s.parking_space_number)}
-                    ${td(parkingTypeWithIcon(s.parking_type))}
-                    ${td(s.owner_username)}
-                    ${td(s.owner_phone_number || "-")}
-                    ${td(formatBucharestDateTime(s.available_from))}
-                    ${td(formatBucharestDateTime(s.available_until))}
-                    <td><button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Claim</button></td>
-                  </tr>`
-              )
-              .join("")
-          : renderParkingEmptyRow(9, "No spots available right now. Check back later.");
+        els.sharedSpots.innerHTML = freeSpots
+          .map(
+            (s) =>
+              `<tr>
+                <td>${parkingStatusBadge("free", "Free")}</td>
+                ${td(s.building_number)}
+                ${td(s.parking_space_number)}
+                ${td(parkingTypeWithIcon(s.parking_type))}
+                ${td(s.owner_username)}
+                ${td(s.owner_phone_number || "-")}
+                ${td(formatBucharestDateTime(s.available_from))}
+                ${td(formatBucharestDateTime(s.available_until))}
+                <td><button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Claim</button></td>
+              </tr>`
+          )
+          .join("");
+        els.sharedSpotsTableWrap.classList.toggle("hidden", !freeSpots.length);
+        els.sharedSpotsEmpty.classList.toggle("hidden", Boolean(freeSpots.length));
 
-        els.myShared.innerHTML = myShared.length
-          ? myShared
-              .map(
-                (s) =>
-                  `<tr>${td(s.parking_space_number)}${td(parkingTypeWithIcon(s.parking_type))}${td(parkingStatusBadge(s.status || "open"))}${td(formatBucharestDateTime(s.available_from))}${td(formatBucharestDateTime(s.available_until))}</tr>`
-              )
-              .join("")
-          : renderParkingEmptyRow(5, "You haven't shared any spots yet.");
+        els.myShared.innerHTML = myShared
+          .map(
+            (s) =>
+              `<tr>${td(s.parking_space_number)}${td(parkingTypeWithIcon(s.parking_type))}${td(parkingStatusBadge(s.status || "open"))}${td(formatBucharestDateTime(s.available_from))}${td(formatBucharestDateTime(s.available_until))}</tr>`
+          )
+          .join("");
+        els.mySharedTableWrap.classList.toggle("hidden", !myShared.length);
+        els.mySharedEmpty.classList.toggle("hidden", Boolean(myShared.length));
 
-        els.claimedOnMine.innerHTML = claimedByOthers.length
-          ? claimedByOthers
-              .map(
-                (s) =>
-                  `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
-              )
-              .join("")
-          : renderParkingEmptyRow(5, "None of your spots have been claimed.");
+        els.claimedOnMine.innerHTML = claimedByOthers
+          .map(
+            (s) =>
+              `<tr>${td(s.parking_space_number)}${td(s.reserved_by_username)}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
+          )
+          .join("");
+        els.claimedOnMineTableWrap.classList.toggle("hidden", !claimedByOthers.length);
+        els.claimedOnMineEmpty.classList.toggle("hidden", Boolean(claimedByOthers.length));
 
-        els.myClaimed.innerHTML = myClaims.length
-          ? myClaims
-              .map(
-                (s) =>
-                  `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
-              )
-              .join("")
-          : renderParkingEmptyRow(7, "You haven't claimed any spots.");
+        els.myClaimed.innerHTML = myClaims
+          .map(
+            (s) =>
+              `<tr>${td(s.building_number)}${td(s.parking_space_number)}${td(s.owner_username)}${td(s.owner_phone_number || "-")}${td(s.reservation_contact_phone || s.reserved_by_phone_number || "-")}${td(formatBucharestDateTime(s.reservation_from))}${td(formatBucharestDateTime(s.reservation_until))}</tr>`
+          )
+          .join("");
+        els.myClaimedTableWrap.classList.toggle("hidden", !myClaims.length);
+        els.myClaimedEmpty.classList.toggle("hidden", Boolean(myClaims.length));
 
         els.sharedSpotsCards.innerHTML = freeSpots.length
           ? freeSpots
@@ -4819,6 +5025,16 @@
         return post.contact_phone || post.owner_phone_number || "No phone provided";
       }
 
+      function normalizeMarketplaceFileType(fileType, fileName) {
+        const lowered = String(fileType || "").toLowerCase();
+        if (lowered) return lowered;
+        const fileLower = String(fileName || "").toLowerCase();
+        if (fileLower.endsWith(".jpg") || fileLower.endsWith(".jpeg")) return "image/jpeg";
+        if (fileLower.endsWith(".png")) return "image/png";
+        if (fileLower.endsWith(".webp")) return "image/webp";
+        return "";
+      }
+
       function setMarketplaceUploadStatus(message, kind = "") {
         els.marketplaceUploadStatus.textContent = message;
         els.marketplaceUploadStatus.classList.remove("error", "success");
@@ -4860,21 +5076,51 @@
             `;
           })
           .join("");
-
-        const oversized = marketplaceSelectedFiles.filter((file) => file.size > MARKETPLACE_MAX_FILE_BYTES);
-        if (oversized.length) {
-          els.marketplaceFileWarning.classList.remove("hidden");
-          els.marketplaceFileWarning.textContent =
-            `${oversized.length} file(s) are larger than 5MB. Upload may fail or be slow.`;
-        } else {
-          els.marketplaceFileWarning.classList.add("hidden");
-          els.marketplaceFileWarning.textContent = "";
-        }
+        els.marketplaceFileWarning.classList.add("hidden");
+        els.marketplaceFileWarning.textContent = "";
         hydrateLucideIcons();
       }
 
       function setMarketplaceSelectedFiles(fileList, { append = false } = {}) {
-        const incoming = Array.from(fileList || []).filter((file) => file && String(file.type || "").startsWith("image/"));
+        const incoming = Array.from(fileList || []).filter(Boolean);
+        const invalid = incoming.filter(
+          (file) => !MARKETPLACE_ALLOWED_FILE_TYPES.has(normalizeMarketplaceFileType(file.type, file.name))
+        );
+        if (invalid.length) {
+          showToast(
+            `Invalid file type: ${invalid.map((file) => file.name).join(", ")}. Only JPG, PNG and WEBP allowed.`,
+            "error"
+          );
+          if (!append) {
+            marketplaceUploadToken += 1;
+            marketplaceUploadPromise = null;
+            marketplaceUploadedPhotos = [];
+            marketplaceSelectedFiles = [];
+            els.marketplacePhotos.value = "";
+            setMarketplaceUploadStatus("No photos selected.");
+            renderMarketplacePhotoPreviews();
+          }
+          return;
+        }
+
+        const oversized = incoming.filter((file) => Number(file.size || 0) > MARKETPLACE_MAX_FILE_BYTES);
+        if (oversized.length) {
+          showToast(
+            `File too large: ${oversized.map((file) => file.name).join(", ")}. Max 5MB each.`,
+            "warning"
+          );
+          if (!append) {
+            marketplaceUploadToken += 1;
+            marketplaceUploadPromise = null;
+            marketplaceUploadedPhotos = [];
+            marketplaceSelectedFiles = [];
+            els.marketplacePhotos.value = "";
+            setMarketplaceUploadStatus("No photos selected.");
+            renderMarketplacePhotoPreviews();
+          }
+          return;
+        }
+
         marketplaceUploadToken += 1;
         marketplaceUploadPromise = null;
         marketplaceSelectedFiles = append ? [...marketplaceSelectedFiles, ...incoming] : incoming;
@@ -5051,8 +5297,10 @@
             : marketplaceCategoryLabel(marketplaceSelectedCategory);
         els.marketplaceActiveCards.innerHTML = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No active listings in ${categoryLabel}.</span></div>`;
         els.marketplaceActiveBody.innerHTML = "";
-        els.marketplaceMineBody.innerHTML = `<tr><td colspan="7">No listings created in ${categoryLabel}.</td></tr>`;
-        els.marketplaceMineCards.innerHTML = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No listings created in ${categoryLabel}.</span></div>`;
+        els.marketplaceMineBody.innerHTML = "";
+        const mineEmptyHtml = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No listings created in ${categoryLabel}.</span></div>`;
+        els.myListingsCards.innerHTML = mineEmptyHtml;
+        els.marketplaceMineCards.innerHTML = mineEmptyHtml;
         els.marketplaceActiveCount.textContent = "0";
         els.marketplaceMineCount.textContent = "0";
         hydrateLucideIcons();
@@ -5134,37 +5382,15 @@
             }</span></div>`;
         els.marketplaceActiveBody.innerHTML = "";
 
-        els.marketplaceMineBody.innerHTML = myListings.length
-          ? myListings
-              .map((post) => {
-                const isActive = post.status === "active";
-                const openLink = `<a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Open</a>`;
-                const action = isActive
-                  ? `<div class="market-actions"><button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark ${post.listing_type === "sale" ? "Sold" : "Donated"}</button><button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>${openLink}</div>`
-                  : `<div class="market-actions"><button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>${openLink}</div>`;
-                return `<tr class="market-row-link" data-listing-url="${marketplaceListingUrl(post.id)}" role="link" tabindex="0">
-                  ${td(marketplaceTypeLabel(post.listing_type))}
-                  ${td(`<div class="market-item">${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}<div class="market-item-main"><strong>${post.title}</strong><small>${marketplaceCategoryLabel(post.category)}</small><br>${marketplacePhotoLinks(post)}</div></div>`)}
-                  ${td(post.listing_type === "sale" ? post.price_text || "-" : "Free")}
-                  ${td(marketplaceStatusLabel(post.status))}
-                  ${td(post.claimed_by_username || "-")}
-                  ${td(formatBucharestDateTime(post.updated_at || post.created_at))}
-                  <td>${action}</td>
-                </tr>`;
-              })
-              .join("")
-          : `<tr><td colspan="7">You have not created listings ${
-              marketplaceSelectedCategory === "all"
-                ? "yet."
-                : `in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
-            }</td></tr>`;
+        els.marketplaceMineBody.innerHTML = "";
 
-        els.marketplaceMineCards.innerHTML = myListings.length
+        const myListingCardsHtml = myListings.length
           ? myListings
               .map((post) => {
                 const isActive = post.status === "active";
                 const statusTag = marketplaceStatusTag(post);
-                const ownerBuilding = marketplaceOwnerBuilding(post);
+                const priceLabel = post.listing_type === "sale" ? post.price_text || "-" : "FREE";
+                const listingUrl = marketplaceListingUrl(post.id);
                 return `
                   <article class="market-listing-card">
                     <div class="market-listing-head">
@@ -5177,22 +5403,28 @@
                       <div class="market-listing-body">
                         <div class="market-title-line">
                           <strong>${post.title}</strong>
-                          ${marketplacePriceBadge(post)}
+                          <span class="market-price-badge ${post.listing_type === "sale" ? "paid" : "free"}">${priceLabel}</span>
                         </div>
                         <div class="market-card-badges">
+                          <span class="market-category-badge">${marketplaceTypeLabel(post.listing_type)}</span>
                           <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
                         </div>
-                        <div class="market-owner-line">Bloc ${ownerBuilding || "-"} · Updated: ${formatBucharestDateTime(post.updated_at || post.created_at)}</div>
+                        ${
+                          post.claimed_by_username
+                            ? `<div class="market-my-meta">Claimed by: ${post.claimed_by_username}</div>`
+                            : ""
+                        }
+                        <div class="market-my-meta">Updated: ${formatBucharestDateTime(post.updated_at || post.created_at)}</div>
                       </div>
                     </div>
                     <div class="market-card-actions">
+                      <button type="button" class="table-action-btn market-edit-btn" data-listing-url="${listingUrl}">Edit</button>
+                      <button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>
                       ${
                         isActive
-                          ? `<button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark ${post.listing_type === "sale" ? "Sold" : "Donated"}</button>`
+                          ? `<button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark Complete</button>`
                           : ""
                       }
-                      <button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>
-                      <a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">View details</a>
                     </div>
                   </article>
                 `;
@@ -5203,11 +5435,13 @@
                 ? "yet."
                 : `in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
             }</span></div>`;
+        els.myListingsCards.innerHTML = myListingCardsHtml;
+        els.marketplaceMineCards.innerHTML = myListingCardsHtml;
 
         els.marketplaceActiveCount.textContent = String(activeListings.length);
         els.marketplaceMineCount.textContent = String(myListings.length);
         decorateDynamicActionIcons(els.marketplaceActiveCards);
-        decorateDynamicActionIcons(els.marketplaceMineBody);
+        decorateDynamicActionIcons(els.myListingsCards);
         decorateDynamicActionIcons(els.marketplaceMineCards);
       }
 
@@ -5256,13 +5490,14 @@
       function updateAvizierFormVisibility() {
         if (!currentUser) {
           els.createAvizierCard.classList.add("hidden");
+          els.avizierLockedCard.classList.add("hidden");
           return;
         }
         const hasPostAccess =
           currentUser.role === "admin" ||
-          currentUser.avizier_permission === "comitet" ||
-          currentUser.avizier_permission === "reprezentant_bloc";
+          String(currentUser.avizier_permission || "none") !== "none";
         els.createAvizierCard.classList.toggle("hidden", !hasPostAccess);
+        els.avizierLockedCard.classList.toggle("hidden", hasPostAccess);
         if (!hasPostAccess) return;
 
         if (currentUser.avizier_permission === "reprezentant_bloc" && currentUser.role !== "admin") {
@@ -5278,6 +5513,27 @@
         const isBuilding = els.avizierScope.value === "building";
         els.avizierBuildingRow.classList.toggle("hidden", !isBuilding);
         els.avizierBuilding.disabled = !isBuilding;
+      }
+
+      function filteredAvizierAnnouncements() {
+        if (avizierScopeFilter === "general") {
+          return avizierAnnouncements.filter((item) => item.scope === "general");
+        }
+        if (avizierScopeFilter === "building") {
+          return avizierAnnouncements.filter((item) => item.scope === "building");
+        }
+        return avizierAnnouncements;
+      }
+
+      function setAvizierScopeFilter(scope) {
+        const nextScope = ["all", "general", "building"].includes(scope) ? scope : "all";
+        avizierScopeFilter = nextScope;
+        els.avizierScopeFilters
+          .querySelectorAll("[data-avizier-filter]")
+          .forEach((button) =>
+            button.classList.toggle("active", button.dataset.avizierFilter === avizierScopeFilter)
+          );
+        renderAvizierAnnouncements();
       }
 
       async function uploadAvizierAttachments(files, onProgress = null) {
@@ -5319,15 +5575,18 @@
       }
 
       function renderAvizierAnnouncements(items) {
-        avizierAnnouncements = Array.isArray(items) ? items : [];
-        els.avizierCount.textContent = String(avizierAnnouncements.length);
-        if (!avizierAnnouncements.length) {
-          els.avizierList.innerHTML = `<div class="poll-card-empty">${iconMarkup("newspaper")}<span>No announcements available.</span></div>`;
+        if (Array.isArray(items)) {
+          avizierAnnouncements = items;
+        }
+        const visibleAnnouncements = filteredAvizierAnnouncements();
+        els.avizierCount.textContent = String(visibleAnnouncements.length);
+        if (!visibleAnnouncements.length) {
+          els.avizierList.innerHTML = `<div class="empty-state">📋 No announcements yet. Check back later.</div>`;
           hydrateLucideIcons();
           return;
         }
 
-        els.avizierList.innerHTML = avizierAnnouncements
+        els.avizierList.innerHTML = visibleAnnouncements
           .map((item) => {
             const scopeLabel = item.scope === "building" ? `Bloc ${item.building_id}` : "General";
             const attachments = Array.isArray(item.attachments) ? item.attachments : [];
@@ -5396,7 +5655,7 @@
                 `;
               })
               .join("")
-          : `<div class="poll-card-empty">${iconMarkup("vote")}<span>No active polls at the moment.</span></div>`;
+          : `<div class="empty-state">🗳️ No active polls right now. Check back later.</div>`;
         decorateDynamicActionIcons(els.activePolls);
       }
 
@@ -5437,6 +5696,8 @@
       }
 
       function renderClosedPollRows(polls) {
+        els.closedPollsTableWrap.classList.toggle("hidden", !polls.length);
+        els.closedPollsEmpty.classList.toggle("hidden", Boolean(polls.length));
         els.closedPolls.innerHTML = polls.length
           ? polls
               .map((poll) => {
@@ -5450,7 +5711,7 @@
                 </tr>`;
               })
               .join("")
-          : `<tr><td colspan="6">No closed polls yet.</td></tr>`;
+          : "";
         els.closedPollCards.innerHTML = polls.length
           ? polls
               .map(
@@ -5470,15 +5731,17 @@
                 `
               )
               .join("")
-          : `<div class="poll-card-empty">${iconMarkup("archive")}<span>No closed polls yet.</span></div>`;
+          : "";
         decorateDynamicActionIcons(els.closedPolls);
         decorateDynamicActionIcons(els.closedPollCards);
       }
 
       function clearPollLists() {
-        els.activePolls.innerHTML = `<div class="poll-card-empty">${iconMarkup("vote")}<span>No active polls.</span></div>`;
-        els.closedPolls.innerHTML = `<tr><td colspan="6">No closed polls.</td></tr>`;
-        els.closedPollCards.innerHTML = `<div class="poll-card-empty">${iconMarkup("archive")}<span>No closed polls.</span></div>`;
+        els.activePolls.innerHTML = `<div class="empty-state">🗳️ No active polls right now. Check back later.</div>`;
+        els.closedPollsTableWrap.classList.add("hidden");
+        els.closedPollsEmpty.classList.remove("hidden");
+        els.closedPolls.innerHTML = "";
+        els.closedPollCards.innerHTML = "";
         els.countActivePolls.textContent = "0";
         els.countClosedPolls.textContent = "0";
         hydrateLucideIcons();
@@ -5887,8 +6150,8 @@
           els.navUserText.textContent = "";
           els.navUserInitials.textContent = "--";
           moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
+          setQuickStatsLoading(false);
           renderWelcomeBanner(null);
-          renderQuickStats();
           updateRefreshMetaLabels();
           showModuleChooser();
           clearPollLists();
@@ -5907,9 +6170,9 @@
         els.navUserText.textContent = `${user.username} · ${displayResidence(user)}`;
         els.navUserInitials.textContent = userInitials(user.username);
         moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
+        setQuickStatsLoading(true);
         showModuleChooser();
         renderWelcomeBanner(user);
-        renderQuickStats();
         updateRefreshMetaLabels();
         document.getElementById("claimBuilding").value = "";
         document.getElementById("claimPhone").value = user.phone_number || "";
@@ -5919,6 +6182,7 @@
         setPollWizardStep(1);
         updateMarketplaceFormVisibility();
         updateAvizierFormVisibility();
+        setAvizierScopeFilter("all");
 
         if (user.role === "admin") {
           els.adminPanel.classList.remove("hidden");
@@ -5954,8 +6218,10 @@
               refreshAvizier(),
               refreshVoting(),
             ]);
+            setQuickStatsLoading(false);
             showToast("Login successful.");
           } catch (error) {
+            setQuickStatsLoading(false);
             setStatus(error.message, true);
           }
         });
@@ -6274,8 +6540,16 @@
       });
 
       async function handleMarketplaceMineActions(event, { allowRowNav = false } = {}) {
+        const editBtn = event.target.closest(".market-edit-btn");
         const completeBtn = event.target.closest(".market-complete-btn");
         const deleteBtn = event.target.closest(".market-delete-btn");
+        if (editBtn) {
+          const url = String(editBtn.dataset.listingUrl || "").trim();
+          if (url) {
+            window.location.href = url;
+          }
+          return;
+        }
         if (completeBtn) {
           const postId = Number(completeBtn.dataset.postId || 0);
           if (!postId) return;
@@ -6315,6 +6589,10 @@
         await handleMarketplaceMineActions(event, { allowRowNav: true });
       });
 
+      els.myListingsCards.addEventListener("click", async (event) => {
+        await handleMarketplaceMineActions(event, { allowRowNav: false });
+      });
+
       els.marketplaceMineCards.addEventListener("click", async (event) => {
         await handleMarketplaceMineActions(event, { allowRowNav: false });
       });
@@ -6337,6 +6615,12 @@
         if (pollWizardStep === 4) renderPollReviewSummary();
       });
 
+      els.avizierScopeFilters.addEventListener("click", (event) => {
+        const filterBtn = event.target.closest("[data-avizier-filter]");
+        if (!filterBtn) return;
+        setAvizierScopeFilter(filterBtn.dataset.avizierFilter);
+      });
+
       els.avizierScope.addEventListener("change", () => {
         updateAvizierFormVisibility();
       });
@@ -6344,6 +6628,28 @@
       els.avizierFiles.addEventListener("change", () => {
         const files = Array.from(els.avizierFiles.files || []);
         if (!files.length) {
+          setAvizierUploadStatus("No files selected.");
+          return;
+        }
+        const invalid = files.filter(
+          (file) => !AVIZIER_ALLOWED_FILE_TYPES.has(normalizeAvizierFileType(file.type, file.name))
+        );
+        if (invalid.length) {
+          showToast(
+            `Invalid file type: ${invalid.map((file) => file.name).join(", ")}. Only JPG and PDF allowed.`,
+            "error"
+          );
+          els.avizierFiles.value = "";
+          setAvizierUploadStatus("No files selected.");
+          return;
+        }
+        const oversized = files.filter((file) => Number(file.size || 0) > AVIZIER_MAX_FILE_BYTES);
+        if (oversized.length) {
+          showToast(
+            `File too large: ${oversized.map((file) => file.name).join(", ")}. Max 10MB each.`,
+            "warning"
+          );
+          els.avizierFiles.value = "";
           setAvizierUploadStatus("No files selected.");
           return;
         }
@@ -6695,6 +7001,7 @@
       });
 
       async function boot() {
+        setQuickStatsLoading(true);
         fillBuildingSelect("claimBuilding", true);
         fillBuildingSelect("newBuilding");
         fillBuildingSelect("avizierBuilding");
@@ -6732,7 +7039,9 @@
             refreshAvizier(),
             refreshVoting(),
           ]);
+          setQuickStatsLoading(false);
         } catch (error) {
+          setQuickStatsLoading(false);
           setStatus(error.message, true);
         }
       }
