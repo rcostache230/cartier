@@ -2000,7 +2000,21 @@ async function listPollsForViewer({ scope = null, status = null, buildingId = nu
           SELECT 1 FROM votes v
           WHERE v.poll_id = p.id
             AND v.user_id = $1
-        ) AS has_voted
+        ) AS has_voted,
+        (
+          SELECT COUNT(DISTINCT v2.user_id)::int
+          FROM votes v2
+          WHERE v2.poll_id = p.id
+        ) AS unique_voters,
+        (
+          SELECT COUNT(*)::int
+          FROM users u
+          WHERE u.role = 'resident'
+            AND (
+              p.scope = 'neighbourhood'
+              OR (p.scope = 'building' AND u.building_number = p.building_id)
+            )
+        ) AS eligible_voters
       FROM polls p
       ${whereClause}
       ORDER BY p.created_at DESC
@@ -2008,7 +2022,18 @@ async function listPollsForViewer({ scope = null, status = null, buildingId = nu
     params
   );
 
-  return result.rows.map((row) => ({ ...mapPoll(row), has_voted: Boolean(row.has_voted) }));
+  return result.rows.map((row) => {
+    const uniqueVoters = Number(row.unique_voters || 0);
+    const eligibleVoters = Number(row.eligible_voters || 0);
+    const turnoutPercentage = eligibleVoters ? Number(((uniqueVoters / eligibleVoters) * 100).toFixed(2)) : 0;
+    return {
+      ...mapPoll(row),
+      has_voted: Boolean(row.has_voted),
+      unique_voters: uniqueVoters,
+      eligible_voters: eligibleVoters,
+      turnout_percentage: turnoutPercentage,
+    };
+  });
 }
 
 function normalizePollDescription(description) {

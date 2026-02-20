@@ -2444,16 +2444,881 @@
           overflow: visible;
         }
       }
+
+      :root {
+        --brand-gradient: linear-gradient(135deg, #1a2332 0%, #0f4c75 100%);
+        --module-parking: #3b82f6;
+        --module-marketplace: #f59e0b;
+        --module-voting: #8b5cf6;
+        --module-avizier: #14b8a6;
+        --module-profile: #64748b;
+        --font-body: "Manrope", "Avenir Next", "Nunito Sans", sans-serif;
+        --font-display: "Space Grotesk", "Plus Jakarta Sans", "Avenir Next", sans-serif;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background:
+          radial-gradient(circle at 4% 2%, rgba(15, 76, 117, 0.08), transparent 34%),
+          radial-gradient(circle at 97% 8%, rgba(20, 184, 166, 0.08), transparent 32%),
+          var(--bg);
+      }
+
+      h1,
+      h2,
+      h3,
+      .display-title,
+      .heading-title,
+      .subheading-title {
+        font-family: var(--font-display);
+        letter-spacing: -0.5px;
+      }
+
+      .display-title {
+        font-size: clamp(1.75rem, 2.6vw, 2.1rem);
+        line-height: 1.1;
+        margin: 0;
+      }
+
+      .heading-title {
+        font-size: 1.25rem;
+        line-height: 1.2;
+        margin: 0;
+      }
+
+      .subheading-title {
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      body.has-sidebar {
+        padding-left: 240px;
+      }
+
+      body.sidebar-collapsed {
+        padding-left: 72px;
+      }
+
+      .global-nav {
+        backdrop-filter: blur(10px);
+        background: rgba(26, 35, 50, 0.9);
+      }
+
+      .global-nav-inner {
+        max-width: none;
+        padding: 0 20px;
+      }
+
+      .brand {
+        grid-auto-flow: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .brand-copy {
+        display: grid;
+        gap: 1px;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        box-shadow: 0 6px 16px rgba(15, 76, 117, 0.28);
+        flex: 0 0 34px;
+      }
+
+      .help-btn {
+        width: auto;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        padding: 8px 12px;
+      }
+
+      #topThemeToggleBtn {
+        display: none;
+      }
+
+      .side-rail {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: 240px;
+        background: var(--brand-gradient);
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        z-index: 1300;
+        color: #f8fafc;
+        transition: width 0.2s ease;
+      }
+
+      body.sidebar-collapsed .side-rail {
+        width: 72px;
+      }
+
+      .rail-head {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 16px 12px 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .brand-rail {
+        align-items: center;
+      }
+
+      .rail-toggle {
+        width: 42px;
+        min-height: 42px;
+        justify-self: end;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .rail-nav {
+        padding: 10px 10px 4px;
+        display: grid;
+        gap: 6px;
+        align-content: start;
+      }
+
+      .rail-link {
+        width: 100%;
+        min-height: 46px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        justify-content: flex-start;
+        background: transparent;
+        color: #dbeafe;
+        border: 1px solid transparent;
+        font-weight: 700;
+      }
+
+      .rail-link.active {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+
+      .rail-foot {
+        padding: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        display: grid;
+        gap: 6px;
+      }
+
+      .rail-foot .nav-user-badge {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .rail-foot .nav-logout {
+        width: 100%;
+        background: rgba(239, 68, 68, 0.85);
+        border-color: rgba(239, 68, 68, 0.9);
+      }
+
+      body.sidebar-collapsed .rail-link span,
+      body.sidebar-collapsed .brand-rail .brand-copy,
+      body.sidebar-collapsed #railUserText,
+      body.sidebar-collapsed .rail-foot .nav-logout span {
+        display: none;
+      }
+
+      body.sidebar-collapsed .rail-link,
+      body.sidebar-collapsed .rail-foot .nav-user-badge,
+      body.sidebar-collapsed .rail-foot .nav-logout {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      body.sidebar-collapsed .side-rail .brand-mark {
+        margin: 0 auto;
+      }
+
+      .container {
+        max-width: 1320px;
+        padding: 18px 22px 30px;
+      }
+
+      .auth-landing {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+        gap: 16px;
+        margin-top: 14px;
+      }
+
+      .login-hero {
+        margin-top: 0;
+        border: 0;
+        color: #e2e8f0;
+        min-height: 440px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 70%),
+          repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 16px),
+          var(--brand-gradient);
+        display: grid;
+        align-content: center;
+        gap: 12px;
+      }
+
+      .hero-kicker {
+        margin: 0;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        color: #bfdbfe;
+      }
+
+      .hero-copy {
+        margin: 0;
+        max-width: 48ch;
+        color: #dbeafe;
+      }
+
+      .hero-points {
+        margin: 0;
+        padding-left: 18px;
+        display: grid;
+        gap: 6px;
+      }
+
+      .hero-foot {
+        margin: 4px 0 0;
+        color: #93c5fd;
+        font-size: 0.85rem;
+      }
+
+      .login-pane {
+        margin-top: 0;
+        min-height: 440px;
+        align-content: center;
+      }
+
+      .dashboard-home {
+        border: 1px solid #dbe5f2;
+      }
+
+      .home-activity-shell {
+        margin-top: 14px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 12px;
+      }
+
+      .home-activity-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .home-activity-feed {
+        margin-top: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .activity-item,
+      .activity-skeleton {
+        border: 1px solid #dde7f4;
+        border-left: 4px solid #cbd5e1;
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px 12px;
+      }
+
+      .activity-item {
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease;
+      }
+
+      .activity-item:hover {
+        background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
+      }
+
+      .activity-item .meta {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .activity-item[data-mod="parking"] {
+        border-left-color: var(--module-parking);
+      }
+
+      .activity-item[data-mod="marketplace"] {
+        border-left-color: var(--module-marketplace);
+      }
+
+      .activity-item[data-mod="voting"] {
+        border-left-color: var(--module-voting);
+      }
+
+      .activity-item[data-mod="avizier"] {
+        border-left-color: var(--module-avizier);
+      }
+
+      .activity-skeleton {
+        min-height: 54px;
+        background: linear-gradient(90deg, #e2e8f0 20%, #f8fafc 40%, #e2e8f0 60%);
+        background-size: 200px 100%;
+        animation: shimmer 1.2s linear infinite;
+      }
+
+      .jump-row {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .jump-chip {
+        width: auto;
+        min-height: 38px;
+        border-radius: 999px;
+        border: 1px solid #d1dbe8;
+        background: #fff;
+        color: #334155;
+        padding: 7px 11px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .module-grid {
+        margin-top: 14px;
+      }
+
+      .module-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .module-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+        background: #cbd5e1;
+      }
+
+      .module-card[data-module-card="parking"]::before {
+        background: var(--module-parking);
+      }
+
+      .module-card[data-module-card="marketplace"]::before {
+        background: var(--module-marketplace);
+      }
+
+      .module-card[data-module-card="voting"]::before {
+        background: var(--module-voting);
+      }
+
+      .module-card[data-module-card="avizier"]::before {
+        background: var(--module-avizier);
+      }
+
+      .module-card[data-module-card="profile"]::before {
+        background: var(--module-profile);
+      }
+
+      .card,
+      .module-card,
+      .poll-card,
+      .market-listing-card,
+      .parking-spot-card {
+        position: relative;
+        border-radius: 12px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+      }
+
+      .card:hover,
+      .module-card:hover,
+      .poll-card:hover,
+      .parking-spot-card:hover {
+        background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
+      }
+
+      button {
+        transition: transform 0.08s ease, box-shadow 0.16s ease;
+      }
+
+      button:active {
+        transform: scale(0.97);
+      }
+
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible {
+        outline: none;
+        border-color: #34d399;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+      }
+
+      .parking-spot-card.status-free {
+        border-left: 4px solid #22c55e;
+      }
+
+      .parking-spot-card.status-claimed {
+        border-left: 4px solid #f59e0b;
+      }
+
+      .parking-spot-card.status-expired {
+        border-left: 4px solid #ef4444;
+      }
+
+      #parkingModule > .card::before,
+      #marketplaceModule > .card::before,
+      #votingModule > .card::before,
+      #avizierModule > .card::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+      }
+
+      #parkingModule > .card::before {
+        background: var(--module-parking);
+      }
+
+      #marketplaceModule > .card::before {
+        background: var(--module-marketplace);
+      }
+
+      #votingModule > .card::before {
+        background: var(--module-voting);
+      }
+
+      #avizierModule > .card::before {
+        background: var(--module-avizier);
+      }
+
+      .market-listing-thumb {
+        height: 180px;
+      }
+
+      .market-free-flag {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 2;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 0.74rem;
+        border: 1px solid #5eead4;
+        background: #0f766e;
+        color: #fff;
+      }
+
+      .market-sold-ribbon {
+        position: absolute;
+        right: -34px;
+        top: 20px;
+        transform: rotate(34deg);
+        min-width: 150px;
+        text-align: center;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        padding: 5px 0;
+        background: rgba(15, 23, 42, 0.85);
+        color: #fff;
+      }
+
+      .market-price-main {
+        font-size: 1.08rem;
+        font-weight: 800;
+        color: #10b981;
+      }
+
+      .market-age {
+        color: var(--muted);
+        font-size: 0.77rem;
+      }
+
+      .poll-urgency {
+        display: inline-grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: conic-gradient(var(--urgency-color, #22c55e) var(--urgency-progress, 75%), #e2e8f0 0);
+        padding: 3px;
+      }
+
+      .poll-urgency-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: #fff;
+        color: #1f2937;
+      }
+
+      .poll-participation {
+        margin-top: 6px;
+        font-size: 0.8rem;
+        color: #475569;
+      }
+
+      .poll-mini-quorum {
+        margin-top: 7px;
+      }
+
+      .poll-mini-track {
+        margin-top: 4px;
+        height: 7px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+      }
+
+      .poll-mini-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #10b981, #059669);
+      }
+
+      .poll-result-fill {
+        transition: width 0.8s ease;
+      }
+
+      .avizier-card {
+        border-left: 4px solid #cbd5e1;
+        padding: 12px;
+      }
+
+      .avizier-card.priority-important {
+        border-left-color: #f59e0b;
+      }
+
+      .avizier-card.priority-urgent {
+        border-left-color: #ef4444;
+      }
+
+      .avizier-card.unread {
+        border-left-color: #3b82f6;
+      }
+
+      .avizier-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ef4444;
+        animation: pulse-dot 1.2s ease infinite;
+      }
+
+      .avizier-meta-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .avizier-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 999px;
+        border: 1px solid #dbe5f2;
+        background: #f8fafc;
+        color: #334155;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 3px 8px;
+      }
+
+      .avizier-chip.scope-general {
+        border-color: #99f6e4;
+        color: #0f766e;
+      }
+
+      .avizier-chip.scope-building {
+        border-color: #bfdbfe;
+        color: #1d4ed8;
+      }
+
+      .avizier-chip.priority-important {
+        border-color: #fcd34d;
+        color: #92400e;
+      }
+
+      .avizier-chip.priority-urgent {
+        border-color: #fecaca;
+        color: #b91c1c;
+      }
+
+      .avizier-read-more {
+        width: auto;
+        min-height: 34px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #1a2332;
+        border-color: #1a2332;
+      }
+
+      .mobile-tabbar {
+        position: fixed;
+        left: 8px;
+        right: 8px;
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        border: 1px solid #d8e3f0;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.15);
+        padding: 6px;
+        z-index: 1400;
+        display: none;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .mobile-tab {
+        width: 100%;
+        min-height: 50px;
+        border-radius: 11px;
+        border: 0;
+        background: transparent;
+        color: #475569;
+        display: grid;
+        place-items: center;
+        gap: 2px;
+        padding: 6px;
+        font-size: 0.68rem;
+        font-weight: 700;
+      }
+
+      .mobile-tab.active {
+        background: #eaf2ff;
+        color: #1d4ed8;
+      }
+
+      .mobile-fab {
+        position: fixed;
+        right: 16px;
+        bottom: calc(78px + env(safe-area-inset-bottom));
+        width: 56px;
+        min-height: 56px;
+        display: none;
+        border-radius: 50%;
+        border: 0;
+        background: linear-gradient(135deg, #0f4c75, #14b8a6);
+        box-shadow: 0 10px 20px rgba(15, 76, 117, 0.35);
+        z-index: 1500;
+      }
+
+      .module-panel.is-visible {
+        animation: panel-in 0.2s ease;
+      }
+
+      @keyframes panel-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 0.35;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      body[data-theme="dark"] {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --line: #334155;
+        --ink: #f8fafc;
+        --muted: #94a3b8;
+        background: #0f172a;
+      }
+
+      body[data-theme="dark"] .card,
+      body[data-theme="dark"] .module-card,
+      body[data-theme="dark"] .poll-card,
+      body[data-theme="dark"] .market-listing-card,
+      body[data-theme="dark"] .parking-spot-card,
+      body[data-theme="dark"] .capacity-card,
+      body[data-theme="dark"] .activity-item,
+      body[data-theme="dark"] .jump-chip,
+      body[data-theme="dark"] .mobile-tabbar {
+        background: #1e293b;
+        border-color: #334155;
+        color: #f8fafc;
+      }
+
+      body[data-theme="dark"] input,
+      body[data-theme="dark"] select,
+      body[data-theme="dark"] textarea {
+        background: #0f172a;
+        color: #f8fafc;
+        border-color: #334155;
+      }
+
+      body[data-theme="dark"] .poll-note,
+      body[data-theme="dark"] .hero-foot,
+      body[data-theme="dark"] .market-age,
+      body[data-theme="dark"] .refresh-meta,
+      body[data-theme="dark"] .market-owner-line {
+        color: #94a3b8;
+      }
+
+      @media (max-width: 1100px) {
+        .auth-landing {
+          grid-template-columns: 1fr;
+        }
+
+        .login-hero {
+          min-height: auto;
+        }
+
+        .login-pane {
+          min-height: auto;
+        }
+      }
+
+      @media (max-width: 900px) {
+        body.has-sidebar,
+        body.sidebar-collapsed {
+          padding-left: 0;
+        }
+
+        .side-rail {
+          display: none;
+        }
+
+        .mobile-tabbar {
+          display: grid;
+        }
+
+        .mobile-fab {
+          display: inline-flex;
+        }
+
+        #topThemeToggleBtn {
+          display: inline-flex;
+        }
+
+        .container {
+          padding-bottom: calc(128px + env(safe-area-inset-bottom));
+        }
+
+        #logoutBtn {
+          display: none;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .nav-actions {
+          gap: 6px;
+        }
+
+        .help-btn {
+          padding: 0;
+          width: 42px;
+          min-height: 42px;
+        }
+
+        .help-btn span {
+          display: none;
+        }
+
+        .hero-points {
+          gap: 4px;
+        }
+      }
     </style>
   </head>
   <body>
+    <aside id="sideRail" class="side-rail hidden" aria-label="Primary navigation">
+      <div class="rail-head">
+        <button id="sidebarToggleBtn" class="rail-toggle" type="button" aria-label="Collapse sidebar">
+          <i data-lucide="panel-left-close" aria-hidden="true"></i>
+        </button>
+        <div class="brand brand-rail">
+          <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+            <defs>
+              <linearGradient id="markGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3B82F6" />
+                <stop offset="100%" stop-color="#14B8A6" />
+              </linearGradient>
+            </defs>
+            <rect x="6" y="6" width="36" height="36" rx="12" fill="url(#markGradient)" />
+            <path d="M14 29V20L24 14L34 20V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <path d="M20 29V24H28V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+          <div class="brand-copy">
+            <div class="brand-title">Cartier</div>
+            <div class="brand-subtitle">Resident Portal</div>
+          </div>
+        </div>
+      </div>
+      <nav class="rail-nav">
+        <button type="button" class="rail-link active" data-nav-home>
+          <i data-lucide="house" aria-hidden="true"></i><span>Home</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="parkingModule" data-module-target="parkingModule">
+          <i data-lucide="car-front" aria-hidden="true"></i><span>Parking</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="marketplaceModule" data-module-target="marketplaceModule">
+          <i data-lucide="store" aria-hidden="true"></i><span>Marketplace</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="votingModule" data-module-target="votingModule">
+          <i data-lucide="vote" aria-hidden="true"></i><span>Voting</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="avizierModule" data-module-target="avizierModule">
+          <i data-lucide="newspaper" aria-hidden="true"></i><span>Avizier</span>
+        </button>
+      </nav>
+      <div class="rail-foot">
+        <button id="themeToggleBtn" class="rail-link" type="button">
+          <i data-lucide="moon-star" aria-hidden="true"></i><span>Dark Mode</span>
+        </button>
+        <button type="button" class="rail-link" data-go-profile>
+          <i data-lucide="user-cog" aria-hidden="true"></i><span>Profile</span>
+        </button>
+        <div id="railUserBadge" class="nav-user-badge hidden">
+          <span id="railUserInitials" class="nav-user-initials">--</span>
+          <span id="railUserText" class="nav-user-text"></span>
+        </div>
+        <button id="railLogoutBtn" class="nav-logout hidden" type="button">Logout</button>
+      </div>
+    </aside>
+
     <header class="global-nav">
       <div class="global-nav-inner">
         <div class="brand">
-          <div class="brand-title">Cartier</div>
-          <div class="brand-subtitle">Neighbourhood community</div>
+          <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+            <defs>
+              <linearGradient id="topMarkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3B82F6" />
+                <stop offset="100%" stop-color="#14B8A6" />
+              </linearGradient>
+            </defs>
+            <rect x="6" y="6" width="36" height="36" rx="12" fill="url(#topMarkGradient)" />
+            <path d="M14 29V20L24 14L34 20V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <path d="M20 29V24H28V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+          <div class="brand-copy">
+            <div class="brand-title">Cartier</div>
+            <div class="brand-subtitle">Resident Dashboard</div>
+          </div>
         </div>
         <div class="nav-actions">
+          <button id="topThemeToggleBtn" class="help-btn" type="button" aria-label="Toggle theme">Theme</button>
+          <button id="helpBtn" class="help-btn" type="button" aria-label="Open help">Help</button>
           <div id="navUserBadge" class="nav-user-badge hidden">
             <span id="navUserInitials" class="nav-user-initials">--</span>
             <span id="navUserText" class="nav-user-text"></span>
@@ -2464,39 +3329,44 @@
     </header>
 
     <div class="container">
-      <section class="hero">
-        <div class="hero-head">
-          <h1>Neighbourhood Community Dashboard</h1>
-          <button id="helpBtn" class="help-btn" type="button" aria-label="Open help">Help</button>
-        </div>
-        <p>
-          Parking, voting, and marketplace modules for residents. Sales are in person only, and donations can be claimed.
-        </p>
-        <p class="tz-note">All dates and times are in Bucharest time (Europe/Bucharest).</p>
-      </section>
+      <section id="authLanding" class="auth-landing">
+        <article class="hero login-hero">
+          <p class="hero-kicker">Made for Cartier residents</p>
+          <h1 class="display-title">Your neighbourhood in one place</h1>
+          <p class="hero-copy">A trusted digital board for Bloc 1-10 residents: coordinate parking, browse listings, vote on local decisions, and stay informed.</p>
+          <ul class="hero-points">
+            <li>Share parking spots in seconds</li>
+            <li>Browse sales and donation listings</li>
+            <li>Vote on building and neighbourhood decisions</li>
+          </ul>
+          <p class="hero-foot">Made for Cartier, Bucuresti.</p>
+        </article>
 
-      <section id="loginCard" class="card" style="margin-top: 14px; max-width: 420px">
-        <h2>Login</h2>
-        <form id="loginForm" class="stack" style="margin-top: 10px">
-          <div>
-            <label for="loginUsername">Username</label>
-            <input id="loginUsername" placeholder="bloc1_apt1" autocomplete="username" autocapitalize="none" spellcheck="false" required />
-          </div>
-          <div>
-            <label for="loginPassword">Password</label>
-            <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" autocapitalize="none" spellcheck="false" required />
-          </div>
-          <label class="remember-label">
-            <input id="keepLoggedIn" type="checkbox" checked />
-            <div class="remember-toggle"></div>
-            Keep me logged in
-          </label>
-          <button id="loginBtn" type="submit">Sign In</button>
-        </form>
+        <section id="loginCard" class="card login-pane">
+          <h2 class="heading-title">Resident Login</h2>
+          <p class="poll-note">Use your apartment account credentials.</p>
+          <form id="loginForm" class="stack" style="margin-top: 10px">
+            <div>
+              <label for="loginUsername">Username</label>
+              <input id="loginUsername" placeholder="bloc1_apt1" autocomplete="username" autocapitalize="none" spellcheck="false" required />
+            </div>
+            <div>
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" autocapitalize="none" spellcheck="false" required />
+            </div>
+            <label class="remember-label">
+              <input id="keepLoggedIn" type="checkbox" checked />
+              <div class="remember-toggle"></div>
+              Keep me logged in
+            </label>
+            <button id="loginBtn" type="submit">Sign In</button>
+          </form>
+          <p class="tz-note">All times are shown in Bucharest time (Europe/Bucharest).</p>
+        </section>
       </section>
 
       <main id="app" class="hidden">
-        <section id="modulesCard" class="card module-panel is-visible" style="margin-top: 12px">
+        <section id="modulesCard" class="card module-panel is-visible dashboard-home" style="margin-top: 12px">
           <div class="welcome-banner">
             <h2 id="welcomeTitle" class="welcome-title">Hello 👋</h2>
             <p id="welcomeResidence" class="welcome-note">Choose which module you want to work in. All modules require authenticated access.</p>
@@ -2506,8 +3376,26 @@
             <span class="quick-stat"><i data-lucide="store" aria-hidden="true"></i><span id="quickStatListings"><span class="stat-loading"></span></span></span>
             <span class="quick-stat"><i data-lucide="vote" aria-hidden="true"></i><span id="quickStatPolls"><span class="stat-loading"></span></span></span>
           </div>
+          <section class="home-activity-shell">
+            <div class="home-activity-head">
+              <h3 class="subheading-title">What's New</h3>
+              <span id="homeActivityTime" class="poll-note">Live updates from all modules</span>
+            </div>
+            <div id="homeActivityFeed" class="home-activity-feed">
+              <article class="activity-skeleton"></article>
+              <article class="activity-skeleton"></article>
+              <article class="activity-skeleton"></article>
+            </div>
+          </section>
+          <div class="jump-row" id="jumpRow">
+            <button type="button" class="jump-chip" data-module-target="parkingModule"><i data-lucide="car-front" aria-hidden="true"></i><span>Parking</span></button>
+            <button type="button" class="jump-chip" data-module-target="marketplaceModule"><i data-lucide="store" aria-hidden="true"></i><span>Marketplace</span></button>
+            <button type="button" class="jump-chip" data-module-target="votingModule"><i data-lucide="vote" aria-hidden="true"></i><span>Voting</span></button>
+            <button type="button" class="jump-chip" data-module-target="avizierModule"><i data-lucide="newspaper" aria-hidden="true"></i><span>Avizier</span></button>
+            <button type="button" class="jump-chip" data-go-profile><i data-lucide="user-cog" aria-hidden="true"></i><span>Profile</span></button>
+          </div>
           <div class="module-grid">
-            <article class="module-card">
+            <article class="module-card" data-module-card="parking">
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="car-front" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
@@ -2519,7 +3407,7 @@
                 <button type="button" class="ghost" data-module-target="parkingModule">Open Parking</button>
               </div>
             </article>
-            <article class="module-card">
+            <article class="module-card" data-module-card="marketplace">
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="store" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
@@ -2531,7 +3419,7 @@
                 <button type="button" class="alt" data-module-target="marketplaceModule">Open Marketplace</button>
               </div>
             </article>
-            <article class="module-card">
+            <article class="module-card" data-module-card="voting">
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="vote" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
@@ -2543,7 +3431,7 @@
                 <button type="button" class="alt" data-module-target="votingModule">Open Voting</button>
               </div>
             </article>
-            <article class="module-card">
+            <article class="module-card" data-module-card="avizier">
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="newspaper" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
@@ -2555,7 +3443,7 @@
                 <button type="button" class="alt" data-module-target="avizierModule">Open Avizier</button>
               </div>
             </article>
-            <article class="module-card">
+            <article class="module-card" data-module-card="profile">
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="user-cog" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
@@ -3031,6 +3919,19 @@
                   <option value="building">Per building</option>
                 </select>
               </div>
+              <div class="grid" style="margin-top: 0">
+                <div>
+                  <label for="avizierPriority">Priority</label>
+                  <select id="avizierPriority">
+                    <option value="normal">Normal</option>
+                    <option value="important">Important</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+                <div>
+                  <label><input id="avizierPinned" type="checkbox" /> Pin announcement</label>
+                </div>
+              </div>
               <div id="avizierBuildingRow" class="hidden">
                 <label for="avizierBuilding">Building</label>
                 <select id="avizierBuilding"></select>
@@ -3281,6 +4182,32 @@
         </div>
       </div>
 
+      <nav id="mobileTabBar" class="mobile-tabbar hidden" aria-label="Mobile navigation">
+        <button type="button" class="mobile-tab active" data-mobile-home>
+          <i data-lucide="house" aria-hidden="true"></i>
+          <span>Home</span>
+        </button>
+        <button type="button" class="mobile-tab" data-nav-module="parkingModule" data-module-target="parkingModule">
+          <i data-lucide="car-front" aria-hidden="true"></i>
+          <span>Parking</span>
+        </button>
+        <button type="button" class="mobile-tab" data-nav-module="marketplaceModule" data-module-target="marketplaceModule">
+          <i data-lucide="store" aria-hidden="true"></i>
+          <span>Market</span>
+        </button>
+        <button type="button" class="mobile-tab" data-nav-module="votingModule" data-module-target="votingModule">
+          <i data-lucide="vote" aria-hidden="true"></i>
+          <span>Voting</span>
+        </button>
+        <button type="button" class="mobile-tab" data-nav-module="avizierModule" data-module-target="avizierModule">
+          <i data-lucide="newspaper" aria-hidden="true"></i>
+          <span>Avizier</span>
+        </button>
+      </nav>
+      <button id="mobileFab" class="mobile-fab hidden" type="button" aria-label="Quick action">
+        <i data-lucide="plus" aria-hidden="true"></i>
+      </button>
+
       <div id="status"></div>
       <div id="toastContainer" class="toast-wrap"></div>
     </div>
@@ -3288,6 +4215,9 @@
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>
       const HELP_SEEN_KEY = "cartier_help_seen_v1";
+      const THEME_PREF_KEY = "cartier_theme_pref_v1";
+      const SIDEBAR_COLLAPSED_KEY = "cartier_sidebar_collapsed_v1";
+      const AVIZIER_READ_KEY = "cartier_avizier_read_v1";
       const BUCHAREST_TIMEZONE = "Europe/Bucharest";
       const BUCHAREST_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
         timeZone: BUCHAREST_TIMEZONE,
@@ -3409,15 +4339,28 @@
       };
 
       const els = {
+        authLanding: document.getElementById("authLanding"),
         loginCard: document.getElementById("loginCard"),
         app: document.getElementById("app"),
         status: document.getElementById("status"),
+        sideRail: document.getElementById("sideRail"),
+        sidebarToggleBtn: document.getElementById("sidebarToggleBtn"),
+        themeToggleBtn: document.getElementById("themeToggleBtn"),
+        topThemeToggleBtn: document.getElementById("topThemeToggleBtn"),
         navUserBadge: document.getElementById("navUserBadge"),
         navUserInitials: document.getElementById("navUserInitials"),
         navUserText: document.getElementById("navUserText"),
         logoutBtn: document.getElementById("logoutBtn"),
+        railUserBadge: document.getElementById("railUserBadge"),
+        railUserInitials: document.getElementById("railUserInitials"),
+        railUserText: document.getElementById("railUserText"),
+        railLogoutBtn: document.getElementById("railLogoutBtn"),
+        mobileTabBar: document.getElementById("mobileTabBar"),
+        mobileFab: document.getElementById("mobileFab"),
         welcomeTitle: document.getElementById("welcomeTitle"),
         welcomeResidence: document.getElementById("welcomeResidence"),
+        homeActivityFeed: document.getElementById("homeActivityFeed"),
+        homeActivityTime: document.getElementById("homeActivityTime"),
         quickStatFree: document.getElementById("quickStatFree"),
         quickStatListings: document.getElementById("quickStatListings"),
         quickStatPolls: document.getElementById("quickStatPolls"),
@@ -3486,6 +4429,8 @@
         avizierTitle: document.getElementById("avizierTitle"),
         avizierMessage: document.getElementById("avizierMessage"),
         avizierScope: document.getElementById("avizierScope"),
+        avizierPriority: document.getElementById("avizierPriority"),
+        avizierPinned: document.getElementById("avizierPinned"),
         avizierBuildingRow: document.getElementById("avizierBuildingRow"),
         avizierBuilding: document.getElementById("avizierBuilding"),
         avizierFiles: document.getElementById("avizierFiles"),
@@ -3571,6 +4516,9 @@
       let claimConfirmResolver = null;
       let currentPollDetail = null;
       let currentModule = null;
+      let latestActivePolls = [];
+      let currentTheme = "light";
+      let sidebarCollapsed = false;
       let pollWizardStep = 1;
       let pollUploadedAttachments = [];
       let pollUploadPromise = null;
@@ -3597,6 +4545,7 @@
         ["#helpBtn", "circle-help"],
         ["#loginBtn", "log-in"],
         ["#logoutBtn", "log-out"],
+        ["#railLogoutBtn", "log-out"],
         ['button[data-module-target="parkingModule"]', "car-front"],
         ['button[data-module-target="marketplaceModule"]', "store"],
         ['button[data-module-target="avizierModule"]', "newspaper"],
@@ -3693,6 +4642,122 @@
       function setQuickStatsLoading(isLoading) {
         quickStatsLoading = Boolean(isLoading);
         renderQuickStats();
+        if (isLoading) {
+          renderHomeActivityFeed([], { loading: true });
+        }
+      }
+
+      function animateCounter(el, nextValue) {
+        if (!el) return;
+        const target = Math.max(0, Number(nextValue || 0));
+        const start = Number(el.dataset.counterValue || 0);
+        const duration = 600;
+        const startAt = performance.now();
+
+        const tick = (now) => {
+          const progress = Math.min(1, (now - startAt) / duration);
+          const value = Math.round(start + (target - start) * progress);
+          el.textContent = String(value);
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            el.dataset.counterValue = String(target);
+          }
+        };
+
+        requestAnimationFrame(tick);
+      }
+
+      function newestByDate(items, getDateValue) {
+        return [...items].sort((a, b) => {
+          const aValue = parseDateSafe(getDateValue(a))?.getTime() || 0;
+          const bValue = parseDateSafe(getDateValue(b))?.getTime() || 0;
+          return bValue - aValue;
+        });
+      }
+
+      function renderHomeActivityFeed(items, { loading = false } = {}) {
+        if (!els.homeActivityFeed) return;
+        if (loading) {
+          els.homeActivityFeed.innerHTML = `<article class="activity-skeleton"></article><article class="activity-skeleton"></article><article class="activity-skeleton"></article>`;
+          if (els.homeActivityTime) els.homeActivityTime.textContent = "Syncing module activity...";
+          return;
+        }
+        if (!items.length) {
+          els.homeActivityFeed.innerHTML = `<article class="activity-item" data-mod="parking"><strong>No recent activity yet.</strong><div class="meta">New updates will appear here as residents interact.</div></article>`;
+          if (els.homeActivityTime) els.homeActivityTime.textContent = "No activity in the last updates";
+          return;
+        }
+        els.homeActivityFeed.innerHTML = items
+          .slice(0, 8)
+          .map(
+            (item) => `
+              <article class="activity-item" data-mod="${item.module}" data-activity-module="${item.moduleId}" ${item.pollId ? `data-activity-poll-id="${item.pollId}"` : ""}>
+                <strong>${item.text}</strong>
+                <div class="meta">${formatRelativeTime(item.createdAt)}</div>
+              </article>
+            `
+          )
+          .join("");
+        const latestDate = parseDateSafe(items[0]?.createdAt);
+        if (els.homeActivityTime) {
+          els.homeActivityTime.textContent = latestDate ? `Latest update ${formatRelativeTime(latestDate)}` : "Live module updates";
+        }
+      }
+
+      function buildHomeActivity() {
+        const activity = [];
+        newestByDate(currentFreeSpots, (slot) => slot.available_from)
+          .slice(0, 3)
+          .forEach((slot) => {
+            activity.push({
+              module: "parking",
+              moduleId: "parkingModule",
+              createdAt: slot.available_from,
+              text: `Spot ${slot.parking_space_number} shared by ${slot.owner_username}.`,
+            });
+          });
+
+        newestByDate(marketplaceDashboardData.active_listings || [], (listing) => listing.created_at || listing.updated_at)
+          .slice(0, 3)
+          .forEach((listing) => {
+            const prefix = listing.listing_type === "donation" ? "Donation posted" : "Listing posted";
+            activity.push({
+              module: "marketplace",
+              moduleId: "marketplaceModule",
+              createdAt: listing.created_at || listing.updated_at,
+              text: `${prefix}: ${listing.title} (${marketplaceCategoryLabel(listing.category)}).`,
+            });
+          });
+
+        newestByDate(latestActivePolls, (poll) => poll.end_date)
+          .slice(0, 3)
+          .forEach((poll) => {
+            activity.push({
+              module: "voting",
+              moduleId: "votingModule",
+              pollId: poll.id,
+              createdAt: poll.end_date,
+              text: `Poll closing soon: "${poll.title}".`,
+            });
+          });
+
+        newestByDate(avizierAnnouncements, (item) => item.created_at)
+          .slice(0, 3)
+          .forEach((item) => {
+            activity.push({
+              module: "avizier",
+              moduleId: "avizierModule",
+              createdAt: item.created_at,
+              text: `Announcement: ${item.title}.`,
+            });
+          });
+
+        return newestByDate(activity, (entry) => entry.createdAt);
+      }
+
+      function refreshHomeActivity() {
+        renderHomeActivityFeed(buildHomeActivity());
       }
 
       function moduleKeyFromId(moduleId) {
@@ -3708,10 +4773,187 @@
         document.title = moduleTitle ? `Cartier - ${moduleTitle}` : "Cartier - Modules";
       }
 
+      function parseDateSafe(value) {
+        if (!value) return null;
+        const parsed = new Date(String(value));
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+      }
+
+      function formatRelativeTime(value) {
+        const dateValue = value instanceof Date ? value : parseDateSafe(value);
+        if (!dateValue) return "just now";
+        const diffMs = Date.now() - dateValue.getTime();
+        const future = diffMs < 0;
+        const absMs = Math.abs(diffMs);
+        const minute = 60 * 1000;
+        const hour = 60 * minute;
+        const day = 24 * hour;
+        const week = 7 * day;
+        const month = 30 * day;
+        const year = 365 * day;
+
+        let count = 0;
+        let unit = "minute";
+        if (absMs < minute) {
+          count = Math.max(1, Math.round(absMs / 1000));
+          unit = "second";
+        } else if (absMs < hour) {
+          count = Math.round(absMs / minute);
+          unit = "minute";
+        } else if (absMs < day) {
+          count = Math.round(absMs / hour);
+          unit = "hour";
+        } else if (absMs < week) {
+          count = Math.round(absMs / day);
+          unit = "day";
+        } else if (absMs < month) {
+          count = Math.round(absMs / week);
+          unit = "week";
+        } else if (absMs < year) {
+          count = Math.round(absMs / month);
+          unit = "month";
+        } else {
+          count = Math.round(absMs / year);
+          unit = "year";
+        }
+
+        const suffix = count === 1 ? unit : `${unit}s`;
+        return future ? `in ${count} ${suffix}` : `${count} ${suffix} ago`;
+      }
+
       function formatSecondsAgo(dateValue) {
         if (!dateValue) return "-";
         const elapsedSeconds = Math.max(0, Math.round((Date.now() - dateValue.getTime()) / 1000));
         return `${elapsedSeconds}s ago`;
+      }
+
+      function loadAvizierReadState() {
+        try {
+          return JSON.parse(localStorage.getItem(AVIZIER_READ_KEY) || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function storeAvizierReadState(nextState) {
+        try {
+          localStorage.setItem(AVIZIER_READ_KEY, JSON.stringify(nextState || {}));
+        } catch {
+          // ignore local storage errors
+        }
+      }
+
+      function isAvizierRead(announcementId) {
+        if (!currentUser || !announcementId) return false;
+        const state = loadAvizierReadState();
+        const userState = state[currentUser.username] || {};
+        return Boolean(userState[String(announcementId)]);
+      }
+
+      function markAvizierRead(announcementId) {
+        if (!currentUser || !announcementId) return;
+        const state = loadAvizierReadState();
+        const userKey = currentUser.username;
+        const userState = state[userKey] || {};
+        userState[String(announcementId)] = true;
+        state[userKey] = userState;
+        storeAvizierReadState(state);
+      }
+
+      function setTheme(theme) {
+        currentTheme = theme === "dark" ? "dark" : "light";
+        document.body.dataset.theme = currentTheme;
+        const nextLabel = currentTheme === "dark" ? "Light Mode" : "Dark Mode";
+        const iconName = currentTheme === "dark" ? "sun-medium" : "moon-star";
+        [els.themeToggleBtn, els.topThemeToggleBtn].forEach((button) => {
+          if (!button) return;
+          button.dataset.defaultText = nextLabel;
+          button.innerHTML = `${iconMarkup(iconName)}<span>${nextLabel}</span>`;
+          button.dataset.defaultHtml = button.innerHTML;
+        });
+        try {
+          localStorage.setItem(THEME_PREF_KEY, currentTheme);
+        } catch {
+          // ignore local storage errors
+        }
+        hydrateLucideIcons();
+      }
+
+      function initTheme() {
+        let preferred = "light";
+        try {
+          preferred = localStorage.getItem(THEME_PREF_KEY) || preferred;
+        } catch {
+          // ignore local storage errors
+        }
+        if (preferred !== "light" && preferred !== "dark") {
+          preferred = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        setTheme(preferred);
+      }
+
+      function setSidebarCollapsed(collapsed) {
+        sidebarCollapsed = Boolean(collapsed);
+        document.body.classList.toggle("sidebar-collapsed", sidebarCollapsed);
+        if (els.sidebarToggleBtn) {
+          const icon = sidebarCollapsed ? "panel-left-open" : "panel-left-close";
+          els.sidebarToggleBtn.innerHTML = iconMarkup(icon);
+        }
+        try {
+          localStorage.setItem(SIDEBAR_COLLAPSED_KEY, sidebarCollapsed ? "1" : "0");
+        } catch {
+          // ignore local storage errors
+        }
+        hydrateLucideIcons();
+      }
+
+      function initSidebarPreference() {
+        let collapsed = false;
+        try {
+          collapsed = localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
+        } catch {
+          collapsed = false;
+        }
+        setSidebarCollapsed(collapsed);
+      }
+
+      function syncNavigationState() {
+        const moduleId = currentModule || null;
+        document.querySelectorAll("[data-nav-module]").forEach((node) => {
+          node.classList.toggle("active", node.dataset.navModule === moduleId);
+        });
+        document.querySelectorAll("[data-nav-home]").forEach((node) => {
+          node.classList.toggle("active", !moduleId);
+        });
+        document.querySelectorAll("[data-mobile-home]").forEach((node) => {
+          node.classList.toggle("active", !moduleId);
+        });
+      }
+
+      function canUseFab() {
+        if (!currentUser) return false;
+        if (!currentModule) return true;
+        if (currentModule === "votingModule") return currentUser.role === "admin";
+        if (currentModule === "avizierModule") {
+          return currentUser.role === "admin" || String(currentUser.avizier_permission || "none") !== "none";
+        }
+        return true;
+      }
+
+      function updateMobileFab() {
+        if (!els.mobileFab) return;
+        if (!currentUser || !canUseFab()) {
+          els.mobileFab.classList.add("hidden");
+          return;
+        }
+        let label = "Quick action";
+        if (currentModule === "parkingModule") label = "Share spot";
+        if (currentModule === "marketplaceModule") label = "Create listing";
+        if (currentModule === "votingModule") label = "Create poll";
+        if (currentModule === "avizierModule") label = "Post announcement";
+        if (!currentModule) label = "Open parking actions";
+        els.mobileFab.setAttribute("aria-label", label);
+        els.mobileFab.classList.remove("hidden");
       }
 
       function updateRefreshMetaLabels() {
@@ -3784,6 +5026,19 @@
           }
           hydrateLucideIcons();
         }
+      }
+
+      function flashButtonSuccess(buttonEl, label = "Done") {
+        if (!buttonEl) return;
+        const originalHtml = buttonEl.dataset.defaultHtml || buttonEl.innerHTML;
+        const originalText = buttonEl.dataset.defaultText || buttonEl.textContent.trim();
+        buttonEl.innerHTML = `${iconMarkup("check")}<span>${label}</span>`;
+        hydrateLucideIcons();
+        setTimeout(() => {
+          if (!buttonEl.isConnected) return;
+          buttonEl.innerHTML = originalHtml || `<span>${originalText}</span>`;
+          hydrateLucideIcons();
+        }, 1500);
       }
 
       function iconMarkup(name) {
@@ -3998,6 +5253,23 @@
         return `Closes in ${mins}m`;
       }
 
+      function pollUrgencyMeta(poll) {
+        const start = parseDateSafe(poll?.start_date);
+        const end = parseDateSafe(poll?.end_date);
+        const now = Date.now();
+        if (!start || !end || end.getTime() <= start.getTime()) {
+          return { progress: 75, color: "#22c55e" };
+        }
+        const total = Math.max(1, end.getTime() - start.getTime());
+        const remaining = Math.max(0, end.getTime() - now);
+        const ratio = Math.max(0, Math.min(1, remaining / total));
+        const hoursLeft = remaining / (1000 * 60 * 60);
+        let color = "#22c55e";
+        if (hoursLeft <= 24) color = "#f59e0b";
+        if (hoursLeft <= 2) color = "#ef4444";
+        return { progress: Math.round(ratio * 100), color };
+      }
+
       function resultStatusLabel(value) {
         if (value === "valid") return "Valid result";
         if (value === "invalid_no_quorum" || value === "quorum_not_met") return "Invalid (quorum not met)";
@@ -4061,6 +5333,9 @@
         els.avizierModule.classList.remove("is-visible");
         els.votingModule.classList.add("hidden");
         els.votingModule.classList.remove("is-visible");
+        refreshHomeActivity();
+        syncNavigationState();
+        updateMobileFab();
       }
 
       function showModuleSelector() {
@@ -4094,6 +5369,8 @@
         if (moduleId === "votingModule") {
           refreshVoting().catch((error) => setStatus(error.message, true));
         }
+        syncNavigationState();
+        updateMobileFab();
       }
 
       function requestedModuleFromQuery() {
@@ -4708,7 +5985,7 @@
           ? freeSpots
               .map(
                 (s) => `
-                  <article class="parking-spot-card">
+                  <article class="parking-spot-card status-free">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
                       ${parkingStatusBadge("free", "Free")}
@@ -4731,7 +6008,7 @@
           ? myShared
               .map(
                 (s) => `
-                  <article class="parking-spot-card">
+                  <article class="parking-spot-card ${String(s.status || "open").toLowerCase() === "open" ? "status-free" : "status-expired"}">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
                       ${parkingStatusBadge(s.status || "open")}
@@ -4749,7 +6026,7 @@
           ? claimedByOthers
               .map(
                 (s) => `
-                  <article class="parking-spot-card">
+                  <article class="parking-spot-card status-claimed">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
                       ${parkingStatusBadge("claimed", "Claimed")}
@@ -4769,7 +6046,7 @@
           ? myClaims
               .map(
                 (s) => `
-                  <article class="parking-spot-card">
+                  <article class="parking-spot-card status-claimed">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
                       ${parkingStatusBadge("claimed", "Claimed")}
@@ -4790,13 +6067,14 @@
         els.countShared.textContent = String(myShared.length);
         els.countClaimedByOthers.textContent = String(claimedByOthers.length);
         els.countMyClaims.textContent = String(myClaims.length);
-        els.kpiFree.textContent = String(freeSpots.length);
-        els.kpiShared.textContent = String(myShared.length);
-        els.kpiClaimedByOthers.textContent = String(claimedByOthers.length);
-        els.kpiMyClaims.textContent = String(myClaims.length);
+        animateCounter(els.kpiFree, freeSpots.length);
+        animateCounter(els.kpiShared, myShared.length);
+        animateCounter(els.kpiClaimedByOthers, claimedByOthers.length);
+        animateCounter(els.kpiMyClaims, myClaims.length);
         moduleQuickStats.freeSpots = freeSpots.length;
         renderQuickStats();
         refreshStats(currentBuildingStats);
+        refreshHomeActivity();
         decorateDynamicActionIcons(els.parkingModule);
       }
 
@@ -5303,6 +6581,8 @@
         els.marketplaceMineCards.innerHTML = mineEmptyHtml;
         els.marketplaceActiveCount.textContent = "0";
         els.marketplaceMineCount.textContent = "0";
+        marketplaceDashboardData = { active_listings: [], my_listings: [] };
+        refreshHomeActivity();
         hydrateLucideIcons();
       }
 
@@ -5343,10 +6623,14 @@
                   !isOwner;
                 const contactId = `market-contact-${post.id}`;
                 const ownerBuilding = marketplaceOwnerBuilding(post);
+                const isDonation = post.listing_type === "donation";
+                const isSold = post.status === "completed";
                 return `
                   <article class="market-listing-card">
                     <div class="market-listing-head">
                       <div class="market-listing-thumb">
+                        ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
+                        ${isSold ? `<span class="market-sold-ribbon">SOLD</span>` : ""}
                         <div class="market-status-corner">
                           <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
                         </div>
@@ -5355,11 +6639,12 @@
                       <div class="market-listing-body">
                         <div class="market-title-line">
                           <strong>${post.title}</strong>
-                          ${marketplacePriceBadge(post)}
+                          <span class="market-price-main">${isDonation ? "FREE" : (post.price_text || "-")}</span>
                         </div>
                         <div class="market-owner-line">Owner: ${post.owner_username} ${
                           ownerBuilding ? `· Bloc ${ownerBuilding}` : ""
                         }</div>
+                        <div class="market-age">Listed ${formatRelativeTime(post.created_at)}</div>
                         <div class="market-card-badges">
                           <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
                         </div>
@@ -5389,12 +6674,16 @@
               .map((post) => {
                 const isActive = post.status === "active";
                 const statusTag = marketplaceStatusTag(post);
+                const isDonation = post.listing_type === "donation";
+                const isSold = post.status === "completed";
                 const priceLabel = post.listing_type === "sale" ? post.price_text || "-" : "FREE";
                 const listingUrl = marketplaceListingUrl(post.id);
                 return `
                   <article class="market-listing-card">
                     <div class="market-listing-head">
                       <div class="market-listing-thumb">
+                        ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
+                        ${isSold ? `<span class="market-sold-ribbon">SOLD</span>` : ""}
                         <div class="market-status-corner">
                           <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
                         </div>
@@ -5403,7 +6692,7 @@
                       <div class="market-listing-body">
                         <div class="market-title-line">
                           <strong>${post.title}</strong>
-                          <span class="market-price-badge ${post.listing_type === "sale" ? "paid" : "free"}">${priceLabel}</span>
+                          <span class="market-price-main">${priceLabel}</span>
                         </div>
                         <div class="market-card-badges">
                           <span class="market-category-badge">${marketplaceTypeLabel(post.listing_type)}</span>
@@ -5414,7 +6703,8 @@
                             ? `<div class="market-my-meta">Claimed by: ${post.claimed_by_username}</div>`
                             : ""
                         }
-                        <div class="market-my-meta">Updated: ${formatBucharestDateTime(post.updated_at || post.created_at)}</div>
+                        <div class="market-my-meta">Updated ${formatRelativeTime(post.updated_at || post.created_at)}</div>
+                        <div class="market-age">Listed ${formatRelativeTime(post.created_at)}</div>
                       </div>
                     </div>
                     <div class="market-card-actions">
@@ -5440,6 +6730,7 @@
 
         els.marketplaceActiveCount.textContent = String(activeListings.length);
         els.marketplaceMineCount.textContent = String(myListings.length);
+        refreshHomeActivity();
         decorateDynamicActionIcons(els.marketplaceActiveCards);
         decorateDynamicActionIcons(els.myListingsCards);
         decorateDynamicActionIcons(els.marketplaceMineCards);
@@ -5536,6 +6827,33 @@
         renderAvizierAnnouncements();
       }
 
+      function decodeAvizierTitle(rawTitle) {
+        const source = String(rawTitle || "").trim();
+        let cleanTitle = source;
+        let priority = "normal";
+        let pinned = false;
+        if (/^\[(urgent)\]\s*/i.test(cleanTitle)) {
+          priority = "urgent";
+          cleanTitle = cleanTitle.replace(/^\[(urgent)\]\s*/i, "");
+        } else if (/^\[(important)\]\s*/i.test(cleanTitle)) {
+          priority = "important";
+          cleanTitle = cleanTitle.replace(/^\[(important)\]\s*/i, "");
+        }
+        if (/^\[pin\]\s*/i.test(cleanTitle)) {
+          pinned = true;
+          cleanTitle = cleanTitle.replace(/^\[pin\]\s*/i, "");
+        }
+        return { cleanTitle: cleanTitle || source, priority, pinned };
+      }
+
+      function encodeAvizierTitle(title, priority, pinned) {
+        let encoded = String(title || "").trim();
+        if (priority === "urgent") encoded = `[URGENT] ${encoded}`;
+        if (priority === "important") encoded = `[IMPORTANT] ${encoded}`;
+        if (pinned) encoded = `[PIN] ${encoded}`;
+        return encoded;
+      }
+
       async function uploadAvizierAttachments(files, onProgress = null) {
         const uploaded = [];
         for (let i = 0; i < files.length; i += 1) {
@@ -5578,7 +6896,21 @@
         if (Array.isArray(items)) {
           avizierAnnouncements = items;
         }
-        const visibleAnnouncements = filteredAvizierAnnouncements();
+        const visibleAnnouncements = filteredAvizierAnnouncements()
+          .map((item) => {
+            const decoded = decodeAvizierTitle(item.title);
+            return { ...item, ...decoded };
+          })
+          .sort((a, b) => {
+            const pinScoreA = a.pinned ? 1 : 0;
+            const pinScoreB = b.pinned ? 1 : 0;
+            if (pinScoreA !== pinScoreB) return pinScoreB - pinScoreA;
+            const priorityRank = { urgent: 3, important: 2, normal: 1 };
+            const prA = priorityRank[a.priority] || 1;
+            const prB = priorityRank[b.priority] || 1;
+            if (prA !== prB) return prB - prA;
+            return (parseDateSafe(b.created_at)?.getTime() || 0) - (parseDateSafe(a.created_at)?.getTime() || 0);
+          });
         els.avizierCount.textContent = String(visibleAnnouncements.length);
         if (!visibleAnnouncements.length) {
           els.avizierList.innerHTML = `<div class="empty-state">📋 No announcements yet. Check back later.</div>`;
@@ -5590,19 +6922,37 @@
           .map((item) => {
             const scopeLabel = item.scope === "building" ? `Bloc ${item.building_id}` : "General";
             const attachments = Array.isArray(item.attachments) ? item.attachments : [];
+            const unread = !isAvizierRead(item.id);
+            const longMessage = String(item.message || "").trim();
+            const shouldTruncate = longMessage.length > 220;
+            const preview = shouldTruncate ? `${longMessage.slice(0, 220)}...` : longMessage;
             return `
-              <article class="poll-card">
+              <article class="poll-card avizier-card priority-${item.priority} ${unread ? "unread" : ""}" data-avizier-id="${item.id}">
                 <div class="poll-card-head">
-                  <h4>${item.title}</h4>
-                  <span class="poll-countdown">${iconMarkup("calendar-clock")}<span>${formatBucharestDateTime(item.created_at)}</span></span>
+                  <h4>${item.cleanTitle}</h4>
+                  <span class="poll-countdown">${iconMarkup("calendar-clock")}<span>${formatRelativeTime(item.created_at)}</span></span>
                 </div>
-                <div class="poll-meta">
-                  <span class="poll-chip scope ${item.scope === "building" ? "building" : "neighbourhood"}">${iconMarkup(
+                <div class="avizier-meta-line">
+                  <span class="avizier-chip scope-${item.scope === "building" ? "building" : "general"}">${iconMarkup(
                     item.scope === "building" ? "building-2" : "map-pinned"
                   )}<span>${scopeLabel}</span></span>
-                  <span class="poll-chip type">${iconMarkup("user")}<span>${item.created_by_username || "-"}</span></span>
+                  <span class="avizier-chip">${iconMarkup("user")}<span>${item.created_by_username || "-"}</span></span>
+                  ${
+                    item.priority !== "normal"
+                      ? `<span class="avizier-chip priority-${item.priority}">${iconMarkup("triangle-alert")}<span>${titleize(item.priority)}</span></span>`
+                      : ""
+                  }
+                  ${
+                    attachments.length
+                      ? `<span class="avizier-chip">${iconMarkup("paperclip")}<span>${attachments.length} attachment${attachments.length === 1 ? "" : "s"}</span></span>`
+                      : ""
+                  }
+                  ${item.pinned ? `<span class="avizier-chip">${iconMarkup("pin")}<span>Pinned</span></span>` : ""}
+                  ${item.priority === "urgent" ? `<span class="avizier-dot" aria-hidden="true"></span>` : ""}
                 </div>
-                <p style="margin:10px 0 0">${item.message}</p>
+                <p style="margin:10px 0 0" data-avizier-message="${item.id}" data-avizier-full="${encodeURIComponent(
+                  longMessage
+                )}">${preview}</p>
                 <div style="margin-top:8px">
                   ${
                     attachments.length
@@ -5615,11 +6965,17 @@
                       : `<span class="poll-note">No attachments.</span>`
                   }
                 </div>
+                ${
+                  shouldTruncate
+                    ? `<button type="button" class="avizier-read-more" data-avizier-expand="${item.id}">Read more</button>`
+                    : ""
+                }
               </article>
             `;
           })
           .join("");
         hydrateLucideIcons();
+        refreshHomeActivity();
       }
 
       async function refreshAvizier() {
@@ -5634,18 +6990,49 @@
           ? polls
               .map((poll) => {
                 const status = pollStatusChip(poll);
+                const urgency = pollUrgencyMeta(poll);
+                const uniqueVoters = Number(poll.unique_voters || 0);
+                const eligibleVoters = Number(poll.eligible_voters || 0);
+                const participation = eligibleVoters
+                  ? Math.round((uniqueVoters / eligibleVoters) * 100)
+                  : null;
+                const quorumNeeded = Number(poll.quorum_percentage || 0);
+                const quorumProgress =
+                  quorumNeeded > 0 && participation != null
+                    ? Math.min(100, Math.round((participation / quorumNeeded) * 100))
+                    : 0;
                 return `
                   <article class="poll-card">
                     <div class="poll-card-head">
                       <h4>${poll.title}</h4>
-                      <span class="poll-countdown">${iconMarkup("clock-3")}<span>${pollCountdownLabel(poll)}</span></span>
+                      <span class="poll-urgency" style="--urgency-progress:${urgency.progress}%; --urgency-color:${urgency.color}">
+                        <span class="poll-urgency-inner">${iconMarkup("clock-3")}</span>
+                      </span>
                     </div>
+                    <span class="poll-countdown">${iconMarkup("clock-3")}<span>${pollCountdownLabel(poll)}</span></span>
                     <div class="poll-meta">
                       <span class="poll-chip"><span class="poll-status-dot" aria-hidden="true"></span><span>${poll.has_voted ? "Voted" : "Open"}</span></span>
                       ${pollScopeChip(poll)}
                       ${status}
                       ${poll.has_voted ? `<span class="poll-voted-badge">${iconMarkup("check-check")}<span>Already voted</span></span>` : ""}
                     </div>
+                    <div class="poll-participation">
+                      ${
+                        participation == null
+                          ? "Participation data will appear after votes are cast."
+                          : `${uniqueVoters} of ${eligibleVoters} residents voted (${participation}%).`
+                      }
+                    </div>
+                    ${
+                      poll.requires_quorum
+                        ? `
+                          <div class="poll-mini-quorum">
+                            <div class="poll-note">Quorum needed: ${quorumNeeded}%</div>
+                            <div class="poll-mini-track"><span class="poll-mini-fill" style="width:${quorumProgress}%"></span></div>
+                          </div>
+                        `
+                        : ""
+                    }
                     <div>
                       <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">
                         ${poll.has_voted ? "View Poll" : "Vote Now"}
@@ -5737,6 +7124,7 @@
       }
 
       function clearPollLists() {
+        latestActivePolls = [];
         els.activePolls.innerHTML = `<div class="empty-state">🗳️ No active polls right now. Check back later.</div>`;
         els.closedPollsTableWrap.classList.add("hidden");
         els.closedPollsEmpty.classList.remove("hidden");
@@ -5744,6 +7132,7 @@
         els.closedPollCards.innerHTML = "";
         els.countActivePolls.textContent = "0";
         els.countClosedPolls.textContent = "0";
+        refreshHomeActivity();
         hydrateLucideIcons();
       }
 
@@ -5753,6 +7142,7 @@
         const allPolls = Array.isArray(polls) ? polls : [];
         const activePolls = allPolls.filter((poll) => poll.status === "active");
         const closedPolls = allPolls.filter((poll) => poll.status === "closed");
+        latestActivePolls = activePolls;
         moduleQuickStats.openPolls = activePolls.length;
         renderQuickStats();
         renderActivePollCards(activePolls);
@@ -5760,6 +7150,7 @@
         els.countActivePolls.textContent = String(activePolls.length);
         els.countClosedPolls.textContent = String(closedPolls.length);
         markModuleRefreshed("voting");
+        refreshHomeActivity();
         warmClosedPollSummaries(closedPolls).catch(() => {});
       }
 
@@ -6006,6 +7397,15 @@
             }
           </div>
         `;
+        requestAnimationFrame(() => {
+          els.pollResultsSection.querySelectorAll(".poll-result-fill").forEach((fill) => {
+            const target = fill.style.width;
+            fill.style.width = "0%";
+            requestAnimationFrame(() => {
+              fill.style.width = target;
+            });
+          });
+        });
       }
 
       function buildVotePayload() {
@@ -6125,6 +7525,7 @@
           });
           await refreshDashboard();
           showToast("Spot claimed successfully.");
+          if (buttonEl) flashButtonSuccess(buttonEl, "Claimed");
         };
 
         if (buttonEl) {
@@ -6143,12 +7544,26 @@
           lastRefreshAt.avizier = null;
           lastRefreshAt.voting = null;
           closeAllModals();
+          els.authLanding.classList.remove("hidden");
           els.loginCard.classList.remove("hidden");
           els.app.classList.add("hidden");
+          els.sideRail.classList.add("hidden");
+          els.mobileTabBar.classList.add("hidden");
+          els.mobileFab.classList.add("hidden");
+          document.body.classList.remove("has-sidebar");
           els.navUserBadge.classList.add("hidden");
           els.logoutBtn.classList.add("hidden");
+          els.railUserBadge.classList.add("hidden");
+          els.railLogoutBtn.classList.add("hidden");
           els.navUserText.textContent = "";
           els.navUserInitials.textContent = "--";
+          els.railUserText.textContent = "";
+          els.railUserInitials.textContent = "--";
+          currentFreeSpots = [];
+          currentBuildingStats = [];
+          latestActivePolls = [];
+          marketplaceDashboardData = { active_listings: [], my_listings: [] };
+          avizierAnnouncements = [];
           moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
           setQuickStatsLoading(false);
           renderWelcomeBanner(null);
@@ -6163,12 +7578,25 @@
         }
 
         closeAllModals();
+        els.authLanding.classList.add("hidden");
         els.loginCard.classList.add("hidden");
         els.app.classList.remove("hidden");
+        els.sideRail.classList.remove("hidden");
+        els.mobileTabBar.classList.remove("hidden");
+        document.body.classList.add("has-sidebar");
         els.navUserBadge.classList.remove("hidden");
         els.logoutBtn.classList.remove("hidden");
+        els.railUserBadge.classList.remove("hidden");
+        els.railLogoutBtn.classList.remove("hidden");
         els.navUserText.textContent = `${user.username} · ${displayResidence(user)}`;
         els.navUserInitials.textContent = userInitials(user.username);
+        els.railUserText.textContent = `${user.username} · ${displayResidence(user)}`;
+        els.railUserInitials.textContent = userInitials(user.username);
+        currentFreeSpots = [];
+        currentBuildingStats = [];
+        latestActivePolls = [];
+        marketplaceDashboardData = { active_listings: [], my_listings: [] };
+        avizierAnnouncements = [];
         moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
         setQuickStatsLoading(true);
         showModuleChooser();
@@ -6194,6 +7622,7 @@
 
         maybeShowHelpOnce();
         startAutoRefresh();
+        updateMobileFab();
       }
 
       document.getElementById("loginForm").addEventListener("submit", async (event) => {
@@ -6220,6 +7649,7 @@
             ]);
             setQuickStatsLoading(false);
             showToast("Login successful.");
+            flashButtonSuccess(button, "Welcome");
           } catch (error) {
             setQuickStatsLoading(false);
             setStatus(error.message, true);
@@ -6227,7 +7657,7 @@
         });
       });
 
-      els.logoutBtn.addEventListener("click", async () => {
+      async function handleLogout() {
         try {
           await api("/api/auth/logout", { method: "POST" });
           applyAuthState(null);
@@ -6235,6 +7665,46 @@
         } catch (error) {
           setStatus(error.message, true);
         }
+      }
+
+      els.logoutBtn.addEventListener("click", handleLogout);
+      els.railLogoutBtn.addEventListener("click", handleLogout);
+
+      els.sidebarToggleBtn.addEventListener("click", () => {
+        setSidebarCollapsed(!sidebarCollapsed);
+      });
+
+      els.themeToggleBtn.addEventListener("click", () => {
+        setTheme(currentTheme === "dark" ? "light" : "dark");
+      });
+
+      els.topThemeToggleBtn.addEventListener("click", () => {
+        setTheme(currentTheme === "dark" ? "light" : "dark");
+      });
+
+      els.mobileFab.addEventListener("click", () => {
+        if (!currentUser) return;
+        if (currentModule === "parkingModule") {
+          setActiveTab("action", "actionSharePanel");
+          document.getElementById("shareForm").scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        if (currentModule === "marketplaceModule") {
+          els.marketplaceCreateForm.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        if (currentModule === "votingModule") {
+          if (currentUser.role !== "admin") return;
+          els.createPollCard.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        if (currentModule === "avizierModule") {
+          const canPost = currentUser.role === "admin" || String(currentUser.avizier_permission || "none") !== "none";
+          if (!canPost) return;
+          els.createAvizierCard.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        openModule("parkingModule");
       });
 
       document.getElementById("shareForm").addEventListener("submit", async (event) => {
@@ -6253,6 +7723,7 @@
             });
             await refreshDashboard();
             showToast("Spot shared successfully.");
+            flashButtonSuccess(button, "Shared");
           } catch (error) {
             setStatus(error.message, true);
           }
@@ -6302,6 +7773,7 @@
             });
             await refreshAdminUsers();
             showToast("User created.");
+            flashButtonSuccess(button, "Created");
           } catch (error) {
             setStatus(error.message, true);
           }
@@ -6325,6 +7797,7 @@
             });
             await refreshDashboard();
             showToast("Admin shared spot created.");
+            flashButtonSuccess(button, "Created");
           } catch (error) {
             setStatus(error.message, true);
           }
@@ -6341,6 +7814,27 @@
         btn.addEventListener("click", () => {
           openModule(btn.dataset.moduleTarget);
         });
+      });
+
+      document.querySelectorAll("[data-nav-home], [data-mobile-home]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          showModuleChooser();
+        });
+      });
+
+      els.homeActivityFeed.addEventListener("click", async (event) => {
+        const card = event.target.closest("[data-activity-module]");
+        if (!card) return;
+        const moduleId = card.dataset.activityModule;
+        if (moduleId) openModule(moduleId);
+        const pollId = String(card.dataset.activityPollId || "").trim();
+        if (pollId && moduleId === "votingModule") {
+          try {
+            await openPollModal(pollId);
+          } catch {
+            // keep interaction silent if poll could not be opened immediately
+          }
+        }
       });
 
       document.querySelectorAll("[data-go-profile]").forEach((btn) => {
@@ -6494,6 +7988,7 @@
               body: JSON.stringify(payload),
             });
             showToast("Marketplace listing created.");
+            flashButtonSuccess(els.marketplaceCreateBtn, "Created");
             els.marketplaceCreateForm.reset();
             els.marketplaceContactPhone.value = currentUser.phone_number || "";
             setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: true, rerender: false });
@@ -6531,6 +8026,7 @@
               await api(`/api/marketplace/posts/${postId}/claim`, { method: "POST" });
               await refreshMarketplace();
               showToast("Donation claimed.");
+              flashButtonSuccess(button, "Claimed");
             } catch (error) {
               setStatus(error.message, true);
             }
@@ -6656,6 +8152,34 @@
         setAvizierUploadStatus(`${files.length} file(s) selected.`);
       });
 
+      els.avizierList.addEventListener("click", (event) => {
+        const expandBtn = event.target.closest("[data-avizier-expand]");
+        const card = event.target.closest("[data-avizier-id]");
+        if (card) {
+          const announcementId = String(card.dataset.avizierId || "").trim();
+          if (announcementId) {
+            markAvizierRead(announcementId);
+            card.classList.remove("unread");
+          }
+        }
+        if (!expandBtn) return;
+        const announcementId = String(expandBtn.dataset.avizierExpand || "").trim();
+        const messageEl = els.avizierList.querySelector(`[data-avizier-message="${announcementId}"]`);
+        if (!messageEl) return;
+        const fullText = decodeURIComponent(messageEl.dataset.avizierFull || "");
+        const expanded = expandBtn.dataset.expanded === "1";
+        if (expanded) {
+          const truncated = fullText.length > 220 ? `${fullText.slice(0, 220)}...` : fullText;
+          messageEl.textContent = truncated;
+          expandBtn.dataset.expanded = "0";
+          expandBtn.textContent = "Read more";
+        } else {
+          messageEl.textContent = fullText;
+          expandBtn.dataset.expanded = "1";
+          expandBtn.textContent = "Show less";
+        }
+      });
+
       els.createAvizierForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         const scope = els.avizierScope.value;
@@ -6685,7 +8209,11 @@
             }
 
             const payload = {
-              title: els.avizierTitle.value.trim(),
+              title: encodeAvizierTitle(
+                els.avizierTitle.value.trim(),
+                els.avizierPriority.value,
+                Boolean(els.avizierPinned.checked)
+              ),
               message: (els.avizierMessage.value || "").trim(),
               scope,
               building_id: scope === "building" ? buildingId : null,
@@ -6696,7 +8224,10 @@
               body: JSON.stringify(payload),
             });
             showToast("Announcement posted.");
+            flashButtonSuccess(els.createAvizierBtn, "Posted");
             els.createAvizierForm.reset();
+            els.avizierPriority.value = "normal";
+            els.avizierPinned.checked = false;
             setAvizierUploadStatus("No files selected.");
             if (currentUser?.avizier_permission === "reprezentant_bloc" && currentUser?.role !== "admin") {
               els.avizierScope.value = "building";
@@ -6785,6 +8316,7 @@
               body: JSON.stringify(payload),
             });
             showToast("Poll created.");
+            flashButtonSuccess(els.createPollBtn, "Published");
             els.createPollForm.reset();
             clearPollUploadState();
             setPollFormDefaults();
@@ -6844,6 +8376,7 @@
               body: JSON.stringify(payload),
             });
             showToast("Vote submitted.");
+            flashButtonSuccess(els.pollVoteBtn, "Submitted");
             await refreshVoting();
             await loadPollModal(pollId);
           } catch (error) {
@@ -7001,6 +8534,8 @@
       });
 
       async function boot() {
+        initTheme();
+        initSidebarPreference();
         setQuickStatsLoading(true);
         fillBuildingSelect("claimBuilding", true);
         fillBuildingSelect("newBuilding");
@@ -7022,6 +8557,8 @@
         setAvizierUploadStatus("No files selected.");
         updateRefreshMetaLabels();
         showModuleChooser();
+        syncNavigationState();
+        updateMobileFab();
         document.getElementById("newRole").dispatchEvent(new Event("change"));
 
         try {
