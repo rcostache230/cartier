@@ -107,6 +107,8 @@ Vercel auto-detects Next.js. No custom `vercel.json` is required.
 - `GET /api/avizier`
 - `POST /api/avizier` (admin, comitet, reprezentant_bloc with building scope only)
 - `GET /api/avizier/:announcement_id`
+- `POST /api/avizier/:announcement_id/update` (author/admin)
+- `POST /api/avizier/:announcement_id/delete` (author/admin)
 - `GET /api/polls`
 - `POST /api/polls` (admin)
 - `GET /api/polls/:poll_id`

@@ -1621,6 +1621,115 @@ async function createAvizierAnnouncement({ user, payload }) {
   return getAvizierAnnouncementById(announcementId);
 }
 
+async function getAvizierAnnouncementRowForUpdate(client, announcementId) {
+  const result = await client.query(
+    `
+      SELECT *
+      FROM avizier_announcements
+      WHERE id = $1
+      FOR UPDATE
+    `,
+    [announcementId]
+  );
+  if (!result.rowCount) {
+    throw new AppError(404, "announcement not found");
+  }
+  return result.rows[0];
+}
+
+function ensureCanModifyAvizierAnnouncement(actorUser, row, actionLabel) {
+  if (actorUser.role === "admin") return;
+  if (Number(row.created_by) !== Number(actorUser.id)) {
+    throw new AppError(403, `only the announcement author can ${actionLabel}`);
+  }
+}
+
+async function updateAvizierAnnouncement({ actorUser, announcementId, payload }) {
+  if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+    throw new AppError(400, "invalid payload");
+  }
+
+  await withTransaction(async (client) => {
+    const existing = await getAvizierAnnouncementRowForUpdate(client, announcementId);
+    ensureCanModifyAvizierAnnouncement(actorUser, existing, "edit this announcement");
+
+    const merged = {
+      title: payload.title == null ? String(existing.title || "") : payload.title,
+      message: payload.message == null ? String(existing.message || "") : payload.message,
+      scope: payload.scope == null ? String(existing.scope || "") : payload.scope,
+      building_id: payload.building_id == null ? existing.building_id : payload.building_id,
+      attachments: Object.prototype.hasOwnProperty.call(payload, "attachments")
+        ? payload.attachments
+        : undefined,
+    };
+    const cleaned = normalizeAvizierCreatePayload(merged);
+    const existingScope = String(existing.scope || "");
+    const existingBuildingId = existing.building_id == null ? null : Number(existing.building_id);
+    const nextBuildingId = cleaned.building_id == null ? null : Number(cleaned.building_id);
+    const scopeChanged =
+      cleaned.scope !== existingScope || Number(existingBuildingId || 0) !== Number(nextBuildingId || 0);
+    if (scopeChanged) {
+      ensureAvizierPostPermission({
+        user: actorUser,
+        scope: cleaned.scope,
+        buildingId: cleaned.scope === "building" ? cleaned.building_id : null,
+      });
+    }
+
+    const now = nowIsoUtc();
+    await client.query(
+      `
+        UPDATE avizier_announcements
+        SET title = $1,
+            message = $2,
+            scope = $3,
+            building_id = $4,
+            updated_at = $5
+        WHERE id = $6
+      `,
+      [cleaned.title, cleaned.message, cleaned.scope, cleaned.building_id, now, announcementId]
+    );
+
+    if (Object.prototype.hasOwnProperty.call(payload, "attachments")) {
+      await client.query("DELETE FROM avizier_attachments WHERE announcement_id = $1", [announcementId]);
+      for (const attachment of cleaned.attachments) {
+        await client.query(
+          `
+            INSERT INTO avizier_attachments (
+              id,
+              announcement_id,
+              file_url,
+              file_name,
+              file_type,
+              file_size_bytes
+            )
+            VALUES ($1, $2, $3, $4, $5, $6)
+          `,
+          [
+            crypto.randomUUID(),
+            announcementId,
+            attachment.file_url,
+            attachment.file_name,
+            attachment.file_type,
+            attachment.file_size_bytes,
+          ]
+        );
+      }
+    }
+  });
+
+  return getAvizierAnnouncementById(announcementId);
+}
+
+async function deleteAvizierAnnouncement({ actorUser, announcementId }) {
+  await withTransaction(async (client) => {
+    const existing = await getAvizierAnnouncementRowForUpdate(client, announcementId);
+    ensureCanModifyAvizierAnnouncement(actorUser, existing, "delete this announcement");
+    await client.query("DELETE FROM avizier_announcements WHERE id = $1", [announcementId]);
+  });
+  return { deleted: true, announcement_id: announcementId };
+}
+
 function parseOptionalInt(value, fieldName) {
   if (value == null || value === "") return null;
   const parsed = Number(value);
@@ -2386,6 +2495,8 @@ async function handleRequest(request, slug) {
         avizier_list: "GET /api/avizier",
         avizier_create: "POST /api/avizier",
         avizier_get: "GET /api/avizier/<announcement_id>",
+        avizier_update: "POST /api/avizier/<announcement_id>/update",
+        avizier_delete: "POST /api/avizier/<announcement_id>/delete",
         upload_presign: "POST /api/uploads/presign",
         upload_direct: "POST /api/uploads/direct",
       },
@@ -2905,6 +3016,38 @@ async function handleRequest(request, slug) {
     const announcement = await getAvizierAnnouncementById(path[1]);
     requireAvizierVisible(announcement, user);
     return json(announcement, 200);
+  }
+
+  if (path[0] === "avizier" && method === "POST" && path.length === 3 && path[2] === "update") {
+    const user = await requireUser(request);
+    const announcementId = String(path[1] || "").trim();
+    if (!announcementId) {
+      throw new AppError(400, "announcement_id is required");
+    }
+    const payload = await parseJsonBody(request);
+    return json(
+      await updateAvizierAnnouncement({
+        actorUser: user,
+        announcementId,
+        payload,
+      }),
+      200
+    );
+  }
+
+  if (path[0] === "avizier" && method === "POST" && path.length === 3 && path[2] === "delete") {
+    const user = await requireUser(request);
+    const announcementId = String(path[1] || "").trim();
+    if (!announcementId) {
+      throw new AppError(400, "announcement_id is required");
+    }
+    return json(
+      await deleteAvizierAnnouncement({
+        actorUser: user,
+        announcementId,
+      }),
+      200
+    );
   }
 
   if (path[0] === "polls" && method === "GET" && path.length === 1) {
