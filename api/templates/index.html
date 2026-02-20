@@ -2425,6 +2425,18 @@
             </article>
             <article class="module-card">
               <div class="module-card-head">
+                <div class="module-icon"><i data-lucide="newspaper" aria-hidden="true"></i></div>
+                <div class="module-card-copy">
+                  <h3>Avizier Module</h3>
+                  <p>Read general and building announcements, with JPG/PDF attachments.</p>
+                </div>
+              </div>
+              <div class="module-actions">
+                <button type="button" class="alt" data-module-target="avizierModule">Open Avizier</button>
+              </div>
+            </article>
+            <article class="module-card">
+              <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="user-cog" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
                   <h3>Profile Management</h3>
@@ -2653,6 +2665,14 @@
                   <div><label for="newPassword">Password</label><input id="newPassword" placeholder="10blocuri" required /></div>
                   <div><label for="newPhone">Phone Number</label><input id="newPhone" placeholder="0712 345 678" /></div>
                   <div><label for="newRole">Role</label><select id="newRole"><option value="resident">Resident</option><option value="admin">Admin</option></select></div>
+                  <div>
+                    <label for="newAvizierPermission">Avizier Permission</label>
+                    <select id="newAvizierPermission">
+                      <option value="none">None</option>
+                      <option value="reprezentant_bloc">Reprezentant Bloc (building only)</option>
+                      <option value="comitet">Comitet (general + building)</option>
+                    </select>
+                  </div>
                   <div><label for="newBuilding">Building</label><select id="newBuilding"></select></div>
                   <div><label for="newApartment">Apartment</label><input id="newApartment" type="number" min="1" max="16" value="1" /></div>
                   <button id="createUserBtn" type="submit" data-default-text="Create User">Create User</button>
@@ -2677,7 +2697,7 @@
                 <div class="table-wrap">
                   <table>
                     <thead>
-                      <tr><th>User</th><th>Role</th><th>Building</th><th>Apt</th><th>Phone</th></tr>
+                      <tr><th>User</th><th>Role</th><th>Avizier</th><th>Building</th><th>Apt</th><th>Phone</th></tr>
                     </thead>
                     <tbody id="allUsers"></tbody>
                   </table>
@@ -2851,6 +2871,57 @@
               </section>
               <button id="marketplaceCreateBtn" type="submit" data-default-text="Create Listing">Create Listing</button>
             </form>
+          </section>
+        </section>
+
+        <section id="avizierModule" class="card hidden module-panel" style="margin-top: 14px">
+          <div class="module-header">
+            <div>
+              <div class="module-breadcrumb"><a href="#" data-back-modules>Home</a> &gt; Avizier</div>
+              <h1 class="module-title"><i data-lucide="newspaper" aria-hidden="true"></i>Avizier</h1>
+              <p class="poll-note">General and per-building announcements for all residents.</p>
+            </div>
+            <div class="module-actions">
+              <a href="#" class="module-back-link" data-back-modules>Back Home</a>
+              <button id="refreshAvizierBtn" class="ghost refresh-btn" type="button">Refresh</button>
+            </div>
+          </div>
+          <p id="avizierLastRefreshed" class="refresh-meta">Last refreshed: -</p>
+
+          <section id="createAvizierCard" class="card hidden" style="margin-top: 12px">
+            <h3>Create Announcement</h3>
+            <form id="createAvizierForm" class="stack" style="margin-top: 8px">
+              <div>
+                <label for="avizierTitle">Title</label>
+                <input id="avizierTitle" maxlength="200" placeholder="e.g. Water maintenance notice" required />
+              </div>
+              <div>
+                <label for="avizierMessage">Message</label>
+                <textarea id="avizierMessage" maxlength="4000" placeholder="Write the full announcement..." required></textarea>
+              </div>
+              <div>
+                <label for="avizierScope">Scope</label>
+                <select id="avizierScope">
+                  <option value="general">General</option>
+                  <option value="building">Per building</option>
+                </select>
+              </div>
+              <div id="avizierBuildingRow" class="hidden">
+                <label for="avizierBuilding">Building</label>
+                <select id="avizierBuilding"></select>
+              </div>
+              <div>
+                <label for="avizierFiles">Attachments (JPG/PDF, max 10MB each)</label>
+                <input id="avizierFiles" type="file" multiple accept=".jpg,.jpeg,application/pdf,image/jpeg,image/jpg" />
+                <p id="avizierUploadStatus" class="upload-status">No files selected.</p>
+              </div>
+              <button id="createAvizierBtn" type="submit" data-default-text="Post Announcement">Post Announcement</button>
+            </form>
+          </section>
+
+          <section class="card" style="margin-top: 12px">
+            <h3>Announcements <span class="count-pill" id="avizierCount">0</span></h3>
+            <div id="avizierList" class="stack" style="margin-top: 8px"></div>
           </section>
         </section>
 
@@ -3101,14 +3172,18 @@
       const MODULE_QUERY_TO_ID = {
         parking: "parkingModule",
         marketplace: "marketplaceModule",
+        avizier: "avizierModule",
         voting: "votingModule",
       };
       const MODULE_ID_TO_TITLE = {
         parkingModule: "Parking",
         marketplaceModule: "Marketplace",
+        avizierModule: "Avizier",
         votingModule: "Voting",
       };
       const MARKETPLACE_MAX_FILE_BYTES = 5 * 1024 * 1024;
+      const AVIZIER_MAX_FILE_BYTES = 10 * 1024 * 1024;
+      const AVIZIER_ALLOWED_FILE_TYPES = new Set(["image/jpeg", "image/jpg", "application/pdf"]);
       const HELP_ITEMS = {
         global: [
           {
@@ -3139,6 +3214,17 @@
           {
             question: "How do donation claims work?",
             answer: "Donation listings can be claimed from the listing card when still available.",
+          },
+        ],
+        avizier: [
+          {
+            question: "Who can post in Avizier?",
+            answer:
+              "Admin can post everywhere. Comitet can post general and any building. Reprezentant Bloc can post only for their own building.",
+          },
+          {
+            question: "What files are accepted?",
+            answer: "Only JPG and PDF attachments are accepted, up to 10MB per file.",
           },
         ],
         voting: [
@@ -3175,8 +3261,10 @@
         countClosedPolls: document.getElementById("countClosedPolls"),
         refreshParkingBtn: document.getElementById("refreshParkingBtn"),
         refreshPollsBtn: document.getElementById("refreshPollsBtn"),
+        refreshAvizierBtn: document.getElementById("refreshAvizierBtn"),
         parkingLastRefreshed: document.getElementById("parkingLastRefreshed"),
         marketplaceLastRefreshed: document.getElementById("marketplaceLastRefreshed"),
+        avizierLastRefreshed: document.getElementById("avizierLastRefreshed"),
         votingLastRefreshed: document.getElementById("votingLastRefreshed"),
         pollModal: document.getElementById("pollModal"),
         pollModalTitle: document.getElementById("pollModalTitle"),
@@ -3193,6 +3281,7 @@
         parkingModule: document.getElementById("parkingModule"),
         parkingModeBanner: document.getElementById("parkingModeBanner"),
         marketplaceModule: document.getElementById("marketplaceModule"),
+        avizierModule: document.getElementById("avizierModule"),
         votingModule: document.getElementById("votingModule"),
         refreshMarketplaceBtn: document.getElementById("refreshMarketplaceBtn"),
         marketplaceCategoryTabs: document.getElementById("marketplaceCategoryTabs"),
@@ -3220,6 +3309,18 @@
         marketplaceMineCards: document.getElementById("marketplaceMineCards"),
         marketplaceActiveCount: document.getElementById("marketplaceActiveCount"),
         marketplaceMineCount: document.getElementById("marketplaceMineCount"),
+        createAvizierCard: document.getElementById("createAvizierCard"),
+        createAvizierForm: document.getElementById("createAvizierForm"),
+        createAvizierBtn: document.getElementById("createAvizierBtn"),
+        avizierTitle: document.getElementById("avizierTitle"),
+        avizierMessage: document.getElementById("avizierMessage"),
+        avizierScope: document.getElementById("avizierScope"),
+        avizierBuildingRow: document.getElementById("avizierBuildingRow"),
+        avizierBuilding: document.getElementById("avizierBuilding"),
+        avizierFiles: document.getElementById("avizierFiles"),
+        avizierUploadStatus: document.getElementById("avizierUploadStatus"),
+        avizierList: document.getElementById("avizierList"),
+        avizierCount: document.getElementById("avizierCount"),
         createPollCard: document.getElementById("createPollCard"),
         createPollForm: document.getElementById("createPollForm"),
         createPollBtn: document.getElementById("createPollBtn"),
@@ -3301,10 +3402,11 @@
       let marketplaceSelectedSort = "newest";
       let marketplaceSelectedBuilding = "all";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
+      let avizierAnnouncements = [];
       let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
       let autoRefreshIntervalId = null;
       let refreshTickerIntervalId = null;
-      const lastRefreshAt = { parking: null, marketplace: null, voting: null };
+      const lastRefreshAt = { parking: null, marketplace: null, avizier: null, voting: null };
       const closedPollSummaryCache = {};
       let actionConfirmResolver = null;
       const STATIC_ACTION_ICON_MAP = [
@@ -3313,16 +3415,19 @@
         ["#logoutBtn", "log-out"],
         ['button[data-module-target="parkingModule"]', "car-front"],
         ['button[data-module-target="marketplaceModule"]', "store"],
+        ['button[data-module-target="avizierModule"]', "newspaper"],
         ['button[data-module-target="votingModule"]', "vote"],
         ['button[data-go-profile]', "user-cog"],
         ["#refreshParkingBtn", "refresh-cw"],
         ["#refreshMarketplaceBtn", "refresh-cw"],
+        ["#refreshAvizierBtn", "refresh-cw"],
         ["#refreshPollsBtn", "refresh-cw"],
         ["#shareBtn", "share-2"],
         ["#claimBtn", "hand"],
         ["#createUserBtn", "user-plus"],
         ["#adminShareBtn", "plus-circle"],
         ["#marketplaceCreateBtn", "package-plus"],
+        ["#createAvizierBtn", "megaphone"],
         ["#createPollBtn", "list-plus"],
         ["#pollWizardNextBtn", "arrow-right"],
         ["#pollWizardPrevBtn", "arrow-left"],
@@ -3397,6 +3502,7 @@
       function moduleKeyFromId(moduleId) {
         if (moduleId === "parkingModule") return "parking";
         if (moduleId === "marketplaceModule") return "marketplace";
+        if (moduleId === "avizierModule") return "avizier";
         if (moduleId === "votingModule") return "voting";
         return "global";
       }
@@ -3416,6 +3522,7 @@
         const labels = [
           ["parking", els.parkingLastRefreshed],
           ["marketplace", els.marketplaceLastRefreshed],
+          ["avizier", els.avizierLastRefreshed],
           ["voting", els.votingLastRefreshed],
         ];
         labels.forEach(([key, labelEl]) => {
@@ -3430,6 +3537,7 @@
         const labelMap = {
           parking: els.parkingLastRefreshed,
           marketplace: els.marketplaceLastRefreshed,
+          avizier: els.avizierLastRefreshed,
           voting: els.votingLastRefreshed,
         };
         const labelEl = labelMap[key];
@@ -3752,6 +3860,8 @@
         els.parkingModule.classList.remove("is-visible");
         els.marketplaceModule.classList.add("hidden");
         els.marketplaceModule.classList.remove("is-visible");
+        els.avizierModule.classList.add("hidden");
+        els.avizierModule.classList.remove("is-visible");
         els.votingModule.classList.add("hidden");
         els.votingModule.classList.remove("is-visible");
       }
@@ -3761,7 +3871,7 @@
         setDocumentTitle(moduleId);
         els.modulesCard.classList.add("hidden");
         els.modulesCard.classList.remove("is-visible");
-        const modules = [els.parkingModule, els.marketplaceModule, els.votingModule];
+        const modules = [els.parkingModule, els.marketplaceModule, els.avizierModule, els.votingModule];
         modules.forEach((moduleEl) => {
           if (moduleEl.id === moduleId) {
             moduleEl.classList.remove("hidden");
@@ -3776,6 +3886,9 @@
         }
         if (moduleId === "marketplaceModule") {
           refreshMarketplace().catch((error) => setStatus(error.message, true));
+        }
+        if (moduleId === "avizierModule") {
+          refreshAvizier().catch((error) => setStatus(error.message, true));
         }
         if (moduleId === "votingModule") {
           refreshVoting().catch((error) => setStatus(error.message, true));
@@ -4542,7 +4655,7 @@
         els.allUsers.innerHTML = users
           .map(
             (u) =>
-              `<tr>${td(u.username)}${td(u.role)}${td(u.building_number)}${td(u.apartment_number)}${td(u.phone_number || "-")}</tr>`
+              `<tr>${td(u.username)}${td(u.role)}${td(avizierPermissionLabel(u.avizier_permission))}${td(u.building_number)}${td(u.apartment_number)}${td(u.phone_number || "-")}</tr>`
           )
           .join("");
         els.allUsersCards.innerHTML = users.length
@@ -4555,6 +4668,7 @@
                       <span class="parking-status-badge default">${u.role}</span>
                     </div>
                     <div class="parking-spot-meta">
+                      <div>Avizier: ${avizierPermissionLabel(u.avizier_permission)}</div>
                       <div>Building: ${u.building_number} | Apt: ${u.apartment_number}</div>
                       <div>Phone: ${u.phone_number || "-"}</div>
                     </div>
@@ -5106,6 +5220,156 @@
         markModuleRefreshed("marketplace");
       }
 
+      function avizierPermissionLabel(permission) {
+        if (permission === "comitet") return "Comitet";
+        if (permission === "reprezentant_bloc") return "Reprezentant Bloc";
+        return "None";
+      }
+
+      function canPostAvizier(user, scope, buildingId = null) {
+        if (!user) return false;
+        if (user.role === "admin") return true;
+        if (user.avizier_permission === "comitet") return true;
+        if (user.avizier_permission === "reprezentant_bloc") {
+          return scope === "building" && Number(buildingId || 0) === Number(user.building_number || 0);
+        }
+        return false;
+      }
+
+      function normalizeAvizierFileType(fileType, fileName) {
+        const lowered = String(fileType || "").toLowerCase();
+        if (lowered) return lowered;
+        const fileLower = String(fileName || "").toLowerCase();
+        if (fileLower.endsWith(".pdf")) return "application/pdf";
+        if (fileLower.endsWith(".jpg") || fileLower.endsWith(".jpeg")) return "image/jpeg";
+        return "";
+      }
+
+      function setAvizierUploadStatus(message, kind = "") {
+        els.avizierUploadStatus.textContent = message;
+        els.avizierUploadStatus.classList.remove("error", "success");
+        if (kind) {
+          els.avizierUploadStatus.classList.add(kind);
+        }
+      }
+
+      function updateAvizierFormVisibility() {
+        if (!currentUser) {
+          els.createAvizierCard.classList.add("hidden");
+          return;
+        }
+        const hasPostAccess =
+          currentUser.role === "admin" ||
+          currentUser.avizier_permission === "comitet" ||
+          currentUser.avizier_permission === "reprezentant_bloc";
+        els.createAvizierCard.classList.toggle("hidden", !hasPostAccess);
+        if (!hasPostAccess) return;
+
+        if (currentUser.avizier_permission === "reprezentant_bloc" && currentUser.role !== "admin") {
+          els.avizierScope.value = "building";
+          els.avizierScope.disabled = true;
+          els.avizierBuilding.value = String(currentUser.building_number || "");
+          els.avizierBuilding.disabled = true;
+          els.avizierBuildingRow.classList.remove("hidden");
+          return;
+        }
+
+        els.avizierScope.disabled = false;
+        const isBuilding = els.avizierScope.value === "building";
+        els.avizierBuildingRow.classList.toggle("hidden", !isBuilding);
+        els.avizierBuilding.disabled = !isBuilding;
+      }
+
+      async function uploadAvizierAttachments(files, onProgress = null) {
+        const uploaded = [];
+        for (let i = 0; i < files.length; i += 1) {
+          const file = files[i];
+          const normalizedType = normalizeAvizierFileType(file.type, file.name);
+          if (!AVIZIER_ALLOWED_FILE_TYPES.has(normalizedType)) {
+            throw new Error(`Unsupported file type for ${file.name}. Allowed: JPG or PDF.`);
+          }
+          if (file.size > AVIZIER_MAX_FILE_BYTES) {
+            throw new Error(`${file.name} exceeds 10MB.`);
+          }
+          if (typeof onProgress === "function") {
+            onProgress({
+              index: i + 1,
+              total: files.length,
+              fileName: file.name,
+              stage: "upload",
+            });
+          }
+
+          const form = new FormData();
+          form.append("file", file);
+          form.append("module_name", "avizier");
+          const uploadRes = await fetch("/api/uploads/direct", { method: "POST", body: form });
+          const uploadData = await uploadRes.json().catch(() => ({}));
+          if (!uploadRes.ok) {
+            throw new Error(uploadData.error || `Upload failed for ${file.name}`);
+          }
+          uploaded.push({
+            file_url: uploadData.file_url,
+            file_name: uploadData.file_name || file.name,
+            file_type: uploadData.file_type || normalizedType,
+            file_size_bytes: Number(uploadData.file_size_bytes || file.size || 0),
+          });
+        }
+        return uploaded;
+      }
+
+      function renderAvizierAnnouncements(items) {
+        avizierAnnouncements = Array.isArray(items) ? items : [];
+        els.avizierCount.textContent = String(avizierAnnouncements.length);
+        if (!avizierAnnouncements.length) {
+          els.avizierList.innerHTML = `<div class="poll-card-empty">${iconMarkup("newspaper")}<span>No announcements available.</span></div>`;
+          hydrateLucideIcons();
+          return;
+        }
+
+        els.avizierList.innerHTML = avizierAnnouncements
+          .map((item) => {
+            const scopeLabel = item.scope === "building" ? `Bloc ${item.building_id}` : "General";
+            const attachments = Array.isArray(item.attachments) ? item.attachments : [];
+            return `
+              <article class="poll-card">
+                <div class="poll-card-head">
+                  <h4>${item.title}</h4>
+                  <span class="poll-countdown">${iconMarkup("calendar-clock")}<span>${formatBucharestDateTime(item.created_at)}</span></span>
+                </div>
+                <div class="poll-meta">
+                  <span class="poll-chip scope ${item.scope === "building" ? "building" : "neighbourhood"}">${iconMarkup(
+                    item.scope === "building" ? "building-2" : "map-pinned"
+                  )}<span>${scopeLabel}</span></span>
+                  <span class="poll-chip type">${iconMarkup("user")}<span>${item.created_by_username || "-"}</span></span>
+                </div>
+                <p style="margin:10px 0 0">${item.message}</p>
+                <div style="margin-top:8px">
+                  ${
+                    attachments.length
+                      ? attachments
+                          .map(
+                            (attachment) =>
+                              `<a class="pill" href="${attachment.file_url}" target="_blank" rel="noopener noreferrer">${attachment.file_name}</a>`
+                          )
+                          .join(" ")
+                      : `<span class="poll-note">No attachments.</span>`
+                  }
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+        hydrateLucideIcons();
+      }
+
+      async function refreshAvizier() {
+        if (!currentUser) return;
+        const data = await api("/api/avizier");
+        renderAvizierAnnouncements(data);
+        markModuleRefreshed("avizier");
+      }
+
       function renderActivePollCards(polls) {
         els.activePolls.innerHTML = polls.length
           ? polls
@@ -5255,6 +5519,9 @@
           }
           if (!currentModule || currentModule === "marketplaceModule") {
             await withRefreshPulse(els.refreshMarketplaceBtn, async () => refreshMarketplace());
+          }
+          if (!currentModule || currentModule === "avizierModule") {
+            await withRefreshPulse(els.refreshAvizierBtn, async () => refreshAvizier());
           }
           if (!currentModule || currentModule === "votingModule") {
             await withRefreshPulse(els.refreshPollsBtn, async () => refreshVoting());
@@ -5610,6 +5877,7 @@
           stopAutoRefresh();
           lastRefreshAt.parking = null;
           lastRefreshAt.marketplace = null;
+          lastRefreshAt.avizier = null;
           lastRefreshAt.voting = null;
           closeAllModals();
           els.loginCard.classList.remove("hidden");
@@ -5626,6 +5894,8 @@
           clearPollLists();
           clearMarketplaceTables();
           clearMarketplaceUploadState();
+          renderAvizierAnnouncements([]);
+          updateAvizierFormVisibility();
           return;
         }
 
@@ -5648,6 +5918,7 @@
         setPollFormDefaults();
         setPollWizardStep(1);
         updateMarketplaceFormVisibility();
+        updateAvizierFormVisibility();
 
         if (user.role === "admin") {
           els.adminPanel.classList.remove("hidden");
@@ -5680,6 +5951,7 @@
               refreshDashboard(),
               refreshAdminUsers(),
               refreshMarketplace(),
+              refreshAvizier(),
               refreshVoting(),
             ]);
             showToast("Login successful.");
@@ -5757,6 +6029,7 @@
                 password: document.getElementById("newPassword").value,
                 phone_number: document.getElementById("newPhone").value,
                 role: document.getElementById("newRole").value,
+                avizier_permission: document.getElementById("newAvizierPermission").value,
                 building_number: Number(document.getElementById("newBuilding").value),
                 apartment_number: Number(document.getElementById("newApartment").value),
               }),
@@ -5839,6 +6112,15 @@
         try {
           await withRefreshPulse(els.refreshMarketplaceBtn, async () => refreshMarketplace());
           showToast("Marketplace refreshed.", "info");
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+
+      els.refreshAvizierBtn.addEventListener("click", async () => {
+        try {
+          await withRefreshPulse(els.refreshAvizierBtn, async () => refreshAvizier());
+          showToast("Avizier refreshed.", "info");
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -6053,6 +6335,74 @@
       els.pollType.addEventListener("change", () => {
         updatePollFormVisibility();
         if (pollWizardStep === 4) renderPollReviewSummary();
+      });
+
+      els.avizierScope.addEventListener("change", () => {
+        updateAvizierFormVisibility();
+      });
+
+      els.avizierFiles.addEventListener("change", () => {
+        const files = Array.from(els.avizierFiles.files || []);
+        if (!files.length) {
+          setAvizierUploadStatus("No files selected.");
+          return;
+        }
+        setAvizierUploadStatus(`${files.length} file(s) selected.`);
+      });
+
+      els.createAvizierForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const scope = els.avizierScope.value;
+        const buildingId =
+          scope === "building"
+            ? Number(els.avizierBuilding.value || currentUser?.building_number || 0)
+            : null;
+        if (!canPostAvizier(currentUser, scope, buildingId)) {
+          setStatus("You do not have permission to post this announcement.", true);
+          return;
+        }
+
+        await withButtonProgress(els.createAvizierBtn, "Posting...", async () => {
+          try {
+            const files = Array.from(els.avizierFiles.files || []);
+            let attachments = [];
+            if (files.length) {
+              setAvizierUploadStatus(`Uploading ${files.length} file(s)...`);
+              attachments = await uploadAvizierAttachments(files, (progress) => {
+                setAvizierUploadStatus(
+                  `Uploading ${progress.index}/${progress.total}: ${progress.fileName}...`
+                );
+              });
+              setAvizierUploadStatus(`Upload complete: ${attachments.length} file(s).`, "success");
+            } else {
+              setAvizierUploadStatus("No files selected.");
+            }
+
+            const payload = {
+              title: els.avizierTitle.value.trim(),
+              message: (els.avizierMessage.value || "").trim(),
+              scope,
+              building_id: scope === "building" ? buildingId : null,
+              attachments,
+            };
+            await api("/api/avizier", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+            showToast("Announcement posted.");
+            els.createAvizierForm.reset();
+            setAvizierUploadStatus("No files selected.");
+            if (currentUser?.avizier_permission === "reprezentant_bloc" && currentUser?.role !== "admin") {
+              els.avizierScope.value = "building";
+              els.avizierBuilding.value = String(currentUser.building_number || "");
+            }
+            updateAvizierFormVisibility();
+            await refreshAvizier();
+          } catch (error) {
+            setStatus(error.message, true);
+            setAvizierUploadStatus(`Upload failed: ${error.message || "unknown error"}`, "error");
+          }
+        });
       });
 
       els.pollScope.addEventListener("change", () => {
@@ -6292,6 +6642,18 @@
         }
       });
 
+      document.getElementById("newRole").addEventListener("change", (event) => {
+        const isAdminRole = event.target.value === "admin";
+        const permissionSelect = document.getElementById("newAvizierPermission");
+        if (!permissionSelect) return;
+        if (isAdminRole) {
+          permissionSelect.value = "none";
+          permissionSelect.disabled = true;
+        } else {
+          permissionSelect.disabled = false;
+        }
+      });
+
       document.getElementById("adminOwnerUsername").addEventListener("input", (event) => {
         event.target.value = normalizeUsername(event.target.value);
       });
@@ -6335,6 +6697,7 @@
       async function boot() {
         fillBuildingSelect("claimBuilding", true);
         fillBuildingSelect("newBuilding");
+        fillBuildingSelect("avizierBuilding");
         fillBuildingSelect("pollBuilding");
         setActiveTab("action", "actionSharePanel");
         setActiveTab("activity", "activityFreePanel");
@@ -6349,8 +6712,10 @@
         applyStaticActionIcons();
         clearMarketplaceTables();
         clearMarketplaceUploadState();
+        setAvizierUploadStatus("No files selected.");
         updateRefreshMetaLabels();
         showModuleChooser();
+        document.getElementById("newRole").dispatchEvent(new Event("change"));
 
         try {
           const me = await api("/api/auth/me");
@@ -6364,6 +6729,7 @@
             refreshDashboard(),
             refreshAdminUsers(),
             refreshMarketplace(),
+            refreshAvizier(),
             refreshVoting(),
           ]);
         } catch (error) {

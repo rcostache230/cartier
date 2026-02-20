@@ -10,6 +10,10 @@ import {
 } from "../../../lib/r2.js";
 import {
   ABOVE_GROUND_CAPACITY_PER_BUILDING,
+  AVIZIER_ALLOWED_ATTACHMENT_TYPES,
+  AVIZIER_MAX_ATTACHMENT_BYTES,
+  AVIZIER_POST_PERMISSIONS,
+  AVIZIER_SCOPES,
   BUCHAREST_TIMEZONE,
   DEFAULT_ADMIN_USERNAME,
   MARKETPLACE_CATEGORIES,
@@ -28,6 +32,9 @@ export const runtime = "nodejs";
 
 const SESSION_COOKIE = "cartier_session";
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
+const AVIZIER_ALLOWED_ATTACHMENT_TYPES_SET = new Set(
+  AVIZIER_ALLOWED_ATTACHMENT_TYPES.map((value) => String(value).toLowerCase())
+);
 
 class AppError extends Error {
   constructor(status, message, details = null) {
@@ -83,6 +90,39 @@ function validateParkingType(parkingType) {
   }
 }
 
+function normalizeAvizierPermission(value) {
+  const normalized = String(value == null ? "none" : value)
+    .trim()
+    .toLowerCase();
+  if (!AVIZIER_POST_PERMISSIONS.includes(normalized)) {
+    throw new AppError(400, `avizier_permission must be one of: ${AVIZIER_POST_PERMISSIONS.join(", ")}`);
+  }
+  return normalized;
+}
+
+function normalizeMimeType(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function resolveMimeType(fileType, fileName = "") {
+  const normalized = normalizeMimeType(fileType);
+  if (normalized) return normalized;
+  const loweredName = String(fileName || "").trim().toLowerCase();
+  if (loweredName.endsWith(".pdf")) return "application/pdf";
+  if (loweredName.endsWith(".jpg") || loweredName.endsWith(".jpeg")) return "image/jpeg";
+  return normalized;
+}
+
+function isAllowedAvizierAttachmentType(fileType) {
+  return AVIZIER_ALLOWED_ATTACHMENT_TYPES_SET.has(normalizeMimeType(fileType));
+}
+
+function canManageAllAvizier(user) {
+  return user.role === "admin" || user.avizier_permission === "comitet";
+}
+
 function parseSlotDateTime(value, fieldName) {
   const raw = String(value || "").trim();
   if (!raw) throw new AppError(400, `invalid datetime '${value}', use ISO format like 2026-02-14T18:30`);
@@ -126,6 +166,7 @@ function mapUser(row) {
     id: Number(row.id),
     username: String(row.username),
     role: String(row.role),
+    avizier_permission: String(row.avizier_permission || "none"),
     building_number: Number(row.building_number),
     apartment_number: Number(row.apartment_number),
     phone_number: String(row.phone_number || ""),
@@ -202,6 +243,31 @@ function mapAttachment(row) {
   };
 }
 
+function mapAvizierAnnouncement(row) {
+  return {
+    id: String(row.id),
+    title: String(row.title),
+    message: String(row.message || ""),
+    scope: String(row.scope),
+    building_id: row.building_id == null ? null : Number(row.building_id),
+    created_by: Number(row.created_by),
+    created_by_username: String(row.created_by_username || ""),
+    created_at: String(row.created_at),
+    updated_at: String(row.updated_at),
+  };
+}
+
+function mapAvizierAttachment(row) {
+  return {
+    id: String(row.id),
+    announcement_id: String(row.announcement_id),
+    file_url: String(row.file_url),
+    file_name: String(row.file_name),
+    file_type: String(row.file_type),
+    file_size_bytes: Number(row.file_size_bytes || 0),
+  };
+}
+
 function mapMarketplacePhoto(row) {
   return {
     id: String(row.id),
@@ -239,6 +305,7 @@ async function getUserById(userId) {
   const result = await query(
     `
       SELECT id, username, role, building_number, apartment_number, phone_number
+           , avizier_permission
       FROM users
       WHERE id = $1
     `,
@@ -252,7 +319,7 @@ async function getUserByUsername(username) {
   const normalized = normalizeUsername(username);
   const result = await query(
     `
-      SELECT id, username, role, building_number, apartment_number, phone_number, password_hash
+      SELECT id, username, role, building_number, apartment_number, phone_number, avizier_permission, password_hash
       FROM users
       WHERE username = $1
     `,
@@ -266,7 +333,7 @@ async function authenticateUser(username, password) {
   const normalized = normalizeUsername(username);
   const result = await query(
     `
-      SELECT id, username, role, building_number, apartment_number, phone_number, password_hash
+      SELECT id, username, role, building_number, apartment_number, phone_number, avizier_permission, password_hash
       FROM users
       WHERE username = $1
     `,
@@ -332,7 +399,7 @@ async function updatePhoneNumber({ user, phoneNumber }) {
       UPDATE users
       SET phone_number = $1
       WHERE id = $2
-      RETURNING id, username, role, building_number, apartment_number, phone_number
+      RETURNING id, username, role, building_number, apartment_number, phone_number, avizier_permission
     `,
     [normalizedPhone, user.id]
   );
@@ -343,7 +410,7 @@ async function updatePhoneNumber({ user, phoneNumber }) {
 async function updateUserByAdmin({ targetUserId, payload }) {
   const existingResult = await query(
     `
-      SELECT id, username, role, building_number, apartment_number, phone_number
+      SELECT id, username, role, building_number, apartment_number, phone_number, avizier_permission
       FROM users
       WHERE id = $1
     `,
@@ -370,6 +437,10 @@ async function updateUserByAdmin({ targetUserId, payload }) {
       : Number(payload.apartment_number);
   const phoneNumber =
     payload.phone_number == null ? String(existing.phone_number || "") : String(payload.phone_number || "").trim();
+  let avizierPermission =
+    payload.avizier_permission == null || payload.avizier_permission === ""
+      ? String(existing.avizier_permission || "none")
+      : normalizeAvizierPermission(payload.avizier_permission);
 
   if (phoneNumber.length > 64) {
     throw new AppError(400, "phone_number must be at most 64 characters");
@@ -378,11 +449,13 @@ async function updateUserByAdmin({ targetUserId, payload }) {
   if (role === "admin") {
     buildingNumber = 0;
     apartmentNumber = 0;
+    avizierPermission = "none";
   } else {
     validateBuildingNumber(buildingNumber);
     if (!Number.isInteger(apartmentNumber) || apartmentNumber < 1 || apartmentNumber > 16) {
       throw new AppError(400, "apartment_number must be between 1 and 16");
     }
+    avizierPermission = normalizeAvizierPermission(avizierPermission);
   }
 
   const updated = await query(
@@ -391,11 +464,12 @@ async function updateUserByAdmin({ targetUserId, payload }) {
       SET role = $1,
           building_number = $2,
           apartment_number = $3,
-          phone_number = $4
-      WHERE id = $5
-      RETURNING id, username, role, building_number, apartment_number, phone_number
+          phone_number = $4,
+          avizier_permission = $5
+      WHERE id = $6
+      RETURNING id, username, role, building_number, apartment_number, phone_number, avizier_permission
     `,
-    [role, buildingNumber, apartmentNumber, phoneNumber, targetUserId]
+    [role, buildingNumber, apartmentNumber, phoneNumber, avizierPermission, targetUserId]
   );
   if (!updated.rowCount) throw new AppError(404, "user not found");
   return mapUser(updated.rows[0]);
@@ -442,6 +516,35 @@ function requirePollVisible(poll, user) {
   if (poll.scope === "building" && Number(poll.building_id || 0) !== Number(user.building_number || 0)) {
     throw new AppError(403, "poll restricted to another building");
   }
+}
+
+function requireAvizierVisible(announcement, user) {
+  if (canManageAllAvizier(user)) return;
+  if (
+    announcement.scope === "building" &&
+    Number(announcement.building_id || 0) !== Number(user.building_number || 0)
+  ) {
+    throw new AppError(403, "announcement restricted to another building");
+  }
+}
+
+function ensureAvizierPostPermission({ user, scope, buildingId }) {
+  if (user.role === "admin") return;
+  const permission = normalizeAvizierPermission(user.avizier_permission || "none");
+  if (permission === "comitet") return;
+  if (permission === "reprezentant_bloc") {
+    if (scope !== "building") {
+      throw new AppError(403, "reprezentant_bloc can post only building announcements");
+    }
+    if (Number(user.building_number || 0) < 1) {
+      throw new AppError(403, "reprezentant_bloc requires a valid building assignment");
+    }
+    if (Number(buildingId || 0) !== Number(user.building_number || 0)) {
+      throw new AppError(403, "reprezentant_bloc can post only for own building");
+    }
+    return;
+  }
+  throw new AppError(403, "you do not have permission to post in avizier");
 }
 
 async function getSlotById(slotId) {
@@ -1274,6 +1377,250 @@ async function getProfileOverview(user) {
   };
 }
 
+function normalizeAvizierAttachments(rawAttachments) {
+  if (rawAttachments == null) return [];
+  if (!Array.isArray(rawAttachments)) {
+    throw new AppError(400, "attachments must be an array");
+  }
+  if (rawAttachments.length > 12) {
+    throw new AppError(400, "at most 12 attachments are allowed");
+  }
+
+  return rawAttachments.map((attachment, idx) => {
+    if (typeof attachment !== "object" || attachment == null) {
+      throw new AppError(400, `attachments[${idx + 1}] must be an object`);
+    }
+    const fileUrl = String(attachment.file_url || "").trim();
+    const fileName = String(attachment.file_name || "").trim();
+    const fileType = normalizeMimeType(attachment.file_type || "");
+    const fileSizeBytes = Number(attachment.file_size_bytes || 0);
+    if (!fileUrl || !fileName || !fileType) {
+      throw new AppError(400, `attachments[${idx + 1}] requires file_url, file_name, file_type`);
+    }
+    if (!isAllowedAvizierAttachmentType(fileType)) {
+      throw new AppError(400, `attachments[${idx + 1}] file_type must be JPG or PDF`);
+    }
+    if (!Number.isInteger(fileSizeBytes) || fileSizeBytes <= 0) {
+      throw new AppError(400, `attachments[${idx + 1}] file_size_bytes is required`);
+    }
+    if (fileSizeBytes > AVIZIER_MAX_ATTACHMENT_BYTES) {
+      throw new AppError(400, `attachments[${idx + 1}] exceeds 10MB limit`);
+    }
+
+    return {
+      file_url: fileUrl,
+      file_name: fileName,
+      file_type: fileType,
+      file_size_bytes: fileSizeBytes,
+    };
+  });
+}
+
+function normalizeAvizierCreatePayload(payload) {
+  if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+    throw new AppError(400, "invalid payload");
+  }
+
+  const title = String(payload.title || "").trim();
+  if (!title) throw new AppError(400, "title is required");
+  if (title.length > 200) throw new AppError(400, "title must be at most 200 characters");
+
+  const message = String(payload.message || "").trim();
+  if (!message) throw new AppError(400, "message is required");
+  if (message.length > 4000) throw new AppError(400, "message must be at most 4000 characters");
+
+  const scope = String(payload.scope || "").trim().toLowerCase();
+  if (!AVIZIER_SCOPES.includes(scope)) {
+    throw new AppError(400, `scope must be one of: ${AVIZIER_SCOPES.join(", ")}`);
+  }
+
+  let buildingId = payload.building_id == null || payload.building_id === "" ? null : Number(payload.building_id);
+  if (scope === "building") {
+    if (buildingId == null) {
+      throw new AppError(400, "building_id is required for building scope");
+    }
+    buildingId = validateBuildingNumber(buildingId);
+  } else {
+    buildingId = null;
+  }
+
+  return {
+    title,
+    message,
+    scope,
+    building_id: buildingId,
+    attachments: normalizeAvizierAttachments(payload.attachments),
+  };
+}
+
+async function getAvizierAttachments(announcementId) {
+  const result = await query(
+    `
+      SELECT id, announcement_id, file_url, file_name, file_type, file_size_bytes
+      FROM avizier_attachments
+      WHERE announcement_id = $1
+      ORDER BY file_name ASC
+    `,
+    [announcementId]
+  );
+  return result.rows.map(mapAvizierAttachment);
+}
+
+async function attachAvizierAttachments(announcements) {
+  if (!announcements.length) return announcements;
+  const ids = announcements.map((announcement) => announcement.id);
+  const result = await query(
+    `
+      SELECT id, announcement_id, file_url, file_name, file_type, file_size_bytes
+      FROM avizier_attachments
+      WHERE announcement_id = ANY($1::TEXT[])
+      ORDER BY announcement_id ASC, file_name ASC
+    `,
+    [ids]
+  );
+  const byAnnouncement = new Map();
+  result.rows.map(mapAvizierAttachment).forEach((item) => {
+    if (!byAnnouncement.has(item.announcement_id)) {
+      byAnnouncement.set(item.announcement_id, []);
+    }
+    byAnnouncement.get(item.announcement_id).push(item);
+  });
+  announcements.forEach((announcement) => {
+    announcement.attachments = byAnnouncement.get(announcement.id) || [];
+  });
+  return announcements;
+}
+
+async function getAvizierAnnouncementById(announcementId) {
+  const result = await query(
+    `
+      SELECT
+        a.*,
+        u.username AS created_by_username
+      FROM avizier_announcements a
+      JOIN users u ON u.id = a.created_by
+      WHERE a.id = $1
+    `,
+    [announcementId]
+  );
+  if (!result.rowCount) {
+    throw new AppError(404, "announcement not found");
+  }
+  const announcement = mapAvizierAnnouncement(result.rows[0]);
+  announcement.attachments = await getAvizierAttachments(announcement.id);
+  return announcement;
+}
+
+async function listAvizierAnnouncementsForViewer({ viewer, scope = null, buildingId = null }) {
+  const where = [];
+  const params = [];
+
+  if (scope != null) {
+    const normalizedScope = String(scope).trim().toLowerCase();
+    if (!AVIZIER_SCOPES.includes(normalizedScope)) {
+      throw new AppError(400, `scope must be one of: ${AVIZIER_SCOPES.join(", ")}`);
+    }
+    params.push(normalizedScope);
+    where.push(`a.scope = $${params.length}`);
+  }
+
+  if (buildingId != null) {
+    const building = validateBuildingNumber(buildingId);
+    if (!canManageAllAvizier(viewer) && Number(viewer.building_number || 0) !== building) {
+      throw new AppError(403, "building filter is restricted to your building");
+    }
+    params.push(building);
+    where.push(`a.building_id = $${params.length}`);
+  }
+
+  if (!canManageAllAvizier(viewer)) {
+    params.push(Number(viewer.building_number || 0));
+    where.push(`(a.scope = 'general' OR (a.scope = 'building' AND a.building_id = $${params.length}))`);
+  }
+
+  const whereClause = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const result = await query(
+    `
+      SELECT
+        a.*,
+        u.username AS created_by_username
+      FROM avizier_announcements a
+      JOIN users u ON u.id = a.created_by
+      ${whereClause}
+      ORDER BY a.created_at DESC
+    `,
+    params
+  );
+
+  return attachAvizierAttachments(result.rows.map(mapAvizierAnnouncement));
+}
+
+async function createAvizierAnnouncement({ user, payload }) {
+  const cleaned = normalizeAvizierCreatePayload(payload);
+  ensureAvizierPostPermission({
+    user,
+    scope: cleaned.scope,
+    buildingId: cleaned.scope === "building" ? cleaned.building_id : null,
+  });
+
+  const announcementId = crypto.randomUUID();
+  const now = nowIsoUtc();
+
+  await withTransaction(async (client) => {
+    await client.query(
+      `
+        INSERT INTO avizier_announcements (
+          id,
+          title,
+          message,
+          scope,
+          building_id,
+          created_by,
+          created_at,
+          updated_at
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `,
+      [
+        announcementId,
+        cleaned.title,
+        cleaned.message,
+        cleaned.scope,
+        cleaned.building_id,
+        user.id,
+        now,
+        now,
+      ]
+    );
+
+    for (const attachment of cleaned.attachments) {
+      await client.query(
+        `
+          INSERT INTO avizier_attachments (
+            id,
+            announcement_id,
+            file_url,
+            file_name,
+            file_type,
+            file_size_bytes
+          )
+          VALUES ($1, $2, $3, $4, $5, $6)
+        `,
+        [
+          crypto.randomUUID(),
+          announcementId,
+          attachment.file_url,
+          attachment.file_name,
+          attachment.file_type,
+          attachment.file_size_bytes,
+        ]
+      );
+    }
+  });
+
+  return getAvizierAnnouncementById(announcementId);
+}
+
 function parseOptionalInt(value, fieldName) {
   if (value == null || value === "") return null;
   const parsed = Number(value);
@@ -2014,7 +2361,7 @@ async function handleRequest(request, slug) {
   if (method === "GET" && path.length === 0) {
     return json({
       service: "neighbourhood-app-api",
-      version: "5.0.0-next",
+      version: "5.1.0-next",
       defaults: { admin_username: DEFAULT_ADMIN_USERNAME },
       parking_types: [...PARKING_TYPES].sort(),
       marketplace_listing_types: [...MARKETPLACE_LISTING_TYPES],
@@ -2036,6 +2383,9 @@ async function handleRequest(request, slug) {
         poll_create: "POST /api/polls",
         poll_vote: "POST /api/polls/<poll_id>/vote",
         poll_results: "GET /api/polls/<poll_id>/results",
+        avizier_list: "GET /api/avizier",
+        avizier_create: "POST /api/avizier",
+        avizier_get: "GET /api/avizier/<announcement_id>",
         upload_presign: "POST /api/uploads/presign",
         upload_direct: "POST /api/uploads/direct",
       },
@@ -2119,7 +2469,23 @@ async function handleRequest(request, slug) {
       return jsonError("invalid payload", 400, { file_name: "required string" });
     }
     const fileType = String(payload.file_type || "application/octet-stream").trim() || "application/octet-stream";
-    const moduleName = String(payload.module_name || "misc").trim();
+    const normalizedFileType = resolveMimeType(fileType, fileName);
+    const moduleName = String(payload.module_name || "misc").trim().toLowerCase();
+    const fileSizeBytes =
+      payload.file_size_bytes == null || payload.file_size_bytes === "" ? null : Number(payload.file_size_bytes);
+    if (moduleName === "avizier") {
+      if (!isAllowedAvizierAttachmentType(normalizedFileType)) {
+        throw new AppError(400, "Avizier accepts only JPG and PDF files");
+      }
+      if (fileSizeBytes != null) {
+        if (!Number.isInteger(fileSizeBytes) || fileSizeBytes <= 0) {
+          throw new AppError(400, "file_size_bytes must be a positive integer");
+        }
+        if (fileSizeBytes > AVIZIER_MAX_ATTACHMENT_BYTES) {
+          throw new AppError(400, "Avizier attachments must be at most 10MB");
+        }
+      }
+    }
 
     const target = await createUploadTarget({
       userId: user.id,
@@ -2147,20 +2513,27 @@ async function handleRequest(request, slug) {
 
     const form = await request.formData();
     const file = form.get("file");
-    const moduleName = String(form.get("module_name") || "misc").trim();
+    const moduleName = String(form.get("module_name") || "misc")
+      .trim()
+      .toLowerCase();
     if (!file || typeof file === "string" || typeof file.arrayBuffer !== "function") {
       throw new AppError(400, "file is required");
     }
 
     const fileName = String(file.name || "").trim() || "file";
     const fileType = String(file.type || "application/octet-stream") || "application/octet-stream";
-    if (typeof file.size === "number" && file.size > MAX_UPLOAD_BYTES) {
-      throw new AppError(400, `file too large (max ${Math.floor(MAX_UPLOAD_BYTES / 1024 / 1024)}MB)`);
+    const normalizedFileType = resolveMimeType(fileType, fileName);
+    const maxBytes = moduleName === "avizier" ? AVIZIER_MAX_ATTACHMENT_BYTES : MAX_UPLOAD_BYTES;
+    if (moduleName === "avizier" && !isAllowedAvizierAttachmentType(normalizedFileType)) {
+      throw new AppError(400, "Avizier accepts only JPG and PDF files");
+    }
+    if (typeof file.size === "number" && file.size > maxBytes) {
+      throw new AppError(400, `file too large (max ${Math.floor(maxBytes / 1024 / 1024)}MB)`);
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    if (arrayBuffer.byteLength > MAX_UPLOAD_BYTES) {
-      throw new AppError(400, `file too large (max ${Math.floor(MAX_UPLOAD_BYTES / 1024 / 1024)}MB)`);
+    if (arrayBuffer.byteLength > maxBytes) {
+      throw new AppError(400, `file too large (max ${Math.floor(maxBytes / 1024 / 1024)}MB)`);
     }
 
     const uploaded = await uploadObjectBuffer({
@@ -2177,6 +2550,7 @@ async function handleRequest(request, slug) {
         file_url: uploaded.fileUrl,
         file_name: fileName,
         file_type: fileType,
+        file_size_bytes: arrayBuffer.byteLength,
       },
       201
     );
@@ -2212,7 +2586,7 @@ async function handleRequest(request, slug) {
     const whereClause = where.length ? `WHERE ${where.join(" AND ")}` : "";
     const result = await query(
       `
-        SELECT id, username, role, building_number, apartment_number, phone_number
+        SELECT id, username, role, building_number, apartment_number, phone_number, avizier_permission
         FROM users
         ${whereClause}
         ORDER BY role DESC, building_number ASC, apartment_number ASC
@@ -2232,6 +2606,7 @@ async function handleRequest(request, slug) {
     let buildingNumber = Number(payload.building_number || 0);
     let apartmentNumber = Number(payload.apartment_number || 0);
     const phoneNumber = String(payload.phone_number || "").trim();
+    let avizierPermission = normalizeAvizierPermission(payload.avizier_permission == null ? "none" : payload.avizier_permission);
 
     if (!username) throw new AppError(400, "username cannot be empty");
     if (!password) throw new AppError(400, "password cannot be empty");
@@ -2240,6 +2615,7 @@ async function handleRequest(request, slug) {
     if (role === "admin") {
       buildingNumber = 0;
       apartmentNumber = 0;
+      avizierPermission = "none";
     } else {
       const inferredBuilding = inferBuildingFromUsername(username);
       if (inferredBuilding != null) buildingNumber = inferredBuilding;
@@ -2247,6 +2623,7 @@ async function handleRequest(request, slug) {
       if (!Number.isInteger(apartmentNumber) || apartmentNumber < 1 || apartmentNumber > 16) {
         throw new AppError(400, "apartment_number must be between 1 and 16");
       }
+      avizierPermission = normalizeAvizierPermission(avizierPermission);
     }
 
     try {
@@ -2258,12 +2635,13 @@ async function handleRequest(request, slug) {
             role,
             building_number,
             apartment_number,
-            phone_number
+            phone_number,
+            avizier_permission
           )
-          VALUES ($1, $2, $3, $4, $5, $6)
-          RETURNING id, username, role, building_number, apartment_number, phone_number
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          RETURNING id, username, role, building_number, apartment_number, phone_number, avizier_permission
         `,
-        [username, hashPassword(password), role, buildingNumber, apartmentNumber, phoneNumber]
+        [username, hashPassword(password), role, buildingNumber, apartmentNumber, phoneNumber, avizierPermission]
       );
       return json(mapUser(inserted.rows[0]), 201);
     } catch (error) {
@@ -2491,6 +2869,42 @@ async function handleRequest(request, slug) {
       throw new AppError(400, "post_id must be a valid integer");
     }
     return json(await deleteMarketplacePost({ actorUser: user, postId }), 200);
+  }
+
+  if (path[0] === "avizier" && method === "GET" && path.length === 1) {
+    const user = await requireUser(request);
+    const scope = request.nextUrl.searchParams.get("scope");
+    const buildingIdRaw = request.nextUrl.searchParams.get("building_id");
+    let buildingId = null;
+    if (buildingIdRaw != null && buildingIdRaw !== "") {
+      buildingId = Number(buildingIdRaw);
+      if (!Number.isInteger(buildingId) || buildingId < 1 || buildingId > TOTAL_BUILDINGS) {
+        return jsonError("invalid query parameters", 400, {
+          building_id: `must be between 1 and ${TOTAL_BUILDINGS}`,
+        });
+      }
+    }
+    return json(
+      await listAvizierAnnouncementsForViewer({
+        viewer: user,
+        scope,
+        buildingId,
+      }),
+      200
+    );
+  }
+
+  if (path[0] === "avizier" && method === "POST" && path.length === 1) {
+    const user = await requireUser(request);
+    const payload = await parseJsonBody(request);
+    return json(await createAvizierAnnouncement({ user, payload }), 201);
+  }
+
+  if (path[0] === "avizier" && method === "GET" && path.length === 2) {
+    const user = await requireUser(request);
+    const announcement = await getAvizierAnnouncementById(path[1]);
+    requireAvizierVisible(announcement, user);
+    return json(announcement, 200);
   }
 
   if (path[0] === "polls" && method === "GET" && path.length === 1) {

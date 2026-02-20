@@ -10,6 +10,7 @@ This project now runs on **Next.js (Node runtime)** with PostgreSQL (Neon on Ver
 - Admin user: `admin`
 - Admin password: `adex123#`
 - Usernames are normalized to lowercase automatically.
+- Avizier permission classes: `none`, `reprezentant_bloc`, `comitet` (admin is always super user)
 
 ## Stack
 
@@ -44,6 +45,7 @@ The app uses:
 - `POST /api/uploads/direct` for same-origin uploads (no browser CORS issues)
 - `POST /api/uploads/presign` to generate signed upload URLs (optional advanced flow)
 - `GET /api/uploads/view?key=...` to serve signed download links
+- For Avizier uploads: only JPG/PDF, max 10MB per file
 
 ### Push R2 settings to Vercel
 
@@ -102,6 +104,9 @@ Vercel auto-detects Next.js. No custom `vercel.json` is required.
 - `POST /api/marketplace/posts/:post_id/claim` (resident, donation only)
 - `POST /api/marketplace/posts/:post_id/complete` (owner/admin)
 - `POST /api/marketplace/posts/:post_id/delete` (owner/admin)
+- `GET /api/avizier`
+- `POST /api/avizier` (admin, comitet, reprezentant_bloc with building scope only)
+- `GET /api/avizier/:announcement_id`
 - `GET /api/polls`
 - `POST /api/polls` (admin)
 - `GET /api/polls/:poll_id`

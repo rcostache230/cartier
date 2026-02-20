@@ -674,6 +674,7 @@ function profileHtml() {
                   <tr>
                     <th class="sortable" data-sort-key="username">Username</th>
                     <th class="sortable" data-sort-key="role">Role</th>
+                    <th class="sortable" data-sort-key="avizier_permission">Avizier</th>
                     <th class="sortable" data-sort-key="building_number">Building</th>
                     <th class="sortable" data-sort-key="apartment_number">Apt</th>
                     <th>Phone</th>
@@ -705,6 +706,14 @@ function profileHtml() {
                   <select id="newRole">
                     <option value="resident">Resident</option>
                     <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="newAvizierPermission">Avizier Permission</label>
+                  <select id="newAvizierPermission">
+                    <option value="none">None</option>
+                    <option value="reprezentant_bloc">Reprezentant Bloc (building only)</option>
+                    <option value="comitet">Comitet (general + building)</option>
                   </select>
                 </div>
                 <div>
@@ -789,6 +798,7 @@ function profileHtml() {
         newUsername: document.getElementById("newUsername"),
         newPassword: document.getElementById("newPassword"),
         newRole: document.getElementById("newRole"),
+        newAvizierPermission: document.getElementById("newAvizierPermission"),
         newPhone: document.getElementById("newPhone"),
         newBuilding: document.getElementById("newBuilding"),
         newApartment: document.getElementById("newApartment"),
@@ -1123,6 +1133,13 @@ function profileHtml() {
                 '>Resident</option><option value="admin"' +
                 (user.role === "admin" ? " selected" : "") +
                 '>Admin</option></select></div>' +
+              '<div><label>Avizier</label><select data-field="avizier_permission"><option value="none"' +
+                (String(user.avizier_permission || "none") === "none" ? " selected" : "") +
+                '>None</option><option value="reprezentant_bloc"' +
+                (String(user.avizier_permission || "none") === "reprezentant_bloc" ? " selected" : "") +
+                '>Reprezentant Bloc</option><option value="comitet"' +
+                (String(user.avizier_permission || "none") === "comitet" ? " selected" : "") +
+                '>Comitet</option></select></div>' +
               '<div><label>Phone</label><input data-field="phone_number" value="' + (user.phone_number || "") + '" maxlength="64" /></div>' +
             '</div>' +
             '<div class="grid">' +
@@ -1147,6 +1164,7 @@ function profileHtml() {
                   "<tr>" +
                     td("<b>" + user.username + "</b>") +
                     td(user.role) +
+                    td(String(user.avizier_permission || "none")) +
                     td(user.building_number) +
                     td(user.apartment_number) +
                     td(user.phone_number || "-") +
@@ -1155,7 +1173,7 @@ function profileHtml() {
                 );
               })
               .join("")
-          : '<tr><td colspan="6">No users found for current filter.</td></tr>';
+          : '<tr><td colspan="7">No users found for current filter.</td></tr>';
 
         els.adminUsersCards.innerHTML = users.length
           ? users
@@ -1164,6 +1182,7 @@ function profileHtml() {
                   '<article class="mini-card">' +
                     '<div class="mini-card-title">' + user.username + "</div>" +
                     '<div class="mini-card-meta">Role: ' + user.role + "</div>" +
+                    '<div class="mini-card-meta">Avizier: ' + String(user.avizier_permission || "none") + "</div>" +
                     adminEditorHtml(user) +
                   "</article>"
                 );
@@ -1199,15 +1218,21 @@ function profileHtml() {
         const isAdmin = els.newRole.value === "admin";
         els.newBuilding.disabled = isAdmin;
         els.newApartment.disabled = isAdmin;
+        els.newAvizierPermission.disabled = isAdmin;
+        if (isAdmin) {
+          els.newAvizierPermission.value = "none";
+        }
       }
 
       function editorPayloadFromContainer(container) {
         const role = container.querySelector('[data-field="role"]')?.value || "resident";
+        const avizierPermission = container.querySelector('[data-field="avizier_permission"]')?.value || "none";
         const phone = container.querySelector('[data-field="phone_number"]')?.value || "";
         const building = Number(container.querySelector('[data-field="building_number"]')?.value || 0);
         const apartment = Number(container.querySelector('[data-field="apartment_number"]')?.value || 0);
         return {
           role: role,
+          avizier_permission: avizierPermission,
           phone_number: String(phone).trim(),
           building_number: building,
           apartment_number: apartment,
@@ -1489,6 +1514,7 @@ function profileHtml() {
           username: normalizeUsername(els.newUsername.value),
           password: els.newPassword.value,
           role: els.newRole.value,
+          avizier_permission: els.newAvizierPermission.value,
           building_number: Number(els.newBuilding.value || 0),
           apartment_number: Number(els.newApartment.value || 0),
           phone_number: String(els.newPhone.value || "").trim(),
