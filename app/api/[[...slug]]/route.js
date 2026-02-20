@@ -1972,16 +1972,19 @@ async function castVote({ pollId, user, selections }) {
   return inserted;
 }
 
-function withSessionCookie(response, userId) {
-  response.cookies.set({
+function withSessionCookie(response, userId, { rememberMe = true } = {}) {
+  const cookieConfig = {
     name: SESSION_COOKIE,
     value: signSessionToken(userId),
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 30 * 24 * 60 * 60,
-  });
+  };
+  if (rememberMe) {
+    cookieConfig.maxAge = 30 * 24 * 60 * 60;
+  }
+  response.cookies.set(cookieConfig);
   return response;
 }
 
@@ -2050,8 +2053,9 @@ async function handleRequest(request, slug) {
   if (method === "POST" && path[0] === "auth" && path[1] === "login") {
     const payload = await parseJsonBody(request);
     const user = await authenticateUser(payload.username, String(payload.password || ""));
+    const rememberMe = payload.remember_me == null ? true : Boolean(payload.remember_me);
     const response = json({ user }, 200);
-    return withSessionCookie(response, user.id);
+    return withSessionCookie(response, user.id, { rememberMe });
   }
 
   if (method === "POST" && path[0] === "auth" && path[1] === "logout") {

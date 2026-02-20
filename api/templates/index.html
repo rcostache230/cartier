@@ -739,6 +739,28 @@
       input[type="checkbox"],
       input[type="radio"] {
         width: auto;
+        min-height: auto;
+        padding: 0;
+      }
+
+      .remember-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .remember-row input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+      }
+
+      .remember-row label {
+        margin: 0;
+        color: #334155;
+        font-size: 0.86rem;
+        font-weight: 600;
+        cursor: pointer;
       }
 
       button {
@@ -2339,11 +2361,15 @@
         <form id="loginForm" class="stack" style="margin-top: 10px">
           <div>
             <label for="loginUsername">Username</label>
-            <input id="loginUsername" placeholder="bloc1_apt1" required />
+            <input id="loginUsername" placeholder="bloc1_apt1" autocomplete="username" autocapitalize="none" spellcheck="false" required />
           </div>
           <div>
             <label for="loginPassword">Password</label>
-            <input id="loginPassword" type="password" placeholder="10blocuri" required />
+            <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" autocapitalize="none" spellcheck="false" required />
+          </div>
+          <div class="remember-row">
+            <input id="keepLoggedIn" type="checkbox" checked />
+            <label for="keepLoggedIn">Keep me logged in</label>
           </div>
           <button id="loginBtn" type="submit">Sign In</button>
         </form>
@@ -5645,6 +5671,7 @@
               body: JSON.stringify({
                 username: normalizeUsername(document.getElementById("loginUsername").value),
                 password: document.getElementById("loginPassword").value,
+                remember_me: Boolean(document.getElementById("keepLoggedIn")?.checked),
               }),
             });
             applyAuthState(response.user);
