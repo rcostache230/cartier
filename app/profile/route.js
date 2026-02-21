@@ -696,8 +696,8 @@ function profileHtml() {
                   <input id="newUsername" required />
                 </div>
                 <div>
-                  <label for="newPassword">Password</label>
-                  <input id="newPassword" type="password" required />
+                  <label for="createUserPassword">Password</label>
+                  <input id="createUserPassword" type="password" required />
                 </div>
               </div>
               <div class="grid">
@@ -796,7 +796,7 @@ function profileHtml() {
         createUserBtn: document.getElementById("createUserBtn"),
         createUserFeedback: document.getElementById("createUserFeedback"),
         newUsername: document.getElementById("newUsername"),
-        newPassword: document.getElementById("newPassword"),
+        createUserPassword: document.getElementById("createUserPassword"),
         newRole: document.getElementById("newRole"),
         newAvizierPermission: document.getElementById("newAvizierPermission"),
         newPhone: document.getElementById("newPhone"),
@@ -1512,7 +1512,7 @@ function profileHtml() {
 
         const payload = {
           username: normalizeUsername(els.newUsername.value),
-          password: els.newPassword.value,
+          password: els.createUserPassword.value,
           role: els.newRole.value,
           avizier_permission: els.newAvizierPermission.value,
           building_number: Number(els.newBuilding.value || 0),

@@ -2746,6 +2746,8 @@ async function handleRequest(request, slug) {
 
     if (!username) throw new AppError(400, "username cannot be empty");
     if (!password) throw new AppError(400, "password cannot be empty");
+    if (password.length < 6) throw new AppError(400, "password must be at least 6 characters");
+    if (password.length > 128) throw new AppError(400, "password must be at most 128 characters");
     if (!["resident", "admin"].includes(role)) throw new AppError(400, "role must be resident or admin");
 
     if (role === "admin") {

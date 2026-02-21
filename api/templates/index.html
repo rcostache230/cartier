@@ -2562,10 +2562,31 @@
         padding: 16px 12px 12px;
         display: grid;
         gap: 10px;
+        align-content: start;
       }
 
       .brand-rail {
-        align-items: center;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        justify-self: start;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .brand-rail .brand-copy {
+        align-items: start;
+        justify-items: start;
+        text-align: left;
+        padding-top: 1px;
+      }
+
+      .brand-rail .brand-title {
+        line-height: 1;
+      }
+
+      .brand-rail .brand-subtitle {
+        line-height: 1.05;
       }
 
       .rail-toggle {
@@ -3673,20 +3694,20 @@
               <section class="card">
                 <h3>Create User</h3>
                 <form id="createUserForm" class="stack" style="margin-top: 8px">
-                  <div><label for="newUsername">Username</label><input id="newUsername" required /></div>
-                  <div><label for="newPassword">Password</label><input id="newPassword" placeholder="10blocuri" required /></div>
-                  <div><label for="newPhone">Phone Number</label><input id="newPhone" placeholder="0712 345 678" /></div>
-                  <div><label for="newRole">Role</label><select id="newRole"><option value="resident">Resident</option><option value="admin">Admin</option></select></div>
+                  <div><label for="adminNewUsername">Username</label><input id="adminNewUsername" required /></div>
+                  <div><label for="adminNewPassword">Password</label><input id="adminNewPassword" minlength="6" placeholder="10blocuri" required /></div>
+                  <div><label for="adminNewPhone">Phone Number</label><input id="adminNewPhone" placeholder="0712 345 678" /></div>
+                  <div><label for="adminNewRole">Role</label><select id="adminNewRole"><option value="resident">Resident</option><option value="admin">Admin</option></select></div>
                   <div>
-                    <label for="newAvizierPermission">Avizier Permission</label>
-                    <select id="newAvizierPermission">
+                    <label for="adminNewAvizierPermission">Avizier Permission</label>
+                    <select id="adminNewAvizierPermission">
                       <option value="none">None</option>
                       <option value="reprezentant_bloc">Reprezentant Bloc (building only)</option>
                       <option value="comitet">Comitet (general + building)</option>
                     </select>
                   </div>
-                  <div><label for="newBuilding">Building</label><select id="newBuilding"></select></div>
-                  <div><label for="newApartment">Apartment</label><input id="newApartment" type="number" min="1" max="16" value="1" /></div>
+                  <div><label for="adminNewBuilding">Building</label><select id="adminNewBuilding"></select></div>
+                  <div><label for="adminNewApartment">Apartment</label><input id="adminNewApartment" type="number" min="1" max="16" value="1" /></div>
                   <button id="createUserBtn" type="submit" data-default-text="Create User">Create User</button>
                 </form>
               </section>
@@ -4484,6 +4505,13 @@
         stats: document.getElementById("stats"),
         allUsers: document.getElementById("allUsers"),
         allUsersCards: document.getElementById("allUsersCards"),
+        adminNewUsername: document.getElementById("adminNewUsername"),
+        adminNewPassword: document.getElementById("adminNewPassword"),
+        adminNewPhone: document.getElementById("adminNewPhone"),
+        adminNewRole: document.getElementById("adminNewRole"),
+        adminNewAvizierPermission: document.getElementById("adminNewAvizierPermission"),
+        adminNewBuilding: document.getElementById("adminNewBuilding"),
+        adminNewApartment: document.getElementById("adminNewApartment"),
         availableSlot: document.getElementById("availableSlot"),
         countFree: document.getElementById("countFree"),
         countShared: document.getElementById("countShared"),
@@ -7762,13 +7790,13 @@
             await api("/api/users", {
               method: "POST",
               body: JSON.stringify({
-                username: normalizeUsername(document.getElementById("newUsername").value),
-                password: document.getElementById("newPassword").value,
-                phone_number: document.getElementById("newPhone").value,
-                role: document.getElementById("newRole").value,
-                avizier_permission: document.getElementById("newAvizierPermission").value,
-                building_number: Number(document.getElementById("newBuilding").value),
-                apartment_number: Number(document.getElementById("newApartment").value),
+                username: normalizeUsername(els.adminNewUsername.value),
+                password: String(els.adminNewPassword.value || ""),
+                phone_number: els.adminNewPhone.value,
+                role: els.adminNewRole.value,
+                avizier_permission: els.adminNewAvizierPermission.value,
+                building_number: Number(els.adminNewBuilding.value),
+                apartment_number: Number(els.adminNewApartment.value),
               }),
             });
             await refreshAdminUsers();
@@ -8473,17 +8501,17 @@
         event.target.value = normalizeUsername(event.target.value);
       });
 
-      document.getElementById("newUsername").addEventListener("input", (event) => {
+      els.adminNewUsername.addEventListener("input", (event) => {
         event.target.value = normalizeUsername(event.target.value);
         const inferred = inferBuildingFromUsername(event.target.value);
         if (inferred) {
-          document.getElementById("newBuilding").value = String(inferred);
+          els.adminNewBuilding.value = String(inferred);
         }
       });
 
-      document.getElementById("newRole").addEventListener("change", (event) => {
+      els.adminNewRole.addEventListener("change", (event) => {
         const isAdminRole = event.target.value === "admin";
-        const permissionSelect = document.getElementById("newAvizierPermission");
+        const permissionSelect = els.adminNewAvizierPermission;
         if (!permissionSelect) return;
         if (isAdminRole) {
           permissionSelect.value = "none";
@@ -8538,7 +8566,7 @@
         initSidebarPreference();
         setQuickStatsLoading(true);
         fillBuildingSelect("claimBuilding", true);
-        fillBuildingSelect("newBuilding");
+        fillBuildingSelect("adminNewBuilding");
         fillBuildingSelect("avizierBuilding");
         fillBuildingSelect("pollBuilding");
         setActiveTab("action", "actionSharePanel");
@@ -8559,7 +8587,7 @@
         showModuleChooser();
         syncNavigationState();
         updateMobileFab();
-        document.getElementById("newRole").dispatchEvent(new Event("change"));
+        els.adminNewRole.dispatchEvent(new Event("change"));
 
         try {
           const me = await api("/api/auth/me");
