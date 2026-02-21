@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neighbourhood Community Dashboard</title>
+    <title>10Blocuri Dashboard</title>
     <style>
       :root {
         --bg: #f8fafc;
@@ -3260,7 +3260,7 @@
             <path d="M20 29V24H28V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
           </svg>
           <div class="brand-copy">
-            <div class="brand-title">Cartier</div>
+            <div class="brand-title">10Blocuri</div>
             <div class="brand-subtitle">Resident Portal</div>
           </div>
         </div>
@@ -3312,7 +3312,7 @@
             <path d="M20 29V24H28V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
           </svg>
           <div class="brand-copy">
-            <div class="brand-title">Cartier</div>
+            <div class="brand-title">10Blocuri</div>
             <div class="brand-subtitle">Resident Dashboard</div>
           </div>
         </div>
@@ -3331,7 +3331,7 @@
     <div class="container">
       <section id="authLanding" class="auth-landing">
         <article class="hero login-hero">
-          <p class="hero-kicker">Made for Cartier residents</p>
+          <p class="hero-kicker">Made for 10Blocuri residents</p>
           <h1 class="display-title">Your neighbourhood in one place</h1>
           <p class="hero-copy">A trusted digital board for Bloc 1-10 residents: coordinate parking, browse listings, vote on local decisions, and stay informed.</p>
           <ul class="hero-points">
@@ -3339,7 +3339,7 @@
             <li>Browse sales and donation listings</li>
             <li>Vote on building and neighbourhood decisions</li>
           </ul>
-          <p class="hero-foot">Made for Cartier, Bucuresti.</p>
+          <p class="hero-foot">Made for 10Blocuri, Bucuresti.</p>
         </article>
 
         <section id="loginCard" class="card login-pane">
@@ -4214,10 +4214,10 @@
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script>
-      const HELP_SEEN_KEY = "cartier_help_seen_v1";
-      const THEME_PREF_KEY = "cartier_theme_pref_v1";
-      const SIDEBAR_COLLAPSED_KEY = "cartier_sidebar_collapsed_v1";
-      const AVIZIER_READ_KEY = "cartier_avizier_read_v1";
+      const HELP_SEEN_KEY = "10blocuri_help_seen_v1";
+      const THEME_PREF_KEY = "10blocuri_theme_pref_v1";
+      const SIDEBAR_COLLAPSED_KEY = "10blocuri_sidebar_collapsed_v1";
+      const AVIZIER_READ_KEY = "10blocuri_avizier_read_v1";
       const BUCHAREST_TIMEZONE = "Europe/Bucharest";
       const BUCHAREST_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
         timeZone: BUCHAREST_TIMEZONE,
@@ -4770,7 +4770,7 @@
 
       function setDocumentTitle(moduleId = null) {
         const moduleTitle = moduleId ? MODULE_ID_TO_TITLE[moduleId] : null;
-        document.title = moduleTitle ? `Cartier - ${moduleTitle}` : "Cartier - Modules";
+        document.title = moduleTitle ? `10Blocuri - ${moduleTitle}` : "10Blocuri - Modules";
       }
 
       function parseDateSafe(value) {

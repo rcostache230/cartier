@@ -1,4 +1,4 @@
-# Cartier Neighbourhood App (Next.js + Node)
+# 10Blocuri Neighbourhood App (Next.js + Node)
 
 This project now runs on **Next.js (Node runtime)** with PostgreSQL (Neon on Vercel).
 

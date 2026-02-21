@@ -30,7 +30,7 @@ import { hashPassword, signSessionToken, verifyPassword, verifySessionToken } fr
 
 export const runtime = "nodejs";
 
-const SESSION_COOKIE = "cartier_session";
+const SESSION_COOKIE = "10blocuri_session";
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 const AVIZIER_ALLOWED_ATTACHMENT_TYPES_SET = new Set(
   AVIZIER_ALLOWED_ATTACHMENT_TYPES.map((value) => String(value).toLowerCase())
