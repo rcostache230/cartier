@@ -1324,6 +1324,125 @@ async function createMarketplacePost({ ownerUser, payload }) {
   return getMarketplacePostById(postId);
 }
 
+function normalizeMarketplaceUpdatePayload(payload, existingRow) {
+  if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+    throw new AppError(400, "invalid payload");
+  }
+
+  const listingType = String(payload.listing_type ?? existingRow.listing_type ?? "")
+    .trim()
+    .toLowerCase();
+  validateMarketplaceListingType(listingType);
+
+  const category = String(payload.category ?? existingRow.category ?? "other")
+    .trim()
+    .toLowerCase() || "other";
+  validateMarketplaceCategory(category);
+
+  const title = String(payload.title ?? existingRow.title ?? "").trim();
+  if (!title) throw new AppError(400, "title is required");
+  if (title.length > 160) throw new AppError(400, "title must be at most 160 characters");
+
+  const description = String(payload.description ?? existingRow.description ?? "").trim();
+  if (description.length > 2500) throw new AppError(400, "description must be at most 2500 characters");
+
+  const contactPhone = String(payload.contact_phone ?? existingRow.contact_phone ?? "").trim();
+  if (contactPhone.length > 64) throw new AppError(400, "contact_phone must be at most 64 characters");
+
+  const pickupDetails = String(payload.pickup_details ?? existingRow.pickup_details ?? "").trim();
+  if (pickupDetails.length > 600) throw new AppError(400, "pickup_details must be at most 600 characters");
+
+  let priceText = String(payload.price_text ?? existingRow.price_text ?? "").trim();
+  if (listingType === "sale") {
+    if (!priceText) throw new AppError(400, "price_text is required for sale listings");
+    if (priceText.length > 120) throw new AppError(400, "price_text must be at most 120 characters");
+  } else {
+    priceText = "";
+  }
+
+  let maxDays = null;
+  if (listingType === "lending") {
+    const raw = payload.max_days ?? existingRow.max_days;
+    if (raw !== "" && raw != null) {
+      const parsed = Number(raw);
+      if (!Number.isInteger(parsed) || parsed < 1 || parsed > 90) {
+        throw new AppError(400, "max_days must be an integer between 1 and 90");
+      }
+      maxDays = parsed;
+    }
+  }
+
+  let isAvailable = true;
+  if (listingType === "lending") {
+    if (payload.is_available == null) {
+      isAvailable = existingRow.is_available == null ? true : Boolean(existingRow.is_available);
+    } else {
+      isAvailable = Boolean(payload.is_available);
+    }
+  }
+
+  return {
+    listing_type: listingType,
+    category,
+    title,
+    description,
+    contact_phone: contactPhone,
+    pickup_details: pickupDetails,
+    price_text: priceText,
+    max_days: maxDays,
+    is_available: isAvailable,
+  };
+}
+
+async function updateMarketplacePost({ actorUser, postId, payload }) {
+  const now = nowIsoUtc();
+  await withTransaction(async (client) => {
+    const row = await getMarketplacePostRowForUpdate(client, postId);
+    if (actorUser.role !== "admin" && Number(row.owner_user_id) !== Number(actorUser.id)) {
+      throw new AppError(403, "only the owner or admin can edit this listing");
+    }
+    const cleaned = normalizeMarketplaceUpdatePayload(payload, row);
+    if (String(row.status || "").toLowerCase() !== "active") {
+      throw new AppError(400, "only active listings can be edited");
+    }
+
+    const clearingDonationClaim = cleaned.listing_type !== "donation";
+    await client.query(
+      `
+        UPDATE marketplace_posts
+        SET listing_type = $1,
+            category = $2,
+            title = $3,
+            description = $4,
+            price_text = $5,
+            contact_phone = $6,
+            pickup_details = $7,
+            max_days = $8,
+            is_available = $9,
+            claimed_by_user_id = CASE WHEN $10 THEN NULL ELSE claimed_by_user_id END,
+            claimed_at = CASE WHEN $10 THEN NULL ELSE claimed_at END,
+            updated_at = $11
+        WHERE id = $12
+      `,
+      [
+        cleaned.listing_type,
+        cleaned.category,
+        cleaned.title,
+        cleaned.description,
+        cleaned.price_text,
+        cleaned.contact_phone,
+        cleaned.pickup_details,
+        cleaned.max_days,
+        cleaned.is_available,
+        clearingDonationClaim,
+        now,
+        postId,
+      ]
+    );
+  });
+  return getMarketplacePostById(postId);
+}
+
 async function claimDonationPost({ user, postId }) {
   if (user.role !== "resident") {
     throw new AppError(403, "resident access required");
@@ -2594,6 +2713,7 @@ async function handleRequest(request, slug) {
         marketplace_dashboard: "GET /api/marketplace/dashboard",
         marketplace_posts: "GET /api/marketplace/posts",
         marketplace_create_post: "POST /api/marketplace/posts",
+        marketplace_update_post: "POST /api/marketplace/posts/<post_id>/update",
         marketplace_claim_donation: "POST /api/marketplace/posts/<post_id>/claim",
         marketplace_complete_post: "POST /api/marketplace/posts/<post_id>/complete",
         marketplace_delete_post: "POST /api/marketplace/posts/<post_id>/delete",
@@ -3073,6 +3193,16 @@ async function handleRequest(request, slug) {
       throw new AppError(400, "post_id must be a valid integer");
     }
     return json(await claimDonationPost({ user, postId }), 200);
+  }
+
+  if (method === "POST" && path[0] === "marketplace" && path[1] === "posts" && path.length === 4 && path[3] === "update") {
+    const user = await requireUser(request);
+    const postId = Number(path[2]);
+    if (!Number.isInteger(postId) || postId <= 0) {
+      throw new AppError(400, "post_id must be a valid integer");
+    }
+    const payload = await parseJsonBody(request);
+    return json(await updateMarketplacePost({ actorUser: user, postId, payload }), 200);
   }
 
   if (method === "POST" && path[0] === "marketplace" && path[1] === "posts" && path.length === 4 && path[3] === "complete") {

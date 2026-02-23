@@ -243,6 +243,98 @@ function buildListingHtml(listingId) {
         gap: 8px;
       }
 
+      .edit-toolbar {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .edit-toggle {
+        background: #dbeafe;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+      }
+
+      .edit-cancel {
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+      }
+
+      .edit-hint {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .edit-panel {
+        margin-top: 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #f8fafc;
+        padding: 12px;
+      }
+
+      .edit-panel h3 {
+        margin: 0 0 10px;
+        font-size: 0.96rem;
+      }
+
+      .edit-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .edit-field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .edit-field.full {
+        grid-column: 1 / -1;
+      }
+
+      .edit-field label {
+        color: #475569;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .edit-panel input,
+      .edit-panel select,
+      .edit-panel textarea {
+        width: 100%;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 9px 10px;
+        font: inherit;
+        background: #fff;
+      }
+
+      .edit-panel textarea {
+        min-height: 92px;
+        resize: vertical;
+      }
+
+      .edit-panel .field-hint {
+        color: var(--muted);
+        font-size: 0.76rem;
+      }
+
+      .edit-actions {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .save-btn {
+        background: var(--teal);
+        color: #fff;
+      }
+
       button,
       .action-link {
         border: 1px solid transparent;
@@ -408,6 +500,10 @@ function buildListingHtml(listingId) {
           grid-template-columns: 1fr;
         }
 
+        .edit-grid {
+          grid-template-columns: 1fr;
+        }
+
         .benefits {
           grid-template-columns: 1fr;
         }
@@ -460,6 +556,71 @@ function buildListingHtml(listingId) {
             <button id="contactBtn" class="action-contact" type="button">Contact owner</button>
             <button id="claimBtn" class="action-claim" type="button">Claim donation</button>
           </div>
+
+          <div id="editToolbar" class="edit-toolbar hidden">
+            <button id="editToggleBtn" class="edit-toggle" type="button">Editează anunț</button>
+            <button id="editCancelBtn" class="edit-cancel hidden" type="button">Renunță</button>
+            <span id="editHint" class="edit-hint"></span>
+          </div>
+
+          <form id="editForm" class="edit-panel hidden">
+            <h3>Editare anunț</h3>
+            <div class="edit-grid">
+              <div class="edit-field">
+                <label for="editListingType">Tip anunț</label>
+                <select id="editListingType">
+                  <option value="sale">🏷 De vânzare</option>
+                  <option value="donation">🎁 Donație</option>
+                  <option value="lending">🤝 Împrumut</option>
+                </select>
+              </div>
+              <div class="edit-field">
+                <label for="editCategory">Categorie</label>
+                <select id="editCategory">
+                  <option value="furniture">Mobilă</option>
+                  <option value="toys">Jucării</option>
+                  <option value="clothes">Haine</option>
+                  <option value="brico">Brico</option>
+                  <option value="other">Altele</option>
+                </select>
+              </div>
+              <div id="editPriceRow" class="edit-field">
+                <label for="editPriceText">Preț (doar pentru vânzare)</label>
+                <input id="editPriceText" maxlength="120" />
+              </div>
+              <div id="editLendingExtras" class="edit-field hidden">
+                <label for="editMaxDays">Durată maximă (zile, opțional)</label>
+                <input id="editMaxDays" type="number" min="1" max="90" />
+                <span class="field-hint">Lasă gol pentru nelimitat.</span>
+              </div>
+              <div id="editLendingAvailabilityRow" class="edit-field hidden">
+                <label for="editLendingAvailability">Disponibilitate</label>
+                <select id="editLendingAvailability">
+                  <option value="true">Disponibil</option>
+                  <option value="false">Împrumutat momentan</option>
+                </select>
+              </div>
+              <div class="edit-field full">
+                <label for="editTitle">Titlu</label>
+                <input id="editTitle" maxlength="160" required />
+              </div>
+              <div class="edit-field full">
+                <label for="editDescription">Descriere</label>
+                <textarea id="editDescription" maxlength="2500"></textarea>
+              </div>
+              <div class="edit-field">
+                <label for="editContactPhone">Telefon contact</label>
+                <input id="editContactPhone" maxlength="64" />
+              </div>
+              <div class="edit-field">
+                <label for="editPickupDetails">Detalii predare</label>
+                <input id="editPickupDetails" maxlength="600" />
+              </div>
+            </div>
+            <div class="edit-actions">
+              <button id="saveEditBtn" class="save-btn" type="submit">Salvează modificările</button>
+            </div>
+          </form>
 
           <div class="quick-links">
             <a id="openMainPhotoLink" class="action-link" href="#" target="_blank" rel="noopener noreferrer">View full photo</a>
@@ -540,9 +701,29 @@ function buildListingHtml(listingId) {
         metaCreated: document.getElementById("metaCreated"),
         metaUpdated: document.getElementById("metaUpdated"),
         listingDescription: document.getElementById("listingDescription"),
+        editToolbar: document.getElementById("editToolbar"),
+        editToggleBtn: document.getElementById("editToggleBtn"),
+        editCancelBtn: document.getElementById("editCancelBtn"),
+        editHint: document.getElementById("editHint"),
+        editForm: document.getElementById("editForm"),
+        editListingType: document.getElementById("editListingType"),
+        editCategory: document.getElementById("editCategory"),
+        editPriceRow: document.getElementById("editPriceRow"),
+        editPriceText: document.getElementById("editPriceText"),
+        editLendingExtras: document.getElementById("editLendingExtras"),
+        editMaxDays: document.getElementById("editMaxDays"),
+        editLendingAvailabilityRow: document.getElementById("editLendingAvailabilityRow"),
+        editLendingAvailability: document.getElementById("editLendingAvailability"),
+        editTitle: document.getElementById("editTitle"),
+        editDescription: document.getElementById("editDescription"),
+        editContactPhone: document.getElementById("editContactPhone"),
+        editPickupDetails: document.getElementById("editPickupDetails"),
+        saveEditBtn: document.getElementById("saveEditBtn"),
       };
 
       let galleryBound = false;
+      let currentPost = null;
+      let currentUser = null;
 
       function iconMarkup(name) {
         return '<i data-lucide="' + name + '" aria-hidden="true"></i>';
@@ -593,7 +774,9 @@ function buildListingHtml(listingId) {
       }
 
       function listingTypeLabel(type) {
-        return type === "donation" ? "Donation" : "Sale";
+        if (type === "donation") return "Donation";
+        if (type === "lending") return "Lending";
+        return "Sale";
       }
 
       function listingStatusLabel(status) {
@@ -603,8 +786,14 @@ function buildListingHtml(listingId) {
       }
 
       function parsePriceParts(post) {
-        if (!post || post.listing_type !== "sale") {
+        if (!post) {
           return { value: "0", currency: "FREE" };
+        }
+        if (post.listing_type === "donation") {
+          return { value: "0", currency: "FREE" };
+        }
+        if (post.listing_type === "lending") {
+          return { value: "-", currency: "LEND" };
         }
         const raw = String(post.price_text || "").trim();
         if (!raw) return { value: "0", currency: "RON" };
@@ -676,6 +865,87 @@ function buildListingHtml(listingId) {
         return data;
       }
 
+      async function getCurrentUser() {
+        try {
+          const response = await fetch("/api/auth/me", {
+            method: "GET",
+            credentials: "include",
+            headers: { "cache-control": "no-store" },
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) return null;
+          return data && data.authenticated ? data.user || null : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function canEditListing(post, user) {
+        if (!post || !user) return false;
+        if (user.role === "admin") return true;
+        return String(user.username || "") === String(post.owner_username || "");
+      }
+
+      function setEditMode(enabled) {
+        const canEdit = canEditListing(currentPost, currentUser);
+        if (!canEdit) {
+          els.editForm.classList.add("hidden");
+          els.editCancelBtn.classList.add("hidden");
+          return;
+        }
+        els.editForm.classList.toggle("hidden", !enabled);
+        els.editCancelBtn.classList.toggle("hidden", !enabled);
+        if (!enabled) {
+          els.editHint.textContent = currentUser && currentUser.role === "admin"
+            ? "Ai acces de administrator pentru editare."
+            : "Poți edita propriul anunț.";
+        } else {
+          els.editHint.textContent = "Modificările se aplică imediat după salvare.";
+        }
+      }
+
+      function updateEditFormVisibility() {
+        const listingType = String(els.editListingType.value || "sale");
+        const isSale = listingType === "sale";
+        const isLending = listingType === "lending";
+        els.editPriceRow.classList.toggle("hidden", !isSale);
+        if (!isSale) els.editPriceText.value = "";
+        els.editLendingExtras.classList.toggle("hidden", !isLending);
+        els.editLendingAvailabilityRow.classList.toggle("hidden", !isLending);
+        if (!isLending) {
+          els.editMaxDays.value = "";
+          els.editLendingAvailability.value = "true";
+        }
+      }
+
+      function populateEditForm(post) {
+        if (!post) return;
+        els.editListingType.value = post.listing_type || "sale";
+        els.editCategory.value = post.category || "other";
+        els.editPriceText.value = post.price_text || "";
+        els.editMaxDays.value = post.max_days == null ? "" : String(post.max_days);
+        els.editLendingAvailability.value = post.is_available === false ? "false" : "true";
+        els.editTitle.value = post.title || "";
+        els.editDescription.value = post.description || "";
+        els.editContactPhone.value = post.contact_phone || post.owner_phone_number || "";
+        els.editPickupDetails.value = post.pickup_details || "";
+        updateEditFormVisibility();
+      }
+
+      async function updateListing(postId, payload) {
+        const response = await fetch("/api/marketplace/posts/" + postId + "/update", {
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.error || "Could not update listing.");
+        }
+        return data;
+      }
+
       function setClaimButton(post) {
         const canClaim =
           post.listing_type === "donation" &&
@@ -695,11 +965,13 @@ function buildListingHtml(listingId) {
       }
 
       function renderListing(post) {
+        currentPost = post;
         els.errorCard.classList.add("hidden");
         els.listingCard.classList.remove("hidden");
 
         els.crumbTitle.textContent = post.title || "Item";
-        els.deliveryBadge.textContent = post.listing_type === "donation" ? "Donation" : "In Person Only";
+        els.deliveryBadge.textContent =
+          post.listing_type === "donation" ? "Donation" : post.listing_type === "lending" ? "Lending" : "In Person Only";
         els.listingTitle.textContent = post.title || "Listing";
 
         const price = parsePriceParts(post);
@@ -731,6 +1003,13 @@ function buildListingHtml(listingId) {
           post.description ||
           "Owner did not add extra details. Contact directly for condition, dimensions, and pickup timing.";
 
+        const canEdit = canEditListing(post, currentUser);
+        els.editToolbar.classList.toggle("hidden", !canEdit);
+        if (canEdit) {
+          populateEditForm(post);
+          setEditMode(false);
+        }
+
         const contactPhone = post.contact_phone || post.owner_phone_number || "";
         els.contactBtn.disabled = !contactPhone;
         setActionButton(els.contactBtn, contactPhone ? "phone" : "phone-off", contactPhone ? "Contact owner" : "No phone shared");
@@ -760,11 +1039,15 @@ function buildListingHtml(listingId) {
 
       async function loadListing() {
         try {
-          const response = await fetch("/api/marketplace/posts/" + listingId, {
-            method: "GET",
-            credentials: "include",
-            headers: { "cache-control": "no-store" },
-          });
+          const [response, user] = await Promise.all([
+            fetch("/api/marketplace/posts/" + listingId, {
+              method: "GET",
+              credentials: "include",
+              headers: { "cache-control": "no-store" },
+            }),
+            getCurrentUser(),
+          ]);
+          currentUser = user;
 
           if (response.status === 401) {
             showError("Authentication required. Go back and sign in first.");
@@ -786,6 +1069,50 @@ function buildListingHtml(listingId) {
           showError("Could not load listing. Please try again.");
         }
       }
+
+      els.editListingType.addEventListener("change", updateEditFormVisibility);
+
+      els.editToggleBtn.addEventListener("click", () => {
+        if (!canEditListing(currentPost, currentUser)) return;
+        setEditMode(true);
+      });
+
+      els.editCancelBtn.addEventListener("click", () => {
+        if (!currentPost) return;
+        populateEditForm(currentPost);
+        setEditMode(false);
+      });
+
+      els.editForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!currentPost || !canEditListing(currentPost, currentUser)) return;
+        const previous = els.saveEditBtn.innerHTML;
+        els.saveEditBtn.disabled = true;
+        els.saveEditBtn.textContent = "Se salvează...";
+        try {
+          const listingType = String(els.editListingType.value || "sale");
+          const payload = {
+            listing_type: listingType,
+            category: els.editCategory.value,
+            title: els.editTitle.value.trim(),
+            description: String(els.editDescription.value || "").trim(),
+            price_text: listingType === "sale" ? String(els.editPriceText.value || "").trim() : null,
+            contact_phone: String(els.editContactPhone.value || "").trim(),
+            pickup_details: String(els.editPickupDetails.value || "").trim(),
+            max_days: listingType === "lending" && els.editMaxDays.value ? Number(els.editMaxDays.value) : null,
+            is_available: listingType === "lending" ? els.editLendingAvailability.value === "true" : true,
+          };
+          const updated = await updateListing(currentPost.id, payload);
+          renderListing(updated);
+          setEditMode(false);
+        } catch (error) {
+          alert(error.message || "Could not update listing");
+        } finally {
+          els.saveEditBtn.disabled = false;
+          els.saveEditBtn.innerHTML = previous;
+          hydrateLucideIcons();
+        }
+      });
 
       applyStaticIcons();
       loadListing();
