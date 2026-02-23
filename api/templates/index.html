@@ -1199,14 +1199,44 @@
       }
 
       .market-card-actions {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
+        align-items: start;
       }
 
       .market-card-actions .table-action-btn,
       .market-card-actions .table-action-link {
-        padding: 7px 10px;
+        min-height: 38px;
+        padding: 6px 10px;
+        font-size: 0.78rem;
+        line-height: 1.1;
+        border-radius: 10px;
+        justify-content: center;
+      }
+
+      .market-card-actions .table-action-btn .lucide,
+      .market-card-actions .table-action-link .lucide {
+        width: 14px;
+        height: 14px;
+      }
+
+      .market-card-actions .market-claim-btn {
+        grid-column: 1 / -1;
+      }
+
+      .market-card-actions .table-action-link {
+        width: 100%;
+      }
+
+      .market-card-actions .market-contact-btn {
+        background: #10b981;
+        border-color: #10b981;
+      }
+
+      .market-card-actions .market-contact-btn:hover {
+        background: #059669;
+        border-color: #059669;
       }
 
       .market-my-meta {
@@ -2359,6 +2389,14 @@
       }
 
       @media (max-width: 640px) {
+        .market-card-actions {
+          grid-template-columns: 1fr;
+        }
+
+        .market-card-actions .market-claim-btn {
+          grid-column: auto;
+        }
+
         .modal {
           align-items: flex-end;
           padding: 0;
