@@ -11,6 +11,12 @@
         --line: #e2e8f0;
         --ink: #1a2332;
         --muted: #64748b;
+        --text-muted: var(--muted);
+        --text-display: 2.75rem; /* 44px — hero/login headline only */
+        --text-heading: 1.375rem; /* 22px — module page titles */
+        --text-subhead: 1rem; /* 16px — card titles, form group labels */
+        --text-body: 0.875rem; /* 14px — all content */
+        --text-caption: 0.75rem; /* 12px — timestamps, metadata, helper text */
         --teal: #10b981;
         --teal-2: #059669;
         --amber: #f59e0b;
@@ -2611,12 +2617,14 @@
         --module-voting: #8b5cf6;
         --module-avizier: #14b8a6;
         --module-profile: #64748b;
-        --font-body: "Manrope", "Avenir Next", "Nunito Sans", sans-serif;
-        --font-display: "Space Grotesk", "Plus Jakarta Sans", "Avenir Next", sans-serif;
+        --font-body: "Inter", system-ui, -apple-system, sans-serif;
+        --font-display: "Inter", system-ui, -apple-system, sans-serif;
       }
 
       body {
-        font-family: var(--font-body);
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        font-size: var(--text-body);
+        line-height: 1.6;
         background:
           radial-gradient(circle at 4% 2%, rgba(15, 76, 117, 0.08), transparent 34%),
           radial-gradient(circle at 97% 8%, rgba(20, 184, 166, 0.08), transparent 32%),
@@ -2629,25 +2637,89 @@
       .display-title,
       .heading-title,
       .subheading-title {
-        font-family: var(--font-display);
-        letter-spacing: -0.5px;
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
       }
 
+      h1,
       .display-title {
-        font-size: clamp(1.75rem, 2.6vw, 2.1rem);
-        line-height: 1.1;
+        font-size: var(--text-display);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1.05;
         margin: 0;
       }
 
+      .module-title {
+        font-size: var(--text-heading);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        line-height: 1.15;
+      }
+
+      h2,
+      .welcome-title,
       .heading-title {
-        font-size: 1.25rem;
-        line-height: 1.2;
+        font-size: var(--text-heading);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        line-height: 1.15;
         margin: 0;
       }
 
+      h3,
       .subheading-title {
-        font-size: 1rem;
+        font-size: var(--text-subhead);
+        font-weight: 600;
+        letter-spacing: -0.015em;
         margin: 0;
+      }
+
+      p,
+      li,
+      td,
+      th,
+      label,
+      input,
+      select,
+      textarea {
+        font-size: var(--text-body);
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      input,
+      select,
+      textarea,
+      button {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+      }
+
+      small,
+      time,
+      .meta,
+      [class*="-meta"],
+      .capacity-help,
+      .tz-note,
+      .upload-status {
+        font-size: var(--text-caption);
+      }
+
+      .help-section-title,
+      .parking-kpi-label,
+      .preset-label,
+      .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .hero-kicker {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
       }
 
       body.has-sidebar {
