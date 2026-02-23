@@ -547,6 +547,28 @@ function ensureAvizierPostPermission({ user, scope, buildingId }) {
   throw new AppError(403, "you do not have permission to post in avizier");
 }
 
+function canManagePolls(user) {
+  if (!user) return false;
+  if (user.role === "admin") return true;
+  return normalizeAvizierPermission(user.avizier_permission || "none") === "comitet";
+}
+
+function requirePollManager(requestOrUser) {
+  // Accept a request (async caller context) or an already loaded user object.
+  if (requestOrUser && typeof requestOrUser === "object" && "role" in requestOrUser) {
+    if (!canManagePolls(requestOrUser)) {
+      throw new AppError(403, "admin or comitet access required");
+    }
+    return requestOrUser;
+  }
+  return requireUser(requestOrUser).then((user) => {
+    if (!canManagePolls(user)) {
+      throw new AppError(403, "admin or comitet access required");
+    }
+    return user;
+  });
+}
+
 async function getSlotById(slotId) {
   const result = await query(
     `
@@ -800,6 +822,10 @@ async function reserveSlotTx(client, row, requesterId, requestedFrom, requestedU
 }
 
 async function reserveSpecificSlot({ requesterUser, slotId, requestedFrom, requestedUntil, claimPhoneNumber = "" }) {
+  const claimPhone = String(claimPhoneNumber || "").trim();
+  if (!claimPhone) {
+    throw new AppError(400, "claim_phone_number is required");
+  }
   const fromDt = parseSlotDateTime(requestedFrom, "requested_from");
   const untilDt = parseSlotDateTime(requestedUntil, "requested_until");
   if (fromDt.toMillis() >= untilDt.toMillis()) {
@@ -838,13 +864,17 @@ async function reserveSpecificSlot({ requesterUser, slotId, requestedFrom, reque
       throw new AppError(400, "requested period must be within slot availability");
     }
 
-    await reserveSlotTx(client, row, requesterUser.id, requestedFrom, requestedUntil, claimPhoneNumber || requesterUser.phone_number);
+    await reserveSlotTx(client, row, requesterUser.id, requestedFrom, requestedUntil, claimPhone);
   });
 
   return getSlotById(slotId);
 }
 
 async function autoReserveSlot({ requesterUser, requestedFrom, requestedUntil, parkingType = null, buildingNumber = null, claimPhoneNumber = "" }) {
+  const claimPhone = String(claimPhoneNumber || "").trim();
+  if (!claimPhone) {
+    throw new AppError(400, "claim_phone_number is required");
+  }
   if (requesterUser.role === "admin" && buildingNumber == null) {
     throw new AppError(400, "admin must provide building_number to claim a slot");
   }
@@ -897,7 +927,7 @@ async function autoReserveSlot({ requesterUser, requestedFrom, requestedUntil, p
     if (!candidate.rowCount) throw new AppError(404, "no matching open parking slot found");
 
     const row = candidate.rows[0];
-    await reserveSlotTx(client, row, requesterUser.id, requestedFrom, requestedUntil, claimPhoneNumber || requesterUser.phone_number);
+    await reserveSlotTx(client, row, requesterUser.id, requestedFrom, requestedUntil, claimPhone);
     reservedSlotId = Number(row.id);
   });
 
@@ -2224,6 +2254,14 @@ async function updatePollStatus(pollId, status) {
   return mapPoll(updated.rows[0]);
 }
 
+async function deletePoll(pollId) {
+  const id = String(pollId || "").trim();
+  if (!id) throw new AppError(400, "poll_id is required");
+  const deleted = await query("DELETE FROM polls WHERE id = $1 RETURNING id", [id]);
+  if (!deleted.rowCount) throw new AppError(404, "poll not found");
+  return { deleted: true, poll_id: String(deleted.rows[0].id) };
+}
+
 async function getPollResults(pollId) {
   const poll = await getPollById(pollId);
   const options = await getPollOptions(pollId);
@@ -3152,6 +3190,12 @@ async function handleRequest(request, slug) {
     const targetStatus = path[2] === "activate" ? "active" : path[2] === "close" ? "closed" : "archived";
     const poll = await updatePollStatus(pollId, targetStatus);
     return json(poll, 200);
+  }
+
+  if (path[0] === "polls" && method === "POST" && path.length === 3 && path[2] === "delete") {
+    await requirePollManager(request);
+    const pollId = path[1];
+    return json(await deletePoll(pollId), 200);
   }
 
   if (path[0] === "polls" && method === "POST" && path.length === 3 && path[2] === "vote") {

@@ -3420,7 +3420,7 @@
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="car-front" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
-                  <h3>Parking Module</h3>
+                  <h3>Parking Sharing</h3>
                   <p>Share and claim parking spots, monitor availability, and manage your claims.</p>
                 </div>
               </div>
@@ -3432,7 +3432,7 @@
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="store" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
-                  <h3>Marketplace Module</h3>
+                  <h3>Marketplace</h3>
                   <p>Residents can sell in person, donate items, claim donations, and mark listings as completed.</p>
                 </div>
               </div>
@@ -3444,7 +3444,7 @@
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="vote" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
-                  <h3>Voting Module</h3>
+                  <h3>Voting</h3>
                   <p>Join building and neighbourhood polls, submit votes, and review results.</p>
                 </div>
               </div>
@@ -3456,7 +3456,7 @@
               <div class="module-card-head">
                 <div class="module-icon"><i data-lucide="newspaper" aria-hidden="true"></i></div>
                 <div class="module-card-copy">
-                  <h3>Avizier Module</h3>
+                  <h3>Avizier</h3>
                   <p>Read general and building announcements, with JPG/PDF attachments.</p>
                 </div>
               </div>
@@ -3482,8 +3482,8 @@
         <div id="parkingModule" class="hidden module-panel">
           <section class="module-header">
             <div>
-              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Parking</div>
-              <h1 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parking</h1>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Parking Sharing</div>
+              <h1 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parking Sharing</h1>
             </div>
             <div class="module-actions">
               <a href="#" class="module-back-link" data-back-modules>Back Home</a>
@@ -3575,7 +3575,7 @@
                 </div>
                 <div>
                   <label for="claimPhone">Contact Phone (for owner)</label>
-                  <input id="claimPhone" placeholder="07xx xxx xxx" />
+                  <input id="claimPhone" placeholder="07xx xxx xxx" required />
                 </div>
                 <p class="tz-note">All claim times are Bucharest time.</p>
                 <button id="claimBtn" class="alt" type="submit" data-default-text="Claim Selected Spot">Claim Selected Spot</button>
@@ -3922,6 +3922,25 @@
           </div>
           <p id="avizierLastRefreshed" class="refresh-meta">Last refreshed: -</p>
 
+          <section class="card" style="margin-top: 12px">
+            <h3>Announcements <span class="count-pill" id="avizierCount">0</span></h3>
+            <div id="avizierScopeFilters" class="tabs market-filter-tabs" style="margin-top: 8px">
+              <button type="button" class="tab-btn market-filter-btn active" data-avizier-filter="all">
+                <span class="market-filter-emoji" aria-hidden="true">📋</span>
+                <span>All</span>
+              </button>
+              <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="general">
+                <span class="market-filter-emoji" aria-hidden="true">🌐</span>
+                <span>General</span>
+              </button>
+              <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="building">
+                <span class="market-filter-emoji" aria-hidden="true">🏢</span>
+                <span>Per Building</span>
+              </button>
+            </div>
+            <div id="avizierList" class="stack" style="margin-top: 8px"></div>
+          </section>
+
           <section id="createAvizierCard" class="card hidden" style="margin-top: 12px">
             <h3>Create Announcement</h3>
             <form id="createAvizierForm" class="stack" style="margin-top: 8px">
@@ -3970,25 +3989,6 @@
             <div class="locked-notice">
               🔒 Only Reprezentant Bloc and Comitet members can post announcements.
             </div>
-          </section>
-
-          <section class="card" style="margin-top: 12px">
-            <h3>Announcements <span class="count-pill" id="avizierCount">0</span></h3>
-            <div id="avizierScopeFilters" class="tabs market-filter-tabs" style="margin-top: 8px">
-              <button type="button" class="tab-btn market-filter-btn active" data-avizier-filter="all">
-                <span class="market-filter-emoji" aria-hidden="true">📋</span>
-                <span>All</span>
-              </button>
-              <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="general">
-                <span class="market-filter-emoji" aria-hidden="true">🌐</span>
-                <span>General</span>
-              </button>
-              <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="building">
-                <span class="market-filter-emoji" aria-hidden="true">🏢</span>
-                <span>Per Building</span>
-              </button>
-            </div>
-            <div id="avizierList" class="stack" style="margin-top: 8px"></div>
           </section>
         </section>
 
@@ -4290,7 +4290,7 @@
         voting: "votingModule",
       };
       const MODULE_ID_TO_TITLE = {
-        parkingModule: "Parking",
+        parkingModule: "Parking Sharing",
         marketplaceModule: "Marketplace",
         avizierModule: "Avizier",
         votingModule: "Voting",
@@ -5113,6 +5113,7 @@
         root.querySelectorAll(".market-complete-btn").forEach((button) => setButtonActionIcon(button, "badge-check"));
         root.querySelectorAll(".market-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll(".poll-open-btn").forEach((button) => setButtonActionIcon(button, "vote"));
+        root.querySelectorAll(".poll-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll(".table-action-link").forEach((link) => {
           const iconName = link.classList.contains("ghost") ? "arrow-up-right" : "external-link";
           setLinkActionIcon(link, iconName);
@@ -6789,6 +6790,11 @@
         return false;
       }
 
+      function canManagePolls(user = currentUser) {
+        if (!user) return false;
+        return user.role === "admin" || String(user.avizier_permission || "none") === "comitet";
+      }
+
       function normalizeAvizierFileType(fileType, fileName) {
         const lowered = String(fileType || "").toLowerCase();
         if (lowered) return lowered;
@@ -7014,6 +7020,7 @@
       }
 
       function renderActivePollCards(polls) {
+        const canDeletePolls = canManagePolls();
         els.activePolls.innerHTML = polls.length
           ? polls
               .map((poll) => {
@@ -7061,10 +7068,15 @@
                         `
                         : ""
                     }
-                    <div>
+                    <div class="module-actions">
                       <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">
                         ${poll.has_voted ? "View Poll" : "Vote Now"}
                       </button>
+                      ${
+                        canDeletePolls
+                          ? `<button type="button" class="table-action-btn danger poll-delete-btn" data-poll-id="${poll.id}">Delete</button>`
+                          : ""
+                      }
                     </div>
                   </article>
                 `;
@@ -7111,6 +7123,7 @@
       }
 
       function renderClosedPollRows(polls) {
+        const canDeletePolls = canManagePolls();
         els.closedPollsTableWrap.classList.toggle("hidden", !polls.length);
         els.closedPollsEmpty.classList.toggle("hidden", Boolean(polls.length));
         els.closedPolls.innerHTML = polls.length
@@ -7122,7 +7135,14 @@
                   ${td(formatPollDate(poll.end_date))}
                   ${td(pollStatusChip(poll))}
                   ${td(closedPollSummaryText(poll.id))}
-                  <td><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button></td>
+                  <td>
+                    <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button>
+                    ${
+                      canDeletePolls
+                        ? `<button type="button" class="table-action-btn danger poll-delete-btn" data-poll-id="${poll.id}">Delete</button>`
+                        : ""
+                    }
+                  </td>
                 </tr>`;
               })
               .join("")
@@ -7141,7 +7161,14 @@
                     </div>
                     <div style="color:var(--muted); font-size:0.82rem">Closed: ${formatPollDate(poll.end_date)}</div>
                     <div style="color:var(--muted); font-size:0.82rem">Result: ${closedPollSummaryText(poll.id)}</div>
-                    <div><button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button></div>
+                    <div class="module-actions">
+                      <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button>
+                      ${
+                        canDeletePolls
+                          ? `<button type="button" class="table-action-btn danger poll-delete-btn" data-poll-id="${poll.id}">Delete</button>`
+                          : ""
+                      }
+                    </div>
                   </article>
                 `
               )
@@ -7535,7 +7562,33 @@
         els.pollModal.classList.remove("hidden");
       }
 
+      async function handlePollDeleteAction(button) {
+        if (!button) return;
+        const pollId = String(button.dataset.pollId || "").trim();
+        if (!pollId) return;
+        const confirmed = await requestActionConfirmation("Delete this poll permanently? This will remove votes and attachments.");
+        if (!confirmed) return;
+        await withButtonProgress(button, "Deleting...", async () => {
+          try {
+            await api(`/api/polls/${pollId}/delete`, { method: "POST" });
+            if (currentPollDetail && String(currentPollDetail.poll?.id || "") === pollId) {
+              closePollModal();
+            }
+            delete closedPollSummaryCache[pollId];
+            showToast("Poll deleted.");
+            await refreshVoting();
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+      }
+
       async function claimSlotByPayload(payload, slotForDisplay, buttonEl) {
+        const claimPhone = String(payload?.claim_phone_number || "").trim();
+        if (!claimPhone) {
+          throw new Error("Contact phone is required to claim a parking spot.");
+        }
+        payload.claim_phone_number = claimPhone;
         const confirmed = await requestClaimConfirmation(
           slotForDisplay,
           payload.requested_from,
@@ -7774,7 +7827,7 @@
             slot_id: slotId,
             requested_from: document.getElementById("claimFrom").value,
             requested_until: document.getElementById("claimUntil").value,
-            claim_phone_number: document.getElementById("claimPhone").value,
+            claim_phone_number: String(document.getElementById("claimPhone").value || "").trim(),
           };
           await claimSlotByPayload(payload, slot, button);
         } catch (error) {
@@ -8358,6 +8411,11 @@
       });
 
       els.activePolls.addEventListener("click", async (event) => {
+        const deleteBtn = event.target.closest(".poll-delete-btn");
+        if (deleteBtn) {
+          await handlePollDeleteAction(deleteBtn);
+          return;
+        }
         const button = event.target.closest(".poll-open-btn");
         if (!button) return;
         try {
@@ -8368,6 +8426,11 @@
       });
 
       els.closedPolls.addEventListener("click", async (event) => {
+        const deleteBtn = event.target.closest(".poll-delete-btn");
+        if (deleteBtn) {
+          await handlePollDeleteAction(deleteBtn);
+          return;
+        }
         const button = event.target.closest(".poll-open-btn");
         if (!button) return;
         try {
@@ -8378,6 +8441,11 @@
       });
 
       els.closedPollCards.addEventListener("click", async (event) => {
+        const deleteBtn = event.target.closest(".poll-delete-btn");
+        if (deleteBtn) {
+          await handlePollDeleteAction(deleteBtn);
+          return;
+        }
         const button = event.target.closest(".poll-open-btn");
         if (!button) return;
         try {
@@ -8464,7 +8532,7 @@
             slot_id: slotId,
             requested_from: available.available_from,
             requested_until: available.available_until,
-            claim_phone_number: document.getElementById("claimPhone").value,
+            claim_phone_number: String(document.getElementById("claimPhone").value || "").trim(),
           };
           await claimSlotByPayload(payload, available, button);
         } catch (error) {
