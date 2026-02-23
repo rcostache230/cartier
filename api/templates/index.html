@@ -18,6 +18,7 @@
         --text-body: 0.875rem; /* 14px — all content */
         --text-caption: 0.75rem; /* 12px — timestamps, metadata, helper text */
         --accent-primary: #16a34a;
+        --shadow-sm: 0 6px 14px rgba(15, 23, 42, 0.08);
         --shadow-md: 0 10px 20px rgba(15, 23, 42, 0.12);
         --shadow-lg: 0 14px 28px rgba(15, 23, 42, 0.16);
         --teal: #10b981;
@@ -3760,6 +3761,351 @@
           gap: 4px;
         }
       }
+      /* Home Bento Grid */
+      .dashboard-home {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      .dashboard-home:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+        gap: 16px;
+        padding: 20px;
+      }
+
+      .bento-card {
+        border-radius: 16px;
+        padding: 20px;
+        background: #fff;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid #e2e8f0;
+      }
+
+      .bento-feed {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+        min-height: 280px;
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .bento-feed:hover {
+        transform: none;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .bento-feed .welcome-banner {
+        margin: 0;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+      }
+
+      .bento-feed .welcome-title,
+      .bento-feed .welcome-note {
+        margin-left: 0;
+      }
+
+      .bento-feed .home-activity-shell {
+        margin-top: 0;
+        border-top: 0;
+        padding-top: 0;
+        min-height: 0;
+      }
+
+      .bento-feed .home-activity-head {
+        margin: 0;
+      }
+
+      .home-activity-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .home-activity-feed {
+        margin-top: 0;
+        display: grid;
+        gap: 8px;
+        max-height: 240px;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+
+      .home-activity-load-more-wrap {
+        display: none !important;
+      }
+
+      .activity-item {
+        display: grid;
+        grid-template-columns: 10px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid #e2e8f0;
+        border-left: 0;
+        border-radius: 12px;
+        padding: 10px 12px;
+      }
+
+      .activity-item:hover {
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+      }
+
+      .activity-item .activity-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #94a3b8;
+        box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.12);
+      }
+
+      .activity-item .activity-text {
+        min-width: 0;
+        color: var(--ink);
+        line-height: 1.35;
+      }
+
+      .activity-item .activity-time {
+        white-space: nowrap;
+        text-align: right;
+        color: var(--muted);
+      }
+
+      .activity-item[data-mod="parking"] .activity-dot {
+        background: var(--module-parking);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
+      }
+
+      .activity-item[data-mod="marketplace"] .activity-dot {
+        background: var(--module-marketplace);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+      }
+
+      .activity-item[data-mod="voting"] .activity-dot {
+        background: var(--module-voting);
+        box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+      }
+
+      .activity-item[data-mod="avizier"] .activity-dot {
+        background: var(--module-avizier);
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15);
+      }
+
+      .activity-item.activity-empty-state {
+        min-height: 160px;
+        display: grid;
+        place-items: center;
+        gap: 6px;
+        text-align: center;
+        border-style: dashed;
+      }
+
+      .activity-item.activity-empty-state .empty-icon {
+        color: #94a3b8;
+      }
+
+      .bento-kpi-card {
+        position: relative;
+        display: grid;
+        gap: 12px;
+        align-content: start;
+        transition: box-shadow 150ms ease, transform 150ms ease;
+      }
+
+      .bento-kpi-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+        border-radius: 16px 16px 0 0;
+        background: #cbd5e1;
+      }
+
+      .bento-kpi-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+
+      .bento-parking {
+        grid-column: 3 / 5;
+        grid-row: 1 / 2;
+      }
+
+      .bento-voting {
+        grid-column: 3 / 5;
+        grid-row: 2 / 3;
+      }
+
+      .bento-market {
+        grid-column: 1 / 3;
+        grid-row: 3 / 4;
+      }
+
+      .bento-avizier {
+        grid-column: 3 / 5;
+        grid-row: 3 / 4;
+      }
+
+      .bento-parking::before {
+        background: var(--module-parking);
+      }
+
+      .bento-voting::before {
+        background: var(--module-voting);
+      }
+
+      .bento-market::before {
+        background: var(--module-marketplace);
+      }
+
+      .bento-avizier::before {
+        background: var(--module-avizier);
+      }
+
+      .bento-kpi-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .bento-kpi-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #334155;
+        flex: 0 0 40px;
+      }
+
+      .bento-kpi-icon .lucide {
+        width: 28px;
+        height: 28px;
+      }
+
+      .bento-kpi-name {
+        font-size: var(--text-subhead);
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .bento-kpi-stat {
+        font-size: var(--text-body);
+        color: var(--ink);
+        min-height: 1.6em;
+      }
+
+      .bento-open-link {
+        width: auto;
+        min-height: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #0f4c75;
+        font-weight: 700;
+        justify-self: start;
+        box-shadow: none;
+      }
+
+      .bento-open-link:hover,
+      .bento-open-link:focus-visible {
+        transform: none;
+        box-shadow: none;
+        text-decoration: underline;
+      }
+
+      .bento-open-link:active {
+        transform: none;
+      }
+
+      body[data-theme="dark"] .bento-card,
+      body[data-theme="dark"] .activity-item,
+      body[data-theme="dark"] .activity-skeleton {
+        background: #1e293b;
+        border-color: #334155;
+        color: #f8fafc;
+      }
+
+      body[data-theme="dark"] .bento-feed .welcome-banner {
+        background: #0f172a;
+        border-color: #334155;
+      }
+
+      body[data-theme="dark"] .bento-kpi-icon {
+        background: #0f172a;
+        border-color: #334155;
+        color: #e2e8f0;
+      }
+
+      body[data-theme="dark"] .bento-open-link {
+        color: #93c5fd;
+      }
+
+      body[data-theme="dark"] .activity-item.activity-empty-state {
+        background: linear-gradient(135deg, #1e293b 0%, #172235 100%);
+      }
+
+      @media (max-width: 900px) {
+        .bento-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .bento-feed {
+          grid-column: 1 / 3;
+          grid-row: 1 / 2;
+          min-height: 200px;
+        }
+
+        .bento-parking,
+        .bento-voting,
+        .bento-market,
+        .bento-avizier {
+          grid-column: span 1;
+          grid-row: auto;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .bento-grid {
+          grid-template-columns: 1fr;
+          padding: 12px;
+        }
+
+        .bento-feed,
+        .bento-parking,
+        .bento-voting,
+        .bento-market,
+        .bento-avizier {
+          grid-column: 1;
+          grid-row: auto;
+        }
+
+        .activity-item {
+          grid-template-columns: 10px minmax(0, 1fr);
+          align-items: start;
+        }
+
+        .activity-item .activity-time {
+          grid-column: 2;
+          text-align: left;
+          margin-top: 2px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -3887,98 +4233,61 @@
 
       <main id="app" class="hidden">
         <section id="modulesCard" class="card module-panel is-visible dashboard-home" style="margin-top: 12px">
-          <div class="welcome-banner">
-            <h2 id="welcomeTitle" class="welcome-title">Hello 👋</h2>
-            <p id="welcomeResidence" class="welcome-note">Choose which module you want to work in. All modules require authenticated access.</p>
-          </div>
-          <div class="quick-stats">
-            <span class="quick-stat"><i data-lucide="car-front" aria-hidden="true"></i><span id="quickStatFree"><span class="stat-loading"></span></span></span>
-            <span class="quick-stat"><i data-lucide="store" aria-hidden="true"></i><span id="quickStatListings"><span class="stat-loading"></span></span></span>
-            <span class="quick-stat"><i data-lucide="vote" aria-hidden="true"></i><span id="quickStatPolls"><span class="stat-loading"></span></span></span>
-          </div>
-          <section class="home-activity-shell">
-            <div class="home-activity-head">
-              <h3 class="subheading-title">What's New</h3>
-              <div class="home-activity-head-right">
-                <span id="homeActivityTime" class="poll-note">Live updates from all modules</span>
+          <div class="bento-grid">
+            <section class="card bento-card bento-feed">
+              <div class="welcome-banner">
+                <h2 id="welcomeTitle" class="welcome-title">Hello 👋</h2>
+                <p id="welcomeResidence" class="welcome-note">Choose which module you want to work in. All modules require authenticated access.</p>
               </div>
-            </div>
-            <div id="homeActivityFeed" class="home-activity-feed">
-              <article class="activity-skeleton"></article>
-              <article class="activity-skeleton"></article>
-              <article class="activity-skeleton"></article>
-            </div>
-            <div id="homeActivityLoadMoreWrap" class="home-activity-load-more-wrap hidden">
-              <button id="homeActivityLoadMoreBtn" type="button" class="ghost home-activity-load-more">Load more</button>
-            </div>
-          </section>
-          <div class="jump-row" id="jumpRow">
-            <button type="button" class="jump-chip" data-module-target="parkingModule"><i data-lucide="car-front" aria-hidden="true"></i><span>Parking</span></button>
-            <button type="button" class="jump-chip" data-module-target="marketplaceModule"><i data-lucide="store" aria-hidden="true"></i><span>Marketplace</span></button>
-            <button type="button" class="jump-chip" data-module-target="votingModule"><i data-lucide="vote" aria-hidden="true"></i><span>Voting</span></button>
-            <button type="button" class="jump-chip" data-module-target="avizierModule"><i data-lucide="newspaper" aria-hidden="true"></i><span>Avizier</span></button>
-            <button type="button" class="jump-chip" data-go-profile><i data-lucide="user-cog" aria-hidden="true"></i><span>Profile</span></button>
-          </div>
-          <div class="module-grid">
-            <article class="module-card" data-module-card="parking">
-              <div class="module-card-head">
-                <div class="module-icon"><i data-lucide="car-front" aria-hidden="true"></i></div>
-                <div class="module-card-copy">
-                  <h3>Parking Sharing</h3>
-                  <p>Share and claim parking spots, monitor availability, and manage your claims.</p>
+              <div class="home-activity-head">
+                <h3 class="subheading-title">Ce e nou</h3>
+                <div class="home-activity-head-right">
+                  <span id="homeActivityTime" class="poll-note">Actualizat acum</span>
                 </div>
               </div>
-              <div class="module-actions">
-                <button type="button" class="ghost" data-module-target="parkingModule">Open Parking</button>
+              <section class="home-activity-shell">
+                <div id="homeActivityFeed" class="home-activity-feed">
+                  <article class="activity-skeleton"></article>
+                  <article class="activity-skeleton"></article>
+                  <article class="activity-skeleton"></article>
+                </div>
+              </section>
+            </section>
+
+            <article class="card bento-card bento-kpi-card bento-parking">
+              <div class="bento-kpi-head">
+                <div class="bento-kpi-icon"><i data-lucide="car-front" aria-hidden="true"></i></div>
+                <div class="bento-kpi-name">Parking</div>
               </div>
+              <div id="quickStatFree" class="bento-kpi-stat"><span class="stat-loading"></span></div>
+              <button type="button" class="bento-open-link" data-module-target="parkingModule" data-icon-locked="1">Deschide →</button>
             </article>
-            <article class="module-card" data-module-card="marketplace">
-              <div class="module-card-head">
-                <div class="module-icon"><i data-lucide="store" aria-hidden="true"></i></div>
-                <div class="module-card-copy">
-                  <h3>Marketplace</h3>
-                  <p>Residents can sell in person, donate items, claim donations, and mark listings as completed.</p>
-                </div>
+
+            <article class="card bento-card bento-kpi-card bento-voting">
+              <div class="bento-kpi-head">
+                <div class="bento-kpi-icon"><i data-lucide="vote" aria-hidden="true"></i></div>
+                <div class="bento-kpi-name">Voting</div>
               </div>
-              <div class="module-actions">
-                <button type="button" class="alt" data-module-target="marketplaceModule">Open Marketplace</button>
-              </div>
+              <div id="quickStatPolls" class="bento-kpi-stat"><span class="stat-loading"></span></div>
+              <button type="button" class="bento-open-link" data-module-target="votingModule" data-icon-locked="1">Deschide →</button>
             </article>
-            <article class="module-card" data-module-card="voting">
-              <div class="module-card-head">
-                <div class="module-icon"><i data-lucide="vote" aria-hidden="true"></i></div>
-                <div class="module-card-copy">
-                  <h3>Voting</h3>
-                  <p>Join building and neighbourhood polls, submit votes, and review results.</p>
-                </div>
+
+            <article class="card bento-card bento-kpi-card bento-market">
+              <div class="bento-kpi-head">
+                <div class="bento-kpi-icon"><i data-lucide="store" aria-hidden="true"></i></div>
+                <div class="bento-kpi-name">Marketplace</div>
               </div>
-              <div class="module-actions">
-                <button type="button" class="alt" data-module-target="votingModule">Open Voting</button>
-              </div>
+              <div id="quickStatListings" class="bento-kpi-stat"><span class="stat-loading"></span></div>
+              <button type="button" class="bento-open-link" data-module-target="marketplaceModule" data-icon-locked="1">Deschide →</button>
             </article>
-            <article class="module-card" data-module-card="avizier">
-              <div class="module-card-head">
-                <div class="module-icon"><i data-lucide="newspaper" aria-hidden="true"></i></div>
-                <div class="module-card-copy">
-                  <h3>Avizier</h3>
-                  <p>Read general and building announcements, with JPG/PDF attachments.</p>
-                </div>
+
+            <article class="card bento-card bento-kpi-card bento-avizier">
+              <div class="bento-kpi-head">
+                <div class="bento-kpi-icon"><i data-lucide="newspaper" aria-hidden="true"></i></div>
+                <div class="bento-kpi-name">Avizier</div>
               </div>
-              <div class="module-actions">
-                <button type="button" class="alt" data-module-target="avizierModule">Open Avizier</button>
-              </div>
-            </article>
-            <article class="module-card" data-module-card="profile">
-              <div class="module-card-head">
-                <div class="module-icon"><i data-lucide="user-cog" aria-hidden="true"></i></div>
-                <div class="module-card-copy">
-                  <h3>Profile Management</h3>
-                  <p>Change password, review your activity, and use quick delete actions for your items.</p>
-                </div>
-              </div>
-              <div class="module-actions">
-                <button type="button" class="ghost" data-go-profile>Open Profile</button>
-              </div>
+              <div id="quickStatAvizier" class="bento-kpi-stat"><span class="stat-loading"></span></div>
+              <button type="button" class="bento-open-link" data-module-target="avizierModule" data-icon-locked="1">Deschide →</button>
             </article>
           </div>
         </section>
@@ -4767,7 +5076,7 @@
       const THEME_PREF_KEY = "10blocuri_theme_pref_v1";
       const SIDEBAR_COLLAPSED_KEY = "10blocuri_sidebar_collapsed_v1";
       const AVIZIER_READ_KEY = "10blocuri_avizier_read_v1";
-      const HOME_ACTIVITY_PAGE_SIZE = 3;
+      const HOME_ACTIVITY_PAGE_SIZE = 10;
       const BUCHAREST_TIMEZONE = "Europe/Bucharest";
       const BUCHAREST_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
         timeZone: BUCHAREST_TIMEZONE,
@@ -4916,6 +5225,7 @@
         quickStatFree: document.getElementById("quickStatFree"),
         quickStatListings: document.getElementById("quickStatListings"),
         quickStatPolls: document.getElementById("quickStatPolls"),
+        quickStatAvizier: document.getElementById("quickStatAvizier"),
         adminPanel: document.getElementById("adminPanel"),
         modulesCard: document.getElementById("modulesCard"),
         activePolls: document.getElementById("activePolls"),
@@ -5085,6 +5395,8 @@
       let currentUser = null;
       let currentOpenSlots = [];
       let currentFreeSpots = [];
+      let currentClaimsOnMine = [];
+      let currentMyClaims = [];
       let currentBuildingStats = [];
       let claimConfirmResolver = null;
       let currentPollDetail = null;
@@ -5111,7 +5423,7 @@
       let avizierAnnouncements = [];
       let avizierEditingAnnouncementId = null;
       let avizierScopeFilter = "all";
-      let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
+      let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
       let quickStatsLoading = true;
       let autoRefreshIntervalId = null;
       let refreshTickerIntervalId = null;
@@ -5215,11 +5527,15 @@
           els.quickStatFree.innerHTML = loadingHtml;
           els.quickStatListings.innerHTML = loadingHtml;
           els.quickStatPolls.innerHTML = loadingHtml;
+          if (els.quickStatAvizier) els.quickStatAvizier.innerHTML = loadingHtml;
           return;
         }
-        els.quickStatFree.textContent = `${moduleQuickStats.freeSpots} free parking spots`;
-        els.quickStatListings.textContent = `${moduleQuickStats.activeListings} active listings`;
-        els.quickStatPolls.textContent = `${moduleQuickStats.openPolls} open polls`;
+        els.quickStatFree.textContent = `${moduleQuickStats.freeSpots} locuri libere`;
+        els.quickStatListings.textContent = `${moduleQuickStats.activeListings} anunțuri active`;
+        els.quickStatPolls.textContent = `${moduleQuickStats.openPolls} sondaje active`;
+        if (els.quickStatAvizier) {
+          els.quickStatAvizier.textContent = `${moduleQuickStats.announcements} anunțuri`;
+        }
       }
 
       function setQuickStatsLoading(isLoading) {
@@ -5289,7 +5605,7 @@
         if (loading) {
           homeActivityItemsCache = [];
           els.homeActivityFeed.innerHTML = `<article class="activity-skeleton"></article><article class="activity-skeleton"></article><article class="activity-skeleton"></article>`;
-          if (els.homeActivityTime) els.homeActivityTime.textContent = "Syncing module activity...";
+          if (els.homeActivityTime) els.homeActivityTime.textContent = "Se actualizează...";
           updateHomeActivityLoadMore(0, { loading: true });
           return;
         }
@@ -5303,7 +5619,7 @@
               <div class="empty-copy">Nicio activitate recentă. Fii primul care postează!</div>
             </article>
           `;
-          if (els.homeActivityTime) els.homeActivityTime.textContent = "";
+          if (els.homeActivityTime) els.homeActivityTime.textContent = "Actualizat acum";
           updateHomeActivityLoadMore(0);
           hydrateLucideIcons();
           return;
@@ -5314,15 +5630,16 @@
           .map(
             (item) => `
               <article class="activity-item" data-mod="${item.module}" data-activity-module="${item.moduleId}" ${item.pollId ? `data-activity-poll-id="${item.pollId}"` : ""}>
-                <strong>${item.text}</strong>
-                <div class="meta">${formatRelativeTime(item.createdAt)}</div>
+                <span class="activity-dot" aria-hidden="true"></span>
+                <div class="activity-text">${item.text}</div>
+                <div class="meta activity-time">${formatRelativeTime(item.createdAt)}</div>
               </article>
             `
           )
           .join("");
         const latestDate = parseDateSafe(items[0]?.createdAt);
         if (els.homeActivityTime) {
-          els.homeActivityTime.textContent = latestDate ? `Latest update ${formatRelativeTime(latestDate)}` : "Live module updates";
+          els.homeActivityTime.textContent = latestDate ? `Actualizat ${formatRelativeTime(latestDate)}` : "Actualizat acum";
         }
         updateHomeActivityLoadMore(homeActivityItemsCache.length);
       }
@@ -5336,14 +5653,36 @@
               module: "parking",
               moduleId: "parkingModule",
               createdAt: slot.available_from,
-              text: `Spot ${slot.parking_space_number} shared by ${slot.owner_username}.`,
+              text: `Locul ${slot.parking_space_number} a fost pus la dispoziție de ${slot.owner_username}.`,
+            });
+          });
+
+        newestByDate(currentClaimsOnMine, (slot) => slot.reservation_from || slot.reservation_until)
+          .slice(0, 2)
+          .forEach((slot) => {
+            activity.push({
+              module: "parking",
+              moduleId: "parkingModule",
+              createdAt: slot.reservation_from || slot.reservation_until,
+              text: `Loc revendicat: ${slot.parking_space_number} (de ${slot.reserved_by_username || "vecin"}).`,
+            });
+          });
+
+        newestByDate(currentMyClaims, (slot) => slot.reservation_from || slot.reservation_until)
+          .slice(0, 2)
+          .forEach((slot) => {
+            activity.push({
+              module: "parking",
+              moduleId: "parkingModule",
+              createdAt: slot.reservation_from || slot.reservation_until,
+              text: `Ai revendicat locul ${slot.parking_space_number} din Bloc ${slot.building_number}.`,
             });
           });
 
         newestByDate(marketplaceDashboardData.active_listings || [], (listing) => listing.created_at || listing.updated_at)
           .slice(0, 3)
           .forEach((listing) => {
-            const prefix = listing.listing_type === "donation" ? "Donation posted" : "Listing posted";
+            const prefix = listing.listing_type === "donation" ? "Donație nouă" : "Anunț nou";
             activity.push({
               module: "marketplace",
               moduleId: "marketplaceModule",
@@ -5352,15 +5691,15 @@
             });
           });
 
-        newestByDate(latestActivePolls, (poll) => poll.end_date)
+        newestByDate([...latestActivePolls, ...latestClosedPolls], (poll) => poll.created_at || poll.start_date || poll.end_date)
           .slice(0, 3)
           .forEach((poll) => {
             activity.push({
               module: "voting",
               moduleId: "votingModule",
               pollId: poll.id,
-              createdAt: poll.end_date,
-              text: `Poll closing soon: "${poll.title}".`,
+              createdAt: poll.created_at || poll.start_date || poll.end_date,
+              text: `Sondaj: "${poll.title}".`,
             });
           });
 
@@ -5371,11 +5710,11 @@
               module: "avizier",
               moduleId: "avizierModule",
               createdAt: item.created_at,
-              text: `Announcement: ${item.title}.`,
+              text: `Anunț: ${item.title}.`,
             });
           });
 
-        return newestByDate(activity, (entry) => entry.createdAt);
+        return newestByDate(activity, (entry) => entry.createdAt).slice(0, 10);
       }
 
       function refreshHomeActivity({ resetPage = false } = {}) {
@@ -6811,6 +7150,8 @@
           currentBuildingStats = data.building_stats;
         }
         currentFreeSpots = freeSpots;
+        currentClaimsOnMine = claimedByOthers;
+        currentMyClaims = myClaims;
 
         els.sharedSpots.innerHTML = freeSpots
           .map(
@@ -8054,6 +8395,8 @@
       async function refreshAvizier() {
         if (!currentUser) return;
         const data = await api("/api/avizier");
+        moduleQuickStats.announcements = Array.isArray(data) ? data.length : 0;
+        renderQuickStats();
         renderAvizierAnnouncements(data);
         markModuleRefreshed("avizier");
       }
@@ -8695,6 +9038,8 @@
           els.railUserText.textContent = "";
           els.railUserInitials.textContent = "--";
           currentFreeSpots = [];
+          currentClaimsOnMine = [];
+          currentMyClaims = [];
           currentBuildingStats = [];
           latestActivePolls = [];
           marketplaceDashboardData = { active_listings: [], my_listings: [] };
@@ -8702,7 +9047,7 @@
           avizierEditingAnnouncementId = null;
           homeActivityPage = 0;
           homeActivityItemsCache = [];
-          moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
+          moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
           setQuickStatsLoading(false);
           renderWelcomeBanner(null);
           updateRefreshMetaLabels();
@@ -8732,6 +9077,8 @@
         els.railUserText.textContent = `${user.username} · ${displayResidence(user)}`;
         els.railUserInitials.textContent = userInitials(user.username);
         currentFreeSpots = [];
+        currentClaimsOnMine = [];
+        currentMyClaims = [];
         currentBuildingStats = [];
         latestActivePolls = [];
         marketplaceDashboardData = { active_listings: [], my_listings: [] };
@@ -8739,7 +9086,7 @@
         avizierEditingAnnouncementId = null;
         homeActivityPage = 0;
         homeActivityItemsCache = [];
-        moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
+        moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
         setQuickStatsLoading(true);
         showModuleChooser();
         renderWelcomeBanner(user);
@@ -8980,9 +9327,11 @@
         }
       });
 
-      els.homeActivityLoadMoreBtn.addEventListener("click", () => {
-        loadMoreHomeActivity();
-      });
+      if (els.homeActivityLoadMoreBtn) {
+        els.homeActivityLoadMoreBtn.addEventListener("click", () => {
+          loadMoreHomeActivity();
+        });
+      }
 
       document.querySelectorAll("[data-go-profile]").forEach((btn) => {
         btn.addEventListener("click", () => {
