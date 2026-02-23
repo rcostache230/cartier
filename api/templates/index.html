@@ -4281,6 +4281,20 @@
         color: var(--text-primary);
       }
 
+      /* Legacy dark "ghost" buttons/links keep a dark background via older selectors. */
+      /* Force readable white foreground when that legacy variant is used across modules. */
+      button.ghost,
+      .table-action-link.ghost,
+      .table-action-btn.ghost {
+        color: #fff;
+      }
+
+      button.ghost .lucide,
+      .table-action-link.ghost .lucide,
+      .table-action-btn.ghost .lucide {
+        color: #fff;
+      }
+
       .btn-ghost {
         background: transparent;
         color: var(--text-secondary);
@@ -4524,16 +4538,6 @@
       .market-cards-row .market-card-actions .table-action-btn span,
       .market-cards-row .market-card-actions .table-action-link span {
         min-width: 0;
-      }
-
-      .market-card-actions .table-action-btn.ghost,
-      .market-card-actions .table-action-link.ghost {
-        color: #fff;
-      }
-
-      .market-card-actions .table-action-btn.ghost .lucide,
-      .market-card-actions .table-action-link.ghost .lucide {
-        color: #fff;
       }
 
       @media (max-width: 560px) {
