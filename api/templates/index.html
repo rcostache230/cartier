@@ -4431,6 +4431,8 @@
       }
 
       .type-pill {
+        width: auto;
+        min-height: 0;
         padding: 6px 14px;
         border-radius: 999px;
         border: 1.5px solid var(--border);
@@ -4441,6 +4443,9 @@
         cursor: pointer;
         transition: all 120ms ease;
         height: auto;
+        line-height: 1.15;
+        white-space: nowrap;
+        flex: 0 0 auto;
       }
 
       .type-pill.active {
@@ -4502,6 +4507,33 @@
 
       .market-section.hidden {
         display: none;
+      }
+
+      .market-cards-row .market-card-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .market-cards-row .market-card-actions .table-action-btn,
+      .market-cards-row .market-card-actions .table-action-link {
+        min-height: 34px;
+        height: auto;
+        padding: 7px 10px;
+        line-height: 1.2;
+      }
+
+      .market-cards-row .market-card-actions .table-action-btn span,
+      .market-cards-row .market-card-actions .table-action-link span {
+        min-width: 0;
+      }
+
+      @media (max-width: 560px) {
+        .market-cards-row .market-card-actions {
+          grid-template-columns: 1fr;
+        }
+
+        .market-cards-row .market-card-actions .market-claim-btn {
+          grid-column: auto;
+        }
       }
 
       body[data-theme="dark"] .type-pill:not(.active) {
@@ -5003,13 +5035,15 @@
           </div>
           <p id="marketplaceLastRefreshed" class="refresh-meta">Last refreshed: -</p>
 
-          <div id="marketplaceTypeTabs" class="type-filter-row" style="margin-top: 10px">
+          <span class="section-label mt-10">Tip anunț</span>
+          <div id="marketplaceTypeTabs" class="type-filter-row" style="margin-top: 6px">
             <button type="button" class="type-pill active" data-market-type="all">📋 Toate</button>
             <button type="button" class="type-pill" data-market-type="sale">🏷 Vânzare</button>
             <button type="button" class="type-pill" data-market-type="donation">🎁 Donații</button>
             <button type="button" class="type-pill" data-market-type="lending">🤝 Împrumut</button>
           </div>
-          <div id="marketplaceCategoryTabs" class="tabs market-filter-tabs" style="margin-top: 10px">
+          <span class="section-label">Categorie obiect</span>
+          <div id="marketplaceCategoryTabs" class="tabs market-filter-tabs" style="margin-top: 6px">
             <button type="button" class="tab-btn market-filter-btn active" data-market-category="all">
               <span class="market-filter-emoji" aria-hidden="true">📋</span>
               <span>Toate</span>
@@ -5049,46 +5083,38 @@
             </div>
           </div>
 
-          <div class="grid" style="margin-top: 12px">
-            <section class="card">
-              <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
-              <span class="section-label">Anunțuri Active</span>
-              <div id="marketplaceActiveCards" class="market-active-grid">
-                <div class="market-section" id="sectionSale">
-                  <div class="market-section-header">
-                    <span class="market-section-title">🏷 De vânzare</span>
-                    <span class="market-section-count badge badge-amber" id="countSale">0</span>
-                  </div>
-                  <div class="market-cards-row" id="cardsSale"></div>
+          <section class="card mt-12">
+            <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
+            <span class="section-label">Anunțuri Active</span>
+            <div id="marketplaceActiveCards" class="market-active-grid">
+              <div class="market-section" id="sectionSale">
+                <div class="market-section-header">
+                  <span class="market-section-title">🏷 De vânzare</span>
+                  <span class="market-section-count badge badge-amber" id="countSale">0</span>
                 </div>
-                <div class="market-section" id="sectionDonation">
-                  <div class="market-section-header">
-                    <span class="market-section-title">🎁 Donații</span>
-                    <span class="market-section-count badge badge-teal" id="countDonation">0</span>
-                  </div>
-                  <div class="market-cards-row" id="cardsDonation"></div>
-                </div>
-                <div class="market-section" id="sectionLending">
-                  <div class="market-section-header">
-                    <span class="market-section-title">🤝 Sharing is Caring</span>
-                    <span class="market-section-count badge badge-blue" id="countLending">0</span>
-                  </div>
-                  <div class="market-cards-row" id="cardsLending"></div>
-                </div>
+                <div class="market-cards-row" id="cardsSale"></div>
               </div>
-              <div class="table-wrap hidden" style="margin-top: 8px">
-                <table>
-                  <tbody id="marketplaceActiveBody"></tbody>
-                </table>
+              <div class="market-section" id="sectionDonation">
+                <div class="market-section-header">
+                  <span class="market-section-title">🎁 Donații</span>
+                  <span class="market-section-count badge badge-teal" id="countDonation">0</span>
+                </div>
+                <div class="market-cards-row" id="cardsDonation"></div>
               </div>
-            </section>
-            <section class="card">
-              <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
-              <span class="section-label">Anunțurile Mele</span>
-              <div id="myListingsCards" class="market-my-grid"></div>
-              <div id="marketplaceMineCards" class="market-mobile-list hidden"></div>
-            </section>
-          </div>
+              <div class="market-section" id="sectionLending">
+                <div class="market-section-header">
+                  <span class="market-section-title">🤝 Sharing is Caring</span>
+                  <span class="market-section-count badge badge-blue" id="countLending">0</span>
+                </div>
+                <div class="market-cards-row" id="cardsLending"></div>
+              </div>
+            </div>
+            <div class="table-wrap hidden" style="margin-top: 8px">
+              <table>
+                <tbody id="marketplaceActiveBody"></tbody>
+              </table>
+            </div>
+          </section>
 
           <section class="card mt-12">
             <h3>Create Listing</h3>
@@ -5171,6 +5197,13 @@
               </section>
               <button id="marketplaceCreateBtn" type="submit" data-default-text="Create Listing">Create Listing</button>
             </form>
+          </section>
+
+          <section class="card mt-12">
+            <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
+            <span class="section-label">Anunțurile Mele</span>
+            <div id="myListingsCards" class="market-my-grid"></div>
+            <div id="marketplaceMineCards" class="market-mobile-list hidden"></div>
           </section>
         </section>
 
@@ -8477,6 +8510,9 @@
           const phone = marketplaceContactLabel(post);
           const phoneHref = sanitizePhoneHref(phone);
           const toggleLabel = post.is_available === false ? "Marchează ca disponibil" : "Marchează ca împrumutat";
+          const contactAction = phoneHref
+            ? `<a class="table-action-link" href="tel:${phoneHref}">Contactează</a>`
+            : `<button type="button" class="table-action-btn ghost" disabled>Telefon indisponibil</button>`;
           return `
             <article class="market-listing-card card lending-card">
               <div class="market-listing-head">
@@ -8484,25 +8520,34 @@
                   ${marketplaceThumbHtml(post, post.title || "Imagine anunț împrumut")}
                 </div>
                 <div class="market-listing-body">
-                  <div class="market-lending-badges">
+                  <div class="market-card-badges market-lending-badges">
                     <span class="badge badge-blue">🤝 Împrumut</span>
+                    <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
                     ${maxDaysBadge}
                     <span class="badge ${statusBadge.className === "available" ? "badge-green" : "badge-amber"}">${statusBadge.label}</span>
                   </div>
-                  <p class="market-listing-title">${escapeHtml(post.title)}</p>
-                  <p class="market-listing-meta">${escapeHtml(post.owner_username)}${ownerBuilding ? ` · Bloc ${ownerBuilding}` : ""}</p>
-                  <p class="market-listing-description">${escapeHtml(post.description || "Fără descriere suplimentară.")}</p>
-                  <div class="market-lending-actions">
-                    ${
-                      phoneHref
-                        ? `<a href="tel:${phoneHref}" class="btn btn-primary btn-sm">📞 Contactează</a>`
-                        : `<button type="button" class="btn btn-secondary btn-sm" disabled>Telefon indisponibil</button>`
-                    }
+                  <div class="market-title-line">
+                    <strong>${escapeHtml(post.title)}</strong>
+                    <span class="market-price-main">Împrumut</span>
+                  </div>
+                  <div class="market-owner-line">${escapeHtml(post.owner_username)}${
+                    ownerBuilding ? ` · Bloc ${ownerBuilding}` : ""
+                  }</div>
+                  <div class="market-age">Publicat ${formatRelativeTime(post.created_at)}</div>
+                  ${
+                    post.description
+                      ? `<p class="market-listing-description">${escapeHtml(post.description)}</p>`
+                      : ""
+                  }
+                  <div class="market-card-actions">
+                    ${contactAction}
+                    <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
                     ${
                       isOwner
-                        ? `<button type="button" class="btn btn-secondary btn-sm market-lending-toggle-btn" data-lending-toggle-id="${post.id}">${toggleLabel}</button>`
+                        ? `<button type="button" class="table-action-btn alt market-lending-toggle-btn" data-lending-toggle-id="${post.id}">${toggleLabel}</button>`
                         : ""
                     }
+                    <a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Detalii</a>
                   </div>
                 </div>
               </div>
