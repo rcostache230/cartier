@@ -1674,6 +1674,16 @@ function ensureCanModifyAvizierAnnouncement(actorUser, row, actionLabel) {
   }
 }
 
+function ensureCanDeleteAvizierAnnouncement(actorUser, row) {
+  if (actorUser.role === "admin") return;
+  if (Number(row.created_by) === Number(actorUser.id)) return;
+  ensureAvizierPostPermission({
+    user: actorUser,
+    scope: String(row.scope || ""),
+    buildingId: String(row.scope || "") === "building" ? Number(row.building_id || 0) : null,
+  });
+}
+
 async function updateAvizierAnnouncement({ actorUser, announcementId, payload }) {
   if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
     throw new AppError(400, "invalid payload");
@@ -1754,7 +1764,7 @@ async function updateAvizierAnnouncement({ actorUser, announcementId, payload })
 async function deleteAvizierAnnouncement({ actorUser, announcementId }) {
   await withTransaction(async (client) => {
     const existing = await getAvizierAnnouncementRowForUpdate(client, announcementId);
-    ensureCanModifyAvizierAnnouncement(actorUser, existing, "delete this announcement");
+    ensureCanDeleteAvizierAnnouncement(actorUser, existing);
     await client.query("DELETE FROM avizier_announcements WHERE id = $1", [announcementId]);
   });
   return { deleted: true, announcement_id: announcementId };

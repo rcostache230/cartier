@@ -5112,6 +5112,7 @@
         root.querySelectorAll(".market-edit-btn").forEach((button) => setButtonActionIcon(button, "square-pen"));
         root.querySelectorAll(".market-complete-btn").forEach((button) => setButtonActionIcon(button, "badge-check"));
         root.querySelectorAll(".market-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
+        root.querySelectorAll(".avizier-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll(".poll-open-btn").forEach((button) => setButtonActionIcon(button, "vote"));
         root.querySelectorAll(".poll-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll(".table-action-link").forEach((link) => {
@@ -6790,6 +6791,12 @@
         return false;
       }
 
+      function canDeleteAvizierAnnouncement(item, user = currentUser) {
+        if (!user || !item) return false;
+        if (String(item.created_by_username || "") === String(user.username || "")) return true;
+        return canPostAvizier(user, item.scope, item.scope === "building" ? item.building_id : null);
+      }
+
       function canManagePolls(user = currentUser) {
         if (!user) return false;
         return user.role === "admin" || String(user.avizier_permission || "none") === "comitet";
@@ -6960,6 +6967,7 @@
             const longMessage = String(item.message || "").trim();
             const shouldTruncate = longMessage.length > 220;
             const preview = shouldTruncate ? `${longMessage.slice(0, 220)}...` : longMessage;
+            const canDelete = canDeleteAvizierAnnouncement(item);
             return `
               <article class="poll-card avizier-card priority-${item.priority} ${unread ? "unread" : ""}" data-avizier-id="${item.id}">
                 <div class="poll-card-head">
@@ -6999,15 +7007,23 @@
                       : `<span class="poll-note">No attachments.</span>`
                   }
                 </div>
-                ${
-                  shouldTruncate
-                    ? `<button type="button" class="avizier-read-more" data-avizier-expand="${item.id}">Read more</button>`
-                    : ""
-                }
+                <div class="module-actions" style="margin-top:8px">
+                  ${
+                    shouldTruncate
+                      ? `<button type="button" class="avizier-read-more" data-avizier-expand="${item.id}">Read more</button>`
+                      : ""
+                  }
+                  ${
+                    canDelete
+                      ? `<button type="button" class="table-action-btn danger avizier-delete-btn" data-avizier-delete="${item.id}">Delete</button>`
+                      : ""
+                  }
+                </div>
               </article>
             `;
           })
           .join("");
+        decorateDynamicActionIcons(els.avizierList);
         hydrateLucideIcons();
         refreshHomeActivity();
       }
@@ -8234,6 +8250,24 @@
       });
 
       els.avizierList.addEventListener("click", (event) => {
+        const deleteBtn = event.target.closest("[data-avizier-delete]");
+        if (deleteBtn) {
+          const announcementId = String(deleteBtn.dataset.avizierDelete || "").trim();
+          if (!announcementId) return;
+          requestActionConfirmation("Delete this announcement permanently?").then(async (confirmed) => {
+            if (!confirmed) return;
+            await withButtonProgress(deleteBtn, "Deleting...", async () => {
+              try {
+                await api(`/api/avizier/${announcementId}/delete`, { method: "POST" });
+                showToast("Announcement deleted.");
+                await refreshAvizier();
+              } catch (error) {
+                setStatus(error.message, true);
+              }
+            });
+          });
+          return;
+        }
         const expandBtn = event.target.closest("[data-avizier-expand]");
         const card = event.target.closest("[data-avizier-id]");
         if (card) {
