@@ -3577,6 +3577,7 @@
         color: var(--text-primary, #1c1917);
         font-size: 14px;
         line-height: 1.6;
+        max-width: 680px;
       }
 
       .announcement-body-preview {
@@ -3585,24 +3586,6 @@
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-      }
-
-      .announcement-inline-more {
-        display: inline;
-        margin-left: 6px;
-        padding: 0;
-        border: none;
-        background: transparent;
-        color: var(--accent-primary);
-        font-size: 13px;
-        font-weight: 600;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-        cursor: pointer;
-      }
-
-      .announcement-inline-more:hover {
-        color: #15803d;
       }
 
       .announcement-attachments {
@@ -3638,29 +3621,29 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-top: 14px;
+        margin-top: 16px;
         flex-wrap: wrap;
       }
 
       .announcement-actions .table-action-btn,
       .announcement-actions .avizier-read-more {
-        height: 34px;
+        height: 36px;
         border-radius: 8px;
         font-size: 13px;
         font-weight: 500;
       }
 
-      .announcement-actions .share-entity-btn {
+      .announcement-actions .avizier-share-btn {
         background: transparent;
-        color: var(--text-secondary, #78716c);
-        border: none;
+        color: var(--text-primary, #1c1917);
+        border: 1.5px solid var(--border, #e7e5e4);
         box-shadow: none;
-        padding: 0 8px;
       }
 
-      .announcement-actions .share-entity-btn:hover {
-        background: #f5f5f4;
+      .announcement-actions .avizier-share-btn:hover {
+        background: #fafaf9;
         color: var(--text-primary, #1c1917);
+        border-color: #d6d3d1;
       }
 
       .announcement-actions .avizier-edit-btn {
@@ -3676,7 +3659,7 @@
 
       .announcement-actions .avizier-read-more {
         width: auto;
-        min-height: 34px;
+        min-height: 36px;
         padding: 0 12px;
         background: var(--accent-primary);
         color: #fff;
@@ -3689,9 +3672,10 @@
       }
 
       .announcement-actions .avizier-delete-btn {
-        width: 34px;
-        min-width: 34px;
-        padding: 0;
+        width: 36px;
+        min-width: 36px;
+        margin-left: auto;
+        padding: 8px;
         background: transparent;
         color: #ef4444;
         border: none;
@@ -3699,7 +3683,7 @@
       }
 
       .announcement-actions .avizier-delete-btn:hover {
-        background: rgba(239, 68, 68, 0.08);
+        background: #fee2e2;
         color: #dc2626;
       }
 
@@ -8935,16 +8919,12 @@
           const isOwner = currentUser && post.owner_username === currentUser.username;
           const ownerBuilding = marketplaceOwnerBuilding(post);
           const statusBadge = marketplaceStatusTag(post);
+          const contactId = `market-contact-${post.id}`;
           const maxDaysBadge =
             Number(post.max_days || 0) > 0
               ? `<span class="badge badge-gray">⏱ Max ${Number(post.max_days)} zile</span>`
               : "";
-          const phone = marketplaceContactLabel(post);
-          const phoneHref = sanitizePhoneHref(phone);
           const toggleLabel = post.is_available === false ? "Marchează ca disponibil" : "Marchează ca împrumutat";
-          const contactAction = phoneHref
-            ? `<a class="table-action-link" href="tel:${phoneHref}">Contactează</a>`
-            : `<button type="button" class="table-action-btn ghost" disabled>Telefon indisponibil</button>`;
           return `
             <article class="market-listing-card card lending-card">
               <div class="market-listing-head">
@@ -8972,7 +8952,7 @@
                       : ""
                   }
                   <div class="market-card-actions">
-                    ${contactAction}
+                    <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contact</button>
                     <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
                     ${
                       isOwner
@@ -8981,6 +8961,9 @@
                     }
                     <a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Detalii</a>
                   </div>
+                  <div id="${contactId}" class="market-contact-meta hidden">${iconMarkup("phone")}<span>${escapeHtml(
+                    marketplaceContactLabel(post)
+                  )}</span></div>
                 </div>
               </div>
             </article>
@@ -9515,7 +9498,7 @@
                 )}">
                   ${
                     shouldTruncate
-                      ? `<p class="announcement-body-preview">${escapeHtml(collapsedPreviewText)} <button type="button" class="announcement-inline-more" data-avizier-expand="${item.id}">Citește mai mult</button></p>`
+                      ? `<p class="announcement-body-preview">${escapeHtml(collapsedPreviewText)}</p>`
                       : renderAvizierMessageHtml(longMessage)
                   }
                 </div>
@@ -9536,12 +9519,12 @@
                     : ""
                 }
                 <div class="announcement-actions">
-                  <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="announcement" data-share-id="${item.id}">Distribuie</button>
                   ${
                     canEdit
                       ? `<button type="button" class="table-action-btn avizier-edit-btn" data-avizier-edit="${item.id}">Editează</button>`
                       : ""
                   }
+                  <button type="button" class="table-action-btn avizier-share-btn share-entity-btn" data-share-kind="announcement" data-share-id="${item.id}">Distribuie</button>
                   ${
                     shouldTruncate
                       ? `<button type="button" class="avizier-read-more" data-avizier-expand="${item.id}">Citește mai mult</button>`
@@ -9549,7 +9532,7 @@
                   }
                   ${
                     canDelete
-                      ? `<button type="button" class="table-action-btn danger avizier-delete-btn" data-avizier-delete="${item.id}" aria-label="Șterge anunțul" title="Șterge">Șterge</button>`
+                      ? `<button type="button" class="table-action-btn danger avizier-delete-btn" data-avizier-delete="${item.id}" aria-label="Șterge anunțul" title="Șterge anunțul">Șterge</button>`
                       : ""
                   }
                 </div>
