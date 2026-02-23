@@ -11,6 +11,9 @@
         --line: #e2e8f0;
         --ink: #1a2332;
         --muted: #64748b;
+        --border: var(--line);
+        --text-primary: var(--ink);
+        --text-secondary: var(--muted);
         --text-muted: var(--muted);
         --text-display: 2.75rem; /* 44px — hero/login headline only */
         --text-heading: 1.375rem; /* 22px — module page titles */
@@ -4106,6 +4109,266 @@
           margin-top: 2px;
         }
       }
+
+      /* Atomic UI Components */
+      .mt-8 {
+        margin-top: 8px;
+      }
+
+      .mt-10 {
+        margin-top: 10px;
+      }
+
+      .mt-12 {
+        margin-top: 12px;
+      }
+
+      .mt-14 {
+        margin-top: 14px;
+      }
+
+      .card,
+      .parking-spot-card,
+      .market-listing-card,
+      .poll-card,
+      .avizier-card {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 16px 20px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        transition: box-shadow 150ms ease, transform 150ms ease;
+      }
+
+      .market-listing-card,
+      .poll-card,
+      .avizier-card,
+      .parking-spot-card {
+        background: var(--card);
+      }
+
+      .badge,
+      .parking-status-badge,
+      .poll-chip,
+      .avizier-chip,
+      .market-status-badge,
+      .market-category-badge,
+      .availability {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+      }
+
+      .badge .lucide,
+      .poll-chip .lucide,
+      .avizier-chip .lucide,
+      .market-status-badge .lucide,
+      .market-category-badge .lucide {
+        width: 14px;
+        height: 14px;
+      }
+
+      .badge-green,
+      .parking-status-badge.free,
+      .parking-status-badge.open,
+      .poll-chip.status-active,
+      .poll-chip.status-active-voted,
+      .market-status-badge.available {
+        background: #dcfce7;
+        color: #15803d;
+        border-color: transparent;
+      }
+
+      .badge-amber,
+      .parking-status-badge.claimed,
+      .parking-status-badge.reserved,
+      .poll-chip.status-draft,
+      .market-status-badge.claimed,
+      .avizier-chip.priority-important {
+        background: #fef3c7;
+        color: #b45309;
+        border-color: transparent;
+      }
+
+      .badge-red,
+      .parking-status-badge.expired,
+      .parking-status-badge.closed,
+      .parking-status-badge.full,
+      .market-status-badge.completed,
+      .avizier-chip.priority-urgent {
+        background: #fee2e2;
+        color: #b91c1c;
+        border-color: transparent;
+      }
+
+      .badge-blue,
+      .poll-chip.scope.building,
+      .avizier-chip.scope-building {
+        background: #dbeafe;
+        color: #1d4ed8;
+        border-color: transparent;
+      }
+
+      .badge-purple,
+      .poll-chip.scope.neighbourhood,
+      .poll-chip.type {
+        background: #ede9fe;
+        color: #6d28d9;
+        border-color: transparent;
+      }
+
+      .badge-teal,
+      .avizier-chip.scope-general {
+        background: #ccfbf1;
+        color: #0f766e;
+        border-color: transparent;
+      }
+
+      .badge-gray,
+      .parking-status-badge.default,
+      .poll-chip.status-closed,
+      .poll-chip.status-archived,
+      .poll-chip.time,
+      .market-category-badge {
+        background: #f4f4f5;
+        color: #52525b;
+        border-color: transparent;
+      }
+
+      .market-category-badge.badge-blue {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+
+      .market-category-badge.badge-teal {
+        background: #ccfbf1;
+        color: #0f766e;
+      }
+
+      .btn,
+      button,
+      .table-action-btn,
+      .module-back-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 38px;
+        padding: 0 16px;
+        border-radius: 9px;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: all 80ms ease;
+      }
+
+      button,
+      .btn-primary {
+        background: var(--accent-primary);
+        color: #fff;
+      }
+
+      .ghost,
+      .btn-secondary {
+        background: transparent;
+        border: 1.5px solid var(--border);
+        color: var(--text-primary);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-secondary);
+      }
+
+      .danger,
+      .btn-danger {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+
+      .table-action-btn,
+      .poll-countdown,
+      .avizier-format-btn,
+      .btn-sm {
+        height: 32px;
+        padding: 0 12px;
+        font-size: 13px;
+      }
+
+      button .lucide,
+      .table-action-btn .lucide,
+      .module-back-link .lucide {
+        width: 16px;
+        height: 16px;
+      }
+
+      input:not([type]),
+      input[type="text"],
+      input[type="password"],
+      input[type="number"],
+      input[type="tel"],
+      input[type="datetime-local"],
+      select,
+      textarea {
+        height: 42px;
+        padding: 0 12px;
+        border-radius: 9px;
+        border: 1.5px solid var(--border);
+        font-size: 14px;
+        color: var(--text-primary);
+        background: var(--card);
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 180ms ease, box-shadow 180ms ease;
+        appearance: none;
+      }
+
+      textarea {
+        height: auto;
+        padding: 12px;
+        min-height: 100px;
+      }
+
+      select {
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 14px 14px;
+        padding-right: 34px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5l5 5 5-5' stroke='%2364748b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--text-muted);
+      }
+
+      .poll-rank-select {
+        width: 110px;
+        margin-left: auto;
+      }
+
+      .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      body[data-theme="dark"] .badge-gray,
+      body[data-theme="dark"] .market-category-badge,
+      body[data-theme="dark"] .poll-chip.time {
+        background: #334155;
+        color: #e2e8f0;
+      }
     </style>
   </head>
   <body>
@@ -4232,7 +4495,7 @@
       </section>
 
       <main id="app" class="hidden">
-        <section id="modulesCard" class="card module-panel is-visible dashboard-home" style="margin-top: 12px">
+        <section id="modulesCard" class="card module-panel is-visible dashboard-home mt-12">
           <div class="bento-grid">
             <section class="card bento-card bento-feed">
               <div class="welcome-banner">
@@ -4305,9 +4568,10 @@
           </section>
           <p id="parkingLastRefreshed" class="refresh-meta">Last refreshed: -</p>
 
-          <section class="card" style="margin-top: 12px">
+          <section class="card mt-12">
             <h2>Building Capacity</h2>
             <p class="capacity-legend">UG = Underground, AG = Above-ground. Tap a bloc card to filter claim options.</p>
+            <span class="section-label">Capacitate Blocuri</span>
             <div id="stats" class="capacity-grid" style="margin-top: 10px"></div>
           </section>
 
@@ -4396,7 +4660,7 @@
             </section>
           </section>
 
-          <section class="card activity-shell" style="margin-top: 14px">
+          <section class="card activity-shell mt-14">
             <h2>My Activity</h2>
             <div class="parking-kpi-grid" style="margin-top: 10px">
               <article class="parking-kpi-card">
@@ -4436,6 +4700,7 @@
             </div>
 
             <section id="activityFreePanel" class="tab-panel" data-tab-group="activity">
+              <span class="section-label">Locuri Disponibile</span>
               <div id="sharedSpotsTableWrap" class="table-wrap">
                 <table>
                   <thead>
@@ -4459,6 +4724,7 @@
             </section>
 
             <section id="activitySharedPanel" class="tab-panel hidden" data-tab-group="activity">
+              <span class="section-label">Locurile Mele Partajate</span>
               <div id="mySharedTableWrap" class="table-wrap">
                 <table>
                   <thead>
@@ -4472,6 +4738,7 @@
             </section>
 
             <section id="activityClaimedByOthersPanel" class="tab-panel hidden" data-tab-group="activity">
+              <span class="section-label">Revendicate De Vecini</span>
               <div id="claimedOnMineTableWrap" class="table-wrap">
                 <table>
                   <thead>
@@ -4485,6 +4752,7 @@
             </section>
 
             <section id="activityMyClaimsPanel" class="tab-panel hidden" data-tab-group="activity">
+              <span class="section-label">Revendicările Mele</span>
               <div id="myClaimedTableWrap" class="table-wrap">
                 <table>
                   <thead>
@@ -4498,7 +4766,7 @@
             </section>
           </section>
 
-          <section id="adminPanel" class="card admin-zone hidden" style="margin-top: 14px">
+          <section id="adminPanel" class="card admin-zone hidden mt-14">
             <div class="admin-zone-head">
               <h2><i data-lucide="lock" aria-hidden="true"></i>Admin Zone</h2>
               <span class="admin-badge"><i data-lucide="shield-check" aria-hidden="true"></i>Admin Only</span>
@@ -4554,7 +4822,7 @@
           </section>
         </div>
 
-        <section id="marketplaceModule" class="card hidden module-panel" style="margin-top: 14px">
+        <section id="marketplaceModule" class="card hidden module-panel mt-14">
           <div class="module-header">
             <div>
               <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Marketplace</div>
@@ -4613,6 +4881,7 @@
           <div class="grid" style="margin-top: 12px">
             <section class="card">
               <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
+              <span class="section-label">Anunțuri Active</span>
               <div id="marketplaceActiveCards" class="market-active-grid"></div>
               <div class="table-wrap hidden" style="margin-top: 8px">
                 <table>
@@ -4622,12 +4891,13 @@
             </section>
             <section class="card">
               <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
+              <span class="section-label">Anunțurile Mele</span>
               <div id="myListingsCards" class="market-my-grid"></div>
               <div id="marketplaceMineCards" class="market-mobile-list hidden"></div>
             </section>
           </div>
 
-          <section class="card" style="margin-top: 12px">
+          <section class="card mt-12">
             <h3>Create Listing</h3>
             <div class="market-notice-banner" style="margin-top: 8px">
               💡 All sales are in person only. No online payment.
@@ -4705,7 +4975,7 @@
           </section>
         </section>
 
-        <section id="avizierModule" class="card hidden module-panel" style="margin-top: 14px">
+        <section id="avizierModule" class="card hidden module-panel mt-14">
           <div class="module-header">
             <div>
               <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Avizier</div>
@@ -4719,8 +4989,9 @@
           </div>
           <p id="avizierLastRefreshed" class="refresh-meta">Last refreshed: -</p>
 
-          <section class="card" style="margin-top: 12px">
+          <section class="card mt-12">
             <h3>Announcements <span class="count-pill" id="avizierCount">0</span></h3>
+            <span class="section-label">Anunțuri</span>
             <div id="avizierScopeFilters" class="tabs market-filter-tabs" style="margin-top: 8px">
               <button type="button" class="tab-btn market-filter-btn active" data-avizier-filter="all">
                 <span class="market-filter-emoji" aria-hidden="true">📋</span>
@@ -4738,7 +5009,7 @@
             <div id="avizierList" class="stack" style="margin-top: 8px"></div>
           </section>
 
-          <section id="createAvizierCard" class="card hidden" style="margin-top: 12px">
+          <section id="createAvizierCard" class="card hidden mt-12">
             <div class="avizier-form-head">
               <h3 id="avizierFormHeading">Create Announcement</h3>
               <button id="avizierCancelEditBtn" class="ghost hidden" type="button">Cancel Edit</button>
@@ -4799,14 +5070,14 @@
             </form>
           </section>
 
-          <section id="avizierLockedCard" class="card hidden" style="margin-top: 12px">
+          <section id="avizierLockedCard" class="card hidden mt-12">
             <div class="locked-notice">
               🔒 Only Reprezentant Bloc and Comitet members can post announcements.
             </div>
           </section>
         </section>
 
-        <section id="votingModule" class="card hidden module-panel" style="margin-top: 14px">
+        <section id="votingModule" class="card hidden module-panel mt-14">
           <div class="module-header">
             <div>
               <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Voting</div>
@@ -4819,7 +5090,7 @@
             </div>
           </div>
           <p id="votingLastRefreshed" class="refresh-meta">Last refreshed: -</p>
-          <section id="createPollCard" class="card hidden" style="margin-top: 12px">
+          <section id="createPollCard" class="card hidden mt-12">
             <h3>Create Poll (Admin Wizard)</h3>
             <form id="createPollForm" class="stack" style="margin-top: 8px">
               <div class="poll-wizard-header">
@@ -4937,10 +5208,12 @@
           <div class="grid" style="margin-top: 10px">
             <section class="card">
               <h3>Active Polls <span class="count-pill" id="countActivePolls">0</span></h3>
+              <span class="section-label">Sondaje Active</span>
               <div id="activePolls" class="poll-card-grid"></div>
             </section>
             <section class="card">
               <h3>Closed Polls <span class="count-pill" id="countClosedPolls">0</span></h3>
+              <span class="section-label">Sondaje Închise</span>
               <div id="closedPollsTableWrap" class="table-wrap" style="margin-top: 8px">
                 <table>
                   <thead>
@@ -7203,7 +7476,7 @@
           ? freeSpots
               .map(
                 (s) => `
-                  <article class="parking-spot-card status-free">
+                  <article class="parking-spot-card card status-free">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
                       ${parkingStatusBadge("free", "Free")}
@@ -7226,7 +7499,7 @@
           ? myShared
               .map(
                 (s) => `
-                  <article class="parking-spot-card ${String(s.status || "open").toLowerCase() === "open" ? "status-free" : "status-expired"}">
+                  <article class="parking-spot-card card ${String(s.status || "open").toLowerCase() === "open" ? "status-free" : "status-expired"}">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
                       ${parkingStatusBadge(s.status || "open")}
@@ -7244,7 +7517,7 @@
           ? claimedByOthers
               .map(
                 (s) => `
-                  <article class="parking-spot-card status-claimed">
+                  <article class="parking-spot-card card status-claimed">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
                       ${parkingStatusBadge("claimed", "Claimed")}
@@ -7264,7 +7537,7 @@
           ? myClaims
               .map(
                 (s) => `
-                  <article class="parking-spot-card status-claimed">
+                  <article class="parking-spot-card card status-claimed">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
                       ${parkingStatusBadge("claimed", "Claimed")}
@@ -7364,7 +7637,7 @@
           ? users
               .map(
                 (u) => `
-                  <article class="parking-spot-card">
+                  <article class="parking-spot-card card">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${u.username}</span>
                       <span class="parking-status-badge default">${u.role}</span>
@@ -7844,7 +8117,7 @@
                 const isDonation = post.listing_type === "donation";
                 const isSold = post.status === "completed";
                 return `
-                  <article class="market-listing-card">
+                  <article class="market-listing-card card">
                     <div class="market-listing-head">
                       <div class="market-listing-thumb">
                         ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
@@ -7898,7 +8171,7 @@
                 const priceLabel = post.listing_type === "sale" ? post.price_text || "-" : "FREE";
                 const listingUrl = marketplaceListingUrl(post.id);
                 return `
-                  <article class="market-listing-card">
+                  <article class="market-listing-card card">
                     <div class="market-listing-head">
                       <div class="market-listing-thumb">
                         ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
@@ -7914,7 +8187,7 @@
                           <span class="market-price-main">${priceLabel}</span>
                         </div>
                         <div class="market-card-badges">
-                          <span class="market-category-badge">${marketplaceTypeLabel(post.listing_type)}</span>
+                          <span class="market-category-badge listing-type ${post.listing_type === "donation" ? "badge-teal" : "badge-blue"}">${marketplaceTypeLabel(post.listing_type)}</span>
                           <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
                         </div>
                         ${
@@ -8327,7 +8600,7 @@
             const canDelete = canDeleteAvizierAnnouncement(item);
             const canEdit = canEditAvizierAnnouncement(item);
             return `
-              <article class="poll-card avizier-card priority-${item.priority} ${unread ? "unread" : ""}" data-avizier-id="${item.id}">
+              <article class="poll-card card avizier-card priority-${item.priority} ${unread ? "unread" : ""}" data-avizier-id="${item.id}">
                 <div class="poll-card-head">
                   <h4>${item.cleanTitle}</h4>
                   <span class="poll-countdown">${iconMarkup("calendar-clock")}<span>${formatRelativeTime(item.created_at)}</span></span>
@@ -8419,7 +8692,7 @@
                     ? Math.min(100, Math.round((participation / quorumNeeded) * 100))
                     : 0;
                 return `
-                  <article class="poll-card">
+                  <article class="poll-card card">
                     <div class="poll-card-head">
                       <h4>${poll.title}</h4>
                       <span class="poll-urgency" style="--urgency-progress:${urgency.progress}%; --urgency-color:${urgency.color}">
@@ -8537,7 +8810,7 @@
           ? polls
               .map(
                 (poll) => `
-                  <article class="poll-card">
+                  <article class="poll-card card">
                     <div class="poll-card-head">
                       <h4>${poll.title}</h4>
                     </div>
@@ -8699,7 +8972,7 @@
                   (opt) => `
                     <div class="poll-vote-tile">
                       <div class="tile-label">${opt.label}</div>
-                      <select data-option-id="${opt.id}" required style="width:110px; margin-left:auto">
+                      <select data-option-id="${opt.id}" class="poll-rank-select" required>
                         <option value="">Rank</option>
                         ${rankOptions}
                       </select>

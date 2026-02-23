@@ -14,6 +14,12 @@ function profileHtml() {
         --line: #e2e8f0;
         --ink: #1a2332;
         --muted: #64748b;
+        --border: var(--line);
+        --text-primary: var(--ink);
+        --text-secondary: var(--muted);
+        --accent-primary: #16a34a;
+        --shadow-sm: 0 6px 14px rgba(15, 23, 42, 0.08);
+        --shadow-md: 0 10px 20px rgba(15, 23, 42, 0.12);
         --teal: #10b981;
         --danger: #ef4444;
       }
@@ -523,6 +529,147 @@ function profileHtml() {
           max-width: none;
         }
       }
+
+      /* Atomic UI Components */
+      .mt-14 {
+        margin-top: 14px;
+      }
+
+      .card,
+      .mini-card {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 16px 20px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        transition: box-shadow 150ms ease, transform 150ms ease;
+      }
+
+      .card-error {
+        border-color: #fecaca;
+        background: #fef2f2;
+        color: #b91c1c;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+      }
+
+      .badge-green { background: #dcfce7; color: #15803d; }
+      .badge-amber { background: #fef3c7; color: #b45309; }
+      .badge-red { background: #fee2e2; color: #b91c1c; }
+      .badge-blue { background: #dbeafe; color: #1d4ed8; }
+      .badge-purple { background: #ede9fe; color: #6d28d9; }
+      .badge-teal { background: #ccfbf1; color: #0f766e; }
+      .badge-gray { background: #f4f4f5; color: #52525b; }
+
+      .btn,
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 38px;
+        padding: 0 16px;
+        border-radius: 9px;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: all 80ms ease;
+      }
+
+      button,
+      .btn-primary {
+        background: var(--accent-primary);
+        color: #fff;
+      }
+
+      button.ghost,
+      .btn-secondary {
+        background: transparent;
+        border: 1.5px solid var(--border);
+        color: var(--text-primary);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-secondary);
+      }
+
+      button.danger,
+      .btn-danger {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: none;
+      }
+
+      .danger-item button,
+      .mini-card button,
+      [data-user-editor] button,
+      .table-wrap button,
+      .modal-actions button,
+      .admin-toolbar button {
+        height: 32px;
+        padding: 0 12px;
+        font-size: 13px;
+      }
+
+      input:not([type]),
+      input[type="text"],
+      input[type="password"],
+      input[type="number"],
+      input[type="tel"],
+      select,
+      textarea {
+        height: 42px;
+        padding: 0 12px;
+        border-radius: 9px;
+        border: 1.5px solid var(--border);
+        font-size: 14px;
+        color: var(--text-primary);
+        background: var(--card);
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 180ms ease, box-shadow 180ms ease;
+        appearance: none;
+      }
+
+      textarea {
+        height: auto;
+        padding: 12px;
+        min-height: 100px;
+      }
+
+      select {
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 14px 14px;
+        padding-right: 34px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5l5 5 5-5' stroke='%2364748b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--muted);
+      }
+
+      .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
+        display: block;
+      }
     </style>
   </head>
   <body>
@@ -535,7 +682,7 @@ function profileHtml() {
         <p>Manage your account, activity, and admin tools.</p>
       </section>
 
-      <section id="errorCard" class="card hidden" style="margin-top:14px; border-color:#fecaca; background:#fef2f2; color:#b91c1c"></section>
+      <section id="errorCard" class="card card-error hidden mt-14"></section>
 
       <main id="profileApp" class="hidden" style="margin-top:14px" >
         <section class="card">
@@ -597,6 +744,7 @@ function profileHtml() {
             </div>
 
             <section id="listingsPanel" style="margin-top:10px">
+              <span class="section-label">Anunțuri</span>
               <div class="table-wrap">
                 <table>
                   <thead>
@@ -615,6 +763,7 @@ function profileHtml() {
             </section>
 
             <section id="parkingPanel" class="hidden" style="margin-top:10px">
+              <span class="section-label">Parcare</span>
               <div class="table-wrap">
                 <table>
                   <thead>
@@ -634,6 +783,7 @@ function profileHtml() {
             </section>
 
             <section id="votesPanel" class="hidden" style="margin-top:10px">
+              <span class="section-label">Sondaje</span>
               <div class="table-wrap">
                 <table>
                   <thead>
@@ -651,9 +801,10 @@ function profileHtml() {
             </section>
           </details>
 
-          <details class="danger-zone">
+          <details class="danger-zone card">
             <summary style="cursor:pointer; font-weight:800">Danger Zone</summary>
             <h3 style="margin-top:10px">Quick Delete Actions</h3>
+            <span class="section-label">Acțiuni Rapide</span>
             <div id="dangerList" class="danger-list"></div>
           </details>
         </section>
@@ -661,6 +812,7 @@ function profileHtml() {
         <section id="adminPanel" class="stack hidden" style="margin-top:14px">
           <section class="card admin-grid">
             <h3 class="section-title">User Management</h3>
+            <span class="section-label">Utilizatori</span>
             <div class="admin-toolbar">
               <div>
                 <label for="adminSearchInput">Search user</label>
@@ -992,7 +1144,7 @@ function profileHtml() {
         els.marketplaceCards.innerHTML = listings.length
           ? listings
               .map(function (listing) {
-                return '<article class="mini-card">' +
+                return '<article class="card mini-card">' +
                   '<div class="mini-card-title">' + listing.title + "</div>" +
                   '<div class="mini-card-meta">' +
                   '<div>Type: ' + listing.listing_type + "</div>" +
@@ -1003,7 +1155,7 @@ function profileHtml() {
                   "</article>";
               })
               .join("")
-          : '<article class="mini-card"><div>No listings yet.</div></article>';
+          : '<article class="card mini-card"><div>No listings yet.</div></article>';
       }
 
       function renderParking(slots) {
@@ -1025,7 +1177,7 @@ function profileHtml() {
         els.parkingCards.innerHTML = slots.length
           ? slots
               .map(function (slot) {
-                return '<article class="mini-card">' +
+                return '<article class="card mini-card">' +
                   '<div class="mini-card-title">Spot ' + slot.parking_space_number + "</div>" +
                   '<div class="mini-card-meta">' +
                   '<div>Type: ' + slot.parking_type + "</div>" +
@@ -1036,7 +1188,7 @@ function profileHtml() {
                   "</article>";
               })
               .join("")
-          : '<article class="mini-card"><div>No shared parking spots active.</div></article>';
+          : '<article class="card mini-card"><div>No shared parking spots active.</div></article>';
       }
 
       function renderVotes(polls) {
@@ -1062,7 +1214,7 @@ function profileHtml() {
                 const statusChip = poll.has_voted
                   ? '<span class="poll-chip voted">' + iconMarkup("check-check") + "<span>Voted</span></span>"
                   : '<span class="poll-chip">' + iconMarkup("circle") + "<span>Not Voted</span></span>";
-                return '<article class="mini-card">' +
+                return '<article class="card mini-card">' +
                   '<div class="mini-card-title">' + poll.title + "</div>" +
                   '<div class="mini-card-meta">' +
                   '<div>' + pollScopeChip(poll) + "</div>" +
@@ -1072,7 +1224,7 @@ function profileHtml() {
                   "</article>";
               })
               .join("")
-          : '<article class="mini-card"><div>No active polls relevant right now.</div></article>';
+          : '<article class="card mini-card"><div>No active polls relevant right now.</div></article>';
       }
 
       function renderDangerZone() {
@@ -1179,7 +1331,7 @@ function profileHtml() {
           ? users
               .map(function (user) {
                 return (
-                  '<article class="mini-card">' +
+                  '<article class="card mini-card">' +
                     '<div class="mini-card-title">' + user.username + "</div>" +
                     '<div class="mini-card-meta">Role: ' + user.role + "</div>" +
                     '<div class="mini-card-meta">Avizier: ' + String(user.avizier_permission || "none") + "</div>" +
@@ -1188,7 +1340,7 @@ function profileHtml() {
                 );
               })
               .join("")
-          : '<article class="mini-card"><div>No users found for current filter.</div></article>';
+          : '<article class="card mini-card"><div>No users found for current filter.</div></article>';
 
         hydrateIcons();
       }
