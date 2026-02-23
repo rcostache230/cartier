@@ -571,6 +571,43 @@
         color: var(--free-text);
       }
 
+      .avizier-form-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .avizier-form-head h3 {
+        margin: 0;
+      }
+
+      .avizier-editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .avizier-format-btn {
+        width: auto;
+        min-height: 32px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        color: #334155;
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      .avizier-format-btn:hover {
+        background: #eff6ff;
+        border-color: #93c5fd;
+        color: #1d4ed8;
+      }
+
       .tz-note {
         margin-top: 6px;
         font-size: 0.78rem;
@@ -3211,6 +3248,52 @@
         border-color: #1a2332;
       }
 
+      .avizier-message-rich {
+        margin-top: 10px;
+        color: var(--ink);
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+      }
+
+      .avizier-message-rich p {
+        margin: 0;
+      }
+
+      .avizier-message-rich p + p,
+      .avizier-message-rich p + ul,
+      .avizier-message-rich p + ol,
+      .avizier-message-rich ul + p,
+      .avizier-message-rich ol + p,
+      .avizier-message-rich ul + ul,
+      .avizier-message-rich ol + ol {
+        margin-top: 8px;
+      }
+
+      .avizier-message-rich ul,
+      .avizier-message-rich ol {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .avizier-message-rich li + li {
+        margin-top: 4px;
+      }
+
+      .avizier-message-rich a {
+        color: #2563eb;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      .avizier-message-rich code {
+        border-radius: 6px;
+        border: 1px solid #dbe5f2;
+        background: #f8fafc;
+        padding: 1px 5px;
+        font-size: 0.84em;
+      }
+
       .mobile-tabbar {
         position: fixed;
         left: 8px;
@@ -3336,6 +3419,27 @@
 
       body[data-theme="dark"] .share-preview {
         background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(20, 184, 166, 0.1) 100%);
+        border-color: #334155;
+      }
+
+      body[data-theme="dark"] .avizier-format-btn {
+        background: #0f172a;
+        border-color: #334155;
+        color: #e2e8f0;
+      }
+
+      body[data-theme="dark"] .avizier-format-btn:hover {
+        background: #1e293b;
+        border-color: #3b82f6;
+        color: #bfdbfe;
+      }
+
+      body[data-theme="dark"] .avizier-message-rich a {
+        color: #93c5fd;
+      }
+
+      body[data-theme="dark"] .avizier-message-rich code {
+        background: #0f172a;
         border-color: #334155;
       }
 
@@ -4102,7 +4206,13 @@
           </section>
 
           <section id="createAvizierCard" class="card hidden" style="margin-top: 12px">
-            <h3>Create Announcement</h3>
+            <div class="avizier-form-head">
+              <h3 id="avizierFormHeading">Create Announcement</h3>
+              <button id="avizierCancelEditBtn" class="ghost hidden" type="button">Cancel Edit</button>
+            </div>
+            <p id="avizierFormModeHint" class="poll-note" style="margin-top:6px">
+              Use line breaks, lists, and simple formatting for easier reading.
+            </p>
             <form id="createAvizierForm" class="stack" style="margin-top: 8px">
               <div>
                 <label for="avizierTitle">Title</label>
@@ -4110,6 +4220,17 @@
               </div>
               <div>
                 <label for="avizierMessage">Message</label>
+                <div id="avizierFormatToolbar" class="avizier-editor-toolbar" role="toolbar" aria-label="Announcement formatting">
+                  <button type="button" class="avizier-format-btn" data-avizier-format="bold">Bold</button>
+                  <button type="button" class="avizier-format-btn" data-avizier-format="italic">Italic</button>
+                  <button type="button" class="avizier-format-btn" data-avizier-format="bullets">Bullets</button>
+                  <button type="button" class="avizier-format-btn" data-avizier-format="numbers">Numbers</button>
+                  <button type="button" class="avizier-format-btn" data-avizier-format="link">Link</button>
+                  <button type="button" class="avizier-format-btn" data-avizier-format="paragraph">Paragraph</button>
+                </div>
+                <p class="poll-note" style="margin:6px 0 6px">
+                  Supports paragraphs, <code>- bullet lists</code>, <code>1. numbered lists</code>, <code>**bold**</code>, <code>*italic*</code>, and pasted URLs.
+                </p>
                 <textarea id="avizierMessage" maxlength="4000" placeholder="Write the full announcement..." required></textarea>
               </div>
               <div>
@@ -4634,6 +4755,10 @@
         avizierLockedCard: document.getElementById("avizierLockedCard"),
         createAvizierForm: document.getElementById("createAvizierForm"),
         createAvizierBtn: document.getElementById("createAvizierBtn"),
+        avizierFormHeading: document.getElementById("avizierFormHeading"),
+        avizierFormModeHint: document.getElementById("avizierFormModeHint"),
+        avizierCancelEditBtn: document.getElementById("avizierCancelEditBtn"),
+        avizierFormatToolbar: document.getElementById("avizierFormatToolbar"),
         avizierTitle: document.getElementById("avizierTitle"),
         avizierMessage: document.getElementById("avizierMessage"),
         avizierScope: document.getElementById("avizierScope"),
@@ -4762,6 +4887,7 @@
       let marketplaceSelectedBuilding = "all";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
       let avizierAnnouncements = [];
+      let avizierEditingAnnouncementId = null;
       let avizierScopeFilter = "all";
       let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
       let quickStatsLoading = true;
@@ -4793,6 +4919,7 @@
         ["#adminShareBtn", "plus-circle"],
         ["#marketplaceCreateBtn", "package-plus"],
         ["#createAvizierBtn", "megaphone"],
+        ["#avizierCancelEditBtn", "x"],
         ["#createPollBtn", "list-plus"],
         ["#pollWizardNextBtn", "arrow-right"],
         ["#pollWizardPrevBtn", "arrow-left"],
@@ -5355,6 +5482,7 @@
         root.querySelectorAll(".market-complete-btn").forEach((button) => setButtonActionIcon(button, "badge-check"));
         root.querySelectorAll(".market-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll(".share-entity-btn").forEach((button) => setButtonActionIcon(button, "share-2"));
+        root.querySelectorAll(".avizier-edit-btn").forEach((button) => setButtonActionIcon(button, "square-pen"));
         root.querySelectorAll(".avizier-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll(".poll-open-btn").forEach((button) => setButtonActionIcon(button, "vote"));
         root.querySelectorAll(".poll-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
@@ -7278,9 +7406,176 @@
         return canPostAvizier(user, item.scope, item.scope === "building" ? item.building_id : null);
       }
 
+      function canEditAvizierAnnouncement(item, user = currentUser) {
+        if (!user || !item) return false;
+        if (user.role === "admin") return true;
+        return String(item.created_by_username || "") === String(user.username || "");
+      }
+
       function canManagePolls(user = currentUser) {
         if (!user) return false;
         return user.role === "admin" || String(user.avizier_permission || "none") === "comitet";
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function formatAvizierInlineRichText(value) {
+        let html = escapeHtml(value);
+        html = html.replace(/(https?:\/\/[^\s<]+)/gi, (match) => {
+          const clean = match.replace(/[),.;!?]+$/g, "");
+          const trailing = match.slice(clean.length);
+          return `<a href="${clean}" target="_blank" rel="noopener noreferrer">${clean}</a>${trailing}`;
+        });
+        html = html.replace(/\*\*([^*\n][\s\S]*?)\*\*/g, "<strong>$1</strong>");
+        html = html.replace(/(^|[^*])\*([^*\n][\s\S]*?)\*/g, "$1<em>$2</em>");
+        html = html.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+        return html;
+      }
+
+      function renderAvizierMessageHtml(message, { truncate = 0 } = {}) {
+        const normalized = String(message || "").replace(/\r\n?/g, "\n").trim();
+        if (!normalized) return `<p class="poll-note">No message.</p>`;
+
+        if (truncate > 0 && normalized.length > truncate) {
+          const short = `${normalized.slice(0, truncate).trim()}...`;
+          return `<p>${formatAvizierInlineRichText(short).replace(/\n/g, "<br>")}</p>`;
+        }
+
+        const blocks = normalized.split(/\n{2,}/).filter(Boolean);
+        return blocks
+          .map((block) => {
+            const lines = block
+              .split("\n")
+              .map((line) => line.trimEnd())
+              .filter((line) => line.length > 0);
+            if (!lines.length) return "";
+            const bulletItems = lines.every((line) => /^[-*]\s+/.test(line));
+            if (bulletItems) {
+              return `<ul>${lines
+                .map((line) => `<li>${formatAvizierInlineRichText(line.replace(/^[-*]\s+/, ""))}</li>`)
+                .join("")}</ul>`;
+            }
+            const numberedItems = lines.every((line) => /^\d+\.\s+/.test(line));
+            if (numberedItems) {
+              return `<ol>${lines
+                .map((line) => `<li>${formatAvizierInlineRichText(line.replace(/^\d+\.\s+/, ""))}</li>`)
+                .join("")}</ol>`;
+            }
+            return `<p>${lines.map((line) => formatAvizierInlineRichText(line)).join("<br>")}</p>`;
+          })
+          .join("");
+      }
+
+      function setAvizierComposerMode() {
+        const editing = Boolean(avizierEditingAnnouncementId);
+        if (els.avizierFormHeading) {
+          els.avizierFormHeading.textContent = editing ? "Edit Announcement" : "Create Announcement";
+        }
+        if (els.avizierFormModeHint) {
+          els.avizierFormModeHint.textContent = editing
+            ? "Editing an existing announcement. Existing attachments stay unless you select new files (replacement)."
+            : "Use line breaks, lists, and simple formatting for easier reading.";
+        }
+        if (els.avizierCancelEditBtn) {
+          els.avizierCancelEditBtn.classList.toggle("hidden", !editing);
+        }
+        if (els.createAvizierBtn) {
+          els.createAvizierBtn.dataset.defaultText = editing ? "Save Changes" : "Post Announcement";
+          setButtonActionIcon(els.createAvizierBtn, "megaphone");
+          hydrateLucideIcons();
+        }
+      }
+
+      function resetAvizierComposer() {
+        avizierEditingAnnouncementId = null;
+        els.createAvizierForm.reset();
+        els.avizierPriority.value = "normal";
+        els.avizierPinned.checked = false;
+        els.avizierFiles.value = "";
+        setAvizierUploadStatus("No files selected.");
+        if (currentUser?.avizier_permission === "reprezentant_bloc" && currentUser?.role !== "admin") {
+          els.avizierScope.value = "building";
+          els.avizierBuilding.value = String(currentUser.building_number || "");
+        }
+        updateAvizierFormVisibility();
+        setAvizierComposerMode();
+      }
+
+      function applyAvizierFormat(formatType) {
+        const textarea = els.avizierMessage;
+        if (!textarea) return;
+        const start = Number(textarea.selectionStart || 0);
+        const end = Number(textarea.selectionEnd || 0);
+        const selected = textarea.value.slice(start, end);
+        const insertWrapped = (prefix, suffix, placeholder) => {
+          const content = selected || placeholder;
+          const next = `${prefix}${content}${suffix}`;
+          textarea.setRangeText(next, start, end, "end");
+          textarea.focus();
+        };
+        if (formatType === "bold") {
+          insertWrapped("**", "**", "text");
+          return;
+        }
+        if (formatType === "italic") {
+          insertWrapped("*", "*", "text");
+          return;
+        }
+        if (formatType === "link") {
+          insertWrapped("", "", "https://example.com");
+          return;
+        }
+        if (formatType === "paragraph") {
+          textarea.setRangeText("\n\n", start, end, "end");
+          textarea.focus();
+          return;
+        }
+        if (formatType === "bullets") {
+          const content = selected || "Item one\nItem two";
+          const lines = content.split(/\r?\n/).map((line) => (line.trim() ? `- ${line.replace(/^[-*]\s+/, "")}` : "- "));
+          textarea.setRangeText(lines.join("\n"), start, end, "end");
+          textarea.focus();
+          return;
+        }
+        if (formatType === "numbers") {
+          const content = selected || "Item one\nItem two";
+          const lines = content.split(/\r?\n/).map((line, idx) => `${idx + 1}. ${line.replace(/^\d+\.\s+/, "").trim() || "Item"}`);
+          textarea.setRangeText(lines.join("\n"), start, end, "end");
+          textarea.focus();
+        }
+      }
+
+      function findAvizierAnnouncementById(announcementId) {
+        return (Array.isArray(avizierAnnouncements) ? avizierAnnouncements : []).find(
+          (item) => String(item.id) === String(announcementId)
+        ) || null;
+      }
+
+      function startAvizierEdit(item) {
+        if (!item) return;
+        const decoded = decodeAvizierTitle(item.title);
+        avizierEditingAnnouncementId = String(item.id);
+        els.avizierTitle.value = decoded.cleanTitle || "";
+        els.avizierMessage.value = String(item.message || "");
+        els.avizierPriority.value = decoded.priority || "normal";
+        els.avizierPinned.checked = Boolean(decoded.pinned);
+        els.avizierScope.value = String(item.scope || "general");
+        if (item.scope === "building" && item.building_id != null) {
+          els.avizierBuilding.value = String(item.building_id);
+        }
+        els.avizierFiles.value = "";
+        setAvizierUploadStatus("No files selected. Existing attachments will be kept unless you choose replacements.");
+        updateAvizierFormVisibility();
+        setAvizierComposerMode();
+        els.createAvizierCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        els.avizierTitle.focus();
       }
 
       function normalizeAvizierFileType(fileType, fileName) {
@@ -7447,8 +7742,9 @@
             const unread = !isAvizierRead(item.id);
             const longMessage = String(item.message || "").trim();
             const shouldTruncate = longMessage.length > 220;
-            const preview = shouldTruncate ? `${longMessage.slice(0, 220)}...` : longMessage;
+            const collapsedMessageHtml = renderAvizierMessageHtml(longMessage, { truncate: 220 });
             const canDelete = canDeleteAvizierAnnouncement(item);
+            const canEdit = canEditAvizierAnnouncement(item);
             return `
               <article class="poll-card avizier-card priority-${item.priority} ${unread ? "unread" : ""}" data-avizier-id="${item.id}">
                 <div class="poll-card-head">
@@ -7473,9 +7769,9 @@
                   ${item.pinned ? `<span class="avizier-chip">${iconMarkup("pin")}<span>Pinned</span></span>` : ""}
                   ${item.priority === "urgent" ? `<span class="avizier-dot" aria-hidden="true"></span>` : ""}
                 </div>
-                <p style="margin:10px 0 0" data-avizier-message="${item.id}" data-avizier-full="${encodeURIComponent(
+                <div class="avizier-message-rich" data-avizier-message="${item.id}" data-avizier-full="${encodeURIComponent(
                   longMessage
-                )}">${preview}</p>
+                )}">${collapsedMessageHtml}</div>
                 <div style="margin-top:8px">
                   ${
                     attachments.length
@@ -7490,6 +7786,11 @@
                 </div>
                 <div class="module-actions" style="margin-top:8px">
                   <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="announcement" data-share-id="${item.id}">Share</button>
+                  ${
+                    canEdit
+                      ? `<button type="button" class="table-action-btn avizier-edit-btn" data-avizier-edit="${item.id}">Edit</button>`
+                      : ""
+                  }
                   ${
                     shouldTruncate
                       ? `<button type="button" class="avizier-read-more" data-avizier-expand="${item.id}">Read more</button>`
@@ -8148,6 +8449,7 @@
           latestActivePolls = [];
           marketplaceDashboardData = { active_listings: [], my_listings: [] };
           avizierAnnouncements = [];
+          avizierEditingAnnouncementId = null;
           homeActivityPage = 0;
           homeActivityItemsCache = [];
           moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
@@ -8160,6 +8462,7 @@
           clearMarketplaceUploadState();
           renderAvizierAnnouncements([]);
           updateAvizierFormVisibility();
+          setAvizierComposerMode();
           return;
         }
 
@@ -8183,6 +8486,7 @@
         latestActivePolls = [];
         marketplaceDashboardData = { active_listings: [], my_listings: [] };
         avizierAnnouncements = [];
+        avizierEditingAnnouncementId = null;
         homeActivityPage = 0;
         homeActivityItemsCache = [];
         moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0 };
@@ -8198,6 +8502,7 @@
         setPollWizardStep(1);
         updateMarketplaceFormVisibility();
         updateAvizierFormVisibility();
+        setAvizierComposerMode();
         setAvizierScopeFilter("all");
 
         if (user.role === "admin") {
@@ -8727,10 +9032,24 @@
         updateAvizierFormVisibility();
       });
 
+      els.avizierCancelEditBtn.addEventListener("click", () => {
+        resetAvizierComposer();
+      });
+
+      els.avizierFormatToolbar.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-avizier-format]");
+        if (!button) return;
+        applyAvizierFormat(button.dataset.avizierFormat);
+      });
+
       els.avizierFiles.addEventListener("change", () => {
         const files = Array.from(els.avizierFiles.files || []);
         if (!files.length) {
-          setAvizierUploadStatus("No files selected.");
+          setAvizierUploadStatus(
+            avizierEditingAnnouncementId
+              ? "No files selected. Existing attachments will be kept unless you choose replacements."
+              : "No files selected."
+          );
           return;
         }
         const invalid = files.filter(
@@ -8762,6 +9081,17 @@
         const shareBtn = event.target.closest('.share-entity-btn[data-share-kind="announcement"]');
         if (shareBtn) {
           openShareForEntity("announcement", shareBtn.dataset.shareId);
+          return;
+        }
+        const editBtn = event.target.closest("[data-avizier-edit]");
+        if (editBtn) {
+          const announcementId = String(editBtn.dataset.avizierEdit || "").trim();
+          const item = findAvizierAnnouncementById(announcementId);
+          if (!item) {
+            showToast("Announcement not found. Refresh and try again.", "warning");
+            return;
+          }
+          startAvizierEdit(item);
           return;
         }
         const deleteBtn = event.target.closest("[data-avizier-delete]");
@@ -8798,19 +9128,20 @@
         const fullText = decodeURIComponent(messageEl.dataset.avizierFull || "");
         const expanded = expandBtn.dataset.expanded === "1";
         if (expanded) {
-          const truncated = fullText.length > 220 ? `${fullText.slice(0, 220)}...` : fullText;
-          messageEl.textContent = truncated;
+          messageEl.innerHTML = renderAvizierMessageHtml(fullText, { truncate: 220 });
           expandBtn.dataset.expanded = "0";
           expandBtn.textContent = "Read more";
         } else {
-          messageEl.textContent = fullText;
+          messageEl.innerHTML = renderAvizierMessageHtml(fullText);
           expandBtn.dataset.expanded = "1";
           expandBtn.textContent = "Show less";
         }
+        hydrateLucideIcons();
       });
 
       els.createAvizierForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+        const isEditing = Boolean(avizierEditingAnnouncementId);
         const scope = els.avizierScope.value;
         const buildingId =
           scope === "building"
@@ -8821,7 +9152,7 @@
           return;
         }
 
-        await withButtonProgress(els.createAvizierBtn, "Posting...", async () => {
+        await withButtonProgress(els.createAvizierBtn, isEditing ? "Saving..." : "Posting...", async () => {
           try {
             const files = Array.from(els.avizierFiles.files || []);
             let attachments = [];
@@ -8846,23 +9177,26 @@
               message: (els.avizierMessage.value || "").trim(),
               scope,
               building_id: scope === "building" ? buildingId : null,
-              attachments,
             };
-            await api("/api/avizier", {
-              method: "POST",
-              body: JSON.stringify(payload),
-            });
-            showToast("Announcement posted.");
-            flashButtonSuccess(els.createAvizierBtn, "Posted");
-            els.createAvizierForm.reset();
-            els.avizierPriority.value = "normal";
-            els.avizierPinned.checked = false;
-            setAvizierUploadStatus("No files selected.");
-            if (currentUser?.avizier_permission === "reprezentant_bloc" && currentUser?.role !== "admin") {
-              els.avizierScope.value = "building";
-              els.avizierBuilding.value = String(currentUser.building_number || "");
+            if (!isEditing || files.length) {
+              payload.attachments = attachments;
             }
-            updateAvizierFormVisibility();
+            if (isEditing) {
+              await api(`/api/avizier/${avizierEditingAnnouncementId}/update`, {
+                method: "POST",
+                body: JSON.stringify(payload),
+              });
+              showToast("Announcement updated.");
+              flashButtonSuccess(els.createAvizierBtn, "Saved");
+            } else {
+              await api("/api/avizier", {
+                method: "POST",
+                body: JSON.stringify(payload),
+              });
+              showToast("Announcement posted.");
+              flashButtonSuccess(els.createAvizierBtn, "Posted");
+            }
+            resetAvizierComposer();
             await refreshAvizier();
           } catch (error) {
             setStatus(error.message, true);
@@ -9223,6 +9557,7 @@
         setPollWizardStep(1);
         updatePollFormVisibility();
         updateMarketplaceFormVisibility();
+        setAvizierComposerMode();
         setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: false, rerender: false });
         setMarketplaceSort(marketplaceSelectedSort, { rerender: false });
         setMarketplaceBuildingFilter("all", { rerender: false });
