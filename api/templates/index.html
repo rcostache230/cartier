@@ -17,6 +17,9 @@
         --text-subhead: 1rem; /* 16px — card titles, form group labels */
         --text-body: 0.875rem; /* 14px — all content */
         --text-caption: 0.75rem; /* 12px — timestamps, metadata, helper text */
+        --accent-primary: #16a34a;
+        --shadow-md: 0 10px 20px rgba(15, 23, 42, 0.12);
+        --shadow-lg: 0 14px 28px rgba(15, 23, 42, 0.16);
         --teal: #10b981;
         --teal-2: #059669;
         --amber: #f59e0b;
@@ -3151,12 +3154,129 @@
         transform: scale(0.97);
       }
 
+      button,
+      .btn {
+        transition: transform 80ms ease, box-shadow 80ms ease;
+        cursor: pointer;
+      }
+
+      button:hover,
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+
+      button:active,
+      .btn:active {
+        transform: scale(0.96) translateY(1px);
+        box-shadow: none;
+      }
+
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #parkingModule .card,
+      #marketplaceModule .card,
+      #avizierModule .card,
+      #votingModule .card {
+        opacity: 0;
+      }
+
+      .card.visible {
+        animation: cardIn 280ms ease forwards;
+      }
+
+      .card:nth-child(1) {
+        animation-delay: 0ms;
+      }
+
+      .card:nth-child(2) {
+        animation-delay: 50ms;
+      }
+
+      .card:nth-child(3) {
+        animation-delay: 100ms;
+      }
+
+      .card:nth-child(4) {
+        animation-delay: 150ms;
+      }
+
+      .card:nth-child(n + 5) {
+        animation-delay: 200ms;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+        transition: transform 150ms ease, box-shadow 150ms ease;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
+        border-color: var(--accent-primary);
+        outline: none;
+        transition: all 180ms ease;
+      }
+
       input:focus-visible,
       select:focus-visible,
       textarea:focus-visible {
         outline: none;
         border-color: #34d399;
         box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+      }
+
+      .toggle-thumb {
+        transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .remember-toggle::after {
+        transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes livePulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 0 6px rgba(22, 163, 74, 0);
+        }
+      }
+
+      .badge-new {
+        animation: livePulse 2s ease infinite;
+      }
+
+      .module-view {
+        animation: cardIn 200ms ease forwards;
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -400px 0;
+        }
+        100% {
+          background-position: 400px 0;
+        }
+      }
+
+      .skeleton {
+        background: linear-gradient(90deg, #f5f0eb 25%, #fdf8f3 50%, #f5f0eb 75%);
+        background-size: 400px 100%;
+        animation: shimmer 1.4s ease infinite;
+        border-radius: 6px;
       }
 
       .parking-spot-card.status-free {
@@ -3460,6 +3580,10 @@
 
       .module-panel.is-visible {
         animation: panel-in 0.2s ease;
+      }
+
+      .module-panel.module-view {
+        animation: cardIn 200ms ease forwards;
       }
 
       @keyframes panel-in {
@@ -5106,25 +5230,24 @@
         }
       }
 
-      function animateCounter(el, nextValue) {
-        if (!el) return;
-        const target = Math.max(0, Number(nextValue || 0));
-        const start = Number(el.dataset.counterValue || 0);
-        const duration = 600;
-        const startAt = performance.now();
-
-        const tick = (now) => {
-          const progress = Math.min(1, (now - startAt) / duration);
-          const value = Math.round(start + (target - start) * progress);
-          el.textContent = String(value);
-          if (progress < 1) {
-            requestAnimationFrame(tick);
-          } else {
-            el.dataset.counterValue = String(target);
+      function animateCounter(el, target, duration = 700) {
+        if (!el || isNaN(target)) return;
+        const numericTarget = Math.max(0, Number(target || 0));
+        const currentValue = Number(String(el.textContent || "0").replace(/[^\d-]/g, "")) || 0;
+        let start = null;
+        const ease = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+        const step = (ts) => {
+          if (!start) start = ts;
+          const p = Math.min((ts - start) / duration, 1);
+          const nextValue = Math.round(currentValue + (numericTarget - currentValue) * ease(p));
+          el.textContent = String(nextValue);
+          if (p < 1) {
+            requestAnimationFrame(step);
+            return;
           }
+          el.dataset.counterValue = String(numericTarget);
         };
-
-        requestAnimationFrame(tick);
+        requestAnimationFrame(step);
       }
 
       function newestByDate(items, getDateValue) {
@@ -5537,15 +5660,11 @@
 
       function flashButtonSuccess(buttonEl, label = "Done") {
         if (!buttonEl) return;
-        const originalHtml = buttonEl.dataset.defaultHtml || buttonEl.innerHTML;
-        const originalText = buttonEl.dataset.defaultText || buttonEl.textContent.trim();
-        buttonEl.innerHTML = `${iconMarkup("check")}<span>${label}</span>`;
-        hydrateLucideIcons();
+        const successHtml = `${iconMarkup("check")}<span>${label}</span>`;
         setTimeout(() => {
           if (!buttonEl.isConnected) return;
-          buttonEl.innerHTML = originalHtml || `<span>${originalText}</span>`;
-          hydrateLucideIcons();
-        }, 1500);
+          submitSuccess(buttonEl, successHtml);
+        }, 0);
       }
 
       function iconMarkup(name) {
@@ -6074,12 +6193,16 @@
         });
         els.parkingModule.classList.add("hidden");
         els.parkingModule.classList.remove("is-visible");
+        els.parkingModule.classList.remove("module-view");
         els.marketplaceModule.classList.add("hidden");
         els.marketplaceModule.classList.remove("is-visible");
+        els.marketplaceModule.classList.remove("module-view");
         els.avizierModule.classList.add("hidden");
         els.avizierModule.classList.remove("is-visible");
+        els.avizierModule.classList.remove("module-view");
         els.votingModule.classList.add("hidden");
         els.votingModule.classList.remove("is-visible");
+        els.votingModule.classList.remove("module-view");
         refreshHomeActivity();
         syncNavigationState();
         updateMobileFab();
@@ -6098,8 +6221,14 @@
         modules.forEach((moduleEl) => {
           if (moduleEl.id === moduleId) {
             moduleEl.classList.remove("hidden");
-            requestAnimationFrame(() => moduleEl.classList.add("is-visible"));
+            moduleEl.classList.remove("module-view");
+            requestAnimationFrame(() => {
+              moduleEl.classList.add("is-visible");
+              moduleEl.classList.add("module-view");
+              animateCards(`#${moduleId}`);
+            });
           } else {
+            moduleEl.classList.remove("module-view");
             moduleEl.classList.remove("is-visible");
             moduleEl.classList.add("hidden");
           }
@@ -9740,6 +9869,46 @@
           setStatus(error.message, true);
         }
       }
+
+      // Submit button success feedback
+      function submitSuccess(btn, label = "✓ Salvat") {
+        if (!btn) return;
+        const orig = btn.innerHTML;
+        const origDisabled = btn.disabled;
+        const origStyle = btn.getAttribute("style");
+        btn.innerHTML = label;
+        btn.disabled = true;
+        btn.style.cssText += ";background:#16A34A;transform:scale(1.03);transition:all 150ms ease";
+        hydrateLucideIcons();
+        setTimeout(() => {
+          if (!btn.isConnected) return;
+          btn.innerHTML = orig;
+          btn.disabled = origDisabled;
+          if (origStyle === null) {
+            btn.removeAttribute("style");
+          } else {
+            btn.setAttribute("style", origStyle);
+          }
+          hydrateLucideIcons();
+        }, 1800);
+      }
+
+      // Trigger card entrance animations when a module section becomes visible
+      function animateCards(containerSelector) {
+        if (!containerSelector) return;
+        const cards = document.querySelectorAll(`${containerSelector} .card`);
+        if (!cards.length) return;
+        cards.forEach((card) => card.classList.remove("visible"));
+        requestAnimationFrame(() => {
+          cards.forEach((card, i) => {
+            card.style.animationDelay = `${i * 50}ms`;
+            card.classList.add("visible");
+          });
+        });
+      }
+
+      // Replace all alert() with toast — integrate with existing showToast if present
+      // Replace all confirm() with the existing modal dialog system
 
       boot();
     </script>
