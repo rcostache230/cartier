@@ -5485,6 +5485,7 @@
         root.querySelectorAll(".avizier-edit-btn").forEach((button) => setButtonActionIcon(button, "square-pen"));
         root.querySelectorAll(".avizier-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll(".poll-open-btn").forEach((button) => setButtonActionIcon(button, "vote"));
+        root.querySelectorAll(".poll-results-btn").forEach((button) => setButtonActionIcon(button, "bar-chart-3"));
         root.querySelectorAll(".poll-delete-btn").forEach((button) => setButtonActionIcon(button, "trash-2"));
         root.querySelectorAll('[data-share-platform="whatsapp"]').forEach((button) => setButtonActionIcon(button, "message-circle"));
         root.querySelectorAll(".table-action-link").forEach((link) => {
@@ -7871,6 +7872,7 @@
                       <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">
                         ${poll.has_voted ? "View Poll" : "Vote Now"}
                       </button>
+                      <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Results</button>
                       <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
                       ${
                         canDeletePolls
@@ -7937,6 +7939,7 @@
                   ${td(closedPollSummaryText(poll.id))}
                   <td>
                     <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button>
+                    <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Results</button>
                     <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
                     ${
                       canDeletePolls
@@ -7964,6 +7967,7 @@
                     <div style="color:var(--muted); font-size:0.82rem">Result: ${closedPollSummaryText(poll.id)}</div>
                     <div class="module-actions">
                       <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button>
+                      <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Results</button>
                       <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
                       ${
                         canDeletePolls
@@ -8364,6 +8368,13 @@
       async function openPollModal(pollId) {
         await loadPollModal(pollId);
         els.pollModal.classList.remove("hidden");
+      }
+
+      async function openPollResultsView(pollId) {
+        await openPollModal(pollId);
+        requestAnimationFrame(() => {
+          els.pollResultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
       }
 
       async function handlePollDeleteAction(button) {
@@ -9298,6 +9309,15 @@
           openShareForEntity("poll", shareBtn.dataset.shareId);
           return;
         }
+        const resultsBtn = event.target.closest(".poll-results-btn");
+        if (resultsBtn) {
+          try {
+            await openPollResultsView(resultsBtn.dataset.pollId);
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+          return;
+        }
         const deleteBtn = event.target.closest(".poll-delete-btn");
         if (deleteBtn) {
           await handlePollDeleteAction(deleteBtn);
@@ -9318,6 +9338,15 @@
           openShareForEntity("poll", shareBtn.dataset.shareId);
           return;
         }
+        const resultsBtn = event.target.closest(".poll-results-btn");
+        if (resultsBtn) {
+          try {
+            await openPollResultsView(resultsBtn.dataset.pollId);
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+          return;
+        }
         const deleteBtn = event.target.closest(".poll-delete-btn");
         if (deleteBtn) {
           await handlePollDeleteAction(deleteBtn);
@@ -9336,6 +9365,15 @@
         const shareBtn = event.target.closest('.share-entity-btn[data-share-kind="poll"]');
         if (shareBtn) {
           openShareForEntity("poll", shareBtn.dataset.shareId);
+          return;
+        }
+        const resultsBtn = event.target.closest(".poll-results-btn");
+        if (resultsBtn) {
+          try {
+            await openPollResultsView(resultsBtn.dataset.pollId);
+          } catch (error) {
+            setStatus(error.message, true);
+          }
           return;
         }
         const deleteBtn = event.target.closest(".poll-delete-btn");
