@@ -2904,47 +2904,24 @@
         justify-content: flex-end;
       }
 
-      .home-activity-pager {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        border: 1px solid #dbe5f2;
-        border-radius: 999px;
-        background: #fff;
-        padding: 3px;
-      }
-
-      .home-activity-page-btn {
-        width: auto;
-        min-height: 30px;
-        padding: 5px 10px;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        border-color: transparent;
-      }
-
-      .home-activity-page-btn.ghost {
-        background: transparent;
-      }
-
-      .home-activity-page-btn:disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
-      }
-
-      .home-activity-page-label {
-        min-width: 48px;
-        text-align: center;
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: #475569;
-        padding: 0 3px;
-      }
-
       .home-activity-feed {
         margin-top: 10px;
         display: grid;
         gap: 8px;
+      }
+
+      .home-activity-load-more-wrap {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .home-activity-load-more {
+        width: auto;
+        min-height: 36px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.78rem;
       }
 
       .activity-item,
@@ -3473,13 +3450,8 @@
         color: #94a3b8;
       }
 
-      body[data-theme="dark"] .home-activity-pager {
-        background: #1e293b;
+      body[data-theme="dark"] .home-activity-load-more {
         border-color: #334155;
-      }
-
-      body[data-theme="dark"] .home-activity-page-label {
-        color: #cbd5e1;
       }
 
       body[data-theme="dark"] .activity-item.activity-empty-state {
@@ -3571,7 +3543,7 @@
 
         .home-activity-head-right {
           width: 100%;
-          justify-content: space-between;
+          justify-content: flex-start;
         }
 
         .nav-actions {
@@ -3684,7 +3656,7 @@
     <div class="container">
       <section id="authLanding" class="auth-landing">
         <article class="hero login-hero">
-          <p class="hero-kicker">Made for 10Blocuri residents</p>
+          <p class="hero-kicker">Resident Community Portal</p>
           <h1 class="display-title">Your neighbourhood in one place</h1>
           <p class="hero-copy">A trusted digital board for Bloc 1-10 residents: coordinate parking, browse listings, vote on local decisions, and stay informed.</p>
           <ul class="hero-points">
@@ -3692,7 +3664,6 @@
             <li>Browse sales and donation listings</li>
             <li>Vote on building and neighbourhood decisions</li>
           </ul>
-          <p class="hero-foot">Made for 10Blocuri, Bucuresti.</p>
         </article>
 
         <section id="loginCard" class="card login-pane">
@@ -3734,17 +3705,15 @@
               <h3 class="subheading-title">What's New</h3>
               <div class="home-activity-head-right">
                 <span id="homeActivityTime" class="poll-note">Live updates from all modules</span>
-                <div id="homeActivityPager" class="home-activity-pager" aria-label="What's new pagination">
-                  <button id="homeActivityPrevBtn" type="button" class="home-activity-page-btn ghost" aria-label="Previous updates">Prev</button>
-                  <span id="homeActivityPageLabel" class="home-activity-page-label">1 / 1</span>
-                  <button id="homeActivityNextBtn" type="button" class="home-activity-page-btn ghost" aria-label="Next updates">Next</button>
-                </div>
               </div>
             </div>
             <div id="homeActivityFeed" class="home-activity-feed">
               <article class="activity-skeleton"></article>
               <article class="activity-skeleton"></article>
               <article class="activity-skeleton"></article>
+            </div>
+            <div id="homeActivityLoadMoreWrap" class="home-activity-load-more-wrap hidden">
+              <button id="homeActivityLoadMoreBtn" type="button" class="ghost home-activity-load-more">Load more</button>
             </div>
           </section>
           <div class="jump-row" id="jumpRow">
@@ -4746,10 +4715,8 @@
         welcomeResidence: document.getElementById("welcomeResidence"),
         homeActivityFeed: document.getElementById("homeActivityFeed"),
         homeActivityTime: document.getElementById("homeActivityTime"),
-        homeActivityPager: document.getElementById("homeActivityPager"),
-        homeActivityPrevBtn: document.getElementById("homeActivityPrevBtn"),
-        homeActivityNextBtn: document.getElementById("homeActivityNextBtn"),
-        homeActivityPageLabel: document.getElementById("homeActivityPageLabel"),
+        homeActivityLoadMoreWrap: document.getElementById("homeActivityLoadMoreWrap"),
+        homeActivityLoadMoreBtn: document.getElementById("homeActivityLoadMoreBtn"),
         quickStatFree: document.getElementById("quickStatFree"),
         quickStatListings: document.getElementById("quickStatListings"),
         quickStatPolls: document.getElementById("quickStatPolls"),
@@ -4958,8 +4925,7 @@
       let activeSharePayload = null;
       const STATIC_ACTION_ICON_MAP = [
         ["#helpBtn", "circle-help"],
-        ["#homeActivityPrevBtn", "chevron-left"],
-        ["#homeActivityNextBtn", "chevron-right"],
+        ["#homeActivityLoadMoreBtn", "chevrons-down"],
         ["#loginBtn", "log-in"],
         ["#logoutBtn", "log-out"],
         ["#railLogoutBtn", "log-out"],
@@ -5097,23 +5063,27 @@
         });
       }
 
-      function updateHomeActivityPager(totalItems, { loading = false } = {}) {
-        if (!els.homeActivityPrevBtn || !els.homeActivityNextBtn || !els.homeActivityPageLabel) return;
-        if (els.homeActivityPager) {
-          const shouldHide = !loading && Number(totalItems || 0) <= 0;
-          els.homeActivityPager.classList.toggle("hidden", shouldHide);
-        }
+      function updateHomeActivityLoadMore(totalItems, { loading = false } = {}) {
+        if (!els.homeActivityLoadMoreWrap || !els.homeActivityLoadMoreBtn) return;
+        const total = Math.max(0, Number(totalItems || 0));
         if (loading) {
-          els.homeActivityPrevBtn.disabled = true;
-          els.homeActivityNextBtn.disabled = true;
-          els.homeActivityPageLabel.textContent = "- / -";
+          els.homeActivityLoadMoreWrap.classList.add("hidden");
+          els.homeActivityLoadMoreBtn.disabled = true;
           return;
         }
-        const totalPages = Math.max(1, Math.ceil(Number(totalItems || 0) / HOME_ACTIVITY_PAGE_SIZE));
-        const currentPageNumber = Math.min(totalPages, Math.max(1, homeActivityPage + 1));
-        els.homeActivityPrevBtn.disabled = currentPageNumber <= 1;
-        els.homeActivityNextBtn.disabled = currentPageNumber >= totalPages;
-        els.homeActivityPageLabel.textContent = `${currentPageNumber} / ${totalPages}`;
+        if (total <= 0) {
+          els.homeActivityLoadMoreWrap.classList.add("hidden");
+          els.homeActivityLoadMoreBtn.disabled = true;
+          return;
+        }
+        const visibleCount = Math.min(total, (homeActivityPage + 1) * HOME_ACTIVITY_PAGE_SIZE);
+        const remaining = Math.max(0, total - visibleCount);
+        const hasMore = remaining > 0;
+        els.homeActivityLoadMoreWrap.classList.toggle("hidden", !hasMore);
+        els.homeActivityLoadMoreBtn.disabled = !hasMore;
+        els.homeActivityLoadMoreBtn.dataset.defaultText = hasMore ? `Load more (${remaining})` : "Load more";
+        setButtonActionIcon(els.homeActivityLoadMoreBtn, "chevrons-down");
+        hydrateLucideIcons();
       }
 
       function renderHomeActivityFeed(items, { loading = false, resetPage = false } = {}) {
@@ -5125,12 +5095,12 @@
           homeActivityItemsCache = [];
           els.homeActivityFeed.innerHTML = `<article class="activity-skeleton"></article><article class="activity-skeleton"></article><article class="activity-skeleton"></article>`;
           if (els.homeActivityTime) els.homeActivityTime.textContent = "Syncing module activity...";
-          updateHomeActivityPager(0, { loading: true });
+          updateHomeActivityLoadMore(0, { loading: true });
           return;
         }
         homeActivityItemsCache = Array.isArray(items) ? [...items] : [];
-        const totalPages = Math.max(1, Math.ceil(homeActivityItemsCache.length / HOME_ACTIVITY_PAGE_SIZE));
-        homeActivityPage = Math.max(0, Math.min(homeActivityPage, totalPages - 1));
+        const maxLoadedPages = Math.max(1, Math.ceil(homeActivityItemsCache.length / HOME_ACTIVITY_PAGE_SIZE));
+        homeActivityPage = Math.max(0, Math.min(homeActivityPage, maxLoadedPages - 1));
         if (!items.length) {
           els.homeActivityFeed.innerHTML = `
             <article class="activity-item activity-empty-state" aria-live="polite">
@@ -5139,13 +5109,13 @@
             </article>
           `;
           if (els.homeActivityTime) els.homeActivityTime.textContent = "";
-          updateHomeActivityPager(0);
+          updateHomeActivityLoadMore(0);
           hydrateLucideIcons();
           return;
         }
-        const pageStart = homeActivityPage * HOME_ACTIVITY_PAGE_SIZE;
-        const pageItems = homeActivityItemsCache.slice(pageStart, pageStart + HOME_ACTIVITY_PAGE_SIZE);
-        els.homeActivityFeed.innerHTML = pageItems
+        const visibleCount = Math.min(homeActivityItemsCache.length, (homeActivityPage + 1) * HOME_ACTIVITY_PAGE_SIZE);
+        const visibleItems = homeActivityItemsCache.slice(0, visibleCount);
+        els.homeActivityFeed.innerHTML = visibleItems
           .map(
             (item) => `
               <article class="activity-item" data-mod="${item.module}" data-activity-module="${item.moduleId}" ${item.pollId ? `data-activity-poll-id="${item.pollId}"` : ""}>
@@ -5159,7 +5129,7 @@
         if (els.homeActivityTime) {
           els.homeActivityTime.textContent = latestDate ? `Latest update ${formatRelativeTime(latestDate)}` : "Live module updates";
         }
-        updateHomeActivityPager(homeActivityItemsCache.length);
+        updateHomeActivityLoadMore(homeActivityItemsCache.length);
       }
 
       function buildHomeActivity() {
@@ -5217,12 +5187,11 @@
         renderHomeActivityFeed(buildHomeActivity(), { resetPage });
       }
 
-      function paginateHomeActivity(direction) {
+      function loadMoreHomeActivity() {
         if (!homeActivityItemsCache.length) return;
         const totalPages = Math.max(1, Math.ceil(homeActivityItemsCache.length / HOME_ACTIVITY_PAGE_SIZE));
-        const nextPage = Math.max(0, Math.min(totalPages - 1, homeActivityPage + direction));
-        if (nextPage === homeActivityPage) return;
-        homeActivityPage = nextPage;
+        if (homeActivityPage >= totalPages - 1) return;
+        homeActivityPage += 1;
         renderHomeActivityFeed(homeActivityItemsCache);
       }
 
@@ -8810,12 +8779,8 @@
         }
       });
 
-      els.homeActivityPrevBtn.addEventListener("click", () => {
-        paginateHomeActivity(-1);
-      });
-
-      els.homeActivityNextBtn.addEventListener("click", () => {
-        paginateHomeActivity(1);
+      els.homeActivityLoadMoreBtn.addEventListener("click", () => {
+        loadMoreHomeActivity();
       });
 
       document.querySelectorAll("[data-go-profile]").forEach((btn) => {
