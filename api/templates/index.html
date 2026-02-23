@@ -2965,6 +2965,33 @@
         background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
       }
 
+      .activity-item.activity-empty-state {
+        cursor: default;
+        border-style: dashed;
+        border-left-width: 1px;
+        border-left-color: #cbd5e1;
+        background: linear-gradient(135deg, #fbfdff 0%, #f8fafc 100%);
+        text-align: center;
+        display: grid;
+        place-items: center;
+        gap: 6px;
+        min-height: 84px;
+        color: #334155;
+      }
+
+      .activity-item.activity-empty-state:hover {
+        background: linear-gradient(135deg, #fbfdff 0%, #f8fafc 100%);
+      }
+
+      .activity-item.activity-empty-state .empty-icon {
+        color: #94a3b8;
+      }
+
+      .activity-item.activity-empty-state .empty-copy {
+        font-weight: 700;
+        line-height: 1.25;
+      }
+
       .activity-item .meta {
         margin-top: 5px;
         color: var(--muted);
@@ -3455,6 +3482,16 @@
         color: #cbd5e1;
       }
 
+      body[data-theme="dark"] .activity-item.activity-empty-state {
+        background: linear-gradient(135deg, #1e293b 0%, #172235 100%);
+        border-color: #334155;
+        color: #e2e8f0;
+      }
+
+      body[data-theme="dark"] .activity-item.activity-empty-state .empty-icon {
+        color: #94a3b8;
+      }
+
       body[data-theme="dark"] .share-preview {
         background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(20, 184, 166, 0.1) 100%);
         border-color: #334155;
@@ -3697,7 +3734,7 @@
               <h3 class="subheading-title">What's New</h3>
               <div class="home-activity-head-right">
                 <span id="homeActivityTime" class="poll-note">Live updates from all modules</span>
-                <div class="home-activity-pager" aria-label="What's new pagination">
+                <div id="homeActivityPager" class="home-activity-pager" aria-label="What's new pagination">
                   <button id="homeActivityPrevBtn" type="button" class="home-activity-page-btn ghost" aria-label="Previous updates">Prev</button>
                   <span id="homeActivityPageLabel" class="home-activity-page-label">1 / 1</span>
                   <button id="homeActivityNextBtn" type="button" class="home-activity-page-btn ghost" aria-label="Next updates">Next</button>
@@ -4111,22 +4148,6 @@
             </section>
             <section class="card">
               <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
-              <div id="marketplaceMineTableWrap" class="table-wrap hidden" style="margin-top: 8px">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Item</th>
-                      <th>Price</th>
-                      <th>Status</th>
-                      <th>Claimed By</th>
-                      <th>Updated</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="marketplaceMineBody"></tbody>
-                </table>
-              </div>
               <div id="myListingsCards" class="market-my-grid"></div>
               <div id="marketplaceMineCards" class="market-mobile-list hidden"></div>
             </section>
@@ -4725,6 +4746,7 @@
         welcomeResidence: document.getElementById("welcomeResidence"),
         homeActivityFeed: document.getElementById("homeActivityFeed"),
         homeActivityTime: document.getElementById("homeActivityTime"),
+        homeActivityPager: document.getElementById("homeActivityPager"),
         homeActivityPrevBtn: document.getElementById("homeActivityPrevBtn"),
         homeActivityNextBtn: document.getElementById("homeActivityNextBtn"),
         homeActivityPageLabel: document.getElementById("homeActivityPageLabel"),
@@ -4784,7 +4806,6 @@
         marketplaceUploadStatus: document.getElementById("marketplaceUploadStatus"),
         marketplaceActiveCards: document.getElementById("marketplaceActiveCards"),
         marketplaceActiveBody: document.getElementById("marketplaceActiveBody"),
-        marketplaceMineBody: document.getElementById("marketplaceMineBody"),
         myListingsCards: document.getElementById("myListingsCards"),
         marketplaceMineCards: document.getElementById("marketplaceMineCards"),
         marketplaceActiveCount: document.getElementById("marketplaceActiveCount"),
@@ -5078,6 +5099,10 @@
 
       function updateHomeActivityPager(totalItems, { loading = false } = {}) {
         if (!els.homeActivityPrevBtn || !els.homeActivityNextBtn || !els.homeActivityPageLabel) return;
+        if (els.homeActivityPager) {
+          const shouldHide = !loading && Number(totalItems || 0) <= 0;
+          els.homeActivityPager.classList.toggle("hidden", shouldHide);
+        }
         if (loading) {
           els.homeActivityPrevBtn.disabled = true;
           els.homeActivityNextBtn.disabled = true;
@@ -5107,9 +5132,15 @@
         const totalPages = Math.max(1, Math.ceil(homeActivityItemsCache.length / HOME_ACTIVITY_PAGE_SIZE));
         homeActivityPage = Math.max(0, Math.min(homeActivityPage, totalPages - 1));
         if (!items.length) {
-          els.homeActivityFeed.innerHTML = `<article class="activity-item" data-mod="parking"><strong>No recent activity yet.</strong><div class="meta">New updates will appear here as residents interact.</div></article>`;
-          if (els.homeActivityTime) els.homeActivityTime.textContent = "No activity in the last updates";
+          els.homeActivityFeed.innerHTML = `
+            <article class="activity-item activity-empty-state" aria-live="polite">
+              <span class="empty-icon">${iconMarkup("sparkles")}</span>
+              <div class="empty-copy">Nicio activitate recentă. Fii primul care postează!</div>
+            </article>
+          `;
+          if (els.homeActivityTime) els.homeActivityTime.textContent = "";
           updateHomeActivityPager(0);
+          hydrateLucideIcons();
           return;
         }
         const pageStart = homeActivityPage * HOME_ACTIVITY_PAGE_SIZE;
@@ -7251,7 +7282,7 @@
             : marketplaceCategoryLabel(marketplaceSelectedCategory);
         els.marketplaceActiveCards.innerHTML = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No active listings in ${categoryLabel}.</span></div>`;
         els.marketplaceActiveBody.innerHTML = "";
-        els.marketplaceMineBody.innerHTML = "";
+        if (els.marketplaceMineBody) els.marketplaceMineBody.innerHTML = "";
         const mineEmptyHtml = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No listings created in ${categoryLabel}.</span></div>`;
         els.myListingsCards.innerHTML = mineEmptyHtml;
         els.marketplaceMineCards.innerHTML = mineEmptyHtml;
@@ -7344,7 +7375,7 @@
             }</span></div>`;
         els.marketplaceActiveBody.innerHTML = "";
 
-        els.marketplaceMineBody.innerHTML = "";
+        if (els.marketplaceMineBody) els.marketplaceMineBody.innerHTML = "";
 
         const myListingCardsHtml = myListings.length
           ? myListings
@@ -9041,9 +9072,11 @@
         }
       }
 
-      els.marketplaceMineBody.addEventListener("click", async (event) => {
-        await handleMarketplaceMineActions(event, { allowRowNav: true });
-      });
+      if (els.marketplaceMineBody) {
+        els.marketplaceMineBody.addEventListener("click", async (event) => {
+          await handleMarketplaceMineActions(event, { allowRowNav: true });
+        });
+      }
 
       els.myListingsCards.addEventListener("click", async (event) => {
         await handleMarketplaceMineActions(event, { allowRowNav: false });
@@ -9053,9 +9086,11 @@
         await handleMarketplaceMineActions(event, { allowRowNav: false });
       });
 
-      els.marketplaceMineBody.addEventListener("keydown", (event) => {
-        maybeNavigateMarketplaceRowFromKeyboard(event);
-      });
+      if (els.marketplaceMineBody) {
+        els.marketplaceMineBody.addEventListener("keydown", (event) => {
+          maybeNavigateMarketplaceRowFromKeyboard(event);
+        });
+      }
 
       els.refreshPollsBtn.addEventListener("click", async () => {
         try {
