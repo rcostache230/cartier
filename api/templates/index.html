@@ -2803,8 +2803,10 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         padding: 16px 12px 12px;
         display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 10px;
         align-content: start;
+        align-items: start;
       }
 
       .brand-rail {
@@ -2814,6 +2816,8 @@
         justify-self: start;
         gap: 8px;
         width: 100%;
+        grid-column: 1;
+        grid-row: 1;
       }
 
       .brand-rail .brand-copy {
@@ -2832,12 +2836,44 @@
       }
 
       .rail-toggle {
-        width: 42px;
-        min-height: 42px;
+        width: 36px;
+        height: 36px;
+        min-height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         justify-self: end;
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        align-self: start;
+        grid-column: 2;
+        grid-row: 1;
+        border-radius: 8px;
+        border: none;
         background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.6);
+        box-shadow: none;
+        cursor: pointer;
+      }
+
+      .rail-toggle:hover {
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+      }
+
+      .rail-toggle:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.35);
+        outline-offset: 2px;
+      }
+
+      .rail-toggle .rail-toggle-icon {
+        width: 16px;
+        height: 16px;
+        display: block;
+        transition: transform 200ms ease;
+      }
+
+      body:not(.sidebar-collapsed) .rail-toggle .rail-toggle-icon {
+        transform: rotate(180deg);
       }
 
       .rail-nav {
@@ -3426,8 +3462,14 @@
       }
 
       .avizier-card {
-        border-left: 4px solid #cbd5e1;
-        padding: 12px;
+        border-left: 4px solid #0d9488;
+        border-radius: 12px;
+        padding: 20px;
+        transition: box-shadow 150ms ease, transform 150ms ease;
+      }
+
+      .avizier-card:hover {
+        box-shadow: var(--shadow-md);
       }
 
       .avizier-card.priority-important {
@@ -3439,7 +3481,7 @@
       }
 
       .avizier-card.unread {
-        border-left-color: #3b82f6;
+        box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.28), var(--shadow-sm);
       }
 
       .avizier-dot {
@@ -3448,12 +3490,6 @@
         border-radius: 50%;
         background: #ef4444;
         animation: pulse-dot 1.2s ease infinite;
-      }
-
-      .avizier-meta-line {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
       }
 
       .avizier-chip {
@@ -3489,19 +3525,192 @@
         color: #b91c1c;
       }
 
-      .avizier-read-more {
+      .announcement-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .announcement-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--text-primary, #1c1917);
+        line-height: 1.25;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .announcement-pin {
+        flex: 0 0 auto;
+      }
+
+      .announcement-time {
+        font-size: 12px;
+        color: var(--text-muted, #78716c);
+        white-space: nowrap;
+        line-height: 1.35;
+        padding-top: 1px;
+      }
+
+      .announcement-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 6px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: var(--text-muted, #78716c);
+        flex-wrap: wrap;
+      }
+
+      .announcement-meta-sep {
+        color: var(--text-muted, #78716c);
+      }
+
+      .announcement-body {
+        margin-bottom: 14px;
+        color: var(--text-primary, #1c1917);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .announcement-body-preview {
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .announcement-inline-more {
+        display: inline;
+        margin-left: 6px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: var(--accent-primary);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        cursor: pointer;
+      }
+
+      .announcement-inline-more:hover {
+        color: #15803d;
+      }
+
+      .announcement-attachments {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .attachment-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: #f5f0eb;
+        border: 1px solid #e7e5e4;
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--text-secondary, #78716c);
+        text-decoration: none;
+        max-width: 280px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .attachment-chip:hover {
+        background: #ede9e3;
+        color: var(--text-primary, #1c1917);
+      }
+
+      .announcement-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+      }
+
+      .announcement-actions .table-action-btn,
+      .announcement-actions .avizier-read-more {
+        height: 34px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .announcement-actions .share-entity-btn {
+        background: transparent;
+        color: var(--text-secondary, #78716c);
+        border: none;
+        box-shadow: none;
+        padding: 0 8px;
+      }
+
+      .announcement-actions .share-entity-btn:hover {
+        background: #f5f5f4;
+        color: var(--text-primary, #1c1917);
+      }
+
+      .announcement-actions .avizier-edit-btn {
+        background: transparent;
+        border: 1.5px solid var(--border, #e7e5e4);
+        color: var(--text-primary, #1c1917);
+      }
+
+      .announcement-actions .avizier-edit-btn:hover {
+        background: #fafaf9;
+        border-color: #d6d3d1;
+      }
+
+      .announcement-actions .avizier-read-more {
         width: auto;
         min-height: 34px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #1a2332;
-        border-color: #1a2332;
+        padding: 0 12px;
+        background: var(--accent-primary);
+        color: #fff;
+        border: none;
+        box-shadow: none;
+      }
+
+      .announcement-actions .avizier-read-more:hover {
+        background: #15803d;
+      }
+
+      .announcement-actions .avizier-delete-btn {
+        width: 34px;
+        min-width: 34px;
+        padding: 0;
+        background: transparent;
+        color: #ef4444;
+        border: none;
+        box-shadow: none;
+      }
+
+      .announcement-actions .avizier-delete-btn:hover {
+        background: rgba(239, 68, 68, 0.08);
+        color: #dc2626;
+      }
+
+      .announcement-actions .avizier-delete-btn span {
+        display: none;
       }
 
       .avizier-message-rich {
-        margin-top: 10px;
-        color: var(--ink);
-        line-height: 1.55;
+        color: var(--text-primary, #1c1917);
+        font-size: 14px;
+        line-height: 1.6;
         overflow-wrap: anywhere;
       }
 
@@ -4182,6 +4391,11 @@
         background: var(--card);
       }
 
+      .avizier-card {
+        border-radius: 12px;
+        padding: 20px;
+      }
+
       .badge,
       .parking-status-badge,
       .poll-chip,
@@ -4677,8 +4891,10 @@
   <body>
     <aside id="sideRail" class="side-rail hidden" aria-label="Primary navigation">
       <div class="rail-head">
-        <button id="sidebarToggleBtn" class="rail-toggle" type="button" aria-label="Collapse sidebar">
-          <i data-lucide="panel-left-close" aria-hidden="true"></i>
+        <button id="sidebarToggleBtn" class="rail-toggle" type="button" aria-label="Restrânge meniul" title="Restrânge meniul">
+          <svg class="rail-toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
         </button>
         <div class="brand brand-rail">
           <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
@@ -6598,8 +6814,10 @@
         sidebarCollapsed = Boolean(collapsed);
         document.body.classList.toggle("sidebar-collapsed", sidebarCollapsed);
         if (els.sidebarToggleBtn) {
-          const icon = sidebarCollapsed ? "panel-left-open" : "panel-left-close";
-          els.sidebarToggleBtn.innerHTML = iconMarkup(icon);
+          els.sidebarToggleBtn.innerHTML = '<svg class="rail-toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+          const sidebarToggleLabel = sidebarCollapsed ? "Extinde meniul" : "Restrânge meniul";
+          els.sidebarToggleBtn.title = sidebarToggleLabel;
+          els.sidebarToggleBtn.setAttribute("aria-label", sidebarToggleLabel);
         }
         try {
           localStorage.setItem(SIDEBAR_COLLAPSED_KEY, sidebarCollapsed ? "1" : "0");
@@ -9253,68 +9471,85 @@
 
         els.avizierList.innerHTML = visibleAnnouncements
           .map((item) => {
-            const scopeLabel = item.scope === "building" ? `Bloc ${item.building_id}` : "General";
+            const scopeLabel = item.scope === "building" ? "Per bloc" : "General";
             const attachments = Array.isArray(item.attachments) ? item.attachments : [];
             const unread = !isAvizierRead(item.id);
             const longMessage = String(item.message || "").trim();
             const shouldTruncate = longMessage.length > 220;
-            const collapsedMessageHtml = renderAvizierMessageHtml(longMessage, { truncate: 220 });
+            const collapsedPreviewText = shortenText(longMessage, 240);
             const canDelete = canDeleteAvizierAnnouncement(item);
             const canEdit = canEditAvizierAnnouncement(item);
+            const attachmentCountLabel = attachments.length
+              ? `${attachments.length} atașament${attachments.length === 1 ? "" : "e"}`
+              : "";
+            const priorityMetaBadge =
+              item.priority === "important"
+                ? `<span class="avizier-chip priority-important">⚠ Important</span>`
+                : item.priority === "urgent"
+                  ? `<span class="avizier-chip priority-urgent">🔴 Urgent</span>`
+                  : "";
             return `
               <article class="poll-card card avizier-card priority-${item.priority} ${unread ? "unread" : ""}" data-avizier-id="${item.id}">
-                <div class="poll-card-head">
-                  <h4>${item.cleanTitle}</h4>
-                  <span class="poll-countdown">${iconMarkup("calendar-clock")}<span>${formatRelativeTime(item.created_at)}</span></span>
+                <div class="announcement-head">
+                  <h4 class="announcement-title">
+                    ${item.pinned ? `<span class="announcement-pin" aria-hidden="true">📌</span>` : ""}
+                    <span>${escapeHtml(item.cleanTitle)}</span>
+                  </h4>
+                  <span class="announcement-time">${formatRelativeTime(item.created_at)}</span>
                 </div>
-                <div class="avizier-meta-line">
+                <div class="announcement-meta">
                   <span class="avizier-chip scope-${item.scope === "building" ? "building" : "general"}">${iconMarkup(
                     item.scope === "building" ? "building-2" : "map-pinned"
                   )}<span>${scopeLabel}</span></span>
-                  <span class="avizier-chip">${iconMarkup("user")}<span>${item.created_by_username || "-"}</span></span>
+                  ${priorityMetaBadge}
+                  <span class="announcement-meta-sep">·</span>
+                  <span>de ${escapeHtml(item.created_by_username || "-")}</span>
                   ${
-                    item.priority !== "normal"
-                      ? `<span class="avizier-chip priority-${item.priority}">${iconMarkup("triangle-alert")}<span>${titleize(item.priority)}</span></span>`
+                    attachmentCountLabel
+                      ? `<span class="announcement-meta-sep">·</span><span>${attachmentCountLabel}</span>`
                       : ""
                   }
-                  ${
-                    attachments.length
-                      ? `<span class="avizier-chip">${iconMarkup("paperclip")}<span>${attachments.length} attachment${attachments.length === 1 ? "" : "s"}</span></span>`
-                      : ""
-                  }
-                  ${item.pinned ? `<span class="avizier-chip">${iconMarkup("pin")}<span>Pinned</span></span>` : ""}
-                  ${item.priority === "urgent" ? `<span class="avizier-dot" aria-hidden="true"></span>` : ""}
                 </div>
-                <div class="avizier-message-rich" data-avizier-message="${item.id}" data-avizier-full="${encodeURIComponent(
+                <div class="avizier-message-rich announcement-body" data-avizier-message="${item.id}" data-avizier-full="${encodeURIComponent(
                   longMessage
-                )}">${collapsedMessageHtml}</div>
-                <div style="margin-top:8px">
+                )}">
                   ${
-                    attachments.length
-                      ? attachments
-                          .map(
-                            (attachment) =>
-                              `<a class="pill" href="${attachment.file_url}" target="_blank" rel="noopener noreferrer">${attachment.file_name}</a>`
-                          )
-                          .join(" ")
-                      : `<span class="poll-note">No attachments.</span>`
+                    shouldTruncate
+                      ? `<p class="announcement-body-preview">${escapeHtml(collapsedPreviewText)} <button type="button" class="announcement-inline-more" data-avizier-expand="${item.id}">Citește mai mult</button></p>`
+                      : renderAvizierMessageHtml(longMessage)
                   }
                 </div>
-                <div class="module-actions" style="margin-top:8px">
-                  <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="announcement" data-share-id="${item.id}">Share</button>
+                ${
+                  attachments.length
+                    ? `<div class="announcement-attachments">
+                  ${attachments
+                    .map((attachment) => {
+                      const fileName = String(attachment.file_name || "Fișier");
+                      return `<a class="attachment-chip" href="${escapeHtml(
+                        attachment.file_url
+                      )}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(fileName)}">📎 Atașament · ${escapeHtml(
+                        shortenText(fileName, 30)
+                      )}</a>`;
+                    })
+                    .join("")}
+                </div>`
+                    : ""
+                }
+                <div class="announcement-actions">
+                  <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="announcement" data-share-id="${item.id}">Distribuie</button>
                   ${
                     canEdit
-                      ? `<button type="button" class="table-action-btn avizier-edit-btn" data-avizier-edit="${item.id}">Edit</button>`
+                      ? `<button type="button" class="table-action-btn avizier-edit-btn" data-avizier-edit="${item.id}">Editează</button>`
                       : ""
                   }
                   ${
                     shouldTruncate
-                      ? `<button type="button" class="avizier-read-more" data-avizier-expand="${item.id}">Read more</button>`
+                      ? `<button type="button" class="avizier-read-more" data-avizier-expand="${item.id}">Citește mai mult</button>`
                       : ""
                   }
                   ${
                     canDelete
-                      ? `<button type="button" class="table-action-btn danger avizier-delete-btn" data-avizier-delete="${item.id}">Delete</button>`
+                      ? `<button type="button" class="table-action-btn danger avizier-delete-btn" data-avizier-delete="${item.id}" aria-label="Șterge anunțul" title="Șterge">Șterge</button>`
                       : ""
                   }
                 </div>
