@@ -785,13 +785,32 @@
       }
 
       .module-back-link {
-        color: #334155;
-        text-decoration: underline;
-        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: auto;
+        min-height: 44px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #3b82f6;
+        background: #3b82f6;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        line-height: 1;
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
       }
 
       .module-back-link:hover {
-        color: #0f172a;
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #fff;
+        text-decoration: none;
+      }
+
+      .module-back-link:active {
+        transform: scale(0.98);
       }
 
       .pill {
