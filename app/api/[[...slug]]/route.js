@@ -289,6 +289,8 @@ function mapMarketplacePost(row) {
     price_text: String(row.price_text || ""),
     contact_phone: String(row.contact_phone || ""),
     pickup_details: String(row.pickup_details || ""),
+    max_days: row.max_days == null ? null : Number(row.max_days),
+    is_available: row.is_available == null ? true : Boolean(row.is_available),
     status: String(row.status),
     in_person_only: Boolean(row.in_person_only),
     owner_username: String(row.owner_username),
@@ -1163,6 +1165,18 @@ function normalizeMarketplaceCreatePayload(payload, ownerUser) {
     priceText = "";
   }
 
+  let maxDays = null;
+  if (listingType === "lending") {
+    const rawMaxDays = payload.max_days;
+    if (rawMaxDays !== "" && rawMaxDays != null) {
+      const parsed = Number(rawMaxDays);
+      if (!Number.isInteger(parsed) || parsed < 1 || parsed > 90) {
+        throw new AppError(400, "max_days must be an integer between 1 and 90");
+      }
+      maxDays = parsed;
+    }
+  }
+
   const photos = normalizeMarketplacePhotos(payload.photos);
 
   return {
@@ -1173,6 +1187,8 @@ function normalizeMarketplaceCreatePayload(payload, ownerUser) {
     price_text: priceText,
     contact_phone: contactPhone,
     pickup_details: pickupDetails,
+    max_days: maxDays,
+    is_available: true,
     in_person_only: true,
     photos,
   };
@@ -1270,11 +1286,13 @@ async function createMarketplacePost({ ownerUser, payload }) {
           price_text,
           contact_phone,
           pickup_details,
+          max_days,
+          is_available,
           status,
           in_person_only,
           updated_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'active', TRUE, $9)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'active', TRUE, $11)
         RETURNING id
       `,
       [
@@ -1286,6 +1304,8 @@ async function createMarketplacePost({ ownerUser, payload }) {
         cleaned.price_text,
         cleaned.contact_phone,
         cleaned.pickup_details,
+        cleaned.max_days,
+        cleaned.is_available,
         now,
       ]
     );
@@ -1349,6 +1369,22 @@ async function markMarketplacePostComplete({ actorUser, postId }) {
     const row = await getMarketplacePostRowForUpdate(client, postId);
     if (actorUser.role !== "admin" && Number(row.owner_user_id) !== Number(actorUser.id)) {
       throw new AppError(403, "only the owner can update this listing");
+    }
+    if (String(row.listing_type) === "lending") {
+      if (String(row.status) !== "active") {
+        throw new AppError(400, "only active lending listings can be toggled");
+      }
+      const nextAvailability = !Boolean(row.is_available ?? true);
+      await client.query(
+        `
+          UPDATE marketplace_posts
+          SET is_available = $1,
+              updated_at = $2
+          WHERE id = $3
+        `,
+        [nextAvailability, now, postId]
+      );
+      return;
     }
     if (String(row.status) !== "active") {
       throw new AppError(400, "listing is already completed");

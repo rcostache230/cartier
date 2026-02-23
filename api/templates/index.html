@@ -3187,10 +3187,10 @@
         }
       }
 
-      #parkingModule .card,
-      #marketplaceModule .card,
-      #avizierModule .card,
-      #votingModule .card {
+      #parkingModule > .card,
+      #marketplaceModule > .card,
+      #avizierModule > .card,
+      #votingModule > .card {
         opacity: 0;
       }
 
@@ -4363,6 +4363,171 @@
         display: block;
       }
 
+      .field-hint {
+        margin: 6px 0 0;
+        color: var(--text-muted);
+        font-size: var(--text-caption);
+      }
+
+      #marketplaceActiveCards.market-active-grid {
+        display: block;
+        margin-top: 8px;
+      }
+
+      .market-section {
+        margin-bottom: 32px;
+      }
+
+      .market-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .market-section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1.5px solid var(--border);
+      }
+
+      .market-section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-primary);
+        letter-spacing: -0.01em;
+      }
+
+      .market-cards-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 14px;
+      }
+
+      .market-cards-row .empty-state {
+        margin: 0;
+        border-radius: 12px;
+        padding: 20px 16px;
+        background: color-mix(in srgb, var(--card) 88%, white);
+        border-color: var(--border);
+      }
+
+      .empty-state-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .empty-state-body {
+        margin: 6px 0 0;
+        color: var(--text-secondary);
+      }
+
+      .type-filter-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+
+      .type-pill {
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 1.5px solid var(--border);
+        background: var(--card);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 120ms ease;
+        height: auto;
+      }
+
+      .type-pill.active {
+        background: var(--text-primary);
+        color: #fff;
+        border-color: var(--text-primary);
+      }
+
+      .market-lending-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .lending-card {
+        border-left: 3px solid #0d9488;
+      }
+
+      .lending-card .market-listing-thumb {
+        background: linear-gradient(135deg, #ccfbf1, #99f6e4);
+      }
+
+      .lending-card .market-listing-body {
+        gap: 8px;
+      }
+
+      .market-listing-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+        line-height: 1.3;
+      }
+
+      .market-listing-meta {
+        margin: 0;
+        color: var(--text-secondary);
+      }
+
+      .market-listing-description {
+        margin: 0;
+        color: var(--text-secondary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.9em;
+      }
+
+      .market-lending-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .market-lending-actions .btn {
+        width: auto;
+      }
+
+      .market-section.hidden {
+        display: none;
+      }
+
+      body[data-theme="dark"] .type-pill:not(.active) {
+        background: #1e293b;
+        color: #cbd5e1;
+      }
+
+      body[data-theme="dark"] .market-section-header {
+        border-bottom-color: #334155;
+      }
+
+      body[data-theme="dark"] .market-cards-row .empty-state {
+        background: #172235;
+        border-color: #334155;
+      }
+
+      body[data-theme="dark"] .empty-state-title {
+        color: #f8fafc;
+      }
+
+      body[data-theme="dark"] .empty-state-body,
+      body[data-theme="dark"] .market-listing-meta,
+      body[data-theme="dark"] .market-listing-description {
+        color: #cbd5e1;
+      }
+
       body[data-theme="dark"] .badge-gray,
       body[data-theme="dark"] .market-category-badge,
       body[data-theme="dark"] .poll-chip.time {
@@ -4828,7 +4993,7 @@
               <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Marketplace</div>
               <h1 class="module-title"><i data-lucide="store" aria-hidden="true"></i>Marketplace</h1>
               <p class="poll-note">
-                Sell items in person only or donate items. No lending. Donations can be claimed.
+                Vinde, donează sau oferă la împrumut obiecte vecinilor. Contactul se face direct prin telefon.
               </p>
             </div>
             <div class="module-actions">
@@ -4838,22 +5003,28 @@
           </div>
           <p id="marketplaceLastRefreshed" class="refresh-meta">Last refreshed: -</p>
 
+          <div id="marketplaceTypeTabs" class="type-filter-row" style="margin-top: 10px">
+            <button type="button" class="type-pill active" data-market-type="all">📋 Toate</button>
+            <button type="button" class="type-pill" data-market-type="sale">🏷 Vânzare</button>
+            <button type="button" class="type-pill" data-market-type="donation">🎁 Donații</button>
+            <button type="button" class="type-pill" data-market-type="lending">🤝 Împrumut</button>
+          </div>
           <div id="marketplaceCategoryTabs" class="tabs market-filter-tabs" style="margin-top: 10px">
             <button type="button" class="tab-btn market-filter-btn active" data-market-category="all">
               <span class="market-filter-emoji" aria-hidden="true">📋</span>
-              <span>All</span>
+              <span>Toate</span>
             </button>
             <button type="button" class="tab-btn market-filter-btn" data-market-category="furniture">
               <span class="market-filter-emoji" aria-hidden="true">🪑</span>
-              <span>Furniture</span>
+              <span>Mobilă</span>
             </button>
             <button type="button" class="tab-btn market-filter-btn" data-market-category="toys">
               <span class="market-filter-emoji" aria-hidden="true">🧸</span>
-              <span>Toys</span>
+              <span>Jucării</span>
             </button>
             <button type="button" class="tab-btn market-filter-btn" data-market-category="clothes">
               <span class="market-filter-emoji" aria-hidden="true">👕</span>
-              <span>Clothes</span>
+              <span>Haine</span>
             </button>
             <button type="button" class="tab-btn market-filter-btn" data-market-category="brico">
               <span class="market-filter-emoji" aria-hidden="true">🔧</span>
@@ -4861,7 +5032,7 @@
             </button>
             <button type="button" class="tab-btn market-filter-btn" data-market-category="other">
               <span class="market-filter-emoji" aria-hidden="true">📦</span>
-              <span>Other</span>
+              <span>Altele</span>
             </button>
           </div>
           <div class="market-filter-row">
@@ -4882,7 +5053,29 @@
             <section class="card">
               <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
               <span class="section-label">Anunțuri Active</span>
-              <div id="marketplaceActiveCards" class="market-active-grid"></div>
+              <div id="marketplaceActiveCards" class="market-active-grid">
+                <div class="market-section" id="sectionSale">
+                  <div class="market-section-header">
+                    <span class="market-section-title">🏷 De vânzare</span>
+                    <span class="market-section-count badge badge-amber" id="countSale">0</span>
+                  </div>
+                  <div class="market-cards-row" id="cardsSale"></div>
+                </div>
+                <div class="market-section" id="sectionDonation">
+                  <div class="market-section-header">
+                    <span class="market-section-title">🎁 Donații</span>
+                    <span class="market-section-count badge badge-teal" id="countDonation">0</span>
+                  </div>
+                  <div class="market-cards-row" id="cardsDonation"></div>
+                </div>
+                <div class="market-section" id="sectionLending">
+                  <div class="market-section-header">
+                    <span class="market-section-title">🤝 Sharing is Caring</span>
+                    <span class="market-section-count badge badge-blue" id="countLending">0</span>
+                  </div>
+                  <div class="market-cards-row" id="cardsLending"></div>
+                </div>
+              </div>
               <div class="table-wrap hidden" style="margin-top: 8px">
                 <table>
                   <tbody id="marketplaceActiveBody"></tbody>
@@ -4909,8 +5102,9 @@
                   <div>
                     <label for="marketplaceListingType">Listing Type</label>
                     <select id="marketplaceListingType">
-                      <option value="sale">Sale</option>
-                      <option value="donation">Donation</option>
+                      <option value="sale">🏷 De vânzare</option>
+                      <option value="donation">🎁 Donație</option>
+                      <option value="lending">🤝 Împrumut</option>
                     </select>
                   </div>
                   <div>
@@ -4927,9 +5121,14 @@
               </section>
               <section class="market-form-section">
                 <h4>Details</h4>
-                <div style="margin-top: 0">
+                <div id="marketplacePriceRow" style="margin-top: 0">
                   <label for="marketplacePriceText">Price (for sale)</label>
                   <input id="marketplacePriceText" maxlength="120" placeholder="e.g. 150 RON, negotiable" />
+                </div>
+                <div id="lendingFields" style="display:none">
+                  <label for="maxDays">Durată maximă de împrumut (zile, opțional)</label>
+                  <input type="number" id="maxDays" name="max_days" min="1" max="90" placeholder="ex: 7" />
+                  <p class="field-hint">Lasă gol dacă nu vrei să specifici o durată.</p>
                 </div>
                 <div>
                   <label for="marketplaceTitle">Title</label>
@@ -5379,12 +5578,12 @@
         );
       const MARKETPLACE_CATEGORY_ORDER = ["furniture", "toys", "clothes", "brico", "other"];
       const MARKETPLACE_CATEGORY_LABELS = {
-        all: "All",
-        furniture: "Furniture",
-        toys: "Toys",
-        clothes: "Clothes",
+        all: "Toate",
+        furniture: "Mobilă",
+        toys: "Jucării",
+        clothes: "Haine",
         brico: "Brico",
-        other: "Other",
+        other: "Altele",
       };
       const MARKETPLACE_CATEGORY_ICONS = {
         all: "📋",
@@ -5531,6 +5730,7 @@
         avizierModule: document.getElementById("avizierModule"),
         votingModule: document.getElementById("votingModule"),
         refreshMarketplaceBtn: document.getElementById("refreshMarketplaceBtn"),
+        marketplaceTypeTabs: document.getElementById("marketplaceTypeTabs"),
         marketplaceCategoryTabs: document.getElementById("marketplaceCategoryTabs"),
         marketplaceSortTabs: document.getElementById("marketplaceSortTabs"),
         marketplaceBuildingFilter: document.getElementById("marketplaceBuildingFilter"),
@@ -5540,7 +5740,10 @@
         marketplaceCategory: document.getElementById("marketplaceCategory"),
         marketplaceTitle: document.getElementById("marketplaceTitle"),
         marketplaceDescription: document.getElementById("marketplaceDescription"),
+        marketplacePriceRow: document.getElementById("marketplacePriceRow"),
         marketplacePriceText: document.getElementById("marketplacePriceText"),
+        lendingFields: document.getElementById("lendingFields"),
+        maxDays: document.getElementById("maxDays"),
         marketplaceContactPhone: document.getElementById("marketplaceContactPhone"),
         marketplacePickupDetails: document.getElementById("marketplacePickupDetails"),
         marketplacePhotos: document.getElementById("marketplacePhotos"),
@@ -5556,6 +5759,15 @@
         marketplaceMineCards: document.getElementById("marketplaceMineCards"),
         marketplaceActiveCount: document.getElementById("marketplaceActiveCount"),
         marketplaceMineCount: document.getElementById("marketplaceMineCount"),
+        countSale: document.getElementById("countSale"),
+        countDonation: document.getElementById("countDonation"),
+        countLending: document.getElementById("countLending"),
+        cardsSale: document.getElementById("cardsSale"),
+        cardsDonation: document.getElementById("cardsDonation"),
+        cardsLending: document.getElementById("cardsLending"),
+        sectionSale: document.getElementById("sectionSale"),
+        sectionDonation: document.getElementById("sectionDonation"),
+        sectionLending: document.getElementById("sectionLending"),
         createAvizierCard: document.getElementById("createAvizierCard"),
         avizierLockedCard: document.getElementById("avizierLockedCard"),
         createAvizierForm: document.getElementById("createAvizierForm"),
@@ -5690,6 +5902,7 @@
       let marketplaceSelectedFiles = [];
       let marketplacePreviewUrls = [];
       let marketplaceSelectedCategory = "all";
+      let marketplaceSelectedType = "all";
       let marketplaceSelectedSort = "newest";
       let marketplaceSelectedBuilding = "all";
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
@@ -7656,7 +7869,9 @@
       }
 
       function marketplaceTypeLabel(type) {
-        return type === "donation" ? "Donation" : "Sale";
+        if (type === "donation") return "Donație";
+        if (type === "lending") return "Împrumut";
+        return "Vânzare";
       }
 
       function normalizeMarketplaceCategory(category) {
@@ -7669,7 +7884,7 @@
 
       function marketplaceCategoryLabel(category) {
         const normalized = normalizeMarketplaceCategory(category);
-        return MARKETPLACE_CATEGORY_LABELS[normalized] || "Other";
+        return MARKETPLACE_CATEGORY_LABELS[normalized] || "Altele";
       }
 
       function marketplaceCategoryIcon(category) {
@@ -7689,7 +7904,7 @@
       }
 
       function parseMarketplacePriceValue(post) {
-        if (!post || post.listing_type === "donation") return 0;
+        if (!post || post.listing_type === "donation" || post.listing_type === "lending") return 0;
         const raw = String(post.price_text || "").replace(",", ".").match(/(\d+(\.\d+)?)/);
         if (!raw) return Number.POSITIVE_INFINITY;
         return Number(raw[1] || Number.POSITIVE_INFINITY);
@@ -7714,6 +7929,43 @@
       function marketplaceCategoryMatches(post) {
         if (marketplaceSelectedCategory === "all") return true;
         return normalizeMarketplaceCategory(post?.category) === marketplaceSelectedCategory;
+      }
+
+      function marketplaceTypeMatches(post) {
+        if (marketplaceSelectedType === "all") return true;
+        return String(post?.listing_type || "").toLowerCase() === marketplaceSelectedType;
+      }
+
+      function syncMarketplaceTypeSectionVisibility() {
+        const sectionMap = {
+          sale: els.sectionSale,
+          donation: els.sectionDonation,
+          lending: els.sectionLending,
+        };
+        Object.entries(sectionMap).forEach(([type, sectionEl]) => {
+          if (!sectionEl) return;
+          sectionEl.classList.toggle("hidden", marketplaceSelectedType !== "all" && marketplaceSelectedType !== type);
+        });
+      }
+
+      function setMarketplaceTypeFilter(type, { rerender = true, scroll = true } = {}) {
+        const normalized = ["sale", "donation", "lending"].includes(String(type || "").toLowerCase())
+          ? String(type).toLowerCase()
+          : "all";
+        marketplaceSelectedType = normalized;
+        if (els.marketplaceTypeTabs) {
+          els.marketplaceTypeTabs.querySelectorAll("[data-market-type]").forEach((btn) => {
+            btn.classList.toggle("active", btn.dataset.marketType === normalized);
+          });
+        }
+        if (rerender) {
+          renderMarketplace(marketplaceDashboardData);
+        } else {
+          syncMarketplaceTypeSectionVisibility();
+        }
+        if (scroll && normalized === "lending" && els.sectionLending) {
+          els.sectionLending.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       }
 
       function setMarketplaceCategory(category, { syncForm = true, rerender = true } = {}) {
@@ -7758,13 +8010,21 @@
         const status = String(post?.status || "active")
           .trim()
           .toLowerCase();
+        if (post?.listing_type === "lending") {
+          if (status !== "active") {
+            return { label: "Închis", className: "completed" };
+          }
+          return post?.is_available === false
+            ? { label: "Împrumutat momentan", className: "claimed" }
+            : { label: "Disponibil", className: "available" };
+        }
         if (status === "active") {
           if (post?.listing_type === "donation" && post?.claimed_by_username) {
-            return { label: "Claimed", className: "claimed" };
+            return { label: "Rezervat", className: "claimed" };
           }
-          return { label: "Available", className: "available" };
+          return { label: "Disponibil", className: "available" };
         }
-        return { label: "Completed", className: "completed" };
+        return { label: "Finalizat", className: "completed" };
       }
 
       function marketplacePrimaryPhotoUrl(post) {
@@ -7784,14 +8044,52 @@
 
       function marketplacePriceBadge(post) {
         if (post.listing_type === "donation") {
-          return `<span class="market-price-badge free">FREE</span>`;
+          return `<span class="market-price-badge free">Gratuit</span>`;
         }
-        const priceLabel = post.price_text ? post.price_text : "Paid";
+        if (post.listing_type === "lending") {
+          return `<span class="market-price-badge free">Împrumut</span>`;
+        }
+        const priceLabel = post.price_text ? post.price_text : "Preț";
         return `<span class="market-price-badge paid">${priceLabel}</span>`;
       }
 
       function marketplaceContactLabel(post) {
-        return post.contact_phone || post.owner_phone_number || "No phone provided";
+        return post.contact_phone || post.owner_phone_number || "Telefon indisponibil";
+      }
+
+      function marketplaceTypeBadgeClass(type) {
+        if (type === "donation") return "badge-teal";
+        if (type === "lending") return "badge-blue";
+        return "badge-amber";
+      }
+
+      function sanitizePhoneHref(phoneValue) {
+        return String(phoneValue || "").replace(/[^\d+]/g, "");
+      }
+
+      function marketplaceSectionEmptyStateHtml(type) {
+        if (type === "sale") {
+          return `
+            <div class="empty-state">
+              <p class="empty-state-title">Niciun obiect de vânzare momentan.</p>
+              <p class="empty-state-body">Fii primul care listează ceva!</p>
+            </div>
+          `;
+        }
+        if (type === "donation") {
+          return `
+            <div class="empty-state">
+              <p class="empty-state-title">Nicio donație disponibilă momentan.</p>
+              <p class="empty-state-body">Ai ceva de dăruit unui vecin?</p>
+            </div>
+          `;
+        }
+        return `
+          <div class="empty-state">
+            <p class="empty-state-title">Nimeni nu a pus ceva la împrumut încă.</p>
+            <p class="empty-state-body">Ai o bormaşină, o scară sau un cort? Oferă-le vecinilor!</p>
+          </div>
+        `;
       }
 
       function normalizeMarketplaceFileType(fileType, fileName) {
@@ -7903,13 +8201,24 @@
       }
 
       function updateMarketplaceFormVisibility() {
-        const isDonation = els.marketplaceListingType.value === "donation";
-        els.marketplacePriceText.disabled = isDonation;
-        if (isDonation) {
+        const listingType = String(els.marketplaceListingType.value || "sale");
+        const showPrice = listingType === "sale";
+        const showLending = listingType === "lending";
+        if (els.marketplacePriceRow) {
+          els.marketplacePriceRow.style.display = showPrice ? "" : "none";
+        }
+        els.marketplacePriceText.disabled = !showPrice;
+        if (!showPrice) {
           els.marketplacePriceText.value = "";
-          els.marketplacePriceText.placeholder = "Not used for donations";
+          els.marketplacePriceText.placeholder = "Nu se folosește pentru donații / împrumut";
         } else {
           els.marketplacePriceText.placeholder = "e.g. 150 RON, negotiable";
+        }
+        if (els.lendingFields) {
+          els.lendingFields.style.display = showLending ? "" : "none";
+        }
+        if (!showLending && els.maxDays) {
+          els.maxDays.value = "";
         }
       }
 
@@ -8060,19 +8369,21 @@
       }
 
       function clearMarketplaceTables() {
-        const categoryLabel =
-          marketplaceSelectedCategory === "all"
-            ? "all categories"
-            : marketplaceCategoryLabel(marketplaceSelectedCategory);
-        els.marketplaceActiveCards.innerHTML = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No active listings in ${categoryLabel}.</span></div>`;
+        if (els.cardsSale) els.cardsSale.innerHTML = marketplaceSectionEmptyStateHtml("sale");
+        if (els.cardsDonation) els.cardsDonation.innerHTML = marketplaceSectionEmptyStateHtml("donation");
+        if (els.cardsLending) els.cardsLending.innerHTML = marketplaceSectionEmptyStateHtml("lending");
         els.marketplaceActiveBody.innerHTML = "";
         if (els.marketplaceMineBody) els.marketplaceMineBody.innerHTML = "";
-        const mineEmptyHtml = `<div class="market-empty-state">${iconMarkup("package-search")}<span>No listings created in ${categoryLabel}.</span></div>`;
+        const mineEmptyHtml = `<div class="market-empty-state">${iconMarkup("package-search")}<span>Nu ai creat anunțuri încă.</span></div>`;
         els.myListingsCards.innerHTML = mineEmptyHtml;
         els.marketplaceMineCards.innerHTML = mineEmptyHtml;
         els.marketplaceActiveCount.textContent = "0";
         els.marketplaceMineCount.textContent = "0";
+        if (els.countSale) els.countSale.textContent = "0";
+        if (els.countDonation) els.countDonation.textContent = "0";
+        if (els.countLending) els.countLending.textContent = "0";
         marketplaceDashboardData = { active_listings: [], my_listings: [] };
+        syncMarketplaceTypeSectionVisibility();
         refreshHomeActivity();
         hydrateLucideIcons();
       }
@@ -8085,7 +8396,7 @@
           my_listings: myListingsAll,
         };
 
-        const buildingOptions = ["<option value=\"all\">All</option>"]
+        const buildingOptions = ["<option value=\"all\">Toate</option>"]
           .concat(Array.from({ length: 10 }, (_, idx) => idx + 1).map((building) => `<option value="${building}">Bloc ${building}</option>`))
           .join("");
         els.marketplaceBuildingFilter.innerHTML = buildingOptions;
@@ -8101,62 +8412,118 @@
           myListingsAll.filter((post) => marketplaceCategoryMatches(post) && marketplaceBuildingMatches(post))
         );
 
-        els.marketplaceActiveCards.innerHTML = activeListings.length
-          ? activeListings
-              .map((post) => {
-                const isOwner = currentUser && post.owner_username === currentUser.username;
-                const statusTag = marketplaceStatusTag(post);
-                const openLink = `<a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">View details</a>`;
-                const canClaim =
-                  post.status === "active" &&
-                  post.listing_type === "donation" &&
-                  !post.claimed_by_username &&
-                  !isOwner;
-                const contactId = `market-contact-${post.id}`;
-                const ownerBuilding = marketplaceOwnerBuilding(post);
-                const isDonation = post.listing_type === "donation";
-                const isSold = post.status === "completed";
-                return `
-                  <article class="market-listing-card card">
-                    <div class="market-listing-head">
-                      <div class="market-listing-thumb">
-                        ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
-                        ${isSold ? `<span class="market-sold-ribbon">SOLD</span>` : ""}
-                        <div class="market-status-corner">
-                          <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
-                        </div>
-                        ${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}
-                      </div>
-                      <div class="market-listing-body">
-                        <div class="market-title-line">
-                          <strong>${post.title}</strong>
-                          <span class="market-price-main">${isDonation ? "FREE" : (post.price_text || "-")}</span>
-                        </div>
-                        <div class="market-owner-line">Owner: ${post.owner_username} ${
-                          ownerBuilding ? `· Bloc ${ownerBuilding}` : ""
-                        }</div>
-                        <div class="market-age">Listed ${formatRelativeTime(post.created_at)}</div>
-                        <div class="market-card-badges">
-                          <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="market-card-actions">
-                      <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contact owner</button>
-                      <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Share</button>
-                      ${canClaim ? `<button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Claim Donation</button>` : ""}
-                      ${openLink}
-                    </div>
-                    <div id="${contactId}" class="market-contact-meta hidden">${iconMarkup("phone")}<span>${marketplaceContactLabel(post)}</span></div>
-                  </article>
-                `;
-              })
-              .join("")
-          : `<div class="market-empty-state">${iconMarkup("package-search")}<span>No active listings ${
-              marketplaceSelectedCategory === "all"
-                ? "yet."
-                : `in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
-            }</span></div>`;
+        const activeByType = {
+          sale: activeListings.filter((post) => post.listing_type === "sale"),
+          donation: activeListings.filter((post) => post.listing_type === "donation"),
+          lending: activeListings.filter((post) => post.listing_type === "lending"),
+        };
+
+        function renderActiveStandardCard(post) {
+          const isOwner = currentUser && post.owner_username === currentUser.username;
+          const statusTag = marketplaceStatusTag(post);
+          const openLink = `<a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Detalii</a>`;
+          const canClaim =
+            post.status === "active" &&
+            post.listing_type === "donation" &&
+            !post.claimed_by_username &&
+            !isOwner;
+          const contactId = `market-contact-${post.id}`;
+          const ownerBuilding = marketplaceOwnerBuilding(post);
+          const isDonation = post.listing_type === "donation";
+          return `
+            <article class="market-listing-card card">
+              <div class="market-listing-head">
+                <div class="market-listing-thumb">
+                  ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
+                  <div class="market-status-corner">
+                    <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
+                  </div>
+                  ${marketplaceThumbHtml(post, post.title || "Imagine anunț")}
+                </div>
+                <div class="market-listing-body">
+                  <div class="market-title-line">
+                    <strong>${escapeHtml(post.title)}</strong>
+                    <span class="market-price-main">${isDonation ? "Gratuit" : escapeHtml(post.price_text || "-")}</span>
+                  </div>
+                  <div class="market-owner-line">${escapeHtml(post.owner_username)} ${
+                    ownerBuilding ? `· Bloc ${ownerBuilding}` : ""
+                  }</div>
+                  <div class="market-age">Publicat ${formatRelativeTime(post.created_at)}</div>
+                  <div class="market-card-badges">
+                    <span class="market-category-badge ${marketplaceTypeBadgeClass(post.listing_type)}">${marketplaceTypeLabel(post.listing_type)}</span>
+                    <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="market-card-actions">
+                <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contact</button>
+                <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
+                ${canClaim ? `<button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Revendică donația</button>` : ""}
+                ${openLink}
+              </div>
+              <div id="${contactId}" class="market-contact-meta hidden">${iconMarkup("phone")}<span>${escapeHtml(marketplaceContactLabel(post))}</span></div>
+            </article>
+          `;
+        }
+
+        function renderLendingCard(post) {
+          const isOwner = currentUser && post.owner_username === currentUser.username;
+          const ownerBuilding = marketplaceOwnerBuilding(post);
+          const statusBadge = marketplaceStatusTag(post);
+          const maxDaysBadge =
+            Number(post.max_days || 0) > 0
+              ? `<span class="badge badge-gray">⏱ Max ${Number(post.max_days)} zile</span>`
+              : "";
+          const phone = marketplaceContactLabel(post);
+          const phoneHref = sanitizePhoneHref(phone);
+          const toggleLabel = post.is_available === false ? "Marchează ca disponibil" : "Marchează ca împrumutat";
+          return `
+            <article class="market-listing-card card lending-card">
+              <div class="market-listing-head">
+                <div class="market-listing-thumb">
+                  ${marketplaceThumbHtml(post, post.title || "Imagine anunț împrumut")}
+                </div>
+                <div class="market-listing-body">
+                  <div class="market-lending-badges">
+                    <span class="badge badge-blue">🤝 Împrumut</span>
+                    ${maxDaysBadge}
+                    <span class="badge ${statusBadge.className === "available" ? "badge-green" : "badge-amber"}">${statusBadge.label}</span>
+                  </div>
+                  <p class="market-listing-title">${escapeHtml(post.title)}</p>
+                  <p class="market-listing-meta">${escapeHtml(post.owner_username)}${ownerBuilding ? ` · Bloc ${ownerBuilding}` : ""}</p>
+                  <p class="market-listing-description">${escapeHtml(post.description || "Fără descriere suplimentară.")}</p>
+                  <div class="market-lending-actions">
+                    ${
+                      phoneHref
+                        ? `<a href="tel:${phoneHref}" class="btn btn-primary btn-sm">📞 Contactează</a>`
+                        : `<button type="button" class="btn btn-secondary btn-sm" disabled>Telefon indisponibil</button>`
+                    }
+                    ${
+                      isOwner
+                        ? `<button type="button" class="btn btn-secondary btn-sm market-lending-toggle-btn" data-lending-toggle-id="${post.id}">${toggleLabel}</button>`
+                        : ""
+                    }
+                  </div>
+                </div>
+              </div>
+            </article>
+          `;
+        }
+
+        function renderTypeSection(containerEl, posts, type) {
+          if (!containerEl) return;
+          if (!posts.length) {
+            containerEl.innerHTML = marketplaceSectionEmptyStateHtml(type);
+            return;
+          }
+          containerEl.innerHTML = posts
+            .map((post) => (type === "lending" ? renderLendingCard(post) : renderActiveStandardCard(post)))
+            .join("");
+        }
+
+        renderTypeSection(els.cardsSale, activeByType.sale, "sale");
+        renderTypeSection(els.cardsDonation, activeByType.donation, "donation");
+        renderTypeSection(els.cardsLending, activeByType.lending, "lending");
         els.marketplaceActiveBody.innerHTML = "";
 
         if (els.marketplaceMineBody) els.marketplaceMineBody.innerHTML = "";
@@ -8167,45 +8534,58 @@
                 const isActive = post.status === "active";
                 const statusTag = marketplaceStatusTag(post);
                 const isDonation = post.listing_type === "donation";
-                const isSold = post.status === "completed";
-                const priceLabel = post.listing_type === "sale" ? post.price_text || "-" : "FREE";
+                const isLending = post.listing_type === "lending";
+                const priceLabel =
+                  post.listing_type === "sale" ? post.price_text || "-" : post.listing_type === "donation" ? "Gratuit" : "Împrumut";
                 const listingUrl = marketplaceListingUrl(post.id);
+                const lendingToggleLabel =
+                  post.is_available === false ? "Disponibil ✓" : "Împrumutat ✗";
                 return `
                   <article class="market-listing-card card">
                     <div class="market-listing-head">
                       <div class="market-listing-thumb">
                         ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
-                        ${isSold ? `<span class="market-sold-ribbon">SOLD</span>` : ""}
                         <div class="market-status-corner">
                           <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
                         </div>
-                        ${marketplaceThumbHtml(post, post.title || "Listing thumbnail")}
+                        ${marketplaceThumbHtml(post, post.title || "Imagine anunț")}
                       </div>
                       <div class="market-listing-body">
                         <div class="market-title-line">
-                          <strong>${post.title}</strong>
-                          <span class="market-price-main">${priceLabel}</span>
+                          <strong>${escapeHtml(post.title)}</strong>
+                          <span class="market-price-main">${escapeHtml(priceLabel)}</span>
                         </div>
                         <div class="market-card-badges">
-                          <span class="market-category-badge listing-type ${post.listing_type === "donation" ? "badge-teal" : "badge-blue"}">${marketplaceTypeLabel(post.listing_type)}</span>
+                          <span class="market-category-badge listing-type ${marketplaceTypeBadgeClass(post.listing_type)}">${marketplaceTypeLabel(post.listing_type)}</span>
                           <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
+                          ${
+                            isLending
+                              ? `<span class="badge ${post.is_available === false ? "badge-amber" : "badge-green"}">${post.is_available === false ? "Împrumutat momentan" : "Disponibil"}</span>`
+                              : ""
+                          }
+                          ${isLending && Number(post.max_days || 0) > 0 ? `<span class="badge badge-gray">⏱ Max ${Number(post.max_days)} zile</span>` : ""}
                         </div>
                         ${
                           post.claimed_by_username
-                            ? `<div class="market-my-meta">Claimed by: ${post.claimed_by_username}</div>`
+                            ? `<div class="market-my-meta">Revendicat de: ${escapeHtml(post.claimed_by_username)}</div>`
                             : ""
                         }
-                        <div class="market-my-meta">Updated ${formatRelativeTime(post.updated_at || post.created_at)}</div>
-                        <div class="market-age">Listed ${formatRelativeTime(post.created_at)}</div>
+                        <div class="market-my-meta">Actualizat ${formatRelativeTime(post.updated_at || post.created_at)}</div>
+                        <div class="market-age">Publicat ${formatRelativeTime(post.created_at)}</div>
                       </div>
                     </div>
                     <div class="market-card-actions">
-                      <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Share</button>
-                      <button type="button" class="table-action-btn market-edit-btn" data-listing-url="${listingUrl}">Edit</button>
-                      <button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Delete</button>
+                      <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
+                      <button type="button" class="table-action-btn market-edit-btn" data-listing-url="${listingUrl}">Editează</button>
+                      <button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Șterge</button>
                       ${
-                        isActive
-                          ? `<button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Mark Complete</button>`
+                        isLending && isActive
+                          ? `<button type="button" class="table-action-btn ghost market-lending-toggle-btn" data-lending-toggle-id="${post.id}">${lendingToggleLabel}</button>`
+                          : ""
+                      }
+                      ${
+                        isActive && !isLending
+                          ? `<button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Marchează finalizat</button>`
                           : ""
                       }
                     </div>
@@ -8213,16 +8593,20 @@
                 `;
               })
               .join("")
-          : `<div class="market-empty-state">${iconMarkup("package-search")}<span>You have not created listings ${
+          : `<div class="market-empty-state">${iconMarkup("package-search")}<span>Nu ai creat anunțuri ${
               marketplaceSelectedCategory === "all"
-                ? "yet."
-                : `in ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
+                ? "încă."
+                : `în categoria ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
             }</span></div>`;
         els.myListingsCards.innerHTML = myListingCardsHtml;
         els.marketplaceMineCards.innerHTML = myListingCardsHtml;
 
         els.marketplaceActiveCount.textContent = String(activeListings.length);
         els.marketplaceMineCount.textContent = String(myListings.length);
+        if (els.countSale) els.countSale.textContent = String(activeByType.sale.length);
+        if (els.countDonation) els.countDonation.textContent = String(activeByType.donation.length);
+        if (els.countLending) els.countLending.textContent = String(activeByType.lending.length);
+        syncMarketplaceTypeSectionVisibility();
         refreshHomeActivity();
         decorateDynamicActionIcons(els.marketplaceActiveCards);
         decorateDynamicActionIcons(els.myListingsCards);
@@ -8236,6 +8620,25 @@
         renderQuickStats();
         renderMarketplace(data);
         markModuleRefreshed("marketplace");
+      }
+
+      async function toggleLendingAvailability(postId, button, { source = "mine" } = {}) {
+        if (!postId) return;
+        await withButtonProgress(button, "Se actualizează...", async () => {
+          try {
+            const updated = await api(`/api/marketplace/posts/${postId}/complete`, { method: "POST" });
+            const isAvailable = updated && updated.is_available !== false;
+            showToast(
+              isAvailable ? "Anunțul este marcat ca disponibil." : "Anunțul este marcat ca împrumutat momentan."
+            );
+            if (source === "active") {
+              flashButtonSuccess(button, isAvailable ? "Disponibil" : "Împrumutat");
+            }
+            await refreshMarketplace();
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
       }
 
       function avizierPermissionLabel(permission) {
@@ -9315,6 +9718,7 @@
           currentMyClaims = [];
           currentBuildingStats = [];
           latestActivePolls = [];
+          marketplaceSelectedType = "all";
           marketplaceDashboardData = { active_listings: [], my_listings: [] };
           avizierAnnouncements = [];
           avizierEditingAnnouncementId = null;
@@ -9328,6 +9732,7 @@
           clearPollLists();
           clearMarketplaceTables();
           clearMarketplaceUploadState();
+          setMarketplaceTypeFilter("all", { rerender: false, scroll: false });
           renderAvizierAnnouncements([]);
           updateAvizierFormVisibility();
           setAvizierComposerMode();
@@ -9354,6 +9759,7 @@
         currentMyClaims = [];
         currentBuildingStats = [];
         latestActivePolls = [];
+        marketplaceSelectedType = "all";
         marketplaceDashboardData = { active_listings: [], my_listings: [] };
         avizierAnnouncements = [];
         avizierEditingAnnouncementId = null;
@@ -9371,6 +9777,7 @@
         setPollFormDefaults();
         setPollWizardStep(1);
         updateMarketplaceFormVisibility();
+        setMarketplaceTypeFilter("all", { rerender: false, scroll: false });
         updateAvizierFormVisibility();
         setAvizierComposerMode();
         setAvizierScopeFilter("all");
@@ -9659,6 +10066,14 @@
         updateMarketplaceFormVisibility();
       });
 
+      if (els.marketplaceTypeTabs) {
+        els.marketplaceTypeTabs.addEventListener("click", (event) => {
+          const typeBtn = event.target.closest("[data-market-type]");
+          if (!typeBtn) return;
+          setMarketplaceTypeFilter(typeBtn.dataset.marketType, { rerender: false, scroll: true });
+        });
+      }
+
       els.marketplaceCategoryTabs.addEventListener("click", (event) => {
         const tabButton = event.target.closest("[data-market-category]");
         if (!tabButton) return;
@@ -9734,7 +10149,13 @@
               category: normalizeMarketplaceCategory(els.marketplaceCategory.value),
               title: els.marketplaceTitle.value.trim(),
               description: (els.marketplaceDescription.value || "").trim(),
-              price_text: (els.marketplacePriceText.value || "").trim(),
+              price_text:
+                els.marketplaceListingType.value === "sale" ? (els.marketplacePriceText.value || "").trim() : null,
+              max_days:
+                els.marketplaceListingType.value === "lending"
+                  ? (els.maxDays && els.maxDays.value ? Number(els.maxDays.value) : null)
+                  : null,
+              is_available: els.marketplaceListingType.value === "lending" ? true : null,
               contact_phone: (els.marketplaceContactPhone.value || "").trim(),
               pickup_details: (els.marketplacePickupDetails.value || "").trim(),
             };
@@ -9771,6 +10192,13 @@
       });
 
       els.marketplaceActiveCards.addEventListener("click", async (event) => {
+        const lendingToggleBtn = event.target.closest(".market-lending-toggle-btn");
+        if (lendingToggleBtn) {
+          const postId = Number(lendingToggleBtn.dataset.lendingToggleId || 0);
+          if (!postId) return;
+          await toggleLendingAvailability(postId, lendingToggleBtn, { source: "active" });
+          return;
+        }
         const shareBtn = event.target.closest('.share-entity-btn[data-share-kind="listing"]');
         if (shareBtn) {
           openShareForEntity("listing", shareBtn.dataset.shareId);
@@ -9784,7 +10212,7 @@
           if (!detailsEl) return;
           const isHidden = detailsEl.classList.contains("hidden");
           detailsEl.classList.toggle("hidden", !isHidden);
-          contactBtn.dataset.defaultText = isHidden ? "Hide phone" : "Contact owner";
+          contactBtn.dataset.defaultText = isHidden ? "Ascunde telefon" : "Arată telefon";
           contactBtn.innerHTML = `${iconMarkup("phone")}<span>${contactBtn.dataset.defaultText}</span>`;
           hydrateLucideIcons();
           return;
@@ -9814,6 +10242,7 @@
         const editBtn = event.target.closest(".market-edit-btn");
         const completeBtn = event.target.closest(".market-complete-btn");
         const deleteBtn = event.target.closest(".market-delete-btn");
+        const lendingToggleBtn = event.target.closest(".market-lending-toggle-btn");
         if (shareBtn) {
           openShareForEntity("listing", shareBtn.dataset.shareId);
           return;
@@ -9837,6 +10266,12 @@
               setStatus(error.message, true);
             }
           });
+          return;
+        }
+        if (lendingToggleBtn) {
+          const postId = Number(lendingToggleBtn.dataset.lendingToggleId || 0);
+          if (!postId) return;
+          await toggleLendingAvailability(postId, lendingToggleBtn, { source: "mine" });
           return;
         }
         if (deleteBtn) {
@@ -10518,7 +10953,7 @@
       // Trigger card entrance animations when a module section becomes visible
       function animateCards(containerSelector) {
         if (!containerSelector) return;
-        const cards = document.querySelectorAll(`${containerSelector} .card`);
+        const cards = document.querySelectorAll(`${containerSelector} > .card`);
         if (!cards.length) return;
         cards.forEach((card) => card.classList.remove("visible"));
         requestAnimationFrame(() => {
