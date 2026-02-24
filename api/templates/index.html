@@ -9,6 +9,21 @@
     <link rel="manifest" href="/manifest.json" />
     <title>10Blocuri Dashboard</title>
     <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        overflow-x: hidden;
+        max-width: 100%;
+      }
+
+      body {
+        overflow-x: hidden;
+        max-width: 100vw;
+        min-height: 100vh;
+      }
+
       :root {
         --bg: #f8fafc;
         --card: #ffffff;
@@ -3766,7 +3781,7 @@
         padding: 6px;
         z-index: 1400;
         display: none;
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 4px;
       }
 
@@ -3987,7 +4002,7 @@
         }
 
         .mobile-tabbar {
-          grid-template-columns: repeat(6, minmax(0, 1fr));
+          grid-template-columns: repeat(5, minmax(0, 1fr));
           gap: 3px;
           padding: 4px;
         }
@@ -5174,6 +5189,270 @@
           flex-shrink: 0;
         }
       }
+      @media (max-width: 768px) {
+        .mobile-tabbar {
+          display: grid !important;
+          grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+          width: 100% !important;
+          overflow: hidden !important;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 1400;
+          background: rgba(255, 255, 255, 0.98);
+          border-top: 1px solid var(--border);
+          border-radius: 0;
+          box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08);
+          padding: 4px 4px env(safe-area-inset-bottom, 0px);
+          gap: 2px;
+          max-width: 100vw !important;
+        }
+
+        .mobile-tab {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 6px 3px 4px;
+          font-size: 10px;
+          min-width: 0;
+          min-height: 46px;
+          overflow: hidden;
+          gap: 2px;
+          border-radius: 8px;
+        }
+
+        .mobile-tab span {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+          font-size: 10px;
+          line-height: 1.1;
+        }
+
+        body > main,
+        .main-content,
+        .app-content,
+        .content-area,
+        [id="appContent"],
+        [id="mainContent"],
+        #app,
+        main#app,
+        .module-section:not([style*="display: none"]) {
+          padding-bottom: calc(70px + env(safe-area-inset-bottom, 16px)) !important;
+        }
+
+        [id^="module"],
+        .module-section,
+        .module-panel {
+          width: 100% !important;
+          max-width: 100vw !important;
+          overflow-x: hidden !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+
+        .module-content-area,
+        .module-body,
+        .module-inner,
+        .module-panel > div,
+        .module-panel > section,
+        .module-panel > p,
+        [id^="module"] > div {
+          padding-left: 12px !important;
+          padding-right: 12px !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          overflow-x: hidden !important;
+        }
+
+        .module-header,
+        [class*="module-header"] {
+          display: flex !important;
+          flex-wrap: wrap !important;
+          align-items: flex-start !important;
+          gap: 8px !important;
+          padding: 12px 12px 0 12px !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+
+        .module-header > :first-child,
+        .module-header-left {
+          flex: 1 !important;
+          min-width: 0 !important;
+        }
+
+        .module-header-actions,
+        .module-header .module-actions {
+          flex-shrink: 0 !important;
+          display: flex !important;
+          gap: 8px !important;
+          align-items: center !important;
+          margin-left: auto;
+          min-width: 0;
+        }
+
+        .btn-refresh,
+        button[onclick*="load"],
+        button[onclick*="refresh"],
+        button[onclick*="Refresh"] {
+          height: 34px !important;
+          min-height: 34px !important;
+          padding: 0 12px !important;
+          font-size: 12px !important;
+          border-radius: 8px !important;
+          white-space: nowrap !important;
+          width: auto !important;
+        }
+
+        .btn-back-home,
+        button[onclick*="showHome"],
+        a[onclick*="showHome"] {
+          display: none !important;
+        }
+
+        #parkingModule .capacity-grid {
+          display: flex !important;
+          gap: 10px !important;
+          overflow-x: auto !important;
+          overflow-y: visible !important;
+          -webkit-overflow-scrolling: touch !important;
+          scroll-snap-type: x mandatory !important;
+          padding-bottom: 8px !important;
+          scrollbar-width: none;
+        }
+
+        #parkingModule .capacity-grid::-webkit-scrollbar {
+          display: none;
+        }
+
+        #parkingModule .capacity-card {
+          scroll-snap-align: start !important;
+          flex-shrink: 0 !important;
+          min-width: 160px !important;
+          max-width: 200px !important;
+        }
+
+        #parkingModule .segmented-control {
+          width: 100% !important;
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 6px !important;
+          background: transparent !important;
+          padding: 0 !important;
+        }
+
+        #parkingModule .segmented-control .tab-btn {
+          width: 100% !important;
+          min-width: 0 !important;
+        }
+
+        [class*="mode-banner"],
+        [id*="modeBanner"] {
+          width: 100% !important;
+          box-sizing: border-box !important;
+          border-radius: 8px !important;
+        }
+
+        #marketplaceTypeTabs,
+        #marketplaceCategoryTabs {
+          display: flex !important;
+          flex-wrap: wrap !important;
+          gap: 8px !important;
+          overflow-x: visible !important;
+          width: 100% !important;
+          min-width: 0 !important;
+          padding-bottom: 0 !important;
+        }
+
+        #marketplaceTypeTabs .type-pill,
+        #marketplaceCategoryTabs .market-filter-btn {
+          flex: 0 0 auto !important;
+          white-space: nowrap !important;
+          height: 36px !important;
+          min-height: 36px !important;
+          padding: 0 12px !important;
+          font-size: 13px !important;
+          width: auto !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+        }
+
+        #marketplaceSortTabs {
+          display: grid !important;
+          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          gap: 6px !important;
+          width: 100% !important;
+          background: transparent !important;
+          padding: 0 !important;
+        }
+
+        #marketplaceSortTabs .market-sort-btn {
+          width: 100% !important;
+          min-width: 0 !important;
+          height: 34px !important;
+          min-height: 34px !important;
+          font-size: 12px !important;
+          padding: 0 8px !important;
+          white-space: nowrap !important;
+        }
+
+        .market-listing-thumb,
+        .listing-photo,
+        [class*="listing-photo"],
+        [class*="listing-image"] {
+          height: 160px !important;
+          max-height: 160px !important;
+        }
+
+        .poll-meta,
+        .poll-badges,
+        [class*="poll-status"] {
+          display: flex !important;
+          flex-wrap: wrap !important;
+          gap: 6px !important;
+        }
+
+        #activePolls .module-actions,
+        #closedPollCards .module-actions,
+        .poll-actions,
+        [class*="poll-buttons"] {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 8px !important;
+          width: 100% !important;
+        }
+
+        #activePolls .module-actions .table-action-btn,
+        #closedPollCards .module-actions .table-action-btn,
+        .poll-actions .btn,
+        [class*="poll-buttons"] button {
+          width: 100% !important;
+          min-width: 0 !important;
+          height: 42px !important;
+          min-height: 42px !important;
+          font-size: 14px !important;
+        }
+
+        .poll-countdown,
+        [class*="countdown"],
+        [class*="closes-in"] {
+          width: 100% !important;
+          text-align: center !important;
+          box-sizing: border-box !important;
+        }
+
+        .mobile-fab,
+        .fab,
+        [class*="fab"],
+        [class*="floating-action"] {
+          right: 16px !important;
+          bottom: calc(72px + env(safe-area-inset-bottom, 8px)) !important;
+        }
+      }
     </style>
     <link rel="stylesheet" href="contacts.css">
   </head>
@@ -5474,32 +5753,32 @@
         <div id="parkingModule" class="hidden module-panel">
           <section class="module-header">
             <div>
-              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Parking Sharing</div>
-              <h1 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parking Sharing</h1>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Parcare</div>
+              <h1 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parcare</h1>
             </div>
             <div class="module-actions module-header-actions">
               <a href="#" class="module-back-link btn-back-home" data-back-modules>Back Home</a>
-              <button id="refreshParkingBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
+              <button id="refreshParkingBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
             </div>
           </section>
-          <p id="parkingLastRefreshed" class="refresh-meta">Last refreshed: -</p>
+          <p id="parkingLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
 
           <section class="card mt-12">
-            <h2>Building Capacity</h2>
+            <h2>Capacitate Blocuri</h2>
             <p class="capacity-legend">UG = Underground, AG = Above-ground. Tap a bloc card to filter claim options.</p>
             <span class="section-label">Capacitate Blocuri</span>
             <div id="stats" class="capacity-grid" style="margin-top: 10px"></div>
           </section>
 
           <section class="card action-shell" id="actionPanel">
-            <h2>Parking Actions</h2>
+            <h2>Acțiuni Parcare</h2>
             <p style="margin: 8px 0 0; color: var(--muted)">I want to:</p>
             <div class="tabs segmented-control" style="margin-top: 8px">
-              <button type="button" class="tab-btn active" data-tab-group="action" data-tab-target="actionSharePanel">Share my spot</button>
-              <button type="button" class="tab-btn" data-tab-group="action" data-tab-target="actionClaimPanel">Claim a spot</button>
+              <button type="button" class="tab-btn active" data-tab-group="action" data-tab-target="actionSharePanel">Ofer locul meu</button>
+              <button type="button" class="tab-btn" data-tab-group="action" data-tab-target="actionClaimPanel">Rezerv un loc</button>
             </div>
             <div id="parkingModeBanner" class="mode-banner sharing">
-              <span>Mode: Sharing your spot</span>
+              <span>Mod: Ofer locul meu</span>
             </div>
 
             <section id="actionSharePanel" class="tab-panel" data-tab-group="action">
@@ -5543,7 +5822,7 @@
                   <button type="button" class="preset-btn" data-target-form="claim" data-preset="weekend">This weekend</button>
                 </div>
                 <div>
-                  <label for="claimBuilding">Building</label>
+                  <label for="claimBuilding">Bloc</label>
                   <select id="claimBuilding"></select>
                 </div>
                 <div>
@@ -5567,7 +5846,7 @@
                   <input id="claimUntil" type="datetime-local" required />
                 </div>
                 <div>
-                  <label for="claimPhone">Contact Phone (for owner)</label>
+                  <label for="claimPhone">Telefon contact (proprietar)</label>
                   <input id="claimPhone" placeholder="07xx xxx xxx" required />
                 </div>
                 <p class="tz-note">All claim times are Bucharest time.</p>
@@ -5622,7 +5901,7 @@
                   <thead>
                     <tr>
                       <th>Status</th>
-                      <th>Building</th>
+                      <th>Bloc</th>
                       <th>Spot</th>
                       <th>Type</th>
                       <th>Owner</th>
@@ -5672,7 +5951,7 @@
               <div id="myClaimedTableWrap" class="table-wrap">
                 <table>
                   <thead>
-                    <tr><th>Building</th><th>Spot</th><th>Owner</th><th>Owner Phone</th><th>Contact Used</th><th>Claim From</th><th>Claim Until</th></tr>
+                    <tr><th>Bloc</th><th>Loc</th><th>Proprietar</th><th>Telefon proprietar</th><th>Telefon folosit</th><th>Rezervare de la</th><th>Rezervare până la</th></tr>
                   </thead>
                   <tbody id="myClaimed"></tbody>
                 </table>
@@ -5703,7 +5982,7 @@
                       <option value="comitet">Comitet (general + building)</option>
                     </select>
                   </div>
-                  <div><label for="adminNewBuilding">Building</label><select id="adminNewBuilding"></select></div>
+                  <div><label for="adminNewBuilding">Bloc</label><select id="adminNewBuilding"></select></div>
                   <div><label for="adminNewApartment">Apartment</label><input id="adminNewApartment" type="number" min="1" max="16" value="1" /></div>
                   <button id="createUserBtn" type="submit" data-default-text="Create User">Create User</button>
                 </form>
@@ -5727,7 +6006,7 @@
                 <div class="table-wrap">
                   <table>
                     <thead>
-                      <tr><th>User</th><th>Role</th><th>Avizier</th><th>Building</th><th>Apt</th><th>Phone</th></tr>
+                      <tr><th>User</th><th>Role</th><th>Avizier</th><th>Bloc</th><th>Apt</th><th>Phone</th></tr>
                     </thead>
                     <tbody id="allUsers"></tbody>
                   </table>
@@ -5749,10 +6028,10 @@
             </div>
             <div class="module-actions module-header-actions">
               <a href="#" class="module-back-link btn-back-home" data-back-modules>Back Home</a>
-              <button id="refreshMarketplaceBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
+              <button id="refreshMarketplaceBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
             </div>
           </div>
-          <p id="marketplaceLastRefreshed" class="refresh-meta">Last refreshed: -</p>
+          <p id="marketplaceLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
 
           <span class="section-label mt-10">Tip anunț</span>
           <div id="marketplaceTypeTabs" class="type-filter-row" style="margin-top: 6px">
@@ -5790,12 +6069,12 @@
           </div>
           <div class="market-filter-row">
             <div id="marketplaceSortTabs" class="segmented-control market-sort-control">
-              <button type="button" class="tab-btn market-sort-btn active" data-market-sort="newest">Newest</button>
-              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_asc">Price ↑</button>
-              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_desc">Price ↓</button>
+              <button type="button" class="tab-btn market-sort-btn active" data-market-sort="newest">Cele mai noi</button>
+              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_asc">Preț ↑</button>
+              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_desc">Preț ↓</button>
             </div>
             <div class="market-building-filter">
-              <label for="marketplaceBuildingFilter">Building</label>
+              <label for="marketplaceBuildingFilter">Bloc</label>
               <select id="marketplaceBuildingFilter">
                 <option value="all">All</option>
               </select>
@@ -5803,7 +6082,7 @@
           </div>
 
           <section class="card mt-12">
-            <h3>Active Listings <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
+            <h3>Anunțuri Active <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
             <span class="section-label">Anunțuri Active</span>
             <div id="marketplaceActiveCards" class="market-active-grid">
               <div class="market-section" id="sectionSale">
@@ -5888,10 +6167,10 @@
                 </div>
               </section>
               <section class="market-form-section">
-                <h4>Contact &amp; Pickup</h4>
+                <h4>Contact &amp; Ridicare</h4>
                 <div class="grid" style="margin-top: 0">
                   <div>
-                    <label for="marketplaceContactPhone">Contact Phone</label>
+                    <label for="marketplaceContactPhone">Telefon contact</label>
                     <input id="marketplaceContactPhone" maxlength="64" placeholder="07xx xxx xxx" />
                   </div>
                   <div>
@@ -5938,10 +6217,10 @@
             </div>
             <div class="module-actions module-header-actions">
               <a href="#" class="module-back-link btn-back-home" data-back-modules>Back Home</a>
-              <button id="refreshAvizierBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
+              <button id="refreshAvizierBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
             </div>
           </div>
-          <p id="avizierLastRefreshed" class="refresh-meta">Last refreshed: -</p>
+          <p id="avizierLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
 
           <section class="card mt-12">
             <h3>Announcements <span class="count-pill" id="avizierCount">0</span></h3>
@@ -5957,7 +6236,7 @@
               </button>
               <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="building">
                 <span class="market-filter-emoji" aria-hidden="true">🏢</span>
-                <span>Per Building</span>
+                <span>Pe bloc</span>
               </button>
             </div>
             <div id="avizierList" class="stack" style="margin-top: 8px"></div>
@@ -6012,7 +6291,7 @@
                 </div>
               </div>
               <div id="avizierBuildingRow" class="hidden">
-                <label for="avizierBuilding">Building</label>
+                <label for="avizierBuilding">Bloc</label>
                 <select id="avizierBuilding"></select>
               </div>
               <div>
@@ -6036,14 +6315,14 @@
             <div>
               <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Voting</div>
               <h1 class="module-title"><i data-lucide="vote" aria-hidden="true"></i>Voting</h1>
-              <p class="poll-note">Participate in neighbourhood or building-specific polls.</p>
+              <p class="poll-note">Participă la sondaje despre decizii comune.</p>
             </div>
             <div class="module-actions module-header-actions">
               <a href="#" class="module-back-link btn-back-home" data-back-modules>Back Home</a>
-              <button id="refreshPollsBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
+              <button id="refreshPollsBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
             </div>
           </div>
-          <p id="votingLastRefreshed" class="refresh-meta">Last refreshed: -</p>
+          <p id="votingLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
           <section id="createPollCard" class="card hidden mt-12">
             <h3>Create Poll (Admin Wizard)</h3>
             <form id="createPollForm" class="stack" style="margin-top: 8px">
@@ -6095,11 +6374,11 @@
                   <label for="pollScope">Scope</label>
                   <select id="pollScope">
                     <option value="neighbourhood">Neighbourhood</option>
-                    <option value="building">Building</option>
+                    <option value="building">Bloc</option>
                   </select>
                 </div>
                 <div id="pollBuildingRow" class="hidden">
-                  <label for="pollBuilding">Building</label>
+                  <label for="pollBuilding">Bloc</label>
                   <select id="pollBuilding"></select>
                 </div>
                 <div class="grid" style="margin-top: 0">
@@ -6116,7 +6395,7 @@
                 <div>
                   <label for="pollStatus">Initial Status</label>
                   <select id="pollStatus">
-                    <option value="active">Active</option>
+                    <option value="active">Activ</option>
                     <option value="draft">Draft</option>
                   </select>
                 </div>
@@ -6131,7 +6410,7 @@
                   <label><input id="pollAllowMultiple" type="checkbox" /> Allow multiple selections</label>
                 </div>
                 <div>
-                  <label><input id="pollShowResultsEarly" type="checkbox" /> Show results before poll closes</label>
+                  <label><input id="pollShowResultsEarly" type="checkbox" /> Afișează rezultatele înainte de închiderea sondajului</label>
                 </div>
                 <div>
                   <label><input id="pollRequiresQuorum" type="checkbox" /> Requires quorum</label>
@@ -6161,12 +6440,12 @@
           </section>
           <div class="grid" style="margin-top: 10px">
             <section class="card">
-              <h3>Active Polls <span class="count-pill" id="countActivePolls">0</span></h3>
+              <h3>Sondaje Active <span class="count-pill" id="countActivePolls">0</span></h3>
               <span class="section-label">Sondaje Active</span>
               <div id="activePolls" class="poll-card-grid"></div>
             </section>
             <section class="card">
-              <h3>Closed Polls <span class="count-pill" id="countClosedPolls">0</span></h3>
+              <h3>Sondaje Închise <span class="count-pill" id="countClosedPolls">0</span></h3>
               <span class="section-label">Sondaje Închise</span>
               <div id="closedPollsTableWrap" class="table-wrap" style="margin-top: 8px">
                 <table>
@@ -6211,11 +6490,11 @@
           <p id="pollDescription" style="margin-top: 8px"></p>
           <div id="pollAttachments" class="stack" style="margin-top: 10px"></div>
           <section id="pollVoteSection" style="margin-top: 12px">
-            <h3>Your Vote</h3>
+            <h3>Votul tău</h3>
             <p id="pollVoteHint" class="poll-note"></p>
             <form id="pollVoteForm" class="stack" style="margin-top: 10px">
               <div id="pollVoteOptions" class="poll-options"></div>
-              <button id="pollVoteBtn" type="submit" data-default-text="Submit Vote">Submit Vote</button>
+              <button id="pollVoteBtn" type="submit" data-default-text="Trimite votul">Trimite votul</button>
             </form>
           </section>
           <section id="pollResultsSection" style="margin-top: 14px"></section>
@@ -6299,10 +6578,6 @@
           <i data-lucide="newspaper" aria-hidden="true"></i>
           <span>Avizier</span>
         </button>
-        <button type="button" class="mobile-tab" data-nav-module="moduleContacts" onclick="showContacts()">
-          <i data-lucide="clipboard-list" aria-hidden="true"></i>
-          <span>Contacte</span>
-        </button>
       </nav>
       <button id="mobileFab" class="mobile-fab hidden" type="button" aria-label="Quick action">
         <i data-lucide="plus" aria-hidden="true"></i>
@@ -6371,7 +6646,7 @@
         voting: "votingModule",
       };
       const MODULE_ID_TO_TITLE = {
-        parkingModule: "Parking Sharing",
+        parkingModule: "Parcare",
         marketplaceModule: "Marketplace",
         avizierModule: "Avizier",
         votingModule: "Voting",
@@ -6401,7 +6676,7 @@
         parking: [
           {
             question: "How do I share my parking spot?",
-            answer: "Use Share my spot, fill number/type/time interval, then submit.",
+            answer: "Use Ofer locul meu, fill number/type/time interval, then submit.",
           },
           {
             question: "How do I claim quickly?",
@@ -7006,9 +7281,9 @@
         return Number.isNaN(parsed.getTime()) ? null : parsed;
       }
 
-      function formatRelativeTime(value) {
+      function timeAgoRo(value) {
         const dateValue = value instanceof Date ? value : parseDateSafe(value);
-        if (!dateValue) return "just now";
+        if (!dateValue) return "acum";
         const diffMs = Date.now() - dateValue.getTime();
         const future = diffMs < 0;
         const absMs = Math.abs(diffMs);
@@ -7020,38 +7295,50 @@
         const year = 365 * day;
 
         let count = 0;
-        let unit = "minute";
+        let unit = "minut";
         if (absMs < minute) {
           count = Math.max(1, Math.round(absMs / 1000));
-          unit = "second";
+          unit = "secundă";
         } else if (absMs < hour) {
           count = Math.round(absMs / minute);
-          unit = "minute";
+          unit = "minut";
         } else if (absMs < day) {
           count = Math.round(absMs / hour);
-          unit = "hour";
+          unit = "oră";
         } else if (absMs < week) {
           count = Math.round(absMs / day);
-          unit = "day";
+          unit = "zi";
         } else if (absMs < month) {
           count = Math.round(absMs / week);
-          unit = "week";
+          unit = "săptămână";
         } else if (absMs < year) {
           count = Math.round(absMs / month);
-          unit = "month";
+          unit = "lună";
         } else {
           count = Math.round(absMs / year);
-          unit = "year";
+          unit = "an";
         }
+        const pluralMap = {
+          "secundă": "secunde",
+          "minut": "minute",
+          "oră": "ore",
+          "zi": "zile",
+          "săptămână": "săptămâni",
+          "lună": "luni",
+          "an": "ani",
+        };
+        const unitLabel = count === 1 ? unit : pluralMap[unit] || unit;
+        return future ? `peste ${count} ${unitLabel}` : `acum ${count} ${unitLabel}`;
+      }
 
-        const suffix = count === 1 ? unit : `${unit}s`;
-        return future ? `in ${count} ${suffix}` : `${count} ${suffix} ago`;
+      function formatRelativeTime(value) {
+        return timeAgoRo(value);
       }
 
       function formatSecondsAgo(dateValue) {
         if (!dateValue) return "-";
         const elapsedSeconds = Math.max(0, Math.round((Date.now() - dateValue.getTime()) / 1000));
-        return `${elapsedSeconds}s ago`;
+        return `acum ${elapsedSeconds} sec`;
       }
 
       function loadAvizierReadState() {
@@ -7177,11 +7464,11 @@
           return;
         }
         let label = "Quick action";
-        if (currentModule === "parkingModule") label = "Share spot";
-        if (currentModule === "marketplaceModule") label = "Create listing";
-        if (currentModule === "votingModule") label = "Create poll";
-        if (currentModule === "avizierModule") label = "Post announcement";
-        if (!currentModule) label = "Open parking actions";
+        if (currentModule === "parkingModule") label = "Ofer loc";
+        if (currentModule === "marketplaceModule") label = "Creează anunț";
+        if (currentModule === "votingModule") label = "Creează sondaj";
+        if (currentModule === "avizierModule") label = "Publică anunț";
+        if (!currentModule) label = "Deschide parcarea";
         els.mobileFab.setAttribute("aria-label", label);
         els.mobileFab.classList.remove("hidden");
       }
@@ -7196,7 +7483,7 @@
         labels.forEach(([key, labelEl]) => {
           if (!labelEl) return;
           const lastValue = lastRefreshAt[key];
-          labelEl.textContent = `Last refreshed: ${formatSecondsAgo(lastValue)}`;
+          labelEl.textContent = `Ultima actualizare: ${formatSecondsAgo(lastValue)}`;
         });
       }
 
@@ -7685,38 +7972,38 @@
       }
 
       function pollTypeLabel(type) {
-        if (type === "yes_no") return "Yes or No";
-        if (type === "multiple_choice") return "Multiple Choice";
-        if (type === "weighted") return "Ranked Choice";
+        if (type === "yes_no") return "Da / Nu";
+        if (type === "multiple_choice") return "Alegere multiplă";
+        if (type === "weighted") return "Clasament";
         return titleize(type);
       }
 
       function pollScopeLabel(poll) {
         if (poll.scope === "building") {
-          return `Bloc ${poll.building_id} residents`;
+          return `Bloc ${poll.building_id}`;
         }
-        return "All residents";
+        return "Toți locatarii";
       }
 
       function pollStatusLabel(poll) {
         if (poll.status === "active") {
-          return poll.has_voted ? "Active - Voted" : "Active";
+          return poll.has_voted ? "Activ - Votat" : "Activ";
         }
         return titleize(poll.status);
       }
 
       function pollCountdownLabel(poll) {
         const end = new Date(String(poll?.end_date || ""));
-        if (Number.isNaN(end.getTime())) return "Closes soon";
+        if (Number.isNaN(end.getTime())) return "Se închide curând";
         const now = new Date();
         const diffMs = end.getTime() - now.getTime();
-        if (diffMs <= 0) return "Closed";
+        if (diffMs <= 0) return "Închis";
         const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
         const days = Math.floor(totalHours / 24);
         const hours = totalHours % 24;
-        if (days > 0) return `Closes in ${days}d ${hours}h`;
+        if (days > 0) return `Se închide în ${days}z ${hours}h`;
         const mins = Math.max(1, Math.floor(diffMs / (1000 * 60)));
-        return `Closes in ${mins}m`;
+        return `Se închide în ${mins}m`;
       }
 
       function pollUrgencyMeta(poll) {
@@ -7737,9 +8024,9 @@
       }
 
       function resultStatusLabel(value) {
-        if (value === "valid") return "Valid result";
-        if (value === "invalid_no_quorum" || value === "quorum_not_met") return "Invalid (quorum not met)";
-        if (value === "pending") return "Pending";
+        if (value === "valid") return "Rezultat valid";
+        if (value === "invalid_no_quorum" || value === "quorum_not_met") return "Invalid (cvorum neîndeplinit)";
+        if (value === "pending") return "În așteptare";
         return titleize(value);
       }
 
@@ -7756,7 +8043,7 @@
         const select = document.getElementById(id);
         select.innerHTML = "";
         if (includeEmpty) {
-          select.appendChild(option("", "Any"));
+          select.appendChild(option("", "Toate"));
         }
         for (let b = 1; b <= 10; b++) {
           select.appendChild(option(String(b), `Bloc ${b}`));
@@ -7779,8 +8066,8 @@
         const isClaimMode = targetPanelId === "actionClaimPanel";
         els.parkingModeBanner.classList.toggle("claiming", isClaimMode);
         els.parkingModeBanner.classList.toggle("sharing", !isClaimMode);
-        els.parkingModeBanner.innerHTML = `<span>Mode: ${
-          isClaimMode ? "Claiming a spot" : "Sharing your spot"
+        els.parkingModeBanner.innerHTML = `<span>Mod: ${
+          isClaimMode ? "Rezerv un loc" : "Ofer locul meu"
         }</span>`;
       }
 
@@ -8031,8 +8318,8 @@
           <div><b>Type:</b> ${pollTypeLabel(els.pollType.value)}</div>
           <div><b>Scope:</b> ${
             els.pollScope.value === "building"
-              ? `Building ${els.pollBuilding.value || "-"}`
-              : "Neighbourhood"
+              ? `Bloc ${els.pollBuilding.value || "-"}`
+              : "Cartier"
           }</div>
           <div><b>Window:</b> ${formatBucharestDateTime(els.pollStart.value)} - ${formatBucharestDateTime(
             els.pollEnd.value
@@ -8367,7 +8654,7 @@
       function refreshStats(stats) {
         currentBuildingStats = Array.isArray(stats) ? stats : [];
         if (!currentBuildingStats.length) {
-          els.stats.innerHTML = `<div class="parking-empty">${iconMarkup("info")}<span>No capacity data available.</span></div>`;
+          els.stats.innerHTML = `<div class="parking-empty">${iconMarkup("info")}<span>Nu există date de capacitate.</span></div>`;
           return;
         }
 
@@ -8405,24 +8692,24 @@
                 <div class="capacity-meta">
                   <b>Bloc ${s.building_number}</b>
                   <span class="availability ${availabilityClass}">
-                    ${open > 0 ? `${open} available` : "none available"}
+                    ${open > 0 ? `${open} disponibil` : "indisponibil"}
                   </span>
                 </div>
                 <div class="capacity-type-line">
                   <div class="capacity-type">
                     <span>UG ${Number(s.underground_spaces || 0)}</span>
                     <span class="capacity-spot-indicator ${hasOpenUnderground ? "available" : "full"}">
-                      ${hasOpenUnderground ? "available" : "full"}
+                      ${hasOpenUnderground ? "disponibil" : "plin"}
                     </span>
                   </div>
                   <div class="capacity-type">
                     <span>AG ${Number(s.above_ground_spaces || 0)}</span>
                     <span class="capacity-spot-indicator ${hasOpenAboveGround ? "available" : "full"}">
-                      ${hasOpenAboveGround ? "available" : "full"}
+                      ${hasOpenAboveGround ? "disponibil" : "plin"}
                     </span>
                   </div>
                 </div>
-                <div class="capacity-help">Shared usage ${open + reserved}/${total || 0}. Tap to claim in this bloc.</div>
+                <div class="capacity-help">Utilizare partajată ${open + reserved}/${total || 0}. Apasă pentru a rezerva.</div>
               </article>
             `;
           })
@@ -8454,7 +8741,7 @@
                 ${td(s.owner_phone_number || "-")}
                 ${td(formatBucharestDateTime(s.available_from))}
                 ${td(formatBucharestDateTime(s.available_until))}
-                <td><button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Claim</button></td>
+                <td><button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Rezervă</button></td>
               </tr>`
           )
           .join("");
@@ -8495,7 +8782,7 @@
                   <article class="parking-spot-card card status-free">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
-                      ${parkingStatusBadge("free", "Free")}
+                      ${parkingStatusBadge("free", "Liber")}
                     </div>
                     <div class="parking-spot-meta">
                       <div><strong>Bloc ${s.building_number}</strong> · ${s.owner_username}</div>
@@ -8503,13 +8790,13 @@
                       <div>${formatBucharestDateTime(s.available_from)} - ${formatBucharestDateTime(s.available_until)}</div>
                     </div>
                     <div class="parking-card-action">
-                      <button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Claim</button>
+                      <button type="button" class="table-action-btn alt quick-claim-btn" data-slot-id="${s.id}">Rezervă</button>
                     </div>
                   </article>
                 `
               )
               .join("")
-          : renderParkingEmptyCard("No spots available right now. Check back later.");
+          : renderParkingEmptyCard("Nu există locuri disponibile acum. Revino mai târziu.");
 
         els.mySharedCards.innerHTML = myShared.length
           ? myShared
@@ -8527,7 +8814,7 @@
                 `
               )
               .join("")
-          : renderParkingEmptyCard("You haven't shared any spots yet.");
+          : renderParkingEmptyCard("Nu ai oferit încă niciun loc.");
 
         els.claimedOnMineCards.innerHTML = claimedByOthers.length
           ? claimedByOthers
@@ -8536,10 +8823,10 @@
                   <article class="parking-spot-card card status-claimed">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
-                      ${parkingStatusBadge("claimed", "Claimed")}
+                      ${parkingStatusBadge("claimed", "Rezervat")}
                     </div>
                     <div class="parking-spot-meta">
-                      <div>By: ${s.reserved_by_username}</div>
+                      <div>De: ${s.reserved_by_username}</div>
                       <div>Contact: ${s.reservation_contact_phone || s.reserved_by_phone_number || "-"}</div>
                       <div>${formatBucharestDateTime(s.reservation_from)} - ${formatBucharestDateTime(s.reservation_until)}</div>
                     </div>
@@ -8547,7 +8834,7 @@
                 `
               )
               .join("")
-          : renderParkingEmptyCard("None of your spots have been claimed.");
+          : renderParkingEmptyCard("Niciun loc al tău nu a fost rezervat.");
 
         els.myClaimedCards.innerHTML = myClaims.length
           ? myClaims
@@ -8556,19 +8843,19 @@
                   <article class="parking-spot-card card status-claimed">
                     <div class="parking-spot-head">
                       <span class="spot-number-badge">${parkingTypeWithIcon(s.parking_type)} · ${s.parking_space_number}</span>
-                      ${parkingStatusBadge("claimed", "Claimed")}
+                      ${parkingStatusBadge("claimed", "Rezervat")}
                     </div>
                     <div class="parking-spot-meta">
-                      <div>Bloc ${s.building_number} · Owner ${s.owner_username}</div>
-                      <div>Owner phone: ${s.owner_phone_number || "-"}</div>
-                      <div>Claim phone: ${s.reservation_contact_phone || s.reserved_by_phone_number || "-"}</div>
+                      <div>Bloc ${s.building_number} · Proprietar ${s.owner_username}</div>
+                      <div>Telefon proprietar: ${s.owner_phone_number || "-"}</div>
+                      <div>Telefon rezervare: ${s.reservation_contact_phone || s.reserved_by_phone_number || "-"}</div>
                       <div>${formatBucharestDateTime(s.reservation_from)} - ${formatBucharestDateTime(s.reservation_until)}</div>
                     </div>
                   </article>
                 `
               )
               .join("")
-          : renderParkingEmptyCard("You haven't claimed any spots.");
+          : renderParkingEmptyCard("Nu ai rezervat încă niciun loc.");
 
         els.countFree.textContent = String(freeSpots.length);
         els.countShared.textContent = String(myShared.length);
@@ -8588,7 +8875,7 @@
       function fillAvailableSpotSelect(slots) {
         els.availableSlot.innerHTML = "";
         if (slots.length === 0) {
-          els.availableSlot.appendChild(option("", "No free spots available for selected filter"));
+          els.availableSlot.appendChild(option("", "Nu există locuri libere pentru filtrul selectat"));
           els.availableSlot.disabled = true;
           return;
         }
@@ -8660,8 +8947,8 @@
                     </div>
                     <div class="parking-spot-meta">
                       <div>Avizier: ${avizierPermissionLabel(u.avizier_permission)}</div>
-                      <div>Building: ${u.building_number} | Apt: ${u.apartment_number}</div>
-                      <div>Phone: ${u.phone_number || "-"}</div>
+                      <div>Bloc: ${u.building_number} | Apt: ${u.apartment_number}</div>
+                      <div>Telefon: ${u.phone_number || "-"}</div>
                     </div>
                   </article>
                 `
@@ -8804,9 +9091,9 @@
       }
 
       function marketplaceStatusLabel(status) {
-        if (status === "sold") return "Sold";
-        if (status === "donated") return "Donated";
-        return "Active";
+        if (status === "sold") return "Vândut";
+        if (status === "donated") return "Donat";
+        return "Activ";
       }
 
       function marketplaceStatusTag(post) {
@@ -9259,7 +9546,7 @@
                 </div>
               </div>
               <div class="market-card-actions">
-                <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contact</button>
+                <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contactează</button>
                 <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
                 ${canClaim ? `<button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Revendică donația</button>` : ""}
                 ${openLink}
@@ -9306,7 +9593,7 @@
                       : ""
                   }
                   <div class="market-card-actions">
-                    <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contact</button>
+                    <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contactează</button>
                     <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
                     ${
                       isOwner
@@ -9935,23 +10222,23 @@
                     </div>
                     <span class="poll-countdown">${iconMarkup("clock-3")}<span>${pollCountdownLabel(poll)}</span></span>
                     <div class="poll-meta">
-                      <span class="poll-chip"><span class="poll-status-dot" aria-hidden="true"></span><span>${poll.has_voted ? "Voted" : "Open"}</span></span>
+                      <span class="poll-chip"><span class="poll-status-dot" aria-hidden="true"></span><span>${poll.has_voted ? "Votat" : "Deschis"}</span></span>
                       ${pollScopeChip(poll)}
                       ${status}
-                      ${poll.has_voted ? `<span class="poll-voted-badge">${iconMarkup("check-check")}<span>Already voted</span></span>` : ""}
+                      ${poll.has_voted ? `<span class="poll-voted-badge">${iconMarkup("check-check")}<span>Deja votat</span></span>` : ""}
                     </div>
                     <div class="poll-participation">
                       ${
                         participation == null
-                          ? "Participation data will appear after votes are cast."
-                          : `${uniqueVoters} of ${eligibleVoters} residents voted (${participation}%).`
+                          ? "Datele de participare vor apărea după primele voturi."
+                          : `${uniqueVoters} din ${eligibleVoters} locatari au votat (${participation}%).`
                       }
                     </div>
                     ${
                       poll.requires_quorum
                         ? `
                           <div class="poll-mini-quorum">
-                            <div class="poll-note">Quorum needed: ${quorumNeeded}%</div>
+                            <div class="poll-note">Cvorum necesar: ${quorumNeeded}%</div>
                             <div class="poll-mini-track"><span class="poll-mini-fill" style="width:${quorumProgress}%"></span></div>
                           </div>
                         `
@@ -9959,9 +10246,9 @@
                     }
                     <div class="module-actions">
                       <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">
-                        ${poll.has_voted ? "View Poll" : "Vote Now"}
+                        ${poll.has_voted ? "Vezi sondajul" : "Votează"}
                       </button>
-                      <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Results</button>
+                      <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Rezultate</button>
                       <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
                       ${
                         canDeletePolls
@@ -9973,13 +10260,13 @@
                 `;
               })
               .join("")
-          : `<div class="empty-state">🗳️ No active polls right now. Check back later.</div>`;
+          : `<div class="empty-state">🗳️ Nu există sondaje active acum. Revino mai târziu.</div>`;
         decorateDynamicActionIcons(els.activePolls);
       }
 
       function closedPollSummaryText(pollId) {
         const cached = closedPollSummaryCache[String(pollId)];
-        if (!cached) return "Loading...";
+        if (!cached) return "Se încarcă...";
         return `${cached.winner} / ${cached.result}`;
       }
 
@@ -9995,17 +10282,17 @@
               const winnerLabels = winnerIds
                 .map((id) => options.find((opt) => opt.id === id)?.label || id)
                 .filter(Boolean);
-              let winner = "No winner";
+              let winner = "Fără câștigător";
               if (winnerLabels.length === 1) winner = winnerLabels[0];
-              if (winnerLabels.length > 1) winner = `Tie: ${winnerLabels.join(", ")}`;
+              if (winnerLabels.length > 1) winner = `Egalitate: ${winnerLabels.join(", ")}`;
               closedPollSummaryCache[String(poll.id)] = {
                 winner,
                 result: resultStatusLabel(results.result_status),
               };
             } catch {
               closedPollSummaryCache[String(poll.id)] = {
-                winner: "Unavailable",
-                result: "Pending",
+                winner: "Indisponibil",
+                result: "În așteptare",
               };
             }
           })
@@ -10027,8 +10314,8 @@
                   ${td(pollStatusChip(poll))}
                   ${td(closedPollSummaryText(poll.id))}
                   <td>
-                    <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button>
-                    <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Results</button>
+                    <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">Vezi</button>
+                    <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Rezultate</button>
                     <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
                     ${
                       canDeletePolls
@@ -10052,11 +10339,11 @@
                       ${pollScopeChip(poll)}
                       ${pollStatusChip(poll)}
                     </div>
-                    <div style="color:var(--muted); font-size:0.82rem">Closed: ${formatPollDate(poll.end_date)}</div>
-                    <div style="color:var(--muted); font-size:0.82rem">Result: ${closedPollSummaryText(poll.id)}</div>
+                    <div style="color:var(--muted); font-size:0.82rem">Închis: ${formatPollDate(poll.end_date)}</div>
+                    <div style="color:var(--muted); font-size:0.82rem">Rezultat: ${closedPollSummaryText(poll.id)}</div>
                     <div class="module-actions">
-                      <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">View</button>
-                      <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Results</button>
+                      <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">Vezi</button>
+                      <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Rezultate</button>
                       <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
                       ${
                         canDeletePolls
@@ -10076,7 +10363,7 @@
       function clearPollLists() {
         latestActivePolls = [];
         latestClosedPolls = [];
-        els.activePolls.innerHTML = `<div class="empty-state">🗳️ No active polls right now. Check back later.</div>`;
+        els.activePolls.innerHTML = `<div class="empty-state">🗳️ Nu există sondaje active acum. Revino mai târziu.</div>`;
         els.closedPollsTableWrap.classList.add("hidden");
         els.closedPollsEmpty.classList.remove("hidden");
         els.closedPolls.innerHTML = "";
@@ -10270,10 +10557,10 @@
         if (!poll) return;
 
         const quorumLine = poll.requires_quorum
-          ? `Turnout: ${results.turnout_percentage}% (${results.unique_voters} of ${results.eligible_voters} residents). Quorum ${
-              results.quorum_met ? "met" : "not met"
+          ? `Prezență: ${results.turnout_percentage}% (${results.unique_voters} din ${results.eligible_voters} locatari). Cvorum ${
+              results.quorum_met ? "îndeplinit" : "neîndeplinit"
             }.`
-          : `Turnout: ${results.turnout_percentage}% (${results.unique_voters} of ${results.eligible_voters} residents).`;
+          : `Prezență: ${results.turnout_percentage}% (${results.unique_voters} din ${results.eligible_voters} locatari).`;
 
         const options = results.options || [];
         const maxPoints = Math.max(
@@ -10292,8 +10579,8 @@
                 : Math.max(0, Math.min(100, Math.round(Number(opt.percentage || 0))));
             const metric =
               poll.poll_type === "weighted"
-                ? `${opt.points} points`
-                : `${opt.votes} votes - ${opt.percentage}%`;
+                ? `${opt.points} puncte`
+                : `${opt.votes} voturi - ${opt.percentage}%`;
             return `
               <article class="poll-result-item">
                 <div class="poll-result-head">
@@ -10313,26 +10600,26 @@
             const match = options.find((opt) => opt.id === id);
             return match ? match.label : id;
           });
-        let winnerText = "No winner yet";
+        let winnerText = "Fără câștigător încă";
         if (winnerLabelList.length === 1) {
           winnerText = winnerLabelList[0];
         } else if (winnerLabelList.length > 1) {
-          winnerText = `Tie: ${winnerLabelList.join(", ")}`;
+          winnerText = `Egalitate: ${winnerLabelList.join(", ")}`;
         }
 
         els.pollResultsSection.innerHTML = `
-          <h3>Results</h3>
+          <h3>Rezultate</h3>
           <div class="poll-summary">
             <span>${quorumLine}</span>
-            <span><b>Result:</b> ${resultStatusLabel(results.result_status)}</span>
-            <span><b>Winner:</b> ${winnerText}</span>
+            <span><b>Rezultat:</b> ${resultStatusLabel(results.result_status)}</span>
+            <span><b>Câștigător:</b> ${winnerText}</span>
           </div>
           ${
             poll.requires_quorum
               ? `
                 <div class="poll-quorum">
                   <div class="poll-quorum-head">
-                    <span>Quorum progress</span>
+                    <span>Progres cvorum</span>
                     <span>${turnoutValue}% / ${quorumTarget}%</span>
                   </div>
                   <div class="poll-quorum-track">
@@ -10345,7 +10632,7 @@
           <div class="poll-result-list">
             ${
               resultVisuals ||
-              `<p class="poll-note">No votes have been submitted yet.</p>`
+              `<p class="poll-note">Nu au fost trimise voturi încă.</p>`
             }
           </div>
         `;
@@ -10420,9 +10707,9 @@
           ${pollTypeChip(poll.poll_type)}
           ${pollScopeChip(poll)}
           ${pollStatusChip({ ...poll, has_voted: data.has_voted })}
-          <span class="poll-chip time">${iconMarkup("calendar-clock")}<span>Opens: ${formatPollDate(poll.start_date)}</span></span>
-          <span class="poll-chip time">${iconMarkup("calendar-check")}<span>Closes: ${formatPollDate(poll.end_date)}</span></span>
-          <span class="poll-chip time">${iconMarkup("map-pin")}<span>Timezone: Bucharest</span></span>
+          <span class="poll-chip time">${iconMarkup("calendar-clock")}<span>Deschidere: ${formatPollDate(poll.start_date)}</span></span>
+          <span class="poll-chip time">${iconMarkup("calendar-check")}<span>Închidere: ${formatPollDate(poll.end_date)}</span></span>
+          <span class="poll-chip time">${iconMarkup("map-pin")}<span>Fus orar: București</span></span>
         `;
 
         const attachments = data.attachments || [];
@@ -10443,14 +10730,14 @@
         const canViewResults =
           poll.status === "closed" || poll.show_results_before_close || (currentUser && currentUser.role === "admin");
         if (!canViewResults) {
-          els.pollResultsSection.innerHTML = `<p class="poll-note">Results are hidden until this poll closes.</p>`;
+          els.pollResultsSection.innerHTML = `<p class="poll-note">Rezultatele sunt ascunse până la închiderea sondajului.</p>`;
           return;
         }
         try {
           const results = await api(`/api/polls/${pollId}/results`);
           renderPollResults(results);
         } catch (error) {
-          els.pollResultsSection.innerHTML = `<p class="poll-note">Results are not available yet. Please check again later.</p>`;
+          els.pollResultsSection.innerHTML = `<p class="poll-note">Rezultatele nu sunt disponibile încă. Revino mai târziu.</p>`;
         }
       }
 
