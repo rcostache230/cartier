@@ -197,10 +197,6 @@ const ContactsModule = (() => {
         adminZone.style.display = 'none';
       }
 
-      // update refreshed timestamp using existing utility if available
-      const ts = document.getElementById('contactsRefreshedAt');
-      if (ts) ts.textContent = 'acum';
-
     } catch(e) {
       showToast('Eroare la încărcarea contactelor.', 'error');
     }
