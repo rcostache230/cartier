@@ -3805,6 +3805,74 @@
         color: #1d4ed8;
       }
 
+      .more-drawer-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        padding: 14px 12px;
+        background: none;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        text-align: left;
+        transition: background 150ms ease;
+        margin-bottom: 4px;
+      }
+
+      .more-drawer-item:hover,
+      .more-drawer-item:active {
+        background: #f5f0eb;
+      }
+
+      .more-drawer-icon {
+        font-size: 26px;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f0eb;
+        border-radius: 12px;
+        flex-shrink: 0;
+      }
+
+      .more-drawer-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .more-drawer-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1c1917;
+      }
+
+      .more-drawer-sub {
+        font-size: 12px;
+        color: #78716c;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .more-drawer-chevron {
+        font-size: 20px;
+        color: #a8a29e;
+        flex-shrink: 0;
+      }
+
+      #tabMore.active svg {
+        stroke: var(--accent-primary, #16a34a);
+      }
+
+      #tabMore.active span {
+        color: var(--accent-primary, #16a34a);
+      }
+
       .mobile-fab {
         position: fixed;
         right: 16px;
@@ -4022,6 +4090,14 @@
           text-overflow: ellipsis;
         }
       }
+
+      @media (min-width: 769px) {
+        #moreDrawer,
+        #moreDrawerOverlay {
+          display: none !important;
+        }
+      }
+
       /* Home Bento Grid */
       .dashboard-home {
         border: 0;
@@ -6650,25 +6726,29 @@
       </div>
 
       <nav id="mobileTabBar" class="mobile-tabbar hidden" aria-label="Mobile navigation">
-        <button type="button" class="mobile-tab active" data-mobile-home>
+        <button type="button" class="mobile-tab active" id="tabHome" data-mobile-home>
           <i data-lucide="house" aria-hidden="true"></i>
           <span>Home</span>
         </button>
-        <button type="button" class="mobile-tab" data-nav-module="parkingModule" data-module-target="parkingModule">
+        <button type="button" class="mobile-tab" id="tabParking" data-nav-module="parkingModule" data-module-target="parkingModule">
           <i data-lucide="car-front" aria-hidden="true"></i>
           <span>Parking</span>
         </button>
-        <button type="button" class="mobile-tab" data-nav-module="marketplaceModule" data-module-target="marketplaceModule">
+        <button type="button" class="mobile-tab" id="tabMarket" data-nav-module="marketplaceModule" data-module-target="marketplaceModule">
           <i data-lucide="store" aria-hidden="true"></i>
           <span>Market</span>
         </button>
-        <button type="button" class="mobile-tab" data-nav-module="votingModule" data-module-target="votingModule">
-          <i data-lucide="vote" aria-hidden="true"></i>
-          <span>Voting</span>
-        </button>
-        <button type="button" class="mobile-tab" data-nav-module="avizierModule" data-module-target="avizierModule">
+        <button type="button" class="mobile-tab" id="tabAvizier" data-nav-module="avizierModule" data-module-target="avizierModule">
           <i data-lucide="newspaper" aria-hidden="true"></i>
           <span>Avizier</span>
+        </button>
+        <button type="button" class="mobile-tab bottom-nav-item" id="tabMore" onclick="toggleMoreDrawer()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="5" cy="12" r="1.5"></circle>
+            <circle cx="12" cy="12" r="1.5"></circle>
+            <circle cx="19" cy="12" r="1.5"></circle>
+          </svg>
+          <span>Mai mult</span>
         </button>
       </nav>
       <button id="mobileFab" class="mobile-fab hidden" type="button" aria-label="Quick action">
@@ -7536,6 +7616,25 @@
         document.querySelectorAll("[data-mobile-home]").forEach((node) => {
           node.classList.toggle("active", !moduleId);
         });
+        let mobileTabId = null;
+        if (!moduleId) mobileTabId = "tabHome";
+        if (moduleId === "parkingModule") mobileTabId = "tabParking";
+        if (moduleId === "marketplaceModule") mobileTabId = "tabMarket";
+        if (moduleId === "avizierModule") mobileTabId = "tabAvizier";
+        if (moduleId === "votingModule" || moduleId === "moduleContacts") mobileTabId = "tabMore";
+        if (mobileTabId) {
+          setActiveBottomTab(mobileTabId);
+        }
+      }
+
+      function setActiveBottomTab(tabId) {
+        document.querySelectorAll("#mobileTabBar .mobile-tab").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+        const tab = document.getElementById(tabId);
+        if (tab) {
+          tab.classList.add("active");
+        }
       }
 
       function canUseFab() {
@@ -8164,6 +8263,7 @@
       }
 
       function showModuleChooser() {
+        closeMoreDrawer();
         currentModule = null;
         setDocumentTitle(null);
         els.modulesCard.classList.remove("hidden");
@@ -8197,7 +8297,39 @@
         showModuleChooser();
       }
 
+      function showHome() {
+        closeMoreDrawer();
+        setActiveBottomTab("tabHome");
+        showModuleChooser();
+      }
+
+      function showParking() {
+        closeMoreDrawer();
+        setActiveBottomTab("tabParking");
+        openModule("parkingModule");
+      }
+
+      function showMarketplace() {
+        closeMoreDrawer();
+        setActiveBottomTab("tabMarket");
+        openModule("marketplaceModule");
+      }
+
+      function showAvizier() {
+        closeMoreDrawer();
+        setActiveBottomTab("tabAvizier");
+        openModule("avizierModule");
+      }
+
+      function showVoting() {
+        closeMoreDrawer();
+        setActiveBottomTab("tabMore");
+        openModule("votingModule");
+      }
+
       function showContacts(attempt = 0) {
+        closeMoreDrawer();
+        setActiveBottomTab("tabMore");
         const contactsModuleEl = document.getElementById("moduleContacts");
         if (!contactsModuleEl) {
           if (attempt < 20) {
@@ -8211,6 +8343,7 @@
       }
 
       function openModule(moduleId) {
+        closeMoreDrawer();
         currentModule = moduleId;
         setDocumentTitle(moduleId);
         els.modulesCard.classList.add("hidden");
@@ -8254,6 +8387,51 @@
         }
         syncNavigationState();
         updateMobileFab();
+      }
+
+      function toggleMoreDrawer() {
+        const drawer = document.getElementById("moreDrawer");
+        const overlay = document.getElementById("moreDrawerOverlay");
+        if (!drawer || !overlay) return;
+        const isOpen = drawer.style.transform === "translateY(0%)";
+        if (isOpen) {
+          closeMoreDrawer();
+        } else {
+          openMoreDrawer();
+        }
+      }
+
+      function openMoreDrawer() {
+        const drawer = document.getElementById("moreDrawer");
+        const overlay = document.getElementById("moreDrawerOverlay");
+        if (!drawer || !overlay) return;
+
+        drawer.style.display = "block";
+        overlay.style.display = "block";
+
+        drawer.offsetHeight;
+        overlay.offsetHeight;
+
+        drawer.style.transform = "translateY(0%)";
+        overlay.style.opacity = "1";
+
+        setActiveBottomTab("tabMore");
+      }
+
+      function closeMoreDrawer() {
+        const drawer = document.getElementById("moreDrawer");
+        const overlay = document.getElementById("moreDrawerOverlay");
+        if (!drawer || !overlay) return;
+
+        drawer.style.transform = "translateY(100%)";
+        overlay.style.opacity = "0";
+
+        setTimeout(() => {
+          if (drawer.style.transform !== "translateY(0%)") {
+            drawer.style.display = "none";
+            overlay.style.display = "none";
+          }
+        }, 250);
       }
 
       function requestedModuleFromQuery() {
@@ -11201,6 +11379,10 @@
         });
       });
 
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMoreDrawer();
+      });
+
       els.homeActivityFeed.addEventListener("click", async (event) => {
         const card = event.target.closest("[data-activity-module]");
         if (!card) return;
@@ -12178,5 +12360,32 @@
 
       boot();
     </script>
+    <div id="moreDrawerOverlay" onclick="closeMoreDrawer()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; opacity:0; transition:opacity 200ms ease;"></div>
+
+    <div id="moreDrawer" style="display:none; position:fixed; bottom:0; left:0; right:0; background:white; border-radius:20px 20px 0 0; padding:0 0 env(safe-area-inset-bottom, 16px) 0; z-index:201; transform:translateY(100%); transition:transform 250ms cubic-bezier(0.34,1.2,0.64,1); box-shadow: 0 -4px 24px rgba(0,0,0,0.12);">
+      <div style="width:36px; height:4px; background:#E2E8F0; border-radius:2px; margin:12px auto 8px; cursor:grab;"></div>
+      <p style="text-align:center; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#A8A29E; margin:0 0 8px; padding:0 20px;">
+        Module
+      </p>
+      <div style="padding:8px 16px 16px;">
+        <button type="button" class="more-drawer-item" onclick="showVoting(); closeMoreDrawer()">
+          <span class="more-drawer-icon">🗳️</span>
+          <div class="more-drawer-info">
+            <span class="more-drawer-label">Vot</span>
+            <span class="more-drawer-sub">Sondaje și decizii comune ale blocului</span>
+          </div>
+          <span class="more-drawer-chevron">›</span>
+        </button>
+
+        <button type="button" class="more-drawer-item" onclick="showContacts(); closeMoreDrawer()">
+          <span class="more-drawer-icon">📞</span>
+          <div class="more-drawer-info">
+            <span class="more-drawer-label">Contacte Utile</span>
+            <span class="more-drawer-sub">Numere utile: lifturi, interfon, administrator</span>
+          </div>
+          <span class="more-drawer-chevron">›</span>
+        </button>
+      </div>
+    </div>
   </body>
 </html>
