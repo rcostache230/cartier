@@ -36,14 +36,17 @@
         --free-text: #047857;
       }
 
-      * {
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
       }
 
       html,
       body {
         width: 100%;
-        max-width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
       }
 
       body {
@@ -53,6 +56,20 @@
         color: var(--ink);
         background: var(--bg);
         overflow-x: hidden;
+      }
+
+      main,
+      #app,
+      .container,
+      .module-panel,
+      .module-header,
+      .module-actions,
+      .stack,
+      .market-section,
+      .market-cards-row,
+      .card {
+        min-width: 0;
+        max-width: 100%;
       }
 
       .global-nav {
@@ -4870,6 +4887,243 @@
         background: #334155;
         color: #e2e8f0;
       }
+      @media (max-width: 640px) {
+        html,
+        body {
+          max-width: 100vw;
+          overflow-x: hidden;
+        }
+
+        #app,
+        main,
+        .container,
+        .module-panel,
+        .module-header,
+        .module-actions,
+        .module-header > div,
+        .stack,
+        .market-section,
+        .market-cards-row {
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        .module-header-actions,
+        .module-header .module-actions {
+          width: auto;
+          margin-left: auto;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 8px;
+          flex: 0 0 auto;
+        }
+
+        .btn-back-home,
+        .module-back-link[data-back-modules] {
+          display: none !important;
+        }
+
+        .btn-refresh {
+          width: auto !important;
+          min-width: 0;
+          min-height: 36px;
+          height: 36px;
+          padding: 0 12px;
+          font-size: 13px;
+          border-radius: 8px;
+          line-height: 1;
+        }
+
+        .btn-refresh span {
+          min-width: 0;
+        }
+
+        .module-header {
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .module-title,
+        .module-breadcrumb,
+        .poll-note {
+          max-width: 100%;
+          overflow-wrap: anywhere;
+        }
+
+        .type-filter-row,
+        .category-filter-row,
+        #marketplaceTypeTabs,
+        #marketplaceCategoryTabs,
+        #avizierScopeFilters,
+        .tabs.market-filter-tabs {
+          display: flex;
+          flex-wrap: wrap !important;
+          gap: 8px;
+          overflow-x: visible !important;
+          max-width: 100%;
+          padding-bottom: 0;
+        }
+
+        .tabs.market-filter-tabs {
+          align-items: flex-start;
+        }
+
+        .type-pill,
+        .market-filter-btn,
+        .tab-btn.market-filter-btn {
+          width: auto !important;
+          flex: 0 0 auto !important;
+          flex-shrink: 0;
+          font-size: 13px;
+          padding: 6px 12px;
+          height: auto;
+          min-height: 36px;
+          white-space: nowrap;
+          justify-content: center;
+          max-width: 100%;
+        }
+
+        .market-filter-btn span:last-child {
+          min-width: 0;
+        }
+
+        .market-filter-row {
+          width: 100%;
+          max-width: 100%;
+        }
+
+        .market-sort-control,
+        .market-building-filter {
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        .card {
+          margin: 0;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        .announcement-card,
+        .listing-card,
+        .avizier-card,
+        .poll-card,
+        .parking-spot-card {
+          padding: 14px;
+          margin: 0;
+          border-radius: 10px;
+          width: 100%;
+          max-width: 100%;
+          overflow: hidden;
+        }
+
+        .market-listing-card {
+          padding: 0;
+          margin: 0;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+        .market-listing-body {
+          min-width: 0;
+          max-width: 100%;
+          padding: 12px;
+        }
+
+        .market-title-line,
+        .market-owner-line,
+        .market-age,
+        .market-card-badges,
+        .market-lending-badges,
+        .market-card-actions,
+        .announcement-body,
+        .announcement-meta {
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        .market-title-line {
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .market-title-line strong,
+        .market-owner-line,
+        .market-listing-description {
+          overflow-wrap: anywhere;
+        }
+
+        .attachment-chip {
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .announcement-meta {
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .announcement-body {
+          max-width: 100%;
+        }
+
+        .poll-wizard-nav {
+          flex-wrap: wrap;
+        }
+
+        .poll-wizard-nav button {
+          min-width: 0;
+          flex: 1 1 calc(50% - 4px);
+        }
+
+        main#app,
+        #app,
+        .main-content,
+        .module-content,
+        #app-content {
+          padding-bottom: calc(72px + env(safe-area-inset-bottom, 16px));
+        }
+
+        .mobile-tabbar {
+          padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+          min-height: calc(56px + env(safe-area-inset-bottom, 0px));
+          height: auto;
+          max-width: calc(100vw - 16px);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .announcement-actions {
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .announcement-actions .avizier-edit-btn,
+        .announcement-actions .avizier-share-btn {
+          flex: 1 1 calc(50% - 4px);
+          justify-content: center;
+          min-width: 0;
+        }
+
+        .announcement-actions .avizier-read-more {
+          width: 100%;
+          flex: 1 0 100%;
+          justify-content: center;
+        }
+
+        .announcement-actions .avizier-delete-btn {
+          width: auto;
+          min-width: 36px;
+          flex-shrink: 0;
+        }
+      }
     </style>
   </head>
   <body>
@@ -5169,8 +5423,8 @@
               <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Parking Sharing</div>
               <h1 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parking Sharing</h1>
             </div>
-            <div class="module-actions">
-              <a href="#" class="module-back-link" data-back-modules>Back Home</a>
+            <div class="module-actions module-header-actions">
+              <a href="#" class="module-back-link btn-back-home" data-back-modules>Back Home</a>
               <button id="refreshParkingBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
             </div>
           </section>
@@ -5439,8 +5693,8 @@
                 Vinde, donează sau oferă la împrumut obiecte vecinilor. Contactul se face direct prin telefon.
               </p>
             </div>
-            <div class="module-actions">
-              <a href="#" class="module-back-link" data-back-modules>Back Home</a>
+            <div class="module-actions module-header-actions">
+              <a href="#" class="module-back-link btn-back-home" data-back-modules>Back Home</a>
               <button id="refreshMarketplaceBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
             </div>
           </div>
@@ -5628,8 +5882,8 @@
               <h1 class="module-title"><i data-lucide="newspaper" aria-hidden="true"></i>Avizier</h1>
               <p class="poll-note">General and per-building announcements for all residents.</p>
             </div>
-            <div class="module-actions">
-              <a href="#" class="module-back-link" data-back-modules>Back Home</a>
+            <div class="module-actions module-header-actions">
+              <a href="#" class="module-back-link btn-back-home" data-back-modules>Back Home</a>
               <button id="refreshAvizierBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
             </div>
           </div>
@@ -5730,8 +5984,8 @@
               <h1 class="module-title"><i data-lucide="vote" aria-hidden="true"></i>Voting</h1>
               <p class="poll-note">Participate in neighbourhood or building-specific polls.</p>
             </div>
-            <div class="module-actions">
-              <a href="#" class="module-back-link" data-back-modules>Back Home</a>
+            <div class="module-actions module-header-actions">
+              <a href="#" class="module-back-link btn-back-home" data-back-modules>Back Home</a>
               <button id="refreshPollsBtn" class="ghost refresh-btn btn-refresh" type="button">Refresh</button>
             </div>
           </div>
