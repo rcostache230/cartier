@@ -5453,6 +5453,98 @@
           bottom: calc(72px + env(safe-area-inset-bottom, 8px)) !important;
         }
       }
+
+      /* iOS Safari hardening: prevent visual viewport overflow from flex rows and fixed UI */
+      @supports (-webkit-touch-callout: none) {
+        @media (max-width: 768px) {
+          html,
+          body,
+          #app,
+          main#app,
+          .container,
+          .module-panel,
+          .module-section {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: clip !important;
+          }
+
+          body {
+            position: relative;
+          }
+
+          .mobile-tabbar {
+            width: auto !important;
+            max-width: none !important;
+            left: 0 !important;
+            right: 0 !important;
+            padding-left: max(4px, env(safe-area-inset-left, 0px)) !important;
+            padding-right: max(4px, env(safe-area-inset-right, 0px)) !important;
+            overflow: clip !important;
+          }
+
+          .mobile-tab,
+          .mobile-tab * {
+            min-width: 0 !important;
+          }
+
+          .module-header,
+          .module-header > div,
+          .module-actions,
+          .module-header-actions,
+          .card,
+          .grid,
+          .stack,
+          .tabs,
+          .segmented-control,
+          .market-filter-row {
+            min-width: 0 !important;
+            max-width: 100% !important;
+          }
+
+          /* Keep filters inside their own lane on Safari instead of expanding page width */
+          #marketplaceTypeTabs,
+          #marketplaceCategoryTabs,
+          .market-filter-tabs,
+          #avizierScopeFilters {
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+            scrollbar-width: none;
+            padding-bottom: 4px !important;
+          }
+
+          #marketplaceTypeTabs::-webkit-scrollbar,
+          #marketplaceCategoryTabs::-webkit-scrollbar,
+          .market-filter-tabs::-webkit-scrollbar,
+          #avizierScopeFilters::-webkit-scrollbar {
+            display: none;
+          }
+
+          #marketplaceTypeTabs .type-pill,
+          #marketplaceCategoryTabs .market-filter-btn,
+          #avizierScopeFilters .market-filter-btn {
+            flex: 0 0 auto !important;
+            max-width: calc(100vw - 32px) !important;
+          }
+
+          #marketplaceSortTabs,
+          #parkingModule .segmented-control {
+            overflow: hidden !important;
+          }
+
+          #marketplaceSortTabs .market-sort-btn,
+          #parkingModule .segmented-control .tab-btn {
+            min-width: 0 !important;
+          }
+
+          .poll-meta .poll-chip,
+          .poll-card .module-actions .table-action-btn {
+            min-width: 0 !important;
+          }
+        }
+      }
     </style>
     <link rel="stylesheet" href="contacts.css">
   </head>
