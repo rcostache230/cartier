@@ -5125,6 +5125,7 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="contacts.css">
   </head>
   <body>
     <aside id="sideRail" class="side-rail hidden" aria-label="Primary navigation">
@@ -5167,6 +5168,9 @@
         </button>
         <button type="button" class="rail-link" data-nav-module="avizierModule" data-module-target="avizierModule">
           <i data-lucide="newspaper" aria-hidden="true"></i><span>Avizier</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="moduleContacts" onclick="showContacts()">
+          <span aria-hidden="true">📋</span><span>Contacte</span>
         </button>
       </nav>
       <div class="rail-foot">
@@ -6134,6 +6138,16 @@
             </section>
           </div>
         </section>
+
+        <!-- Contacts module — contacts.html injected here -->
+        <div id="contactsModuleMount"></div>
+        <script>
+          fetch('contacts.html')
+            .then(r => r.text())
+            .then(html => {
+              document.getElementById('contactsModuleMount').innerHTML = html;
+            });
+        </script>
       </main>
 
       <div id="pollModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pollModalTitle">
@@ -6234,6 +6248,10 @@
           <i data-lucide="newspaper" aria-hidden="true"></i>
           <span>Avizier</span>
         </button>
+        <button type="button" class="mobile-tab" data-nav-module="moduleContacts" onclick="showContacts()">
+          <span aria-hidden="true">📋</span>
+          <span>Contacte</span>
+        </button>
       </nav>
       <button id="mobileFab" class="mobile-fab hidden" type="button" aria-label="Quick action">
         <i data-lucide="plus" aria-hidden="true"></i>
@@ -6244,6 +6262,7 @@
     </div>
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="contacts.js"></script>
     <script>
       const HELP_SEEN_KEY = "10blocuri_help_seen_v1";
       const THEME_PREF_KEY = "10blocuri_theme_pref_v1";
@@ -6305,6 +6324,7 @@
         marketplaceModule: "Marketplace",
         avizierModule: "Avizier",
         votingModule: "Voting",
+        moduleContacts: "Contacte",
       };
       const MARKETPLACE_MAX_FILE_BYTES = 5 * 1024 * 1024;
       const MARKETPLACE_ALLOWED_FILE_TYPES = new Set([
@@ -7091,6 +7111,7 @@
       function canUseFab() {
         if (!currentUser) return false;
         if (!currentModule) return true;
+        if (currentModule === "moduleContacts") return false;
         if (currentModule === "votingModule") return currentUser.role === "admin";
         if (currentModule === "avizierModule") {
           return currentUser.role === "admin" || String(currentUser.avizier_permission || "none") !== "none";
@@ -7731,6 +7752,12 @@
         els.votingModule.classList.add("hidden");
         els.votingModule.classList.remove("is-visible");
         els.votingModule.classList.remove("module-view");
+        const contactsModuleEl = document.getElementById("moduleContacts");
+        if (contactsModuleEl) {
+          contactsModuleEl.classList.add("hidden");
+          contactsModuleEl.classList.remove("is-visible");
+          contactsModuleEl.classList.remove("module-view");
+        }
         refreshHomeActivity();
         syncNavigationState();
         updateMobileFab();
@@ -7740,12 +7767,31 @@
         showModuleChooser();
       }
 
+      function showContacts(attempt = 0) {
+        const contactsModuleEl = document.getElementById("moduleContacts");
+        if (!contactsModuleEl) {
+          if (attempt < 20) {
+            setTimeout(() => showContacts(attempt + 1), 100);
+          } else {
+            showToast("Modulul Contacte nu s-a încărcat.", "error");
+          }
+          return;
+        }
+        openModule("moduleContacts");
+      }
+
       function openModule(moduleId) {
         currentModule = moduleId;
         setDocumentTitle(moduleId);
         els.modulesCard.classList.add("hidden");
         els.modulesCard.classList.remove("is-visible");
-        const modules = [els.parkingModule, els.marketplaceModule, els.avizierModule, els.votingModule];
+        const modules = [
+          els.parkingModule,
+          els.marketplaceModule,
+          els.avizierModule,
+          els.votingModule,
+          document.getElementById("moduleContacts"),
+        ].filter(Boolean);
         modules.forEach((moduleEl) => {
           if (moduleEl.id === moduleId) {
             moduleEl.classList.remove("hidden");
@@ -7772,6 +7818,9 @@
         }
         if (moduleId === "votingModule") {
           refreshVoting().catch((error) => setStatus(error.message, true));
+        }
+        if (moduleId === "moduleContacts" && window.ContactsModule && typeof window.ContactsModule.load === "function") {
+          window.ContactsModule.load();
         }
         syncNavigationState();
         updateMobileFab();
