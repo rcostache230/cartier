@@ -5170,7 +5170,7 @@
           <i data-lucide="newspaper" aria-hidden="true"></i><span>Avizier</span>
         </button>
         <button type="button" class="rail-link" data-nav-module="moduleContacts" onclick="showContacts()">
-          <span aria-hidden="true">📋</span><span>Contacte</span>
+          <i data-lucide="clipboard-list" aria-hidden="true"></i><span>Contacte</span>
         </button>
       </nav>
       <div class="rail-foot">
@@ -6146,6 +6146,7 @@
             .then(r => r.text())
             .then(html => {
               document.getElementById('contactsModuleMount').innerHTML = html;
+              if (typeof hydrateLucideIcons === 'function') hydrateLucideIcons();
             });
         </script>
       </main>
@@ -6249,7 +6250,7 @@
           <span>Avizier</span>
         </button>
         <button type="button" class="mobile-tab" data-nav-module="moduleContacts" onclick="showContacts()">
-          <span aria-hidden="true">📋</span>
+          <i data-lucide="clipboard-list" aria-hidden="true"></i>
           <span>Contacte</span>
         </button>
       </nav>
