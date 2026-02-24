@@ -1,0 +1,94 @@
+<section id="moduleContacts" class="module-section card hidden module-panel mt-14">
+
+  <div class="module-header">
+    <div class="module-header-left">
+      <nav class="breadcrumb">
+        <a href="javascript:void(0)" onclick="showHome()">Home</a> › Contacte Utile
+      </nav>
+      <h1 class="module-title">📋 Contacte Utile</h1>
+      <p class="module-subtitle">
+        Numere de telefon utile pentru locatarii cartierului.
+      </p>
+      <p class="module-meta">
+        Ultima actualizare: <span id="contactsRefreshedAt">-</span>
+      </p>
+    </div>
+    <div class="module-header-actions">
+      <button class="btn btn-secondary btn-refresh"
+              onclick="ContactsModule.load()">
+        ↻ Actualizează
+      </button>
+    </div>
+  </div>
+
+  <div class="module-content-area">
+
+    <!-- Contact groups rendered by ContactsModule.load() -->
+    <div id="contactsList"></div>
+
+    <!-- Admin Zone -->
+    <div id="contactsAdminZone" class="admin-zone" style="display:none">
+      <div class="admin-zone-header">
+        🔒 <span>Zonă Admin</span>
+        <span class="badge badge-red">Doar pentru administratori</span>
+      </div>
+
+      <!-- Manage categories -->
+      <div class="card" style="margin-bottom:16px; padding:20px">
+        <h3 style="margin:0 0 12px; font-size:15px; font-weight:700">
+          Gestionează categorii
+        </h3>
+        <div id="contactsCategoryRows"></div>
+        <div style="margin-top:12px; border-top:1px solid var(--border);
+                    padding-top:12px">
+          <p style="font-size:12px; font-weight:700; color:var(--text-muted);
+                    text-transform:uppercase; letter-spacing:.06em; margin:0 0 8px">
+            Categorie nouă
+          </p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <input type="text" id="newCatIcon" maxlength="2"
+                   placeholder="📋" value="📋"
+                   style="width:52px; text-align:center">
+            <input type="text" id="newCatName"
+                   placeholder="Nume categorie" style="flex:1; min-width:160px">
+            <button class="btn btn-primary"
+                    onclick="ContactsModule.addCategory()">
+              + Adaugă
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add contact -->
+      <div class="card" style="padding:20px">
+        <h3 style="margin:0 0 12px; font-size:15px; font-weight:700">
+          Adaugă contact
+        </h3>
+        <div class="admin-form-group">
+          <label for="contactCategorySelect">Categorie</label>
+          <select id="contactCategorySelect"></select>
+        </div>
+        <div class="admin-form-group">
+          <label for="contactName">Nume</label>
+          <input type="text" id="contactName"
+                 placeholder="ex: Tehnic Lift SRL">
+        </div>
+        <div class="admin-form-group">
+          <label for="contactPhone">Telefon</label>
+          <input type="tel" id="contactPhone"
+                 placeholder="07xx xxx xxx">
+        </div>
+        <div class="admin-form-group">
+          <label for="contactNotes">Note (opțional)</label>
+          <input type="text" id="contactNotes"
+                 placeholder="ex: Program L-V 8-17, urgențe 24/7">
+        </div>
+        <button class="btn btn-primary" onclick="ContactsModule.addContact()">
+          + Adaugă contact
+        </button>
+      </div>
+
+    </div><!-- /admin zone -->
+
+  </div><!-- /module-content-area -->
+</section>
