@@ -303,6 +303,27 @@ function mapMarketplacePost(row) {
   };
 }
 
+function mapContactCategory(row) {
+  return {
+    id: Number(row.id),
+    icon: String(row.icon || "📋"),
+    name: String(row.name),
+    sort_order: Number(row.sort_order || 0),
+  };
+}
+
+function mapContactItem(row) {
+  return {
+    id: Number(row.id),
+    category_id: Number(row.category_id),
+    name: String(row.name),
+    phone: String(row.phone),
+    notes: String(row.notes || ""),
+    active: row.active == null ? true : Boolean(row.active),
+    sort_order: Number(row.sort_order || 0),
+  };
+}
+
 async function getUserById(userId) {
   const result = await query(
     `
@@ -1925,6 +1946,276 @@ async function deleteAvizierAnnouncement({ actorUser, announcementId }) {
   return { deleted: true, announcement_id: announcementId };
 }
 
+function normalizeContactsCategoryPayload(payload, { partial = false } = {}) {
+  if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+    throw new AppError(400, "invalid payload");
+  }
+
+  const hasName = Object.prototype.hasOwnProperty.call(payload, "name");
+  const hasIcon = Object.prototype.hasOwnProperty.call(payload, "icon");
+  if (partial && !hasName && !hasIcon) {
+    throw new AppError(400, "at least one field is required");
+  }
+
+  let name = null;
+  if (!partial || hasName) {
+    name = String(payload.name || "").trim();
+    if (!name) throw new AppError(400, "category name is required");
+    if (name.length > 120) throw new AppError(400, "category name must be at most 120 characters");
+  }
+
+  let icon = null;
+  if (!partial || hasIcon) {
+    icon = String(payload.icon || "📋").trim() || "📋";
+    if (icon.length > 16) throw new AppError(400, "category icon must be at most 16 characters");
+  }
+
+  return { name, icon };
+}
+
+function normalizeContactPayload(payload, { partial = false } = {}) {
+  if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+    throw new AppError(400, "invalid payload");
+  }
+
+  const keys = ["category_id", "name", "phone", "notes", "active"];
+  const hasAnyField = keys.some((key) => Object.prototype.hasOwnProperty.call(payload, key));
+  if (partial && !hasAnyField) {
+    throw new AppError(400, "at least one field is required");
+  }
+
+  let categoryId = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "category_id")) {
+    categoryId = Number(payload.category_id);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      throw new AppError(400, "category_id must be a valid integer");
+    }
+  }
+
+  let name = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "name")) {
+    name = String(payload.name || "").trim();
+    if (!name) throw new AppError(400, "contact name is required");
+    if (name.length > 200) throw new AppError(400, "contact name must be at most 200 characters");
+  }
+
+  let phone = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "phone")) {
+    phone = String(payload.phone || "").trim();
+    if (!phone) throw new AppError(400, "contact phone is required");
+    if (phone.length > 64) throw new AppError(400, "contact phone must be at most 64 characters");
+  }
+
+  let notes = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "notes")) {
+    notes = String(payload.notes || "").trim();
+    if (notes.length > 500) throw new AppError(400, "contact notes must be at most 500 characters");
+  }
+
+  let active = null;
+  if (Object.prototype.hasOwnProperty.call(payload, "active")) {
+    if (typeof payload.active !== "boolean") {
+      throw new AppError(400, "active must be boolean");
+    }
+    active = payload.active;
+  }
+
+  return {
+    category_id: categoryId,
+    name,
+    phone,
+    notes,
+    active,
+  };
+}
+
+async function ensureContactsCategoryExists(categoryId, client = null) {
+  const dbResult = client
+    ? await client.query("SELECT id FROM contacts_categories WHERE id = $1", [categoryId])
+    : await query("SELECT id FROM contacts_categories WHERE id = $1", [categoryId]);
+  if (!dbResult.rowCount) {
+    throw new AppError(404, "contact category not found");
+  }
+}
+
+async function getContactItemById(contactId) {
+  const result = await query(
+    `
+      SELECT id, category_id, name, phone, notes, active, sort_order
+      FROM contacts_items
+      WHERE id = $1
+    `,
+    [contactId]
+  );
+  if (!result.rowCount) throw new AppError(404, "contact not found");
+  return mapContactItem(result.rows[0]);
+}
+
+async function listContactsForViewer(viewer) {
+  const includeInactive = viewer?.role === "admin";
+  const rows = await query(
+    `
+      SELECT
+        cc.id AS category_id,
+        cc.icon AS category_icon,
+        cc.name AS category_name,
+        cc.sort_order AS category_sort_order,
+        ci.id AS contact_id,
+        ci.category_id AS contact_category_id,
+        ci.name AS contact_name,
+        ci.phone AS contact_phone,
+        ci.notes AS contact_notes,
+        ci.active AS contact_active,
+        ci.sort_order AS contact_sort_order
+      FROM contacts_categories cc
+      LEFT JOIN contacts_items ci
+        ON ci.category_id = cc.id
+       AND ($1::boolean = TRUE OR ci.active = TRUE)
+      ORDER BY cc.sort_order ASC, cc.id ASC, ci.sort_order ASC, ci.id ASC
+    `,
+    [includeInactive]
+  );
+
+  const categories = [];
+  const byId = new Map();
+  for (const row of rows.rows) {
+    const categoryId = Number(row.category_id);
+    let category = byId.get(categoryId);
+    if (!category) {
+      category = {
+        id: categoryId,
+        icon: String(row.category_icon || "📋"),
+        name: String(row.category_name),
+        sort_order: Number(row.category_sort_order || 0),
+        contacts: [],
+      };
+      byId.set(categoryId, category);
+      categories.push(category);
+    }
+    if (row.contact_id == null) continue;
+    category.contacts.push({
+      id: Number(row.contact_id),
+      category_id: Number(row.contact_category_id),
+      name: String(row.contact_name),
+      phone: String(row.contact_phone),
+      notes: String(row.contact_notes || ""),
+      active: Boolean(row.contact_active),
+      sort_order: Number(row.contact_sort_order || 0),
+    });
+  }
+  return categories;
+}
+
+async function createContactsCategory(payload) {
+  const cleaned = normalizeContactsCategoryPayload(payload, { partial: false });
+  const inserted = await query(
+    `
+      INSERT INTO contacts_categories (icon, name)
+      VALUES ($1, $2)
+      RETURNING id, icon, name, sort_order
+    `,
+    [cleaned.icon, cleaned.name]
+  );
+  return mapContactCategory(inserted.rows[0]);
+}
+
+async function updateContactsCategory(categoryId, payload) {
+  const cleaned = normalizeContactsCategoryPayload(payload, { partial: true });
+  const existing = await query(
+    `
+      SELECT id, icon, name, sort_order
+      FROM contacts_categories
+      WHERE id = $1
+    `,
+    [categoryId]
+  );
+  if (!existing.rowCount) throw new AppError(404, "contact category not found");
+  const row = existing.rows[0];
+  const nextIcon = cleaned.icon == null ? String(row.icon || "📋") : cleaned.icon;
+  const nextName = cleaned.name == null ? String(row.name) : cleaned.name;
+
+  const updated = await query(
+    `
+      UPDATE contacts_categories
+      SET icon = $1,
+          name = $2
+      WHERE id = $3
+      RETURNING id, icon, name, sort_order
+    `,
+    [nextIcon, nextName, categoryId]
+  );
+  return mapContactCategory(updated.rows[0]);
+}
+
+async function deleteContactsCategory(categoryId) {
+  const deleted = await query("DELETE FROM contacts_categories WHERE id = $1 RETURNING id", [categoryId]);
+  if (!deleted.rowCount) throw new AppError(404, "contact category not found");
+  return { deleted: true, category_id: Number(deleted.rows[0].id) };
+}
+
+async function createContactItem(payload) {
+  const cleaned = normalizeContactPayload(payload, { partial: false });
+  await ensureContactsCategoryExists(cleaned.category_id);
+  const inserted = await query(
+    `
+      INSERT INTO contacts_items (category_id, name, phone, notes, active, updated_at)
+      VALUES ($1, $2, $3, $4, TRUE, NOW())
+      RETURNING id, category_id, name, phone, notes, active, sort_order
+    `,
+    [cleaned.category_id, cleaned.name, cleaned.phone, cleaned.notes || ""]
+  );
+  return mapContactItem(inserted.rows[0]);
+}
+
+async function updateContactItem(contactId, payload) {
+  const cleaned = normalizeContactPayload(payload, { partial: true });
+  return withTransaction(async (client) => {
+    const existing = await client.query(
+      `
+        SELECT id, category_id, name, phone, notes, active, sort_order
+        FROM contacts_items
+        WHERE id = $1
+        FOR UPDATE
+      `,
+      [contactId]
+    );
+    if (!existing.rowCount) throw new AppError(404, "contact not found");
+    const row = existing.rows[0];
+
+    const nextCategoryId = cleaned.category_id == null ? Number(row.category_id) : cleaned.category_id;
+    if (nextCategoryId !== Number(row.category_id)) {
+      await ensureContactsCategoryExists(nextCategoryId, client);
+    }
+
+    const nextName = cleaned.name == null ? String(row.name) : cleaned.name;
+    const nextPhone = cleaned.phone == null ? String(row.phone) : cleaned.phone;
+    const nextNotes = cleaned.notes == null ? String(row.notes || "") : cleaned.notes;
+    const nextActive = cleaned.active == null ? Boolean(row.active) : cleaned.active;
+
+    const updated = await client.query(
+      `
+        UPDATE contacts_items
+        SET category_id = $1,
+            name = $2,
+            phone = $3,
+            notes = $4,
+            active = $5,
+            updated_at = NOW()
+        WHERE id = $6
+        RETURNING id, category_id, name, phone, notes, active, sort_order
+      `,
+      [nextCategoryId, nextName, nextPhone, nextNotes, nextActive, contactId]
+    );
+    return mapContactItem(updated.rows[0]);
+  });
+}
+
+async function deleteContactItem(contactId) {
+  const deleted = await query("DELETE FROM contacts_items WHERE id = $1 RETURNING id", [contactId]);
+  if (!deleted.rowCount) throw new AppError(404, "contact not found");
+  return { deleted: true, contact_id: Number(deleted.rows[0].id) };
+}
+
 function parseOptionalInt(value, fieldName) {
   if (value == null || value === "") return null;
   const parsed = Number(value);
@@ -2717,6 +3008,13 @@ async function handleRequest(request, slug) {
         marketplace_claim_donation: "POST /api/marketplace/posts/<post_id>/claim",
         marketplace_complete_post: "POST /api/marketplace/posts/<post_id>/complete",
         marketplace_delete_post: "POST /api/marketplace/posts/<post_id>/delete",
+        contacts_list: "GET /api/contacts",
+        contacts_create: "POST /api/contacts",
+        contacts_update: "PUT /api/contacts/<contact_id>",
+        contacts_delete: "DELETE /api/contacts/<contact_id>",
+        contacts_categories_create: "POST /api/contacts/categories",
+        contacts_categories_update: "PUT /api/contacts/categories/<category_id>",
+        contacts_categories_delete: "DELETE /api/contacts/categories/<category_id>",
         polls: "GET /api/polls",
         poll_create: "POST /api/polls",
         poll_vote: "POST /api/polls/<poll_id>/vote",
@@ -3019,6 +3317,61 @@ async function handleRequest(request, slug) {
   if (method === "POST" && path[0] === "users" && path[1] === "reset-defaults") {
     await requireAdmin(request);
     return json({ inserted_or_updated: 0 }, 200);
+  }
+
+  if (method === "GET" && path.length === 1 && path[0] === "contacts") {
+    const user = await requireUser(request);
+    return json(await listContactsForViewer(user), 200);
+  }
+
+  if (method === "POST" && path.length === 1 && path[0] === "contacts") {
+    await requireAdmin(request);
+    const payload = await parseJsonBody(request);
+    return json(await createContactItem(payload), 201);
+  }
+
+  if (method === "PUT" && path.length === 2 && path[0] === "contacts") {
+    await requireAdmin(request);
+    const contactId = Number(path[1]);
+    if (!Number.isInteger(contactId) || contactId <= 0) {
+      throw new AppError(400, "contact_id must be a valid integer");
+    }
+    const payload = await parseJsonBody(request);
+    return json(await updateContactItem(contactId, payload), 200);
+  }
+
+  if (method === "DELETE" && path.length === 2 && path[0] === "contacts") {
+    await requireAdmin(request);
+    const contactId = Number(path[1]);
+    if (!Number.isInteger(contactId) || contactId <= 0) {
+      throw new AppError(400, "contact_id must be a valid integer");
+    }
+    return json(await deleteContactItem(contactId), 200);
+  }
+
+  if (method === "POST" && path.length === 2 && path[0] === "contacts" && path[1] === "categories") {
+    await requireAdmin(request);
+    const payload = await parseJsonBody(request);
+    return json(await createContactsCategory(payload), 201);
+  }
+
+  if (method === "PUT" && path.length === 3 && path[0] === "contacts" && path[1] === "categories") {
+    await requireAdmin(request);
+    const categoryId = Number(path[2]);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      throw new AppError(400, "category_id must be a valid integer");
+    }
+    const payload = await parseJsonBody(request);
+    return json(await updateContactsCategory(categoryId, payload), 200);
+  }
+
+  if (method === "DELETE" && path.length === 3 && path[0] === "contacts" && path[1] === "categories") {
+    await requireAdmin(request);
+    const categoryId = Number(path[2]);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      throw new AppError(400, "category_id must be a valid integer");
+    }
+    return json(await deleteContactsCategory(categoryId), 200);
   }
 
   if (method === "POST" && path.length === 1 && path[0] === "slots") {
@@ -3434,5 +3787,13 @@ export async function GET(request, context) {
 }
 
 export async function POST(request, context) {
+  return run(request, context);
+}
+
+export async function PUT(request, context) {
+  return run(request, context);
+}
+
+export async function DELETE(request, context) {
   return run(request, context);
 }
