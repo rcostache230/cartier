@@ -7709,14 +7709,98 @@
         }
       }
 
+      // ── Client fetch cache ────────────────────────────────────
+      const _fetchCache = {};
+
+      function apiCacheTtlSeconds(url) {
+        const path = String(url || "").split("?")[0];
+        if (!path.startsWith("/api/")) return 0;
+        if (path.startsWith("/api/auth/")) return 0;
+        if (path.startsWith("/api/contacts")) return 300;
+        if (path === "/api/dashboard" || path.startsWith("/api/slots") || path.startsWith("/api/admin/slots")) {
+          return 30;
+        }
+        if (path.startsWith("/api/marketplace")) return 60;
+        if (path.startsWith("/api/polls")) return 120;
+        if (path.startsWith("/api/avizier")) return 120;
+        if (path === "/api/users") return 60;
+        return 60;
+      }
+
+      async function cachedFetch(url, options = {}, ttlSeconds = 60) {
+        const cacheKey = String(url) + String(options.body || "");
+        const now = Date.now();
+        const method = String(options.method || "GET").toUpperCase();
+        const isGet = method === "GET";
+
+        if (isGet && ttlSeconds > 0 && _fetchCache[cacheKey]) {
+          const age = (now - _fetchCache[cacheKey].ts) / 1000;
+          if (age < ttlSeconds) {
+            return Promise.resolve(_fetchCache[cacheKey].data);
+          }
+        }
+
+        const res = await fetch(url, options);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error((data && data.error) || `HTTP ${res.status} for ${url}`);
+
+        if (isGet && ttlSeconds > 0) {
+          _fetchCache[cacheKey] = { data, ts: now };
+        }
+
+        return data;
+      }
+
+      function bustCache(urlPattern) {
+        Object.keys(_fetchCache).forEach((key) => {
+          if (key.includes(urlPattern)) {
+            delete _fetchCache[key];
+          }
+        });
+      }
+
+      function bustRelatedApiCaches(url) {
+        const path = String(url || "").split("?")[0];
+        if (!path.startsWith("/api/")) return;
+        if (path.startsWith("/api/auth/")) return;
+
+        const patterns = new Set([path]);
+        if (path.startsWith("/api/slots") || path.startsWith("/api/admin/slots")) {
+          patterns.add("/api/dashboard");
+          patterns.add("/api/slots");
+          patterns.add("/api/admin/slots");
+        }
+        if (path.startsWith("/api/marketplace")) patterns.add("/api/marketplace");
+        if (path.startsWith("/api/avizier")) patterns.add("/api/avizier");
+        if (path.startsWith("/api/polls")) patterns.add("/api/polls");
+        if (path.startsWith("/api/users")) patterns.add("/api/users");
+        if (path.startsWith("/api/contacts")) patterns.add("/api/contacts");
+
+        patterns.forEach((pattern) => bustCache(pattern));
+      }
+
+      window.cachedFetch = cachedFetch;
+      window.bustCache = bustCache;
+      // ─────────────────────────────────────────────────────────
+
       async function api(path, opts = {}) {
-        const res = await fetch(path, {
+        const method = String(opts.method || "GET").toUpperCase();
+        const requestOptions = {
           headers: { "Content-Type": "application/json" },
           ...opts,
-        });
+        };
+
+        if (method === "GET" && !String(path || "").startsWith("/api/auth/")) {
+          return cachedFetch(path, requestOptions, apiCacheTtlSeconds(path));
+        }
+
+        const res = await fetch(path, requestOptions);
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
           throw new Error(data.error || `Request failed (${res.status})`);
+        }
+        if (method !== "GET") {
+          bustRelatedApiCaches(path);
         }
         return data;
       }

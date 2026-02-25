@@ -9,9 +9,18 @@ const ContactsModule = (() => {
 
   // ── API ──────────────────────────────────────────────────
   async function fetchCategories() {
+    if (typeof window.cachedFetch === 'function') {
+      return window.cachedFetch('/api/contacts', {}, 300);
+    }
     const res = await fetch('/api/contacts');
     if (!res.ok) throw new Error('Failed to load contacts');
     return res.json();
+  }
+
+  function bustContactsCache() {
+    if (typeof window.bustCache === 'function') {
+      window.bustCache('/api/contacts');
+    }
   }
 
   async function apiAddCategory(icon, name) {
@@ -216,6 +225,7 @@ const ContactsModule = (() => {
     if (!name) { showToast('Introdu un nume pentru categorie.', 'warning'); return; }
     try {
       await apiAddCategory(icon, name);
+      bustContactsCache();
       document.getElementById('newCatName').value = '';
       showToast('Categorie adăugată.', 'success');
       load();
@@ -243,6 +253,7 @@ const ContactsModule = (() => {
     if (!name) { showToast('Numele nu poate fi gol.', 'warning'); return; }
     try {
       await apiUpdateCategory(id, { icon, name });
+      bustContactsCache();
       showToast('Categorie actualizată.', 'success');
       load();
     } catch(e) { showToast('Eroare.', 'error'); }
@@ -252,6 +263,7 @@ const ContactsModule = (() => {
     if (!confirm('Ștergi categoria și toate contactele din ea?')) return;
     try {
       await apiDeleteCategory(id);
+      bustContactsCache();
       showToast('Categorie ștearsă.', 'success');
       load();
     } catch(e) { showToast('Eroare.', 'error'); }
@@ -268,6 +280,7 @@ const ContactsModule = (() => {
     }
     try {
       await apiAddContact({ category_id: parseInt(category_id), name, phone, notes });
+      bustContactsCache();
       document.getElementById('contactName').value = '';
       document.getElementById('contactPhone').value = '';
       document.getElementById('contactNotes').value = '';
@@ -293,6 +306,7 @@ const ContactsModule = (() => {
     }
     try {
       await apiUpdateContact(id, { name, phone, notes });
+      bustContactsCache();
       showToast('Contact actualizat.', 'success');
       load();
     } catch(e) { showToast('Eroare.', 'error'); }
@@ -302,6 +316,7 @@ const ContactsModule = (() => {
     if (!confirm('Ștergi acest contact?')) return;
     try {
       await apiDeleteContact(id);
+      bustContactsCache();
       showToast('Contact șters.', 'success');
       load();
     } catch(e) { showToast('Eroare.', 'error'); }
