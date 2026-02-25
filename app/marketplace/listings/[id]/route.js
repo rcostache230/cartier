@@ -1,12 +1,121 @@
+import { query } from "../../../../lib/db.js";
+
 export const runtime = "nodejs";
 
-function buildListingHtml(listingId) {
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function trimText(value, max = 180) {
+  const normalized = String(value || "").replace(/\s+/g, " ").trim();
+  if (!normalized) return "";
+  if (normalized.length <= max) return normalized;
+  return `${normalized.slice(0, Math.max(0, max - 1)).trim()}…`;
+}
+
+function listingTypeLabelRo(type) {
+  if (type === "donation") return "Donație";
+  if (type === "lending") return "Împrumut";
+  return "Vânzare";
+}
+
+function buildShareMeta(listingId, listing, origin) {
+  const fallbackTitle = `Marketplace Listing #${listingId}`;
+  if (!listing) {
+    return {
+      pageTitle: fallbackTitle,
+      metaTitle: fallbackTitle,
+      metaDescription: "Anunț din Marketplace pe 10Blocuri.",
+      canonicalUrl: `${origin}/marketplace/listings/${listingId}`,
+      imageUrl: "",
+    };
+  }
+
+  const title = String(listing.title || fallbackTitle).trim() || fallbackTitle;
+  const parts = [
+    listingTypeLabelRo(listing.listing_type),
+    String(listing.price_text || "").trim(),
+    String(listing.status || "").trim() === "active" ? "Activ" : "",
+  ].filter(Boolean);
+  const description =
+    trimText([parts.join(" · "), String(listing.description || "").trim()].filter(Boolean).join(" — "), 200) ||
+    "Anunț din Marketplace pe 10Blocuri.";
+
+  let imageUrl = String(listing.photo_url || "").trim();
+  if (imageUrl && imageUrl.startsWith("/")) {
+    imageUrl = `${origin}${imageUrl}`;
+  }
+
+  return {
+    pageTitle: `${title} | 10Blocuri Marketplace`,
+    metaTitle: title,
+    metaDescription: description,
+    canonicalUrl: `${origin}/marketplace/listings/${listingId}`,
+    imageUrl,
+  };
+}
+
+async function getListingShareMeta(listingId) {
+  const result = await query(
+    `
+      SELECT
+        mp.id,
+        mp.title,
+        mp.description,
+        mp.listing_type,
+        mp.price_text,
+        mp.status,
+        photo.file_url AS photo_url
+      FROM marketplace_posts mp
+      LEFT JOIN LATERAL (
+        SELECT file_url
+        FROM marketplace_post_photos
+        WHERE post_id = mp.id
+        ORDER BY position ASC, file_name ASC
+        LIMIT 1
+      ) photo ON TRUE
+      WHERE mp.id = $1
+      LIMIT 1
+    `,
+    [listingId]
+  );
+  return result.rows[0] || null;
+}
+
+function buildListingHtml(listingId, meta = {}) {
+  const safePageTitle = escapeHtml(meta.pageTitle || `Marketplace Listing #${listingId}`);
+  const safeMetaTitle = escapeHtml(meta.metaTitle || `Marketplace Listing #${listingId}`);
+  const safeMetaDescription = escapeHtml(meta.metaDescription || "Anunț din Marketplace pe 10Blocuri.");
+  const safeCanonicalUrl = escapeHtml(meta.canonicalUrl || `/marketplace/listings/${listingId}`);
+  const safeImageUrl = meta.imageUrl ? escapeHtml(meta.imageUrl) : "";
+  const imageMetaTags = safeImageUrl
+    ? `
+    <meta property="og:image" content="${safeImageUrl}" />
+    <meta property="og:image:secure_url" content="${safeImageUrl}" />
+    <meta property="og:image:alt" content="${safeMetaTitle}" />
+    <meta name="twitter:image" content="${safeImageUrl}" />`
+    : "";
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Marketplace Listing #${listingId}</title>
+    <title>${safePageTitle}</title>
+    <meta name="description" content="${safeMetaDescription}" />
+    <link rel="canonical" href="${safeCanonicalUrl}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="10Blocuri" />
+    <meta property="og:title" content="${safeMetaTitle}" />
+    <meta property="og:description" content="${safeMetaDescription}" />
+    <meta property="og:url" content="${safeCanonicalUrl}" />${imageMetaTags}
+    <meta name="twitter:card" content="${safeImageUrl ? "summary_large_image" : "summary"}" />
+    <meta name="twitter:title" content="${safeMetaTitle}" />
+    <meta name="twitter:description" content="${safeMetaDescription}" />
     <style>
       :root {
         --bg: #f8fafc;
@@ -1121,7 +1230,7 @@ function buildListingHtml(listingId) {
 </html>`;
 }
 
-export async function GET(_request, context) {
+export async function GET(request, context) {
   const params = await Promise.resolve(context?.params || {});
   const listingId = Number(params.id || 0);
   if (!Number.isInteger(listingId) || listingId <= 0) {
@@ -1131,7 +1240,22 @@ export async function GET(_request, context) {
     });
   }
 
-  return new Response(buildListingHtml(listingId), {
+  const origin = (() => {
+    try {
+      return new URL(request?.url || "https://10blocuri.com").origin;
+    } catch {
+      return "https://10blocuri.com";
+    }
+  })();
+
+  let listing = null;
+  try {
+    listing = await getListingShareMeta(listingId);
+  } catch {
+    listing = null;
+  }
+
+  return new Response(buildListingHtml(listingId, buildShareMeta(listingId, listing, origin)), {
     status: 200,
     headers: {
       "content-type": "text/html; charset=utf-8",
