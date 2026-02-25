@@ -2,6 +2,12 @@ import { query } from "../../../../lib/db.js";
 
 export const runtime = "nodejs";
 
+const VERCEL_ANALYTICS_SNIPPET = `
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>`;
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -1226,6 +1232,7 @@ function buildListingHtml(listingId, meta = {}) {
       applyStaticIcons();
       loadListing();
     </script>
+${VERCEL_ANALYTICS_SNIPPET}
   </body>
 </html>`;
 }

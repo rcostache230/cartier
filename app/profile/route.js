@@ -1,5 +1,11 @@
 export const runtime = "nodejs";
 
+const VERCEL_ANALYTICS_SNIPPET = `
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>`;
+
 function profileHtml() {
   return `<!doctype html>
 <html lang="en">
@@ -1727,6 +1733,7 @@ function profileHtml() {
 
       boot();
     </script>
+${VERCEL_ANALYTICS_SNIPPET}
   </body>
 </html>`;
 }

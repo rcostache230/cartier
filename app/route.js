@@ -3,10 +3,26 @@ import path from "node:path";
 
 export const runtime = "nodejs";
 
+const VERCEL_ANALYTICS_SNIPPET = `
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+`;
+
+function injectVercelAnalytics(html) {
+  if (typeof html !== "string") return html;
+  if (html.includes("/_vercel/insights/script.js")) return html;
+  if (html.includes("</body>")) {
+    return html.replace("</body>", `${VERCEL_ANALYTICS_SNIPPET}\n</body>`);
+  }
+  return `${html}\n${VERCEL_ANALYTICS_SNIPPET}`;
+}
+
 export async function GET() {
   const htmlPath = path.join(process.cwd(), "api", "templates", "index.html");
   const html = await readFile(htmlPath, "utf8");
-  return new Response(html, {
+  return new Response(injectVercelAnalytics(html), {
     status: 200,
     headers: {
       "content-type": "text/html; charset=utf-8",
