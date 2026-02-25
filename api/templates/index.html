@@ -6816,6 +6816,8 @@
         marketplace: "marketplaceModule",
         avizier: "avizierModule",
         voting: "votingModule",
+        contacts: "moduleContacts",
+        contacte: "moduleContacts",
       };
       const MODULE_ID_TO_TITLE = {
         parkingModule: "Parcare",
@@ -8444,6 +8446,10 @@
       function applyRequestedModuleFromQuery() {
         const moduleId = requestedModuleFromQuery();
         if (!moduleId) return;
+        if (moduleId === "moduleContacts") {
+          showContacts();
+          return;
+        }
         openModule(moduleId);
       }
 
