@@ -343,31 +343,30 @@ const RecomandariModule = (() => {
     const zone = document.getElementById('recAdminZone');
     if (!zone) return;
     const adminAllowed = isAdminUser();
+    if (!adminAllowed) {
+      zone.style.display = 'none';
+      return;
+    }
     zone.style.display = 'block';
 
     const listEl = document.getElementById('recCatManageList');
     if (!listEl) return;
 
-    if (adminAllowed) {
-      const rows = sortCategories(categories).map((c) => '' +
-        '<div class="rec-cat-manage-row" id="cat-admin-row-' + c.id + '">' +
-        '  <span class="cat-label">' + esc(c.icon) + ' ' + esc(c.name) + '</span>' +
-        '  <button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.startEditCat(' + c.id + ')">✏</button>' +
-        '  <button class="btn btn-danger btn-sm" type="button" onclick="RecomandariModule.delCat(' + c.id + ')">🗑</button>' +
-        '</div>'
-      );
-      listEl.innerHTML = rows.length ? rows.join('') : '<p style="font-size:13px;color:var(--text-muted);padding:8px">Nicio categorie.</p>';
-    } else {
-      const user = getUser() || {};
-      listEl.innerHTML = '<p style="font-size:13px;color:var(--text-muted);padding:8px">Doar admin poate modifica categorii. User curent: <b>' + esc(user.username || '-') + '</b> · role=<b>' + esc(user.role || '-') + '</b>.</p>';
-    }
+    const rows = sortCategories(categories).map((c) => '' +
+      '<div class="rec-cat-manage-row" id="cat-admin-row-' + c.id + '">' +
+      '  <span class="cat-label">' + esc(c.icon) + ' ' + esc(c.name) + '</span>' +
+      '  <button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.startEditCat(' + c.id + ')">✏</button>' +
+      '  <button class="btn btn-danger btn-sm" type="button" onclick="RecomandariModule.delCat(' + c.id + ')">🗑</button>' +
+      '</div>'
+    );
+    listEl.innerHTML = rows.length ? rows.join('') : '<p style="font-size:13px;color:var(--text-muted);padding:8px">Nicio categorie.</p>';
 
     const iconInput = document.getElementById('recNewCatIcon');
     const nameInput = document.getElementById('recNewCatName');
     const addBtn = zone.querySelector('.rec-new-cat-form .btn');
-    if (iconInput) iconInput.disabled = !adminAllowed;
-    if (nameInput) nameInput.disabled = !adminAllowed;
-    if (addBtn) addBtn.disabled = !adminAllowed;
+    if (iconInput) iconInput.disabled = false;
+    if (nameInput) nameInput.disabled = false;
+    if (addBtn) addBtn.disabled = false;
     renderNewCategoryIconPicker();
   }
 
