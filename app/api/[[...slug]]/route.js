@@ -324,6 +324,34 @@ function mapContactItem(row) {
   };
 }
 
+function mapRecCategory(row) {
+  return {
+    id: Number(row.id),
+    name: String(row.name),
+    icon: String(row.icon || "📌"),
+    display_order: Number(row.display_order || 0),
+  };
+}
+
+function mapRecommendation(row) {
+  const createdAt = row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at || "");
+  const updatedAt = row.updated_at instanceof Date ? row.updated_at.toISOString() : String(row.updated_at || "");
+  return {
+    id: Number(row.id),
+    category_id: row.category_id == null ? null : Number(row.category_id),
+    name: String(row.name),
+    area: String(row.area || ""),
+    phone: String(row.phone || ""),
+    website: String(row.website || ""),
+    rating: Number(row.rating || 0),
+    why: String(row.why || ""),
+    added_by: String(row.added_by || ""),
+    building: String(row.building || ""),
+    created_at: createdAt,
+    updated_at: updatedAt,
+  };
+}
+
 async function getUserById(userId) {
   const result = await query(
     `
@@ -2216,6 +2244,408 @@ async function deleteContactItem(contactId) {
   return { deleted: true, contact_id: Number(deleted.rows[0].id) };
 }
 
+function normalizeRecCategoryPayload(payload, { partial = false } = {}) {
+  if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+    throw new AppError(400, "invalid payload");
+  }
+
+  const hasName = Object.prototype.hasOwnProperty.call(payload, "name");
+  const hasIcon = Object.prototype.hasOwnProperty.call(payload, "icon");
+  const hasDisplayOrder = Object.prototype.hasOwnProperty.call(payload, "display_order");
+  if (partial && !hasName && !hasIcon && !hasDisplayOrder) {
+    throw new AppError(400, "at least one field is required");
+  }
+
+  let name = null;
+  if (!partial || hasName) {
+    name = String(payload.name || "").trim();
+    if (!name) throw new AppError(400, "category name is required");
+    if (name.length > 100) throw new AppError(400, "category name must be at most 100 characters");
+  }
+
+  let icon = null;
+  if (!partial || hasIcon) {
+    icon = String(payload.icon || "📌").trim() || "📌";
+    if (icon.length > 10) throw new AppError(400, "category icon must be at most 10 characters");
+  }
+
+  let displayOrder = null;
+  if (hasDisplayOrder || !partial) {
+    if (payload.display_order == null || payload.display_order === "") {
+      displayOrder = null;
+    } else {
+      const parsed = Number(payload.display_order);
+      if (!Number.isInteger(parsed)) {
+        throw new AppError(400, "display_order must be an integer");
+      }
+      displayOrder = parsed;
+    }
+  }
+
+  return {
+    name,
+    icon,
+    display_order: displayOrder,
+  };
+}
+
+function normalizeRecommendationPayload(payload, { partial = false } = {}) {
+  if (typeof payload !== "object" || payload == null || Array.isArray(payload)) {
+    throw new AppError(400, "invalid payload");
+  }
+
+  const keys = ["category_id", "name", "area", "phone", "website", "rating", "why", "building"];
+  const hasAnyField = keys.some((key) => Object.prototype.hasOwnProperty.call(payload, key));
+  if (partial && !hasAnyField) {
+    throw new AppError(400, "at least one field is required");
+  }
+
+  let categoryId = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "category_id")) {
+    if (payload.category_id == null || payload.category_id === "") {
+      categoryId = null;
+    } else {
+      const parsed = Number(payload.category_id);
+      if (!Number.isInteger(parsed) || parsed <= 0) {
+        throw new AppError(400, "category_id must be a valid integer");
+      }
+      categoryId = parsed;
+    }
+  }
+
+  let name = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "name")) {
+    name = String(payload.name || "").trim();
+    if (!name) throw new AppError(400, "name is required");
+    if (name.length > 150) throw new AppError(400, "name must be at most 150 characters");
+  }
+
+  let area = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "area")) {
+    area = String(payload.area || "").trim();
+    if (area.length > 100) throw new AppError(400, "area must be at most 100 characters");
+  }
+
+  let phone = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "phone")) {
+    phone = String(payload.phone || "").trim();
+    if (phone.length > 30) throw new AppError(400, "phone must be at most 30 characters");
+  }
+
+  let website = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "website")) {
+    website = String(payload.website || "").trim();
+    if (website.length > 500) throw new AppError(400, "website must be at most 500 characters");
+  }
+
+  let rating = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "rating")) {
+    rating = Number(payload.rating);
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      throw new AppError(400, "rating must be an integer between 1 and 5");
+    }
+  }
+
+  let why = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "why")) {
+    why = String(payload.why || "").trim();
+    if (!why) throw new AppError(400, "why is required");
+    if (why.length < 10) throw new AppError(400, "why must contain at least 10 characters");
+  }
+
+  let building = null;
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, "building")) {
+    building = String(payload.building || "").trim();
+    if (building.length > 20) throw new AppError(400, "building must be at most 20 characters");
+  }
+
+  return {
+    category_id: categoryId,
+    name,
+    area,
+    phone,
+    website,
+    rating,
+    why,
+    building,
+  };
+}
+
+async function ensureRecCategoryExists(categoryId, client = null) {
+  if (categoryId == null) return;
+  const dbResult = client
+    ? await client.query("SELECT id FROM rec_categories WHERE id = $1", [categoryId])
+    : await query("SELECT id FROM rec_categories WHERE id = $1", [categoryId]);
+  if (!dbResult.rowCount) {
+    throw new AppError(404, "recommendation category not found");
+  }
+}
+
+async function listRecCategories() {
+  const result = await query(
+    `
+      SELECT id, name, icon, display_order
+      FROM rec_categories
+      ORDER BY display_order ASC, id ASC
+    `
+  );
+  return result.rows.map(mapRecCategory);
+}
+
+async function createRecCategory(payload) {
+  const cleaned = normalizeRecCategoryPayload(payload, { partial: false });
+  const inserted = await query(
+    `
+      INSERT INTO rec_categories (name, icon, display_order, updated_at)
+      VALUES (
+        $1,
+        $2,
+        COALESCE($3, (SELECT COALESCE(MAX(display_order), 0) + 1 FROM rec_categories)),
+        NOW()
+      )
+      RETURNING id, name, icon, display_order
+    `,
+    [cleaned.name, cleaned.icon, cleaned.display_order]
+  );
+  return mapRecCategory(inserted.rows[0]);
+}
+
+async function updateRecCategory(categoryId, payload) {
+  const cleaned = normalizeRecCategoryPayload(payload, { partial: true });
+  const existing = await query(
+    `
+      SELECT id, name, icon, display_order
+      FROM rec_categories
+      WHERE id = $1
+    `,
+    [categoryId]
+  );
+  if (!existing.rowCount) throw new AppError(404, "recommendation category not found");
+  const row = existing.rows[0];
+
+  const nextName = cleaned.name == null ? String(row.name) : cleaned.name;
+  const nextIcon = cleaned.icon == null ? String(row.icon || "📌") : cleaned.icon;
+  const nextDisplayOrder = cleaned.display_order == null ? Number(row.display_order || 0) : cleaned.display_order;
+
+  const updated = await query(
+    `
+      UPDATE rec_categories
+      SET name = $1,
+          icon = $2,
+          display_order = $3,
+          updated_at = NOW()
+      WHERE id = $4
+      RETURNING id, name, icon, display_order
+    `,
+    [nextName, nextIcon, nextDisplayOrder, categoryId]
+  );
+  return mapRecCategory(updated.rows[0]);
+}
+
+async function deleteRecCategory(categoryId) {
+  const deleted = await query("DELETE FROM rec_categories WHERE id = $1 RETURNING id", [categoryId]);
+  if (!deleted.rowCount) throw new AppError(404, "recommendation category not found");
+  return { deleted: true, category_id: Number(deleted.rows[0].id) };
+}
+
+async function listRecommendations({ categoryId = null } = {}) {
+  const hasCategory = categoryId != null;
+  const result = await query(
+    `
+      SELECT
+        id,
+        category_id,
+        name,
+        area,
+        phone,
+        website,
+        rating,
+        why,
+        added_by,
+        building,
+        created_at,
+        updated_at
+      FROM recommendations
+      ${hasCategory ? "WHERE category_id = $1" : ""}
+      ORDER BY created_at DESC, id DESC
+    `,
+    hasCategory ? [categoryId] : []
+  );
+  return result.rows.map(mapRecommendation);
+}
+
+async function createRecommendation({ actorUser, payload }) {
+  const cleaned = normalizeRecommendationPayload(payload, { partial: false });
+  await ensureRecCategoryExists(cleaned.category_id);
+
+  const addedBy = normalizeUsername(actorUser.username);
+  const fallbackBuilding =
+    actorUser.building_number == null || Number(actorUser.building_number) <= 0
+      ? ""
+      : String(actorUser.building_number);
+  const building = cleaned.building == null || cleaned.building === "" ? fallbackBuilding : cleaned.building;
+
+  const inserted = await query(
+    `
+      INSERT INTO recommendations (
+        category_id,
+        name,
+        area,
+        phone,
+        website,
+        rating,
+        why,
+        added_by,
+        building,
+        updated_at
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+      RETURNING
+        id,
+        category_id,
+        name,
+        area,
+        phone,
+        website,
+        rating,
+        why,
+        added_by,
+        building,
+        created_at,
+        updated_at
+    `,
+    [
+      cleaned.category_id,
+      cleaned.name,
+      cleaned.area || "",
+      cleaned.phone || "",
+      cleaned.website || "",
+      cleaned.rating,
+      cleaned.why,
+      addedBy,
+      building || "",
+    ]
+  );
+
+  return mapRecommendation(inserted.rows[0]);
+}
+
+async function updateRecommendation({ actorUser, recommendationId, payload }) {
+  const cleaned = normalizeRecommendationPayload(payload, { partial: true });
+  return withTransaction(async (client) => {
+    const existing = await client.query(
+      `
+        SELECT
+          id,
+          category_id,
+          name,
+          area,
+          phone,
+          website,
+          rating,
+          why,
+          added_by,
+          building,
+          created_at,
+          updated_at
+        FROM recommendations
+        WHERE id = $1
+        FOR UPDATE
+      `,
+      [recommendationId]
+    );
+    if (!existing.rowCount) throw new AppError(404, "recommendation not found");
+    const row = existing.rows[0];
+
+    const isOwner = normalizeUsername(row.added_by) === normalizeUsername(actorUser.username);
+    if (!isOwner && actorUser.role !== "admin") {
+      throw new AppError(403, "only the owner or admin can edit this recommendation");
+    }
+
+    const nextCategoryId =
+      cleaned.category_id === null && Object.prototype.hasOwnProperty.call(payload, "category_id")
+        ? null
+        : cleaned.category_id == null
+          ? (row.category_id == null ? null : Number(row.category_id))
+          : cleaned.category_id;
+    if (nextCategoryId !== null) {
+      await ensureRecCategoryExists(nextCategoryId, client);
+    }
+
+    const nextName = cleaned.name == null ? String(row.name) : cleaned.name;
+    const nextArea = cleaned.area == null ? String(row.area || "") : cleaned.area;
+    const nextPhone = cleaned.phone == null ? String(row.phone || "") : cleaned.phone;
+    const nextWebsite = cleaned.website == null ? String(row.website || "") : cleaned.website;
+    const nextRating = cleaned.rating == null ? Number(row.rating) : cleaned.rating;
+    const nextWhy = cleaned.why == null ? String(row.why || "") : cleaned.why;
+    const nextBuilding = cleaned.building == null ? String(row.building || "") : cleaned.building;
+
+    const updated = await client.query(
+      `
+        UPDATE recommendations
+        SET category_id = $1,
+            name = $2,
+            area = $3,
+            phone = $4,
+            website = $5,
+            rating = $6,
+            why = $7,
+            building = $8,
+            updated_at = NOW()
+        WHERE id = $9
+        RETURNING
+          id,
+          category_id,
+          name,
+          area,
+          phone,
+          website,
+          rating,
+          why,
+          added_by,
+          building,
+          created_at,
+          updated_at
+      `,
+      [
+        nextCategoryId,
+        nextName,
+        nextArea,
+        nextPhone,
+        nextWebsite,
+        nextRating,
+        nextWhy,
+        nextBuilding,
+        recommendationId,
+      ]
+    );
+    return mapRecommendation(updated.rows[0]);
+  });
+}
+
+async function deleteRecommendation({ actorUser, recommendationId }) {
+  return withTransaction(async (client) => {
+    const existing = await client.query(
+      `
+        SELECT id, added_by
+        FROM recommendations
+        WHERE id = $1
+        FOR UPDATE
+      `,
+      [recommendationId]
+    );
+    if (!existing.rowCount) throw new AppError(404, "recommendation not found");
+    const row = existing.rows[0];
+    const isOwner = normalizeUsername(row.added_by) === normalizeUsername(actorUser.username);
+    if (!isOwner && actorUser.role !== "admin") {
+      throw new AppError(403, "only the owner or admin can delete this recommendation");
+    }
+
+    await client.query("DELETE FROM recommendations WHERE id = $1", [recommendationId]);
+    return { deleted: true, recommendation_id: recommendationId };
+  });
+}
+
 function parseOptionalInt(value, fieldName) {
   if (value == null || value === "") return null;
   const parsed = Number(value);
@@ -3015,6 +3445,14 @@ async function handleRequest(request, slug) {
         contacts_categories_create: "POST /api/contacts/categories",
         contacts_categories_update: "PUT /api/contacts/categories/<category_id>",
         contacts_categories_delete: "DELETE /api/contacts/categories/<category_id>",
+        rec_categories_list: "GET /api/rec-categories",
+        rec_categories_create: "POST /api/rec-categories",
+        rec_categories_update: "PUT /api/rec-categories/<category_id>",
+        rec_categories_delete: "DELETE /api/rec-categories/<category_id>",
+        recommendations_list: "GET /api/recommendations",
+        recommendations_create: "POST /api/recommendations",
+        recommendations_update: "PUT /api/recommendations/<recommendation_id>",
+        recommendations_delete: "DELETE /api/recommendations/<recommendation_id>",
         polls: "GET /api/polls",
         poll_create: "POST /api/polls",
         poll_vote: "POST /api/polls/<poll_id>/vote",
@@ -3372,6 +3810,70 @@ async function handleRequest(request, slug) {
       throw new AppError(400, "category_id must be a valid integer");
     }
     return json(await deleteContactsCategory(categoryId), 200);
+  }
+
+  if (method === "GET" && path.length === 1 && path[0] === "rec-categories") {
+    await requireUser(request);
+    return json(await listRecCategories(), 200);
+  }
+
+  if (method === "POST" && path.length === 1 && path[0] === "rec-categories") {
+    await requireAdmin(request);
+    const payload = await parseJsonBody(request);
+    return json(await createRecCategory(payload), 201);
+  }
+
+  if (method === "PUT" && path.length === 2 && path[0] === "rec-categories") {
+    await requireAdmin(request);
+    const categoryId = Number(path[1]);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      throw new AppError(400, "category_id must be a valid integer");
+    }
+    const payload = await parseJsonBody(request);
+    return json(await updateRecCategory(categoryId, payload), 200);
+  }
+
+  if (method === "DELETE" && path.length === 2 && path[0] === "rec-categories") {
+    await requireAdmin(request);
+    const categoryId = Number(path[1]);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      throw new AppError(400, "category_id must be a valid integer");
+    }
+    return json(await deleteRecCategory(categoryId), 200);
+  }
+
+  if (method === "GET" && path.length === 1 && path[0] === "recommendations") {
+    await requireUser(request);
+    const categoryId = parseOptionalInt(request.nextUrl.searchParams.get("category"), "category");
+    if (categoryId != null && categoryId <= 0) {
+      throw new AppError(400, "category must be a valid integer");
+    }
+    return json(await listRecommendations({ categoryId }), 200);
+  }
+
+  if (method === "POST" && path.length === 1 && path[0] === "recommendations") {
+    const user = await requireUser(request);
+    const payload = await parseJsonBody(request);
+    return json(await createRecommendation({ actorUser: user, payload }), 201);
+  }
+
+  if (method === "PUT" && path.length === 2 && path[0] === "recommendations") {
+    const user = await requireUser(request);
+    const recommendationId = Number(path[1]);
+    if (!Number.isInteger(recommendationId) || recommendationId <= 0) {
+      throw new AppError(400, "recommendation_id must be a valid integer");
+    }
+    const payload = await parseJsonBody(request);
+    return json(await updateRecommendation({ actorUser: user, recommendationId, payload }), 200);
+  }
+
+  if (method === "DELETE" && path.length === 2 && path[0] === "recommendations") {
+    const user = await requireUser(request);
+    const recommendationId = Number(path[1]);
+    if (!Number.isInteger(recommendationId) || recommendationId <= 0) {
+      throw new AppError(400, "recommendation_id must be a valid integer");
+    }
+    return json(await deleteRecommendation({ actorUser: user, recommendationId }), 200);
   }
 
   if (method === "POST" && path.length === 1 && path[0] === "slots") {
