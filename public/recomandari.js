@@ -52,6 +52,13 @@ const RecomandariModule = (() => {
     return currentUser.building || currentUser.building_number || '';
   }
 
+  function normalizeWebsite(raw) {
+    const value = String(raw || '').trim();
+    if (!value) return '';
+    if (/^https?:\/\//i.test(value)) return value;
+    return 'https://' + value;
+  }
+
   function iconPickerHtml(targetId, activeIcon) {
     return ICON_CHOICES.map((icon) => {
       const activeClass = (activeIcon || '') === icon ? 'active' : '';
@@ -151,38 +158,79 @@ const RecomandariModule = (() => {
   }
 
   // ── Render ────────────────────────────────────────────
-  function renderTabs() {
-    const el = document.getElementById('recCategoryTabs');
+  function sortCategories(list) {
+    return (list || []).slice().sort((a, b) => {
+      const ao = Number(a.display_order || 0);
+      const bo = Number(b.display_order || 0);
+      if (ao !== bo) return ao - bo;
+      return String(a.name || '').localeCompare(String(b.name || ''), 'ro', { sensitivity: 'base' });
+    });
+  }
+
+  function renderCategoryFilter() {
+    const el = document.getElementById('recCategoryFilter');
     if (!el) return;
-    const allBtn = '\n      <button class="rec-cat-tab ' + (!activeCategory ? 'active' : '') + '" type="button" onclick="RecomandariModule.filter(null)">📋 Toate</button>';
-    const catBtns = categories.map((c) => (
-      '\n      <button class="rec-cat-tab ' + (activeCategory === c.id ? 'active' : '') + '" type="button" onclick="RecomandariModule.filter(' + c.id + ')">' +
-        esc(c.icon) + ' ' + esc(c.name) +
-      '</button>'
-    )).join('');
-    el.innerHTML = allBtn + catBtns;
+    const options = ['<option value="">📋 Toate categoriile</option>'];
+    sortCategories(categories).forEach((c) => {
+      options.push('<option value="' + c.id + '" ' + (activeCategory === c.id ? 'selected' : '') + '>' + esc(c.icon) + ' ' + esc(c.name) + '</option>');
+    });
+    el.innerHTML = options.join('');
+    el.value = activeCategory ? String(activeCategory) : '';
+  }
+
+  function renderCategorySection(cat, items) {
+    const safeName = cat && cat.name ? cat.name : 'Fără categorie';
+    const safeIcon = cat && cat.icon ? cat.icon : '📌';
+    const color = getCatColor(safeName);
+    return '\n      <section class="rec-category-group" style="--rec-color:' + color + '">' +
+      '\n        <div class="rec-category-group-header">' +
+      '\n          <div class="rec-category-group-title">' + esc(safeIcon) + ' ' + esc(safeName) + '</div>' +
+      '\n          <span class="rec-category-group-count">' + items.length + '</span>' +
+      '\n        </div>' +
+      '\n        <div class="rec-category-group-body">' + items.map(renderCard).join('') + '</div>' +
+      '\n      </section>';
   }
 
   function renderList() {
     const el = document.getElementById('recList');
     if (!el) return;
-    const list = activeCategory ? allRecs.filter((r) => r.category_id === activeCategory) : allRecs;
 
-    if (!list.length) {
-      const catName = activeCategory
-        ? (categories.find((c) => c.id === activeCategory) || {}).name || ''
-        : '';
-      el.innerHTML = '\n        <div class="rec-empty">\n          <div class="rec-empty-icon">💡</div>\n          <div class="rec-empty-title">' +
-            (catName ? ('Nicio recomandare pentru &quot;' + esc(catName) + '&quot; încă.') : 'Nicio recomandare adăugată încă.') +
+    if (activeCategory) {
+      const list = allRecs.filter((r) => r.category_id === activeCategory);
+      if (!list.length) {
+        const catName = (categories.find((c) => c.id === activeCategory) || {}).name || '';
+        el.innerHTML = '\n        <div class="rec-empty">\n          <div class="rec-empty-icon">💡</div>\n          <div class="rec-empty-title">' +
+          (catName ? ('Nicio recomandare pentru &quot;' + esc(catName) + '&quot; încă.') : 'Nicio recomandare adăugată încă.') +
           '</div>\n          <div class="rec-empty-sub">Fii primul care recomandă ceva vecinilor!</div>\n        </div>';
+        return;
+      }
+      el.innerHTML = list.map(renderCard).join('');
       return;
     }
-    el.innerHTML = list.map(renderCard).join('');
+
+    if (!allRecs.length) {
+      el.innerHTML = '\n        <div class="rec-empty">\n          <div class="rec-empty-icon">💡</div>\n          <div class="rec-empty-title">Nicio recomandare adăugată încă.</div>\n          <div class="rec-empty-sub">Fii primul care recomandă ceva vecinilor!</div>\n        </div>';
+      return;
+    }
+
+    const categoryIds = new Set(categories.map((c) => c.id));
+    const sections = [];
+    sortCategories(categories).forEach((cat) => {
+      const catItems = allRecs.filter((r) => r.category_id === cat.id);
+      if (catItems.length) sections.push(renderCategorySection(cat, catItems));
+    });
+
+    const uncategorized = allRecs.filter((r) => !r.category_id || !categoryIds.has(r.category_id));
+    if (uncategorized.length) {
+      sections.push(renderCategorySection({ id: null, name: 'Fără categorie', icon: '📌' }, uncategorized));
+    }
+
+    el.innerHTML = sections.join('');
   }
 
   function renderCard(rec) {
     const cat = categories.find((c) => c.id === rec.category_id);
-    const catName = cat ? cat.name : 'Altele';
+    const catName = cat ? cat.name : 'Fără categorie';
     const catIcon = cat ? cat.icon : '📌';
     const color = getCatColor(catName);
     const isOwn = currentUser && currentUser.username === rec.added_by;
@@ -191,6 +239,10 @@ const RecomandariModule = (() => {
 
     const phonePart = rec.phone
       ? '<a href="tel:' + esc(rec.phone) + '" class="rec-phone-btn">📞 ' + esc(rec.phone) + '</a>'
+      : '';
+    const webUrl = normalizeWebsite(rec.website || '');
+    const websitePart = webUrl
+      ? '<a href="' + esc(webUrl) + '" class="rec-web-btn" target="_blank" rel="noopener noreferrer">🌐 Website</a>'
       : '';
 
     const adminPart = canEdit ?
@@ -203,7 +255,7 @@ const RecomandariModule = (() => {
               (rec.area ? ('<div class="rec-area">📍 ' + esc(rec.area) + '</div>') : '') +
           '</div>\n          <div class="rec-stars">' + starsHtml(rec.rating) + '</div>\n        </div>\n        <div class="rec-badges">\n          <span class="rec-badge">' + esc(catIcon) + ' ' + esc(catName) + '</span>\n        </div>\n        <div class="rec-why">' + esc(rec.why) + '</div>\n        <div class="rec-card-footer">\n          <div class="rec-meta">\n            <span>👤 ' + esc(rec.added_by) + '</span>' +
             (rec.building ? ('<span>· Bloc ' + esc(rec.building) + '</span>') : '') +
-            '<span>· ' + timeStr(rec.created_at) + '</span>\n          </div>\n          <div class="rec-actions">' + phonePart + '</div>\n        </div>' +
+            '<span>· ' + timeStr(rec.created_at) + '</span>\n          </div>\n          <div class="rec-actions">' + phonePart + websitePart + '</div>\n        </div>' +
         adminPart +
       '\n      </div>';
   }
@@ -222,7 +274,7 @@ const RecomandariModule = (() => {
       'style="font-size:28px;cursor:pointer;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;opacity:' + (i <= editRating ? '1' : '0.25') + '">⭐</span>'
     )).join('');
 
-    return '\n      <div class="rec-card" id="rec-card-' + rec.id + '" style="--rec-color:' + color + ';border-color:var(--accent-primary)">\n        <div class="rec-edit-form">\n          <div>\n            <label>Nume *</label>\n            <input type="text" id="eRecName" value="' + esc(rec.name) + '" placeholder="Numele locului sau persoanei">\n          </div>\n          <div>\n            <label>Categorie *</label>\n            <select id="eRecCat">' + catOptions + '</select>\n          </div>\n          <div>\n            <label>Zonă / Adresă</label>\n            <input type="text" id="eRecArea" value="' + esc(rec.area || '') + '" placeholder="ex: Bd. Unirii, Sector 3">\n          </div>\n          <div>\n            <label>Telefon</label>\n            <input type="tel" id="eRecPhone" value="' + esc(rec.phone || '') + '" placeholder="07xx xxx xxx">\n          </div>\n          <div>\n            <label>Rating *</label>\n            <div style="display:flex;gap:4px">' + editStars + '</div>\n          </div>\n          <div>\n            <label>De ce recomanzi? *</label>\n            <textarea id="eRecWhy">' + esc(rec.why) + '</textarea>\n          </div>\n          <div class="rec-edit-actions">\n            <button class="btn btn-primary" type="button" onclick="RecomandariModule.saveEdit(' + rec.id + ')">✓ Salvează</button>\n            <button class="btn btn-secondary" type="button" onclick="RecomandariModule.load()">Anulează</button>\n          </div>\n        </div>\n      </div>';
+    return '\n      <div class="rec-card" id="rec-card-' + rec.id + '" style="--rec-color:' + color + ';border-color:var(--accent-primary)">\n        <div class="rec-edit-form">\n          <div>\n            <label>Nume *</label>\n            <input type="text" id="eRecName" value="' + esc(rec.name) + '" placeholder="Numele locului sau persoanei">\n          </div>\n          <div>\n            <label>Categorie *</label>\n            <select id="eRecCat">' + catOptions + '</select>\n          </div>\n          <div>\n            <label>Zonă / Adresă</label>\n            <input type="text" id="eRecArea" value="' + esc(rec.area || '') + '" placeholder="ex: Bd. Unirii, Sector 3">\n          </div>\n          <div>\n            <label>Telefon</label>\n            <input type="tel" id="eRecPhone" value="' + esc(rec.phone || '') + '" placeholder="07xx xxx xxx">\n          </div>\n          <div>\n            <label>Website</label>\n            <input type="url" id="eRecWebsite" value="' + esc(rec.website || '') + '" placeholder="https://exemplu.ro">\n          </div>\n          <div>\n            <label>Rating *</label>\n            <div style="display:flex;gap:4px">' + editStars + '</div>\n          </div>\n          <div>\n            <label>De ce recomanzi? *</label>\n            <textarea id="eRecWhy">' + esc(rec.why) + '</textarea>\n          </div>\n          <div class="rec-edit-actions">\n            <button class="btn btn-primary" type="button" onclick="RecomandariModule.saveEdit(' + rec.id + ')">✓ Salvează</button>\n            <button class="btn btn-secondary" type="button" onclick="RecomandariModule.load()">Anulează</button>\n          </div>\n        </div>\n      </div>';
   }
 
   function populateSelect() {
@@ -264,7 +316,7 @@ const RecomandariModule = (() => {
       allRecs = Array.isArray(data[0]) ? data[0] : [];
       categories = Array.isArray(data[1]) ? data[1] : [];
       ensureValidActiveCategory();
-      renderTabs();
+      renderCategoryFilter();
       renderList();
       populateSelect();
       renderAdminPanel();
@@ -277,9 +329,16 @@ const RecomandariModule = (() => {
 
   // ── Public: filter ────────────────────────────────────
   function filter(catId) {
-    activeCategory = catId;
-    renderTabs();
+    const parsed = Number(catId);
+    activeCategory = Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+    renderCategoryFilter();
     renderList();
+  }
+
+  function filterFromSelect() {
+    const sel = document.getElementById('recCategoryFilter');
+    const val = sel ? sel.value : '';
+    filter(val ? parseInt(val, 10) : null);
   }
 
   // ── Public: star rating (add form) ───────────────────
@@ -325,6 +384,7 @@ const RecomandariModule = (() => {
     const catId = parseInt(((document.getElementById('recFormCategory') || {}).value || ''), 10);
     const area = (document.getElementById('recFormArea') || {}).value ? document.getElementById('recFormArea').value.trim() : '';
     const phone = (document.getElementById('recFormPhone') || {}).value ? document.getElementById('recFormPhone').value.trim() : '';
+    const website = normalizeWebsite((document.getElementById('recFormWebsite') || {}).value || '');
     const why = (document.getElementById('recFormWhy') || {}).value ? document.getElementById('recFormWhy').value.trim() : '';
 
     if (!name) { showToast('Introdu numele locului sau persoanei.', 'warning'); return; }
@@ -339,7 +399,7 @@ const RecomandariModule = (() => {
     }
 
     try {
-      await apiCreateRec({
+      const payload = {
         name: name,
         category_id: catId,
         area: area,
@@ -348,9 +408,11 @@ const RecomandariModule = (() => {
         rating: selectedRating,
         added_by: currentUser.username,
         building: getCurrentUserBuilding()
-      });
+      };
+      if (website) payload.website = website;
+      await apiCreateRec(payload);
 
-      ['recFormName', 'recFormArea', 'recFormPhone', 'recFormWhy'].forEach((id) => {
+      ['recFormName', 'recFormArea', 'recFormPhone', 'recFormWebsite', 'recFormWhy'].forEach((id) => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
@@ -385,6 +447,7 @@ const RecomandariModule = (() => {
     const catId = parseInt(((document.getElementById('eRecCat') || {}).value || ''), 10);
     const area = (document.getElementById('eRecArea') || {}).value ? document.getElementById('eRecArea').value.trim() : '';
     const phone = (document.getElementById('eRecPhone') || {}).value ? document.getElementById('eRecPhone').value.trim() : '';
+    const website = normalizeWebsite((document.getElementById('eRecWebsite') || {}).value || '');
     const why = (document.getElementById('eRecWhy') || {}).value ? document.getElementById('eRecWhy').value.trim() : '';
 
     if (!name) { showToast('Numele nu poate fi gol.', 'warning'); return; }
@@ -393,14 +456,16 @@ const RecomandariModule = (() => {
     if (!editRating) { showToast('Selectează un rating.', 'warning'); return; }
 
     try {
-      await apiUpdateRec(id, {
+      const payload = {
         name: name,
         category_id: catId,
         area: area,
         phone: phone,
         why: why,
         rating: editRating
-      });
+      };
+      if (website) payload.website = website;
+      await apiUpdateRec(id, payload);
       showToast('Recomandare actualizată.', 'success');
       editingRecId = null;
       await load();
@@ -489,6 +554,7 @@ const RecomandariModule = (() => {
   return {
     load: load,
     filter: filter,
+    filterFromSelect: filterFromSelect,
     setRating: setRating,
     hoverRating: hoverRating,
     resetHover: resetHover,

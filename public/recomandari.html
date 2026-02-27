@@ -4,7 +4,9 @@
       <nav class="breadcrumb">
         <a href="javascript:void(0)" onclick="showHome()">Home</a> › Recomandări
       </nav>
-      <h1 class="module-title">💡 Recomandări</h1>
+      <h1 class="module-title">
+        <i data-lucide="lightbulb" aria-hidden="true"></i>Recomandări
+      </h1>
       <p class="module-subtitle">
         Sfaturi de la vecini pentru restaurante, servicii și locuri utile din cartier.
       </p>
@@ -18,8 +20,11 @@
   </div>
 
   <div class="module-content-area">
-    <!-- Category filter tabs — rendered by JS -->
-    <div class="rec-category-tabs" id="recCategoryTabs"></div>
+    <!-- Category filter dropdown — rendered by JS -->
+    <div class="rec-filter-wrap">
+      <label for="recCategoryFilter">Filtrează după categorie</label>
+      <select id="recCategoryFilter" onchange="RecomandariModule.filterFromSelect()"></select>
+    </div>
 
     <!-- Add recommendation form (all residents) -->
     <div class="rec-form-card">
@@ -44,6 +49,11 @@
         <div class="rec-form-group">
           <label for="recFormPhone">Telefon (opțional)</label>
           <input type="tel" id="recFormPhone" placeholder="07xx xxx xxx">
+        </div>
+
+        <div class="rec-form-group">
+          <label for="recFormWebsite">Website (opțional)</label>
+          <input type="url" id="recFormWebsite" placeholder="ex: https://exemplu.ro">
         </div>
 
         <div class="rec-form-group full">
