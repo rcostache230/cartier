@@ -661,3 +661,7 @@ const RecomandariModule = (() => {
     pickCatIcon: pickCatIcon
   };
 })();
+
+if (typeof window !== 'undefined') {
+  window.RecomandariModule = RecomandariModule;
+}

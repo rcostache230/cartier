@@ -5623,7 +5623,7 @@
       }
     </style>
     <link rel="stylesheet" href="contacts.css">
-    <link rel="stylesheet" href="recomandari.css?v=20260227b">
+    <link rel="stylesheet" href="recomandari.css?v=20260227c">
   </head>
   <body>
     <aside id="sideRail" class="side-rail hidden" aria-label="Primary navigation">
@@ -6654,7 +6654,7 @@
         <!-- Recomandări module — recomandari.html injected here -->
         <div id="recomandariMount"></div>
         <script>
-          fetch('recomandari.html?v=20260227b', { cache: 'no-store' })
+          fetch('recomandari.html?v=20260227c', { cache: 'no-store' })
             .then(r => r.text())
             .then(html => {
               document.getElementById('recomandariMount').innerHTML = html;
@@ -6776,7 +6776,7 @@
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="contacts.js"></script>
-    <script src="recomandari.js?v=20260227b"></script>
+    <script src="recomandari.js?v=20260227c"></script>
     <script>
       const HELP_SEEN_KEY = "10blocuri_help_seen_v1";
       const THEME_PREF_KEY = "10blocuri_theme_pref_v1";
@@ -8509,11 +8509,23 @@
         if (moduleId === "votingModule") {
           refreshVoting().catch((error) => setStatus(error.message, true));
         }
-        if (moduleId === "moduleContacts" && window.ContactsModule && typeof window.ContactsModule.load === "function") {
-          window.ContactsModule.load();
+        if (moduleId === "moduleContacts") {
+          const contactsModuleRef =
+            (typeof ContactsModule !== "undefined" && ContactsModule) ||
+            (typeof window !== "undefined" && window.ContactsModule) ||
+            null;
+          if (contactsModuleRef && typeof contactsModuleRef.load === "function") {
+            contactsModuleRef.load();
+          }
         }
-        if (moduleId === "moduleRecomandari" && window.RecomandariModule && typeof window.RecomandariModule.load === "function") {
-          window.RecomandariModule.load();
+        if (moduleId === "moduleRecomandari") {
+          const recomandariModuleRef =
+            (typeof RecomandariModule !== "undefined" && RecomandariModule) ||
+            (typeof window !== "undefined" && window.RecomandariModule) ||
+            null;
+          if (recomandariModuleRef && typeof recomandariModuleRef.load === "function") {
+            recomandariModuleRef.load();
+          }
         }
         syncNavigationState();
         updateMobileFab();
