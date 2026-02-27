@@ -2659,6 +2659,7 @@
         --module-marketplace: #f59e0b;
         --module-voting: #8b5cf6;
         --module-avizier: #14b8a6;
+        --module-recomandari: #f97316;
         --module-profile: #64748b;
         --font-body: "Inter", system-ui, -apple-system, sans-serif;
         --font-display: "Inter", system-ui, -apple-system, sans-serif;
@@ -3148,6 +3149,10 @@
 
       .activity-item[data-mod="avizier"] {
         border-left-color: var(--module-avizier);
+      }
+
+      .activity-item[data-mod="recomandari"] {
+        border-left-color: var(--module-recomandari);
       }
 
       .activity-skeleton {
@@ -4257,6 +4262,11 @@
       .activity-item[data-mod="avizier"] .activity-dot {
         background: var(--module-avizier);
         box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15);
+      }
+
+      .activity-item[data-mod="recomandari"] .activity-dot {
+        background: var(--module-recomandari);
+        box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
       }
 
       .activity-item.activity-empty-state {
@@ -5623,7 +5633,7 @@
       }
     </style>
     <link rel="stylesheet" href="contacts.css">
-    <link rel="stylesheet" href="recomandari.css?v=20260227c">
+    <link rel="stylesheet" href="recomandari.css?v=20260227d">
   </head>
   <body>
     <aside id="sideRail" class="side-rail hidden" aria-label="Primary navigation">
@@ -6654,7 +6664,7 @@
         <!-- Recomandări module — recomandari.html injected here -->
         <div id="recomandariMount"></div>
         <script>
-          fetch('recomandari.html?v=20260227c', { cache: 'no-store' })
+          fetch('recomandari.html?v=20260227d', { cache: 'no-store' })
             .then(r => r.text())
             .then(html => {
               document.getElementById('recomandariMount').innerHTML = html;
@@ -6776,7 +6786,7 @@
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="contacts.js"></script>
-    <script src="recomandari.js?v=20260227c"></script>
+    <script src="recomandari.js?v=20260227d"></script>
     <script>
       const HELP_SEEN_KEY = "10blocuri_help_seen_v1";
       const THEME_PREF_KEY = "10blocuri_theme_pref_v1";
@@ -7132,6 +7142,7 @@
       let sidebarCollapsed = false;
       let homeActivityPage = 0;
       let homeActivityItemsCache = [];
+      let recommendationsActivityEntries = [];
       let pollWizardStep = 1;
       let pollUploadedAttachments = [];
       let pollUploadPromise = null;
@@ -7440,6 +7451,17 @@
             });
           });
 
+        newestByDate(recommendationsActivityEntries, (item) => item.created_at || item.updated_at)
+          .slice(0, 3)
+          .forEach((item) => {
+            activity.push({
+              module: "recomandari",
+              moduleId: "moduleRecomandari",
+              createdAt: item.created_at || item.updated_at,
+              text: `Recomandare nouă: ${item.name}${item.added_by ? ` (de ${item.added_by})` : ""}.`,
+            });
+          });
+
         return newestByDate(activity, (entry) => entry.createdAt).slice(0, 10);
       }
 
@@ -7460,6 +7482,7 @@
         if (moduleId === "marketplaceModule") return "marketplace";
         if (moduleId === "avizierModule") return "avizier";
         if (moduleId === "votingModule") return "voting";
+        if (moduleId === "moduleRecomandari") return "recomandari";
         return "global";
       }
 
@@ -9347,6 +9370,26 @@
         markModuleRefreshed("parking");
       }
 
+      async function refreshRecommendationsActivity({ refreshFeed = true } = {}) {
+        if (!currentUser) {
+          recommendationsActivityEntries = [];
+          if (refreshFeed) refreshHomeActivity();
+          return;
+        }
+        try {
+          const response = await fetch(`/api/recommendations?activity=1&_=${Date.now()}`, {
+            cache: "no-store",
+            headers: { Accept: "application/json" },
+          });
+          if (!response.ok) throw new Error("Failed to fetch recommendations activity");
+          const data = await response.json().catch(() => []);
+          recommendationsActivityEntries = Array.isArray(data) ? data : [];
+        } catch {
+          recommendationsActivityEntries = [];
+        }
+        if (refreshFeed) refreshHomeActivity();
+      }
+
       async function refreshAdminUsers() {
         if (!currentUser || currentUser.role !== "admin") return;
         const users = await api("/api/users");
@@ -10839,6 +10882,7 @@
           if (!currentModule || currentModule === "votingModule") {
             await withRefreshPulse(els.refreshPollsBtn, async () => refreshVoting());
           }
+          await refreshRecommendationsActivity({ refreshFeed: true });
         } catch {
           // silent auto-refresh errors to avoid interrupting user flow
         }
@@ -11261,6 +11305,7 @@
           marketplaceDashboardData = { active_listings: [], my_listings: [] };
           avizierAnnouncements = [];
           avizierEditingAnnouncementId = null;
+          recommendationsActivityEntries = [];
           homeActivityPage = 0;
           homeActivityItemsCache = [];
           moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
@@ -11302,6 +11347,7 @@
         marketplaceDashboardData = { active_listings: [], my_listings: [] };
         avizierAnnouncements = [];
         avizierEditingAnnouncementId = null;
+        recommendationsActivityEntries = [];
         homeActivityPage = 0;
         homeActivityItemsCache = [];
         moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
@@ -11354,7 +11400,9 @@
               refreshMarketplace(),
               refreshAvizier(),
               refreshVoting(),
+              refreshRecommendationsActivity({ refreshFeed: false }),
             ]);
+            refreshHomeActivity({ resetPage: true });
             setQuickStatsLoading(false);
             showToast("Login successful.");
             flashButtonSuccess(button, "Welcome");
@@ -11547,6 +11595,11 @@
             // keep interaction silent if poll could not be opened immediately
           }
         }
+      });
+
+      window.addEventListener("recomandari:changed", () => {
+        if (!currentUser) return;
+        refreshRecommendationsActivity({ refreshFeed: true }).catch(() => {});
       });
 
       if (els.homeActivityLoadMoreBtn) {
@@ -12461,7 +12514,9 @@
             refreshMarketplace(),
             refreshAvizier(),
             refreshVoting(),
+            refreshRecommendationsActivity({ refreshFeed: false }),
           ]);
+          refreshHomeActivity({ resetPage: true });
           setQuickStatsLoading(false);
         } catch (error) {
           setQuickStatsLoading(false);

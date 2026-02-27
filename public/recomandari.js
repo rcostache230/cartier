@@ -7,6 +7,7 @@ const RecomandariModule = (() => {
   let activeCategory = null;
   let selectedRating = 0;
   let editRating = 0;
+  let modalEventsBound = false;
 
   const PREDEFINED_CATEGORIES = [
     { icon: '🍽️', name: 'Food', display_order: 1 },
@@ -106,6 +107,49 @@ const RecomandariModule = (() => {
     const user = getUser();
     if (!user) return false;
     return isAdminUser() || String(user.username || '') === String(rec.added_by || '');
+  }
+
+  function getCreateModal() {
+    return document.getElementById('recCreateModal');
+  }
+
+  function openCreateModal() {
+    const modal = getCreateModal();
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    const firstInput = document.getElementById('recFormName');
+    if (firstInput) setTimeout(() => firstInput.focus(), 0);
+  }
+
+  function closeCreateModal() {
+    const modal = getCreateModal();
+    if (!modal) return;
+    modal.classList.add('hidden');
+  }
+
+  function bindCreateModalEvents() {
+    if (modalEventsBound) return;
+    const modal = getCreateModal();
+    if (!modal) return;
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeCreateModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const activeModal = getCreateModal();
+      if (!activeModal || activeModal.classList.contains('hidden')) return;
+      closeCreateModal();
+    });
+    modalEventsBound = true;
+  }
+
+  function notifyRecomandariChanged() {
+    if (typeof window === 'undefined') return;
+    try {
+      window.dispatchEvent(new CustomEvent('recomandari:changed'));
+    } catch (_) {
+      // ignore
+    }
   }
 
   async function fetchRecs() {
@@ -388,6 +432,7 @@ const RecomandariModule = (() => {
   }
 
   async function load() {
+    bindCreateModalEvents();
     const [recsResult, catsResult] = await Promise.allSettled([fetchRecs(), fetchCats()]);
 
     allRecs = recsResult.status === 'fulfilled' ? recsResult.value : [];
@@ -499,6 +544,8 @@ const RecomandariModule = (() => {
       });
 
       showToast('Recomandare adăugată.', 'success');
+      closeCreateModal();
+      notifyRecomandariChanged();
       await load();
     } catch (_) {
       showToast('Eroare la adăugare.', 'error');
@@ -546,6 +593,7 @@ const RecomandariModule = (() => {
 
       await apiUpdateRec(id, payload);
       showToast('Recomandare actualizată.', 'success');
+      notifyRecomandariChanged();
       await load();
     } catch (_) {
       showToast('Eroare la actualizare.', 'error');
@@ -560,6 +608,7 @@ const RecomandariModule = (() => {
     try {
       await apiDeleteRec(id);
       showToast('Recomandare ștearsă.', 'success');
+      notifyRecomandariChanged();
       await load();
     } catch (_) {
       showToast('Eroare la ștergere.', 'error');
@@ -650,6 +699,8 @@ const RecomandariModule = (() => {
     resetHover: resetHover,
     setEditRating: setEditRating,
     submit: submit,
+    openCreateModal: openCreateModal,
+    closeCreateModal: closeCreateModal,
     startEdit: startEdit,
     saveEdit: saveEdit,
     del: del,

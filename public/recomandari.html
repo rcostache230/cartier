@@ -42,54 +42,68 @@
       </div>
     </div>
 
-    <div class="rec-form-card">
-      <h3 class="rec-form-title">✍️ Adaugă o recomandare</h3>
-      <div class="rec-form-grid">
-        <div class="rec-form-group">
-          <label for="recFormName">Nume *</label>
-          <input type="text" id="recFormName" placeholder="ex: Pizzeria Napoli, Instalator Ionescu">
-        </div>
-
-        <div class="rec-form-group">
-          <label for="recFormCategory">Categorie *</label>
-          <select id="recFormCategory"></select>
-        </div>
-
-        <div class="rec-form-group">
-          <label for="recFormArea">Zonă / Adresă (opțional)</label>
-          <input type="text" id="recFormArea" placeholder="ex: Bd. Unirii, Sector 3">
-        </div>
-
-        <div class="rec-form-group">
-          <label for="recFormPhone">Telefon (opțional)</label>
-          <input type="tel" id="recFormPhone" placeholder="07xx xxx xxx">
-        </div>
-
-        <div class="rec-form-group">
-          <label for="recFormWebsite">Website (opțional)</label>
-          <input type="url" id="recFormWebsite" placeholder="ex: https://exemplu.ro">
-        </div>
-
-        <div class="rec-form-group full">
-          <label>Rating *</label>
-          <div class="rec-star-input">
-            <span id="rStar1" onclick="RecomandariModule.setRating(1)" onmouseover="RecomandariModule.hoverRating(1)" onmouseout="RecomandariModule.resetHover()">⭐</span>
-            <span id="rStar2" onclick="RecomandariModule.setRating(2)" onmouseover="RecomandariModule.hoverRating(2)" onmouseout="RecomandariModule.resetHover()">⭐</span>
-            <span id="rStar3" onclick="RecomandariModule.setRating(3)" onmouseover="RecomandariModule.hoverRating(3)" onmouseout="RecomandariModule.resetHover()">⭐</span>
-            <span id="rStar4" onclick="RecomandariModule.setRating(4)" onmouseover="RecomandariModule.hoverRating(4)" onmouseout="RecomandariModule.resetHover()">⭐</span>
-            <span id="rStar5" onclick="RecomandariModule.setRating(5)" onmouseover="RecomandariModule.hoverRating(5)" onmouseout="RecomandariModule.resetHover()">⭐</span>
-          </div>
-        </div>
-
-        <div class="rec-form-group full">
-          <label for="recFormWhy">De ce recomanzi? * <span style="font-weight:400;text-transform:none;font-size:11px">— minim 10 caractere</span></label>
-          <textarea id="recFormWhy" placeholder="ex: Lucrare impecabilă, răspunde rapid și preț corect."></textarea>
-        </div>
-      </div>
-
-      <button class="btn btn-primary rec-submit-btn" id="recSubmitBtn" type="button" onclick="RecomandariModule.submit()">+ Adaugă recomandare</button>
+    <div class="rec-add-launch">
+      <button class="btn btn-primary rec-open-modal-btn" type="button" onclick="RecomandariModule.openCreateModal()">
+        ✍️ Adaugă o recomandare
+      </button>
     </div>
 
     <div id="recList"></div>
+  </div>
+
+  <div id="recCreateModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="recCreateModalTitle">
+    <div class="modal-card rec-modal-card">
+      <div class="modal-head rec-modal-head">
+        <h2 id="recCreateModalTitle">✍️ Adaugă o recomandare</h2>
+        <button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.closeCreateModal()">Închide</button>
+      </div>
+
+      <div class="rec-form-card rec-form-card-modal">
+        <div class="rec-form-grid">
+          <div class="rec-form-group">
+            <label for="recFormName">Nume *</label>
+            <input type="text" id="recFormName" placeholder="ex: Pizzeria Napoli, Instalator Ionescu">
+          </div>
+
+          <div class="rec-form-group">
+            <label for="recFormCategory">Categorie *</label>
+            <select id="recFormCategory"></select>
+          </div>
+
+          <div class="rec-form-group">
+            <label for="recFormArea">Zonă / Adresă (opțional)</label>
+            <input type="text" id="recFormArea" placeholder="ex: Bd. Unirii, Sector 3">
+          </div>
+
+          <div class="rec-form-group">
+            <label for="recFormPhone">Telefon (opțional)</label>
+            <input type="tel" id="recFormPhone" placeholder="07xx xxx xxx">
+          </div>
+
+          <div class="rec-form-group">
+            <label for="recFormWebsite">Website (opțional)</label>
+            <input type="url" id="recFormWebsite" placeholder="ex: https://exemplu.ro">
+          </div>
+
+          <div class="rec-form-group full">
+            <label>Rating *</label>
+            <div class="rec-star-input">
+              <span id="rStar1" onclick="RecomandariModule.setRating(1)" onmouseover="RecomandariModule.hoverRating(1)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+              <span id="rStar2" onclick="RecomandariModule.setRating(2)" onmouseover="RecomandariModule.hoverRating(2)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+              <span id="rStar3" onclick="RecomandariModule.setRating(3)" onmouseover="RecomandariModule.hoverRating(3)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+              <span id="rStar4" onclick="RecomandariModule.setRating(4)" onmouseover="RecomandariModule.hoverRating(4)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+              <span id="rStar5" onclick="RecomandariModule.setRating(5)" onmouseover="RecomandariModule.hoverRating(5)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+            </div>
+          </div>
+
+          <div class="rec-form-group full">
+            <label for="recFormWhy">De ce recomanzi? * <span style="font-weight:400;text-transform:none;font-size:11px">— minim 10 caractere</span></label>
+            <textarea id="recFormWhy" placeholder="ex: Lucrare impecabilă, răspunde rapid și preț corect."></textarea>
+          </div>
+        </div>
+
+        <button class="btn btn-primary rec-submit-btn" id="recSubmitBtn" type="button" onclick="RecomandariModule.submit()">+ Adaugă recomandare</button>
+      </div>
+    </div>
   </div>
 </section>
