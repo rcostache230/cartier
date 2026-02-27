@@ -202,6 +202,55 @@ const RecomandariModule = (() => {
     }));
   }
 
+  function adminZoneMarkup() {
+    return '' +
+      '<div class="rec-admin-zone-header">' +
+      '  <span style="font-size:18px">🔒</span>' +
+      '  <span class="rec-admin-zone-title">Zonă Admin — Gestionează Categorii</span>' +
+      '  <span class="badge badge-red" style="font-size:11px;padding:2px 8px">Doar Admin</span>' +
+      '</div>' +
+      '<div id="recCatManageList"></div>' +
+      '<div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">' +
+      '  <p style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px">Categorie nouă</p>' +
+      '  <div class="rec-new-cat-form">' +
+      '    <input type="text" id="recNewCatIcon" class="rec-new-cat-icon-input" maxlength="2" placeholder="📌" value="📌">' +
+      '    <input type="text" id="recNewCatName" class="rec-new-cat-name-input" placeholder="Nume categorie (ex: Sport)">' +
+      '    <button class="btn btn-primary" type="button" onclick="RecomandariModule.addCat()">+ Adaugă</button>' +
+      '  </div>' +
+      '  <p class="rec-icon-picker-label">Alege rapid iconița</p>' +
+      '  <div class="rec-icon-picker" id="recNewCatIconPicker"></div>' +
+      '</div>';
+  }
+
+  function ensureAdminZoneDom() {
+    const root = document.getElementById('moduleRecomandari');
+    if (!root) return null;
+    const content = root.querySelector('.module-content-area');
+    if (!content) return null;
+    const filterWrap = content.querySelector('.rec-filter-wrap');
+
+    let zone = document.getElementById('recAdminZone');
+    if (!zone) {
+      zone = document.createElement('div');
+      zone.id = 'recAdminZone';
+      zone.className = 'rec-admin-zone';
+      zone.style.display = 'none';
+      zone.innerHTML = adminZoneMarkup();
+    } else {
+      if (!zone.querySelector('#recCatManageList') || !zone.querySelector('#recNewCatName') || !zone.querySelector('#recNewCatIconPicker')) {
+        zone.innerHTML = adminZoneMarkup();
+      }
+    }
+
+    if (filterWrap) {
+      filterWrap.insertAdjacentElement('afterend', zone);
+    } else if (content.firstChild !== zone) {
+      content.insertBefore(zone, content.firstChild);
+    }
+
+    return zone;
+  }
+
   function renderCategoryFilter() {
     const el = document.getElementById('recCategoryFilter');
     if (!el) return;
@@ -322,7 +371,7 @@ const RecomandariModule = (() => {
   }
 
   function renderAdminPanel() {
-    const el = document.getElementById('recAdminZone');
+    const el = ensureAdminZoneDom();
     if (!el) return;
     if (!isAdminUser()) {
       el.style.display = 'none';
