@@ -1,0 +1,103 @@
+<section id="moduleRecomandari" class="module-section card hidden module-panel mt-14">
+  <div class="module-header">
+    <div class="module-header-left">
+      <nav class="breadcrumb">
+        <a href="javascript:void(0)" onclick="showHome()">Home</a> › Recomandări
+      </nav>
+      <h1 class="module-title">💡 Recomandări</h1>
+      <p class="module-subtitle">
+        Sfaturi de la vecini pentru restaurante, servicii și locuri utile din cartier.
+      </p>
+      <p class="module-meta">
+        Ultima actualizare: <span id="recRefreshedAt">-</span>
+      </p>
+    </div>
+    <div class="module-header-actions">
+      <button class="btn btn-secondary btn-refresh" type="button" onclick="RecomandariModule.load()">↻ Actualizează</button>
+    </div>
+  </div>
+
+  <div class="module-content-area">
+    <!-- Category filter tabs — rendered by JS -->
+    <div class="rec-category-tabs" id="recCategoryTabs"></div>
+
+    <!-- Add recommendation form (all residents) -->
+    <div class="rec-form-card">
+      <h3 class="rec-form-title">✍️ Adaugă o recomandare</h3>
+
+      <div class="rec-form-grid">
+        <div class="rec-form-group">
+          <label for="recFormName">Nume *</label>
+          <input type="text" id="recFormName" placeholder="ex: Pizzeria Napoli, Instalator Ionescu">
+        </div>
+
+        <div class="rec-form-group">
+          <label for="recFormCategory">Categorie *</label>
+          <select id="recFormCategory"></select>
+        </div>
+
+        <div class="rec-form-group">
+          <label for="recFormArea">Zonă / Adresă (opțional)</label>
+          <input type="text" id="recFormArea" placeholder="ex: Bd. Unirii, Sector 3">
+        </div>
+
+        <div class="rec-form-group">
+          <label for="recFormPhone">Telefon (opțional)</label>
+          <input type="tel" id="recFormPhone" placeholder="07xx xxx xxx">
+        </div>
+
+        <div class="rec-form-group full">
+          <label>Rating *</label>
+          <div class="rec-star-input">
+            <span id="rStar1" onclick="RecomandariModule.setRating(1)" onmouseover="RecomandariModule.hoverRating(1)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+            <span id="rStar2" onclick="RecomandariModule.setRating(2)" onmouseover="RecomandariModule.hoverRating(2)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+            <span id="rStar3" onclick="RecomandariModule.setRating(3)" onmouseover="RecomandariModule.hoverRating(3)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+            <span id="rStar4" onclick="RecomandariModule.setRating(4)" onmouseover="RecomandariModule.hoverRating(4)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+            <span id="rStar5" onclick="RecomandariModule.setRating(5)" onmouseover="RecomandariModule.hoverRating(5)" onmouseout="RecomandariModule.resetHover()">⭐</span>
+          </div>
+        </div>
+
+        <div class="rec-form-group full">
+          <label for="recFormWhy">
+            De ce recomanzi? *
+            <span style="font-weight:400;text-transform:none;font-size:11px">— minim 10 caractere</span>
+          </label>
+          <textarea id="recFormWhy" placeholder="ex: Am folosit acest instalator de 3 ori, mereu punctual și prețuri corecte. Recomand cu încredere!"></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-primary rec-submit-btn" id="recSubmitBtn" type="button" onclick="RecomandariModule.submit()">
+        + Adaugă recomandare
+      </button>
+    </div>
+
+    <!-- Recommendations list — rendered by JS -->
+    <div id="recList"></div>
+
+    <!-- Admin Zone — shown only for role=admin -->
+    <div class="rec-admin-zone" id="recAdminZone" style="display:none">
+      <div class="rec-admin-zone-header">
+        <span style="font-size:18px">🔒</span>
+        <span class="rec-admin-zone-title">Zonă Admin — Gestionează Categorii</span>
+        <span class="badge badge-red" style="font-size:11px;padding:2px 8px">Doar Admin</span>
+      </div>
+
+      <!-- Existing categories list -->
+      <div id="recCatManageList"></div>
+
+      <!-- Add new category form -->
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">
+        <p style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px">
+          Categorie nouă
+        </p>
+        <div class="rec-new-cat-form">
+          <input type="text" id="recNewCatIcon" class="rec-new-cat-icon-input" maxlength="2" placeholder="📌" value="📌">
+          <input type="text" id="recNewCatName" class="rec-new-cat-name-input" placeholder="Nume categorie (ex: Sport)">
+          <button class="btn btn-primary" type="button" onclick="RecomandariModule.addCat()">+ Adaugă</button>
+        </div>
+        <p class="rec-icon-picker-label">Alege rapid iconița</p>
+        <div class="rec-icon-picker" id="recNewCatIconPicker"></div>
+      </div>
+    </div>
+  </div>
+</section>

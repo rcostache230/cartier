@@ -5623,6 +5623,7 @@
       }
     </style>
     <link rel="stylesheet" href="contacts.css">
+    <link rel="stylesheet" href="recomandari.css">
   </head>
   <body>
     <aside id="sideRail" class="side-rail hidden" aria-label="Primary navigation">
@@ -5668,6 +5669,9 @@
         </button>
         <button type="button" class="rail-link" data-nav-module="moduleContacts" onclick="showContacts()">
           <i data-lucide="clipboard-list" aria-hidden="true"></i><span>Contacte</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="moduleRecomandari" onclick="showRecomandari()">
+          <span aria-hidden="true">💡</span><span>Recomandări</span>
         </button>
       </nav>
       <div class="rail-foot">
@@ -6646,6 +6650,17 @@
               if (typeof hydrateLucideIcons === 'function') hydrateLucideIcons();
             });
         </script>
+
+        <!-- Recomandări module — recomandari.html injected here -->
+        <div id="recomandariMount"></div>
+        <script>
+          fetch('recomandari.html')
+            .then(r => r.text())
+            .then(html => {
+              document.getElementById('recomandariMount').innerHTML = html;
+              if (typeof hydrateLucideIcons === 'function') hydrateLucideIcons();
+            });
+        </script>
       </main>
 
       <div id="pollModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pollModalTitle">
@@ -6761,6 +6776,7 @@
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="contacts.js"></script>
+    <script src="recomandari.js"></script>
     <script>
       const HELP_SEEN_KEY = "10blocuri_help_seen_v1";
       const THEME_PREF_KEY = "10blocuri_theme_pref_v1";
@@ -6818,6 +6834,8 @@
         voting: "votingModule",
         contacts: "moduleContacts",
         contacte: "moduleContacts",
+        recommendations: "moduleRecomandari",
+        recomandari: "moduleRecomandari",
       };
       const MODULE_ID_TO_TITLE = {
         parkingModule: "Parcare",
@@ -6825,6 +6843,7 @@
         avizierModule: "Avizier",
         votingModule: "Voting",
         moduleContacts: "Contacte",
+        moduleRecomandari: "Recomandări",
       };
       const MARKETPLACE_MAX_FILE_BYTES = 5 * 1024 * 1024;
       const MARKETPLACE_ALLOWED_FILE_TYPES = new Set([
@@ -7623,7 +7642,7 @@
         if (moduleId === "parkingModule") mobileTabId = "tabParking";
         if (moduleId === "marketplaceModule") mobileTabId = "tabMarket";
         if (moduleId === "avizierModule") mobileTabId = "tabAvizier";
-        if (moduleId === "votingModule" || moduleId === "moduleContacts") mobileTabId = "tabMore";
+        if (moduleId === "votingModule" || moduleId === "moduleContacts" || moduleId === "moduleRecomandari") mobileTabId = "tabMore";
         if (mobileTabId) {
           setActiveBottomTab(mobileTabId);
         }
@@ -7642,7 +7661,7 @@
       function canUseFab() {
         if (!currentUser) return false;
         if (!currentModule) return true;
-        if (currentModule === "moduleContacts") return false;
+        if (currentModule === "moduleContacts" || currentModule === "moduleRecomandari") return false;
         if (currentModule === "votingModule") return currentUser.role === "admin";
         if (currentModule === "avizierModule") {
           return currentUser.role === "admin" || String(currentUser.avizier_permission || "none") !== "none";
@@ -8374,6 +8393,12 @@
           contactsModuleEl.classList.remove("is-visible");
           contactsModuleEl.classList.remove("module-view");
         }
+        const recomandariModuleEl = document.getElementById("moduleRecomandari");
+        if (recomandariModuleEl) {
+          recomandariModuleEl.classList.add("hidden");
+          recomandariModuleEl.classList.remove("is-visible");
+          recomandariModuleEl.classList.remove("module-view");
+        }
         refreshHomeActivity();
         syncNavigationState();
         updateMobileFab();
@@ -8428,6 +8453,21 @@
         openModule("moduleContacts");
       }
 
+      function showRecomandari(attempt = 0) {
+        closeMoreDrawer();
+        setActiveBottomTab("tabMore");
+        const recomandariModuleEl = document.getElementById("moduleRecomandari");
+        if (!recomandariModuleEl) {
+          if (attempt < 20) {
+            setTimeout(() => showRecomandari(attempt + 1), 100);
+          } else {
+            showToast("Modulul Recomandări nu s-a încărcat.", "error");
+          }
+          return;
+        }
+        openModule("moduleRecomandari");
+      }
+
       function openModule(moduleId) {
         closeMoreDrawer();
         currentModule = moduleId;
@@ -8440,6 +8480,7 @@
           els.avizierModule,
           els.votingModule,
           document.getElementById("moduleContacts"),
+          document.getElementById("moduleRecomandari"),
         ].filter(Boolean);
         modules.forEach((moduleEl) => {
           if (moduleEl.id === moduleId) {
@@ -8470,6 +8511,9 @@
         }
         if (moduleId === "moduleContacts" && window.ContactsModule && typeof window.ContactsModule.load === "function") {
           window.ContactsModule.load();
+        }
+        if (moduleId === "moduleRecomandari" && window.RecomandariModule && typeof window.RecomandariModule.load === "function") {
+          window.RecomandariModule.load();
         }
         syncNavigationState();
         updateMobileFab();
@@ -8532,6 +8576,10 @@
         if (!moduleId) return;
         if (moduleId === "moduleContacts") {
           showContacts();
+          return;
+        }
+        if (moduleId === "moduleRecomandari") {
+          showRecomandari();
           return;
         }
         openModule(moduleId);
@@ -12472,6 +12520,15 @@
           <div class="more-drawer-info">
             <span class="more-drawer-label">Contacte Utile</span>
             <span class="more-drawer-sub">Numere utile: lifturi, interfon, administrator</span>
+          </div>
+          <span class="more-drawer-chevron">›</span>
+        </button>
+
+        <button type="button" class="more-drawer-item" onclick="showRecomandari()">
+          <span class="more-drawer-icon">💡</span>
+          <div class="more-drawer-info">
+            <span class="more-drawer-label">Recomandări</span>
+            <span class="more-drawer-sub">Restaurante, servicii și sfaturi de la vecini</span>
           </div>
           <span class="more-drawer-chevron">›</span>
         </button>
