@@ -58,14 +58,24 @@ const RecomandariModule = (() => {
     return ts ? String(ts).slice(0, 10) : '';
   }
 
+  function getCurrentUser() {
+    if (typeof currentUser !== 'undefined' && currentUser) return currentUser;
+    if (typeof window !== 'undefined' && window.currentUser) return window.currentUser;
+    return null;
+  }
+
   function getCurrentUserBuilding() {
-    if (typeof currentUser === 'undefined' || !currentUser) return '';
-    return currentUser.building || currentUser.building_number || '';
+    const user = getCurrentUser();
+    if (!user) return '';
+    return user.building || user.building_number || '';
   }
 
   function isAdminUser() {
-    if (typeof currentUser === 'undefined' || !currentUser) return false;
-    return String(currentUser.role || '').trim().toLowerCase() === 'admin';
+    const user = getCurrentUser();
+    if (!user) return false;
+    const role = String(user.role || '').trim().toLowerCase();
+    if (role === 'admin' || role.includes('admin')) return true;
+    return String(user.username || '').trim().toLowerCase() === 'admin';
   }
 
   function normalizeWebsite(raw) {
@@ -258,7 +268,8 @@ const RecomandariModule = (() => {
     const catName = cat ? cat.name : 'Fără categorie';
     const catIcon = cat ? cat.icon : '📌';
     const color = getCatColor(catName);
-    const isOwn = currentUser && currentUser.username === rec.added_by;
+    const user = getCurrentUser();
+    const isOwn = user && user.username === rec.added_by;
     const isAdmin = isAdminUser();
     const canEdit = Boolean(isOwn || isAdmin);
 
@@ -412,7 +423,8 @@ const RecomandariModule = (() => {
 
   // ── Public: submit new rec ────────────────────────────
   async function submit() {
-    if (!currentUser || !currentUser.username) {
+    const user = getCurrentUser();
+    if (!user || !user.username) {
       showToast('Trebuie să fii autentificat.', 'warning');
       return;
     }
@@ -443,7 +455,7 @@ const RecomandariModule = (() => {
         phone: phone,
         why: why,
         rating: selectedRating,
-        added_by: currentUser.username,
+        added_by: user.username,
         building: getCurrentUserBuilding()
       };
       if (website) payload.website = website;

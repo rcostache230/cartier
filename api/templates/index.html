@@ -11217,6 +11217,7 @@
 
       function applyAuthState(user) {
         currentUser = user;
+        window.currentUser = user;
         if (!user) {
           stopAutoRefresh();
           lastRefreshAt.parking = null;
