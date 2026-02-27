@@ -373,10 +373,7 @@ const RecomandariModule = (() => {
   function renderAdminPanel() {
     const el = ensureAdminZoneDom();
     if (!el) return;
-    if (!isAdminUser()) {
-      el.style.display = 'none';
-      return;
-    }
+    const adminAllowed = isAdminUser();
     el.style.display = 'block';
 
     const rows = categories.map((c) =>
@@ -389,7 +386,21 @@ const RecomandariModule = (() => {
 
     const listEl = document.getElementById('recCatManageList');
     if (listEl) {
-      listEl.innerHTML = rows || '<p style="font-size:13px;color:var(--text-muted);padding:8px">Nicio categorie.</p>';
+      if (adminAllowed) {
+        listEl.innerHTML = rows || '<p style="font-size:13px;color:var(--text-muted);padding:8px">Nicio categorie.</p>';
+      } else {
+        listEl.innerHTML = '<p style="font-size:13px;color:var(--text-muted);padding:8px">Panou vizibil pentru diagnostic. Acțiunile sunt doar pentru admin.</p>';
+      }
+    }
+
+    const iconInput = document.getElementById('recNewCatIcon');
+    const nameInput = document.getElementById('recNewCatName');
+    const addBtn = el.querySelector('.rec-new-cat-form .btn');
+    if (iconInput) iconInput.disabled = !adminAllowed;
+    if (nameInput) nameInput.disabled = !adminAllowed;
+    if (addBtn) addBtn.disabled = !adminAllowed;
+    if (addBtn) {
+      addBtn.textContent = adminAllowed ? '+ Adaugă' : 'Doar Admin';
     }
     renderAddCategoryPicker();
   }
@@ -416,10 +427,10 @@ const RecomandariModule = (() => {
     }
 
     ensureValidActiveCategory();
+    renderAdminPanel();
     renderCategoryFilter();
     renderList();
     populateSelect();
-    renderAdminPanel();
     const ts = document.getElementById('recRefreshedAt');
     if (ts) ts.textContent = 'acum';
   }
@@ -587,6 +598,10 @@ const RecomandariModule = (() => {
 
   // ── Public: category management ───────────────────────
   async function addCat() {
+    if (!isAdminUser()) {
+      showToast('Doar admin poate gestiona categoriile.', 'warning');
+      return;
+    }
     const iconEl = document.getElementById('recNewCatIcon');
     const nameEl = document.getElementById('recNewCatName');
     const icon = (iconEl && iconEl.value.trim()) || '📌';
@@ -605,6 +620,10 @@ const RecomandariModule = (() => {
   }
 
   function startEditCat(id) {
+    if (!isAdminUser()) {
+      showToast('Doar admin poate gestiona categoriile.', 'warning');
+      return;
+    }
     const cat = categories.find((c) => c.id === id);
     if (!cat) return;
     const row = document.getElementById('cat-admin-row-' + id);
@@ -614,6 +633,10 @@ const RecomandariModule = (() => {
   }
 
   async function saveEditCat(id) {
+    if (!isAdminUser()) {
+      showToast('Doar admin poate gestiona categoriile.', 'warning');
+      return;
+    }
     const icon = ((document.getElementById('eCatIcon-' + id) || {}).value || '').trim();
     const name = ((document.getElementById('eCatName-' + id) || {}).value || '').trim();
     if (!name) { showToast('Numele nu poate fi gol.', 'warning'); return; }
@@ -627,6 +650,10 @@ const RecomandariModule = (() => {
   }
 
   async function delCat(id) {
+    if (!isAdminUser()) {
+      showToast('Doar admin poate gestiona categoriile.', 'warning');
+      return;
+    }
     const cat = categories.find((c) => c.id === id);
     const msg = 'Ștergi categoria "' + ((cat && cat.name) || '') + '"? Toate recomandările din ea rămân, dar fără categorie.';
     if (!confirm(msg)) return;
