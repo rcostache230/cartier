@@ -9,6 +9,17 @@ const RecomandariModule = (() => {
   let selectedRating = 0;
   let editRating = 0;
   let editingRecId = null;
+  let warnedCatsFallback = false;
+
+  const DEFAULT_CATEGORIES = [
+    { id: 1, icon: '🍽️', name: 'Mâncare', display_order: 1 },
+    { id: 2, icon: '🔧', name: 'Servicii', display_order: 2 },
+    { id: 3, icon: '🏥', name: 'Sănătate', display_order: 3 },
+    { id: 4, icon: '🎓', name: 'Educație', display_order: 4 },
+    { id: 5, icon: '🛒', name: 'Shopping', display_order: 5 },
+    { id: 6, icon: '✂️', name: 'Frumusețe', display_order: 6 },
+    { id: 7, icon: '📦', name: 'Altele', display_order: 7 }
+  ];
 
   const ICON_CHOICES = ['🍽️','🔧','🏥','🎓','🛒','✂️','📦','🏋️','🐶','🚗','🧰','⚖️','🏠','☕','🧒','📚','💻','📌'];
 
@@ -172,6 +183,15 @@ const RecomandariModule = (() => {
     });
   }
 
+  function defaultCategoriesClone() {
+    return DEFAULT_CATEGORIES.map((c) => ({
+      id: c.id,
+      icon: c.icon,
+      name: c.name,
+      display_order: c.display_order
+    }));
+  }
+
   function renderCategoryFilter() {
     const el = document.getElementById('recCategoryFilter');
     if (!el) return;
@@ -316,20 +336,32 @@ const RecomandariModule = (() => {
 
   // ── Public: load ──────────────────────────────────────
   async function load() {
-    try {
-      const data = await Promise.all([fetchRecs(), fetchCats()]);
-      allRecs = Array.isArray(data[0]) ? data[0] : [];
-      categories = Array.isArray(data[1]) ? data[1] : [];
-      ensureValidActiveCategory();
-      renderCategoryFilter();
-      renderList();
-      populateSelect();
-      renderAdminPanel();
-      const ts = document.getElementById('recRefreshedAt');
-      if (ts) ts.textContent = 'acum';
-    } catch (e) {
-      showToast('Eroare la încărcarea recomandărilor.', 'error');
+    const results = await Promise.allSettled([fetchRecs(), fetchCats()]);
+
+    if (results[0].status === 'fulfilled' && Array.isArray(results[0].value)) {
+      allRecs = results[0].value;
+    } else {
+      allRecs = [];
+      showToast('Nu am putut încărca recomandările.', 'error');
     }
+
+    const serverCats = results[1].status === 'fulfilled' && Array.isArray(results[1].value)
+      ? results[1].value
+      : [];
+
+    categories = serverCats.length ? serverCats : defaultCategoriesClone();
+    if (!serverCats.length && !warnedCatsFallback) {
+      warnedCatsFallback = true;
+      showToast('Categoriile nu au putut fi încărcate din server. Folosim lista implicită.', 'warning');
+    }
+
+    ensureValidActiveCategory();
+    renderCategoryFilter();
+    renderList();
+    populateSelect();
+    renderAdminPanel();
+    const ts = document.getElementById('recRefreshedAt');
+    if (ts) ts.textContent = 'acum';
   }
 
   // ── Public: filter ────────────────────────────────────
