@@ -35,7 +35,10 @@ const RecomandariModule = (() => {
   function isAdminUser() {
     const user = getUser();
     if (!user) return false;
-    return String(user.role || '').trim().toLowerCase() === 'admin';
+    const role = String(user.role || '').trim().toLowerCase();
+    if (role === 'admin' || role.includes('admin')) return true;
+    if (user.is_admin === true) return true;
+    return String(user.username || '').trim().toLowerCase() === 'admin';
   }
 
   function esc(value) {
@@ -339,24 +342,32 @@ const RecomandariModule = (() => {
   function renderAdminPanel() {
     const zone = document.getElementById('recAdminZone');
     if (!zone) return;
-    if (!isAdminUser()) {
-      zone.style.display = 'none';
-      return;
-    }
+    const adminAllowed = isAdminUser();
     zone.style.display = 'block';
 
     const listEl = document.getElementById('recCatManageList');
     if (!listEl) return;
 
-    const rows = sortCategories(categories).map((c) => '' +
-      '<div class="rec-cat-manage-row" id="cat-admin-row-' + c.id + '">' +
-      '  <span class="cat-label">' + esc(c.icon) + ' ' + esc(c.name) + '</span>' +
-      '  <button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.startEditCat(' + c.id + ')">✏</button>' +
-      '  <button class="btn btn-danger btn-sm" type="button" onclick="RecomandariModule.delCat(' + c.id + ')">🗑</button>' +
-      '</div>'
-    );
+    if (adminAllowed) {
+      const rows = sortCategories(categories).map((c) => '' +
+        '<div class="rec-cat-manage-row" id="cat-admin-row-' + c.id + '">' +
+        '  <span class="cat-label">' + esc(c.icon) + ' ' + esc(c.name) + '</span>' +
+        '  <button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.startEditCat(' + c.id + ')">✏</button>' +
+        '  <button class="btn btn-danger btn-sm" type="button" onclick="RecomandariModule.delCat(' + c.id + ')">🗑</button>' +
+        '</div>'
+      );
+      listEl.innerHTML = rows.length ? rows.join('') : '<p style="font-size:13px;color:var(--text-muted);padding:8px">Nicio categorie.</p>';
+    } else {
+      const user = getUser() || {};
+      listEl.innerHTML = '<p style="font-size:13px;color:var(--text-muted);padding:8px">Doar admin poate modifica categorii. User curent: <b>' + esc(user.username || '-') + '</b> · role=<b>' + esc(user.role || '-') + '</b>.</p>';
+    }
 
-    listEl.innerHTML = rows.length ? rows.join('') : '<p style="font-size:13px;color:var(--text-muted);padding:8px">Nicio categorie.</p>';
+    const iconInput = document.getElementById('recNewCatIcon');
+    const nameInput = document.getElementById('recNewCatName');
+    const addBtn = zone.querySelector('.rec-new-cat-form .btn');
+    if (iconInput) iconInput.disabled = !adminAllowed;
+    if (nameInput) nameInput.disabled = !adminAllowed;
+    if (addBtn) addBtn.disabled = !adminAllowed;
     renderNewCategoryIconPicker();
   }
 
