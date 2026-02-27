@@ -52,6 +52,10 @@ const RecomandariModule = (() => {
     return currentUser.building || currentUser.building_number || '';
   }
 
+  function isAdminUser() {
+    return String((window.currentUser && currentUser.role) || '').trim().toLowerCase() === 'admin';
+  }
+
   function normalizeWebsite(raw) {
     const value = String(raw || '').trim();
     if (!value) return '';
@@ -234,7 +238,7 @@ const RecomandariModule = (() => {
     const catIcon = cat ? cat.icon : '📌';
     const color = getCatColor(catName);
     const isOwn = currentUser && currentUser.username === rec.added_by;
-    const isAdmin = currentUser && currentUser.role === 'admin';
+    const isAdmin = isAdminUser();
     const canEdit = Boolean(isOwn || isAdmin);
 
     const phonePart = rec.phone
@@ -288,7 +292,7 @@ const RecomandariModule = (() => {
   function renderAdminPanel() {
     const el = document.getElementById('recAdminZone');
     if (!el) return;
-    if (!currentUser || currentUser.role !== 'admin') {
+    if (!isAdminUser()) {
       el.style.display = 'none';
       return;
     }
