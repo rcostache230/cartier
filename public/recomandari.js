@@ -1,81 +1,55 @@
-/* recomandari.js — loaded after main index.html script */
-/* Depends on globals: currentUser, showToast */
+/* recomandari.js — rebuilt */
+/* globals: currentUser, showToast, timeAgoRo */
 
 const RecomandariModule = (() => {
-  // ── State ─────────────────────────────────────────────
   let allRecs = [];
   let categories = [];
   let activeCategory = null;
   let selectedRating = 0;
   let editRating = 0;
-  let editingRecId = null;
-  let warnedCatsFallback = false;
 
-  const DEFAULT_CATEGORIES = [
-    { id: 1, icon: '🍽️', name: 'Mâncare', display_order: 1 },
-    { id: 2, icon: '🔧', name: 'Servicii', display_order: 2 },
-    { id: 3, icon: '🏥', name: 'Sănătate', display_order: 3 },
-    { id: 4, icon: '🎓', name: 'Educație', display_order: 4 },
-    { id: 5, icon: '🛒', name: 'Shopping', display_order: 5 },
-    { id: 6, icon: '✂️', name: 'Frumusețe', display_order: 6 },
-    { id: 7, icon: '📦', name: 'Altele', display_order: 7 }
+  const PREDEFINED_CATEGORIES = [
+    { icon: '🍽️', name: 'Food', display_order: 1 },
+    { icon: '☕', name: 'Coffee', display_order: 2 },
+    { icon: '🏥', name: 'Medicina', display_order: 3 },
+    { icon: '🛠️', name: 'Mesteri', display_order: 4 },
+    { icon: '🎓', name: 'Educatie', display_order: 5 }
   ];
 
-  const ICON_CHOICES = ['🍽️','🔧','🏥','🎓','🛒','✂️','📦','🏋️','🐶','🚗','🧰','⚖️','🏠','☕','🧒','📚','💻','📌'];
+  const ICON_CHOICES = ['🍽️', '☕', '🏥', '🛠️', '🎓', '📌', '🚗', '💻', '🏠', '🧰', '⚖️', '✂️', '🛒', '🔧', '📦'];
 
   const CAT_COLORS = {
-    'Mâncare': '#F97316',
-    'Servicii': '#3B82F6',
-    'Sănătate': '#EF4444',
-    'Educație': '#8B5CF6',
-    'Shopping': '#0D9488',
-    'Frumusețe': '#EC4899',
-    'Altele': '#78716C'
+    Food: '#F97316',
+    Coffee: '#B45309',
+    Medicina: '#DC2626',
+    Mesteri: '#2563EB',
+    Educatie: '#7C3AED'
   };
 
-  function getCatColor(name) {
-    return CAT_COLORS[name] || 'var(--accent-primary)';
+  function getUser() {
+    if (typeof currentUser !== 'undefined' && currentUser) return currentUser;
+    if (typeof window !== 'undefined' && window.currentUser) return window.currentUser;
+    return null;
   }
 
-  function esc(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
+  function isAdminUser() {
+    const user = getUser();
+    if (!user) return false;
+    return String(user.role || '').trim().toLowerCase() === 'admin';
+  }
+
+  function esc(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
   }
 
-  function starsHtml(n, size) {
-    const starSize = size || 14;
-    return [1, 2, 3, 4, 5].map((i) =>
-      '<span style="font-size:' + starSize + 'px;opacity:' + (i <= (n || 0) ? '1' : '0.2') + '">⭐</span>'
-    ).join('');
-  }
-
-  function timeStr(ts) {
-    if (typeof window.timeAgoRo === 'function') return window.timeAgoRo(ts);
-    return ts ? String(ts).slice(0, 10) : '';
-  }
-
-  function getCurrentUser() {
-    if (typeof currentUser !== 'undefined' && currentUser) return currentUser;
-    if (typeof window !== 'undefined' && window.currentUser) return window.currentUser;
-    return null;
-  }
-
-  function getCurrentUserBuilding() {
-    const user = getCurrentUser();
-    if (!user) return '';
-    return user.building || user.building_number || '';
-  }
-
-  function isAdminUser() {
-    const user = getCurrentUser();
-    if (!user) return false;
-    const role = String(user.role || '').trim().toLowerCase();
-    if (role === 'admin' || role.includes('admin')) return true;
-    return String(user.username || '').trim().toLowerCase() === 'admin';
+  function toInt(v) {
+    const n = parseInt(String(v || ''), 10);
+    return Number.isFinite(n) ? n : null;
   }
 
   function normalizeWebsite(raw) {
@@ -85,107 +59,27 @@ const RecomandariModule = (() => {
     return 'https://' + value;
   }
 
-  function iconPickerHtml(targetId, activeIcon) {
-    return ICON_CHOICES.map((icon) => {
-      const activeClass = (activeIcon || '') === icon ? 'active' : '';
-      return '<button type="button" class="rec-icon-chip ' + activeClass + '" ' +
-        'onclick="RecomandariModule.pickCatIcon(\'' + icon + '\', \'' + targetId + '\')" ' +
-        'aria-label="Alege iconița ' + esc(icon) + '">' + esc(icon) + '</button>';
-    }).join('');
+  function starsHtml(n, size) {
+    const s = size || 14;
+    const score = Number(n) || 0;
+    return [1, 2, 3, 4, 5].map((i) => '<span style="font-size:' + s + 'px;opacity:' + (i <= score ? '1' : '0.2') + '">⭐</span>').join('');
   }
 
-  function updatePickerSelection(targetId) {
-    const input = document.getElementById(targetId);
-    const value = input ? input.value.trim() : '';
-    const root = document.querySelector('[data-icon-picker-for="' + targetId + '"]');
-    if (!root) return;
-    root.querySelectorAll('.rec-icon-chip').forEach((chip) => {
-      chip.classList.toggle('active', chip.textContent === value);
-    });
+  function timeStr(value) {
+    if (typeof timeAgoRo === 'function') return timeAgoRo(value);
+    return value ? String(value).slice(0, 10) : '';
   }
 
-  function renderAddCategoryPicker() {
-    const picker = document.getElementById('recNewCatIconPicker');
-    if (!picker) return;
-    const iconInput = document.getElementById('recNewCatIcon');
-    const activeIcon = iconInput && iconInput.value ? iconInput.value.trim() : '📌';
-    picker.setAttribute('data-icon-picker-for', 'recNewCatIcon');
-    picker.innerHTML = iconPickerHtml('recNewCatIcon', activeIcon);
-    updatePickerSelection('recNewCatIcon');
+  function getCatColor(name) {
+    return CAT_COLORS[String(name || '').trim()] || 'var(--accent-primary)';
   }
 
-  function ensureValidActiveCategory() {
-    if (!activeCategory) return;
-    const exists = categories.some((c) => c.id === activeCategory);
-    if (!exists) activeCategory = null;
+  function categoryNameKey(name) {
+    return String(name || '').trim().toLowerCase();
   }
 
-  // ── API ───────────────────────────────────────────────
-  async function fetchRecs() {
-    const r = await fetch('/api/recommendations');
-    if (!r.ok) throw new Error('Eroare la încărcarea recomandărilor');
-    return r.json();
-  }
-
-  async function fetchCats() {
-    const r = await fetch('/api/rec-categories');
-    if (!r.ok) throw new Error('Eroare la încărcarea categoriilor');
-    return r.json();
-  }
-
-  async function apiCreateRec(data) {
-    const r = await fetch('/api/recommendations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!r.ok) throw new Error('Eroare la crearea recomandării');
-    return r.json();
-  }
-
-  async function apiUpdateRec(id, data) {
-    const r = await fetch('/api/recommendations/' + id, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!r.ok) throw new Error('Eroare la actualizarea recomandării');
-    return r.json();
-  }
-
-  async function apiDeleteRec(id) {
-    const r = await fetch('/api/recommendations/' + id, { method: 'DELETE' });
-    if (!r.ok) throw new Error('Eroare la ștergerea recomandării');
-  }
-
-  async function apiCreateCat(icon, name) {
-    const r = await fetch('/api/rec-categories', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ icon: icon, name: name })
-    });
-    if (!r.ok) throw new Error('Eroare la crearea categoriei');
-    return r.json();
-  }
-
-  async function apiUpdateCat(id, icon, name) {
-    const r = await fetch('/api/rec-categories/' + id, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ icon: icon, name: name })
-    });
-    if (!r.ok) throw new Error('Eroare la actualizarea categoriei');
-    return r.json();
-  }
-
-  async function apiDeleteCat(id) {
-    const r = await fetch('/api/rec-categories/' + id, { method: 'DELETE' });
-    if (!r.ok) throw new Error('Eroare la ștergerea categoriei');
-  }
-
-  // ── Render ────────────────────────────────────────────
   function sortCategories(list) {
-    return (list || []).slice().sort((a, b) => {
+    return (Array.isArray(list) ? list : []).slice().sort((a, b) => {
       const ao = Number(a.display_order || 0);
       const bo = Number(b.display_order || 0);
       if (ao !== bo) return ao - bo;
@@ -193,62 +87,113 @@ const RecomandariModule = (() => {
     });
   }
 
-  function defaultCategoriesClone() {
-    return DEFAULT_CATEGORIES.map((c) => ({
-      id: c.id,
-      icon: c.icon,
-      name: c.name,
-      display_order: c.display_order
-    }));
+  async function requestJson(url, opts) {
+    const r = await fetch(url, opts);
+    if (!r.ok) throw new Error('request failed');
+    const text = await r.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch (_) {
+      return null;
+    }
   }
 
-  function adminZoneMarkup() {
-    return '' +
-      '<div class="rec-admin-zone-header">' +
-      '  <span style="font-size:18px">🔒</span>' +
-      '  <span class="rec-admin-zone-title">Zonă Admin — Gestionează Categorii</span>' +
-      '  <span class="badge badge-red" style="font-size:11px;padding:2px 8px">Doar Admin</span>' +
-      '</div>' +
-      '<div id="recCatManageList"></div>' +
-      '<div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px">' +
-      '  <p style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin:0 0 8px">Categorie nouă</p>' +
-      '  <div class="rec-new-cat-form">' +
-      '    <input type="text" id="recNewCatIcon" class="rec-new-cat-icon-input" maxlength="2" placeholder="📌" value="📌">' +
-      '    <input type="text" id="recNewCatName" class="rec-new-cat-name-input" placeholder="Nume categorie (ex: Sport)">' +
-      '    <button class="btn btn-primary" type="button" onclick="RecomandariModule.addCat()">+ Adaugă</button>' +
-      '  </div>' +
-      '  <p class="rec-icon-picker-label">Alege rapid iconița</p>' +
-      '  <div class="rec-icon-picker" id="recNewCatIconPicker"></div>' +
-      '</div>';
+  function canEditRec(rec) {
+    const user = getUser();
+    if (!user) return false;
+    return isAdminUser() || String(user.username || '') === String(rec.added_by || '');
   }
 
-  function ensureAdminZoneDom() {
-    const root = document.getElementById('moduleRecomandari');
-    if (!root) return null;
-    const content = root.querySelector('.module-content-area');
-    if (!content) return null;
-    const filterWrap = content.querySelector('.rec-filter-wrap');
+  async function fetchRecs() {
+    const data = await requestJson('/api/recommendations');
+    return Array.isArray(data) ? data : [];
+  }
 
-    let zone = document.getElementById('recAdminZone');
-    if (!zone) {
-      zone = document.createElement('div');
-      zone.id = 'recAdminZone';
-      zone.className = 'rec-admin-zone';
-      zone.style.display = 'none';
-      zone.innerHTML = adminZoneMarkup();
-    } else {
-      if (!zone.querySelector('#recCatManageList') || !zone.querySelector('#recNewCatName') || !zone.querySelector('#recNewCatIconPicker')) {
-        zone.innerHTML = adminZoneMarkup();
+  async function fetchCats() {
+    const data = await requestJson('/api/rec-categories');
+    return Array.isArray(data) ? data : [];
+  }
+
+  async function apiCreateRec(payload) {
+    return requestJson('/api/recommendations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async function apiUpdateRec(id, payload) {
+    return requestJson('/api/recommendations/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async function apiDeleteRec(id) {
+    return requestJson('/api/recommendations/' + id, { method: 'DELETE' });
+  }
+
+  async function apiCreateCat(icon, name) {
+    return requestJson('/api/rec-categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ icon: icon, name: name })
+    });
+  }
+
+  async function apiUpdateCat(id, icon, name) {
+    return requestJson('/api/rec-categories/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ icon: icon, name: name })
+    });
+  }
+
+  async function apiDeleteCat(id) {
+    return requestJson('/api/rec-categories/' + id, { method: 'DELETE' });
+  }
+
+  async function bootstrapPredefinedCategories(serverCats) {
+    const list = Array.isArray(serverCats) ? serverCats : [];
+    if (!isAdminUser()) return list;
+
+    const existing = new Set(list.map((c) => categoryNameKey(c.name)));
+    const missing = PREDEFINED_CATEGORIES.filter((c) => !existing.has(categoryNameKey(c.name)));
+    if (!missing.length) return list;
+
+    let created = 0;
+    for (const cat of missing) {
+      try {
+        await apiCreateCat(cat.icon, cat.name);
+        created += 1;
+      } catch (_) {
+        // ignore per-category failures
       }
     }
 
-    if (filterWrap) {
-      filterWrap.insertAdjacentElement('afterend', zone);
-    } else if (content.firstChild !== zone) {
-      content.insertBefore(zone, content.firstChild);
+    if (created > 0) {
+      try {
+        showToast('Categorii predefinite adăugate.', 'success');
+      } catch (_) {}
     }
 
-    return zone;
+    try {
+      return await fetchCats();
+    } catch (_) {
+      return list;
+    }
+  }
+
+  function fallbackCategories() {
+    return PREDEFINED_CATEGORIES.map((c, i) => ({
+      id: 9000 + i,
+      icon: c.icon,
+      name: c.name,
+      display_order: c.display_order,
+      _fallback: true
+    }));
   }
 
   function renderCategoryFilter() {
@@ -256,200 +201,216 @@ const RecomandariModule = (() => {
     if (!el) return;
     const options = ['<option value="">📋 Toate categoriile</option>'];
     sortCategories(categories).forEach((c) => {
-      options.push('<option value="' + c.id + '" ' + (activeCategory === c.id ? 'selected' : '') + '>' + esc(c.icon) + ' ' + esc(c.name) + '</option>');
+      options.push('<option value="' + esc(c.id) + '"' + (activeCategory === c.id ? ' selected' : '') + '>' + esc(c.icon) + ' ' + esc(c.name) + '</option>');
     });
     el.innerHTML = options.join('');
     el.value = activeCategory ? String(activeCategory) : '';
   }
 
+  function renderFormCategorySelect() {
+    const el = document.getElementById('recFormCategory');
+    if (!el) return;
+    const options = sortCategories(categories).map((c) => '<option value="' + esc(c.id) + '">' + esc(c.icon) + ' ' + esc(c.name) + '</option>');
+    el.innerHTML = options.join('');
+  }
+
   function renderCategorySection(cat, items) {
-    const safeName = cat && cat.name ? cat.name : 'Fără categorie';
-    const safeIcon = cat && cat.icon ? cat.icon : '📌';
-    const color = getCatColor(safeName);
-    return '\n      <section class="rec-category-group" style="--rec-color:' + color + '">' +
-      '\n        <div class="rec-category-group-header">' +
-      '\n          <div class="rec-category-group-title">' + esc(safeIcon) + ' ' + esc(safeName) + '</div>' +
-      '\n          <span class="rec-category-group-count">' + items.length + '</span>' +
-      '\n        </div>' +
-      '\n        <div class="rec-category-group-body">' + items.map(renderCard).join('') + '</div>' +
-      '\n      </section>';
+    return '' +
+      '<section class="rec-category-group" style="--rec-color:' + getCatColor(cat.name) + '">' +
+      '  <div class="rec-category-group-header">' +
+      '    <div class="rec-category-group-title">' + esc(cat.icon) + ' ' + esc(cat.name) + '</div>' +
+      '    <span class="rec-category-group-count">' + items.length + '</span>' +
+      '  </div>' +
+      '  <div class="rec-category-group-body">' + items.map(renderCard).join('') + '</div>' +
+      '</section>';
   }
 
   function renderList() {
     const el = document.getElementById('recList');
     if (!el) return;
 
+    if (!allRecs.length) {
+      el.innerHTML = '' +
+        '<div class="rec-empty">' +
+        '  <div class="rec-empty-icon">💡</div>' +
+        '  <div class="rec-empty-title">Nicio recomandare adăugată încă.</div>' +
+        '  <div class="rec-empty-sub">Fii primul care recomandă ceva vecinilor.</div>' +
+        '</div>';
+      return;
+    }
+
     if (activeCategory) {
       const list = allRecs.filter((r) => r.category_id === activeCategory);
       if (!list.length) {
-        const catName = (categories.find((c) => c.id === activeCategory) || {}).name || '';
-        el.innerHTML = '\n        <div class="rec-empty">\n          <div class="rec-empty-icon">💡</div>\n          <div class="rec-empty-title">' +
-          (catName ? ('Nicio recomandare pentru &quot;' + esc(catName) + '&quot; încă.') : 'Nicio recomandare adăugată încă.') +
-          '</div>\n          <div class="rec-empty-sub">Fii primul care recomandă ceva vecinilor!</div>\n        </div>';
+        el.innerHTML = '' +
+          '<div class="rec-empty">' +
+          '  <div class="rec-empty-icon">🗂️</div>' +
+          '  <div class="rec-empty-title">Nu există recomandări în categoria selectată.</div>' +
+          '</div>';
         return;
       }
       el.innerHTML = list.map(renderCard).join('');
       return;
     }
 
-    if (!allRecs.length) {
-      el.innerHTML = '\n        <div class="rec-empty">\n          <div class="rec-empty-icon">💡</div>\n          <div class="rec-empty-title">Nicio recomandare adăugată încă.</div>\n          <div class="rec-empty-sub">Fii primul care recomandă ceva vecinilor!</div>\n        </div>';
-      return;
+    const out = [];
+    const sortedCats = sortCategories(categories);
+    for (const cat of sortedCats) {
+      const items = allRecs.filter((r) => r.category_id === cat.id);
+      if (items.length) out.push(renderCategorySection(cat, items));
     }
 
-    const categoryIds = new Set(categories.map((c) => c.id));
-    const sections = [];
-    sortCategories(categories).forEach((cat) => {
-      const catItems = allRecs.filter((r) => r.category_id === cat.id);
-      if (catItems.length) sections.push(renderCategorySection(cat, catItems));
-    });
-
-    const uncategorized = allRecs.filter((r) => !r.category_id || !categoryIds.has(r.category_id));
+    const knownIds = new Set(sortedCats.map((c) => c.id));
+    const uncategorized = allRecs.filter((r) => !r.category_id || !knownIds.has(r.category_id));
     if (uncategorized.length) {
-      sections.push(renderCategorySection({ id: null, name: 'Fără categorie', icon: '📌' }, uncategorized));
+      out.push(renderCategorySection({ icon: '📌', name: 'Fără categorie' }, uncategorized));
     }
 
-    el.innerHTML = sections.join('');
+    el.innerHTML = out.join('');
   }
 
   function renderCard(rec) {
-    const cat = categories.find((c) => c.id === rec.category_id);
-    const catName = cat ? cat.name : 'Fără categorie';
-    const catIcon = cat ? cat.icon : '📌';
-    const color = getCatColor(catName);
-    const user = getCurrentUser();
-    const isOwn = user && user.username === rec.added_by;
-    const isAdmin = isAdminUser();
-    const canEdit = Boolean(isOwn || isAdmin);
-
-    const phonePart = rec.phone
-      ? '<a href="tel:' + esc(rec.phone) + '" class="rec-phone-btn">📞 ' + esc(rec.phone) + '</a>'
+    const cat = categories.find((c) => c.id === rec.category_id) || { icon: '📌', name: 'Fără categorie' };
+    const color = getCatColor(cat.name);
+    const phoneLink = rec.phone
+      ? '<a class="rec-phone-btn" href="tel:' + esc(rec.phone) + '">📞 ' + esc(rec.phone) + '</a>'
       : '';
-    const webUrl = normalizeWebsite(rec.website || '');
-    const websitePart = webUrl
-      ? '<a href="' + esc(webUrl) + '" class="rec-web-btn" target="_blank" rel="noopener noreferrer">🌐 Website</a>'
+    const website = normalizeWebsite(rec.website || '');
+    const webLink = website
+      ? '<a class="rec-web-btn" href="' + esc(website) + '" target="_blank" rel="noopener noreferrer">🌐 Website</a>'
       : '';
 
-    const adminPart = canEdit ?
-      '<div class="rec-admin-actions">' +
-        '<button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.startEdit(' + rec.id + ')">✏ Editează</button>' +
-        '<button class="btn btn-danger btn-sm" type="button" onclick="RecomandariModule.del(' + rec.id + ')">🗑 Șterge</button>' +
-      '</div>' : '';
+    const actions = canEditRec(rec)
+      ? '<div class="rec-admin-actions">' +
+          '<button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.startEdit(' + rec.id + ')">✏ Editează</button>' +
+          '<button class="btn btn-danger btn-sm" type="button" onclick="RecomandariModule.del(' + rec.id + ')">🗑 Șterge</button>' +
+        '</div>'
+      : '';
 
-    return '\n      <div class="rec-card" id="rec-card-' + rec.id + '" style="--rec-color:' + color + '">\n        <div class="rec-card-header">\n          <div class="rec-card-title-group">\n            <div class="rec-name">' + esc(rec.name) + '</div>' +
-              (rec.area ? ('<div class="rec-area">📍 ' + esc(rec.area) + '</div>') : '') +
-          '</div>\n          <div class="rec-stars">' + starsHtml(rec.rating) + '</div>\n        </div>\n        <div class="rec-badges">\n          <span class="rec-badge">' + esc(catIcon) + ' ' + esc(catName) + '</span>\n        </div>\n        <div class="rec-why">' + esc(rec.why) + '</div>\n        <div class="rec-card-footer">\n          <div class="rec-meta">\n            <span>👤 ' + esc(rec.added_by) + '</span>' +
-            (rec.building ? ('<span>· Bloc ' + esc(rec.building) + '</span>') : '') +
-            '<span>· ' + timeStr(rec.created_at) + '</span>\n          </div>\n          <div class="rec-actions">' + phonePart + websitePart + '</div>\n        </div>' +
-        adminPart +
-      '\n      </div>';
+    return '' +
+      '<article class="rec-card" id="rec-card-' + rec.id + '" style="--rec-color:' + color + '">' +
+      '  <div class="rec-card-header">' +
+      '    <div class="rec-card-title-group">' +
+      '      <div class="rec-name">' + esc(rec.name) + '</div>' +
+      (rec.area ? '      <div class="rec-area">📍 ' + esc(rec.area) + '</div>' : '') +
+      '    </div>' +
+      '    <div class="rec-stars">' + starsHtml(rec.rating, 14) + '</div>' +
+      '  </div>' +
+      '  <div class="rec-badges"><span class="rec-badge">' + esc(cat.icon) + ' ' + esc(cat.name) + '</span></div>' +
+      '  <div class="rec-why">' + esc(rec.why) + '</div>' +
+      '  <div class="rec-card-footer">' +
+      '    <div class="rec-meta">' +
+      '      <span>👤 ' + esc(rec.added_by || '-') + '</span>' +
+      (rec.building ? '<span>· Bloc ' + esc(rec.building) + '</span>' : '') +
+      '      <span>· ' + esc(timeStr(rec.created_at)) + '</span>' +
+      '    </div>' +
+      '    <div class="rec-actions">' + phoneLink + webLink + '</div>' +
+      '  </div>' +
+      actions +
+      '</article>';
   }
 
   function renderEditForm(rec) {
-    const cat = categories.find((c) => c.id === rec.category_id);
-    const color = getCatColor((cat && cat.name) || 'Altele');
-    editRating = rec.rating || 0;
+    const catOptions = sortCategories(categories).map((c) => '<option value="' + esc(c.id) + '"' + (c.id === rec.category_id ? ' selected' : '') + '>' + esc(c.icon) + ' ' + esc(c.name) + '</option>').join('');
+    editRating = Number(rec.rating || 0);
 
-    const catOptions = categories.map((c) =>
-      '<option value="' + c.id + '" ' + (c.id === rec.category_id ? 'selected' : '') + '>' + esc(c.icon) + ' ' + esc(c.name) + '</option>'
+    const stars = [1, 2, 3, 4, 5].map((i) =>
+      '<span id="eStar' + i + '" onclick="RecomandariModule.setEditRating(' + i + ')" style="font-size:28px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:' + (i <= editRating ? '1' : '0.25') + '">⭐</span>'
     ).join('');
 
-    const editStars = [1, 2, 3, 4, 5].map((i) => (
-      '<span id="eStar' + i + '" onclick="RecomandariModule.setEditRating(' + i + ')" ' +
-      'style="font-size:28px;cursor:pointer;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;opacity:' + (i <= editRating ? '1' : '0.25') + '">⭐</span>'
-    )).join('');
-
-    return '\n      <div class="rec-card" id="rec-card-' + rec.id + '" style="--rec-color:' + color + ';border-color:var(--accent-primary)">\n        <div class="rec-edit-form">\n          <div>\n            <label>Nume *</label>\n            <input type="text" id="eRecName" value="' + esc(rec.name) + '" placeholder="Numele locului sau persoanei">\n          </div>\n          <div>\n            <label>Categorie *</label>\n            <select id="eRecCat">' + catOptions + '</select>\n          </div>\n          <div>\n            <label>Zonă / Adresă</label>\n            <input type="text" id="eRecArea" value="' + esc(rec.area || '') + '" placeholder="ex: Bd. Unirii, Sector 3">\n          </div>\n          <div>\n            <label>Telefon</label>\n            <input type="tel" id="eRecPhone" value="' + esc(rec.phone || '') + '" placeholder="07xx xxx xxx">\n          </div>\n          <div>\n            <label>Website</label>\n            <input type="url" id="eRecWebsite" value="' + esc(rec.website || '') + '" placeholder="https://exemplu.ro">\n          </div>\n          <div>\n            <label>Rating *</label>\n            <div style="display:flex;gap:4px">' + editStars + '</div>\n          </div>\n          <div>\n            <label>De ce recomanzi? *</label>\n            <textarea id="eRecWhy">' + esc(rec.why) + '</textarea>\n          </div>\n          <div class="rec-edit-actions">\n            <button class="btn btn-primary" type="button" onclick="RecomandariModule.saveEdit(' + rec.id + ')">✓ Salvează</button>\n            <button class="btn btn-secondary" type="button" onclick="RecomandariModule.load()">Anulează</button>\n          </div>\n        </div>\n      </div>';
-  }
-
-  function populateSelect() {
-    const sel = document.getElementById('recFormCategory');
-    if (!sel) return;
-    sel.innerHTML = categories.map((c) =>
-      '<option value="' + c.id + '">' + esc(c.icon) + ' ' + esc(c.name) + '</option>'
-    ).join('');
+    return '' +
+      '<article class="rec-card" id="rec-card-' + rec.id + '">' +
+      '  <div class="rec-edit-form">' +
+      '    <div><label>Nume *</label><input type="text" id="eRecName" value="' + esc(rec.name) + '"></div>' +
+      '    <div><label>Categorie *</label><select id="eRecCat">' + catOptions + '</select></div>' +
+      '    <div><label>Zonă / Adresă</label><input type="text" id="eRecArea" value="' + esc(rec.area || '') + '"></div>' +
+      '    <div><label>Telefon</label><input type="tel" id="eRecPhone" value="' + esc(rec.phone || '') + '"></div>' +
+      '    <div><label>Website</label><input type="url" id="eRecWebsite" value="' + esc(rec.website || '') + '"></div>' +
+      '    <div><label>Rating *</label><div style="display:flex;gap:4px">' + stars + '</div></div>' +
+      '    <div><label>De ce recomanzi? *</label><textarea id="eRecWhy">' + esc(rec.why || '') + '</textarea></div>' +
+      '    <div class="rec-edit-actions">' +
+      '      <button class="btn btn-primary" type="button" onclick="RecomandariModule.saveEdit(' + rec.id + ')">✓ Salvează</button>' +
+      '      <button class="btn btn-secondary" type="button" onclick="RecomandariModule.load()">Anulează</button>' +
+      '    </div>' +
+      '  </div>' +
+      '</article>';
   }
 
   function renderAdminPanel() {
-    const el = ensureAdminZoneDom();
-    if (!el) return;
-    const adminAllowed = isAdminUser();
-    el.style.display = 'block';
-
-    const rows = categories.map((c) =>
-      '<div class="rec-cat-manage-row" id="cat-admin-row-' + c.id + '">' +
-        '<span class="cat-label">' + esc(c.icon) + ' ' + esc(c.name) + '</span>' +
-        '<button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.startEditCat(' + c.id + ')">✏</button>' +
-        '<button class="btn btn-danger btn-sm" type="button" onclick="RecomandariModule.delCat(' + c.id + ')">🗑</button>' +
-      '</div>'
-    ).join('');
+    const zone = document.getElementById('recAdminZone');
+    if (!zone) return;
+    if (!isAdminUser()) {
+      zone.style.display = 'none';
+      return;
+    }
+    zone.style.display = 'block';
 
     const listEl = document.getElementById('recCatManageList');
-    if (listEl) {
-      if (adminAllowed) {
-        listEl.innerHTML = rows || '<p style="font-size:13px;color:var(--text-muted);padding:8px">Nicio categorie.</p>';
-      } else {
-        listEl.innerHTML = '<p style="font-size:13px;color:var(--text-muted);padding:8px">Panou vizibil pentru diagnostic. Acțiunile sunt doar pentru admin.</p>';
-      }
-    }
+    if (!listEl) return;
 
-    const iconInput = document.getElementById('recNewCatIcon');
-    const nameInput = document.getElementById('recNewCatName');
-    const addBtn = el.querySelector('.rec-new-cat-form .btn');
-    if (iconInput) iconInput.disabled = !adminAllowed;
-    if (nameInput) nameInput.disabled = !adminAllowed;
-    if (addBtn) addBtn.disabled = !adminAllowed;
-    if (addBtn) {
-      addBtn.textContent = adminAllowed ? '+ Adaugă' : 'Doar Admin';
-    }
-    renderAddCategoryPicker();
+    const rows = sortCategories(categories).map((c) => '' +
+      '<div class="rec-cat-manage-row" id="cat-admin-row-' + c.id + '">' +
+      '  <span class="cat-label">' + esc(c.icon) + ' ' + esc(c.name) + '</span>' +
+      '  <button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.startEditCat(' + c.id + ')">✏</button>' +
+      '  <button class="btn btn-danger btn-sm" type="button" onclick="RecomandariModule.delCat(' + c.id + ')">🗑</button>' +
+      '</div>'
+    );
+
+    listEl.innerHTML = rows.length ? rows.join('') : '<p style="font-size:13px;color:var(--text-muted);padding:8px">Nicio categorie.</p>';
+    renderNewCategoryIconPicker();
   }
 
-  // ── Public: load ──────────────────────────────────────
+  function renderNewCategoryIconPicker() {
+    const picker = document.getElementById('recNewCatIconPicker');
+    if (!picker) return;
+    const iconInput = document.getElementById('recNewCatIcon');
+    const current = iconInput && iconInput.value ? iconInput.value.trim() : '📌';
+
+    picker.setAttribute('data-icon-picker-for', 'recNewCatIcon');
+    picker.innerHTML = ICON_CHOICES.map((icon) =>
+      '<button type="button" class="rec-icon-chip' + (icon === current ? ' active' : '') + '" onclick="RecomandariModule.pickCatIcon(\'' + icon + '\', \'recNewCatIcon\')">' + esc(icon) + '</button>'
+    ).join('');
+  }
+
+  function ensureActiveCategoryValid() {
+    if (!activeCategory) return;
+    if (!categories.some((c) => c.id === activeCategory)) activeCategory = null;
+  }
+
   async function load() {
-    const results = await Promise.allSettled([fetchRecs(), fetchCats()]);
+    const [recsResult, catsResult] = await Promise.allSettled([fetchRecs(), fetchCats()]);
 
-    if (results[0].status === 'fulfilled' && Array.isArray(results[0].value)) {
-      allRecs = results[0].value;
-    } else {
-      allRecs = [];
-      showToast('Nu am putut încărca recomandările.', 'error');
-    }
+    allRecs = recsResult.status === 'fulfilled' ? recsResult.value : [];
+    if (recsResult.status !== 'fulfilled') showToast('Eroare la încărcarea recomandărilor.', 'error');
 
-    const serverCats = results[1].status === 'fulfilled' && Array.isArray(results[1].value)
-      ? results[1].value
-      : [];
+    let serverCats = catsResult.status === 'fulfilled' ? catsResult.value : [];
+    if (catsResult.status !== 'fulfilled') showToast('Eroare la încărcarea categoriilor.', 'warning');
 
-    categories = serverCats.length ? serverCats : defaultCategoriesClone();
-    if (!serverCats.length && !warnedCatsFallback) {
-      warnedCatsFallback = true;
-      showToast('Categoriile nu au putut fi încărcate din server. Folosim lista implicită.', 'warning');
-    }
+    serverCats = await bootstrapPredefinedCategories(serverCats);
+    categories = sortCategories(serverCats.length ? serverCats : fallbackCategories());
 
-    ensureValidActiveCategory();
+    ensureActiveCategoryValid();
     renderAdminPanel();
     renderCategoryFilter();
+    renderFormCategorySelect();
     renderList();
-    populateSelect();
+
     const ts = document.getElementById('recRefreshedAt');
     if (ts) ts.textContent = 'acum';
   }
 
-  // ── Public: filter ────────────────────────────────────
   function filter(catId) {
-    const parsed = Number(catId);
-    activeCategory = Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+    const parsed = toInt(catId);
+    activeCategory = parsed;
     renderCategoryFilter();
     renderList();
   }
 
   function filterFromSelect() {
-    const sel = document.getElementById('recCategoryFilter');
-    const val = sel ? sel.value : '';
-    filter(val ? parseInt(val, 10) : null);
+    const select = document.getElementById('recCategoryFilter');
+    filter(select && select.value ? select.value : null);
   }
 
-  // ── Public: star rating (add form) ───────────────────
   function setRating(n) {
     selectedRating = n;
     [1, 2, 3, 4, 5].forEach((i) => {
@@ -466,13 +427,9 @@ const RecomandariModule = (() => {
   }
 
   function resetHover() {
-    [1, 2, 3, 4, 5].forEach((i) => {
-      const el = document.getElementById('rStar' + i);
-      if (el) el.style.opacity = i <= selectedRating ? '1' : '0.25';
-    });
+    setRating(selectedRating || 0);
   }
 
-  // ── Public: star rating (edit form) ──────────────────
   function setEditRating(n) {
     editRating = n;
     [1, 2, 3, 4, 5].forEach((i) => {
@@ -481,25 +438,24 @@ const RecomandariModule = (() => {
     });
   }
 
-  // ── Public: submit new rec ────────────────────────────
   async function submit() {
-    const user = getCurrentUser();
+    const user = getUser();
     if (!user || !user.username) {
       showToast('Trebuie să fii autentificat.', 'warning');
       return;
     }
 
-    const name = (document.getElementById('recFormName') || {}).value ? document.getElementById('recFormName').value.trim() : '';
-    const catId = parseInt(((document.getElementById('recFormCategory') || {}).value || ''), 10);
-    const area = (document.getElementById('recFormArea') || {}).value ? document.getElementById('recFormArea').value.trim() : '';
-    const phone = (document.getElementById('recFormPhone') || {}).value ? document.getElementById('recFormPhone').value.trim() : '';
+    const name = String((document.getElementById('recFormName') || {}).value || '').trim();
+    const catId = toInt((document.getElementById('recFormCategory') || {}).value);
+    const area = String((document.getElementById('recFormArea') || {}).value || '').trim();
+    const phone = String((document.getElementById('recFormPhone') || {}).value || '').trim();
     const website = normalizeWebsite((document.getElementById('recFormWebsite') || {}).value || '');
-    const why = (document.getElementById('recFormWhy') || {}).value ? document.getElementById('recFormWhy').value.trim() : '';
+    const why = String((document.getElementById('recFormWhy') || {}).value || '').trim();
 
-    if (!name) { showToast('Introdu numele locului sau persoanei.', 'warning'); return; }
-    if (!Number.isFinite(catId)) { showToast('Selectează o categorie.', 'warning'); return; }
-    if (!why || why.length < 10) { showToast('Explică de ce recomanzi (minim 10 caractere).', 'warning'); return; }
-    if (!selectedRating) { showToast('Selectează un rating (1-5 stele).', 'warning'); return; }
+    if (!name) return showToast('Introdu numele locului/persoanei.', 'warning');
+    if (!catId || catId >= 9000) return showToast('Selectează o categorie validă.', 'warning');
+    if (!selectedRating) return showToast('Selectează ratingul (1-5).', 'warning');
+    if (why.length < 10) return showToast('Scrie minim 10 caractere la "De ce recomanzi".', 'warning');
 
     const btn = document.getElementById('recSubmitBtn');
     if (btn) {
@@ -513,12 +469,13 @@ const RecomandariModule = (() => {
         category_id: catId,
         area: area,
         phone: phone,
-        why: why,
         rating: selectedRating,
+        why: why,
         added_by: user.username,
-        building: getCurrentUserBuilding()
+        building: user.building || user.building_number || ''
       };
       if (website) payload.website = website;
+
       await apiCreateRec(payload);
 
       ['recFormName', 'recFormArea', 'recFormPhone', 'recFormWebsite', 'recFormWhy'].forEach((id) => {
@@ -530,9 +487,10 @@ const RecomandariModule = (() => {
         const el = document.getElementById('rStar' + i);
         if (el) el.style.opacity = '0.25';
       });
-      showToast('Recomandare adăugată! Mulțumim 🙏', 'success');
+
+      showToast('Recomandare adăugată.', 'success');
       await load();
-    } catch (e) {
+    } catch (_) {
       showToast('Eroare la adăugare.', 'error');
     } finally {
       if (btn) {
@@ -542,27 +500,28 @@ const RecomandariModule = (() => {
     }
   }
 
-  // ── Public: inline edit rec ───────────────────────────
   function startEdit(id) {
     const rec = allRecs.find((r) => r.id === id);
-    if (!rec) return;
-    editingRecId = id;
+    if (!rec || !canEditRec(rec)) return;
     const card = document.getElementById('rec-card-' + id);
     if (card) card.outerHTML = renderEditForm(rec);
   }
 
   async function saveEdit(id) {
-    const name = (document.getElementById('eRecName') || {}).value ? document.getElementById('eRecName').value.trim() : '';
-    const catId = parseInt(((document.getElementById('eRecCat') || {}).value || ''), 10);
-    const area = (document.getElementById('eRecArea') || {}).value ? document.getElementById('eRecArea').value.trim() : '';
-    const phone = (document.getElementById('eRecPhone') || {}).value ? document.getElementById('eRecPhone').value.trim() : '';
-    const website = normalizeWebsite((document.getElementById('eRecWebsite') || {}).value || '');
-    const why = (document.getElementById('eRecWhy') || {}).value ? document.getElementById('eRecWhy').value.trim() : '';
+    const rec = allRecs.find((r) => r.id === id);
+    if (!rec || !canEditRec(rec)) return;
 
-    if (!name) { showToast('Numele nu poate fi gol.', 'warning'); return; }
-    if (!Number.isFinite(catId)) { showToast('Selectează o categorie.', 'warning'); return; }
-    if (!why || why.length < 10) { showToast('Explică de ce recomanzi.', 'warning'); return; }
-    if (!editRating) { showToast('Selectează un rating.', 'warning'); return; }
+    const name = String((document.getElementById('eRecName') || {}).value || '').trim();
+    const catId = toInt((document.getElementById('eRecCat') || {}).value);
+    const area = String((document.getElementById('eRecArea') || {}).value || '').trim();
+    const phone = String((document.getElementById('eRecPhone') || {}).value || '').trim();
+    const website = normalizeWebsite((document.getElementById('eRecWebsite') || {}).value || '');
+    const why = String((document.getElementById('eRecWhy') || {}).value || '').trim();
+
+    if (!name) return showToast('Numele nu poate fi gol.', 'warning');
+    if (!catId || catId >= 9000) return showToast('Selectează o categorie validă.', 'warning');
+    if (!editRating) return showToast('Selectează ratingul.', 'warning');
+    if (why.length < 10) return showToast('Textul explicației este prea scurt.', 'warning');
 
     try {
       const payload = {
@@ -570,100 +529,98 @@ const RecomandariModule = (() => {
         category_id: catId,
         area: area,
         phone: phone,
-        why: why,
-        rating: editRating
+        rating: editRating,
+        why: why
       };
       if (website) payload.website = website;
+
       await apiUpdateRec(id, payload);
       showToast('Recomandare actualizată.', 'success');
-      editingRecId = null;
       await load();
-    } catch (e) {
+    } catch (_) {
       showToast('Eroare la actualizare.', 'error');
     }
   }
 
-  // ── Public: delete rec ────────────────────────────────
   async function del(id) {
+    const rec = allRecs.find((r) => r.id === id);
+    if (!rec || !canEditRec(rec)) return;
     if (!confirm('Ștergi această recomandare?')) return;
+
     try {
       await apiDeleteRec(id);
-      if (editingRecId === id) editingRecId = null;
       showToast('Recomandare ștearsă.', 'success');
       await load();
-    } catch (e) {
+    } catch (_) {
       showToast('Eroare la ștergere.', 'error');
     }
   }
 
-  // ── Public: category management ───────────────────────
   async function addCat() {
-    if (!isAdminUser()) {
-      showToast('Doar admin poate gestiona categoriile.', 'warning');
-      return;
-    }
+    if (!isAdminUser()) return showToast('Doar admin poate adăuga categorii.', 'warning');
+
     const iconEl = document.getElementById('recNewCatIcon');
     const nameEl = document.getElementById('recNewCatName');
-    const icon = (iconEl && iconEl.value.trim()) || '📌';
-    const name = nameEl ? nameEl.value.trim() : '';
-    if (!name) { showToast('Introdu un nume pentru categorie.', 'warning'); return; }
+    const icon = String((iconEl || {}).value || '').trim() || '📌';
+    const name = String((nameEl || {}).value || '').trim();
+
+    if (!name) return showToast('Introdu numele categoriei.', 'warning');
+
     try {
       await apiCreateCat(icon, name);
       if (nameEl) nameEl.value = '';
       if (iconEl) iconEl.value = '📌';
-      renderAddCategoryPicker();
       showToast('Categorie adăugată.', 'success');
       await load();
-    } catch (e) {
-      showToast('Eroare la adăugare.', 'error');
+    } catch (_) {
+      showToast('Eroare la adăugarea categoriei.', 'error');
     }
   }
 
   function startEditCat(id) {
-    if (!isAdminUser()) {
-      showToast('Doar admin poate gestiona categoriile.', 'warning');
-      return;
-    }
+    if (!isAdminUser()) return showToast('Doar admin poate edita categorii.', 'warning');
+
     const cat = categories.find((c) => c.id === id);
-    if (!cat) return;
     const row = document.getElementById('cat-admin-row-' + id);
-    if (!row) return;
-    row.innerHTML = '\n      <div class="rec-cat-manage-edit">\n        <div class="rec-cat-manage-edit-row">\n          <input type="text" id="eCatIcon-' + id + '" class="rec-cat-edit-icon" value="' + esc(cat.icon) + '" maxlength="2" aria-label="Icon categorie">\n          <input type="text" id="eCatName-' + id + '" class="rec-cat-edit-name" value="' + esc(cat.name) + '" aria-label="Nume categorie">\n          <button class="btn btn-primary btn-sm" type="button" onclick="RecomandariModule.saveEditCat(' + id + ')">✓</button>\n          <button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.load()">✕</button>\n        </div>\n        <div class="rec-icon-picker" data-icon-picker-for="eCatIcon-' + id + '">' + iconPickerHtml('eCatIcon-' + id, cat.icon) + '</div>\n      </div>';
-    updatePickerSelection('eCatIcon-' + id);
+    if (!cat || !row) return;
+
+    row.innerHTML = '' +
+      '<input type="text" id="eCatIcon-' + id + '" value="' + esc(cat.icon || '📌') + '" style="width:58px;text-align:center;font-size:20px;padding:0 6px">' +
+      '<input type="text" id="eCatName-' + id + '" value="' + esc(cat.name) + '" style="flex:1;min-width:120px">' +
+      '<button class="btn btn-primary btn-sm" type="button" onclick="RecomandariModule.saveEditCat(' + id + ')">✓</button>' +
+      '<button class="btn btn-secondary btn-sm" type="button" onclick="RecomandariModule.load()">✕</button>';
   }
 
   async function saveEditCat(id) {
-    if (!isAdminUser()) {
-      showToast('Doar admin poate gestiona categoriile.', 'warning');
-      return;
-    }
-    const icon = ((document.getElementById('eCatIcon-' + id) || {}).value || '').trim();
-    const name = ((document.getElementById('eCatName-' + id) || {}).value || '').trim();
-    if (!name) { showToast('Numele nu poate fi gol.', 'warning'); return; }
+    if (!isAdminUser()) return showToast('Doar admin poate edita categorii.', 'warning');
+
+    const icon = String((document.getElementById('eCatIcon-' + id) || {}).value || '').trim() || '📌';
+    const name = String((document.getElementById('eCatName-' + id) || {}).value || '').trim();
+    if (!name) return showToast('Numele categoriei nu poate fi gol.', 'warning');
+
     try {
-      await apiUpdateCat(id, icon || '📌', name);
+      await apiUpdateCat(id, icon, name);
       showToast('Categorie actualizată.', 'success');
       await load();
-    } catch (e) {
-      showToast('Eroare.', 'error');
+    } catch (_) {
+      showToast('Eroare la actualizare categorie.', 'error');
     }
   }
 
   async function delCat(id) {
-    if (!isAdminUser()) {
-      showToast('Doar admin poate gestiona categoriile.', 'warning');
-      return;
-    }
+    if (!isAdminUser()) return showToast('Doar admin poate șterge categorii.', 'warning');
+
     const cat = categories.find((c) => c.id === id);
-    const msg = 'Ștergi categoria "' + ((cat && cat.name) || '') + '"? Toate recomandările din ea rămân, dar fără categorie.';
-    if (!confirm(msg)) return;
+    const label = cat ? String(cat.name) : 'această categorie';
+    if (!confirm('Ștergi categoria "' + label + '"?')) return;
+
     try {
       await apiDeleteCat(id);
       if (activeCategory === id) activeCategory = null;
       showToast('Categorie ștearsă.', 'success');
       await load();
-    } catch (e) {
-      showToast('Eroare.', 'error');
+    } catch (_) {
+      showToast('Eroare la ștergere categorie.', 'error');
     }
   }
 
@@ -671,11 +628,9 @@ const RecomandariModule = (() => {
     const input = document.getElementById(targetId);
     if (!input) return;
     input.value = icon;
-    updatePickerSelection(targetId);
-    try { input.focus(); } catch (_) {}
+    renderNewCategoryIconPicker();
   }
 
-  // ── Public API ────────────────────────────────────────
   return {
     load: load,
     filter: filter,

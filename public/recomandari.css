@@ -1,532 +1,133 @@
-/* ── Recomandări Module — Mobile First ─────────── */
-/* Scoped to #moduleRecomandari to avoid conflicts */
-
+/* Recomandari module */
 #moduleRecomandari,
 #moduleRecomandari * {
   box-sizing: border-box;
   max-width: 100%;
 }
 
-/* Module content wrapper */
 #moduleRecomandari .module-content-area {
   padding: 12px;
-  width: 100%;
-  max-width: 100%;
   overflow-x: hidden;
 }
 
-/* ── Category filter dropdown ── */
 #moduleRecomandari .rec-filter-wrap {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 16px;
-}
-#moduleRecomandari .rec-filter-wrap label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-#moduleRecomandari #recCategoryFilter {
-  width: 100%;
-  min-height: 44px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  padding: 0 38px 0 12px;
-  background: white;
-  color: var(--text-primary);
-  font-size: 14px;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%), linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
-  background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
-  background-size: 6px 6px, 6px 6px;
-  background-repeat: no-repeat;
-}
-
-/* ── Category sections ── */
-#moduleRecomandari .rec-category-group {
-  background: white;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 14px;
-  overflow: hidden;
-}
-#moduleRecomandari .rec-category-group-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-subtle, #F8FAFC);
-  box-shadow: inset 4px 0 0 var(--rec-color, var(--accent-primary));
-}
-#moduleRecomandari .rec-category-group-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-#moduleRecomandari .rec-category-group-count {
-  min-width: 28px;
-  min-height: 28px;
-  padding: 0 8px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  background: white;
-  border: 1px solid var(--border);
-}
-#moduleRecomandari .rec-category-group-body {
-  padding: 10px;
-}
-#moduleRecomandari .rec-category-group .rec-card {
-  margin-bottom: 10px;
-}
-#moduleRecomandari .rec-category-group .rec-card:last-child {
-  margin-bottom: 0;
-}
-
-/* ── Recommendation card ── */
-#moduleRecomandari .rec-card {
-  background: white;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  padding: 16px;
-  margin-bottom: 12px;
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-}
-#moduleRecomandari .rec-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 12px;
-  bottom: 12px;
-  width: 4px;
-  border-radius: 0 4px 4px 0;
-  background: var(--rec-color, var(--accent-primary));
-}
-
-/* Card header: name left, stars right */
-#moduleRecomandari .rec-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-#moduleRecomandari .rec-card-title-group {
-  flex: 1;
-  min-width: 0;
-}
-#moduleRecomandari .rec-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-  margin-bottom: 2px;
-  word-break: break-word;
-}
-#moduleRecomandari .rec-area {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-#moduleRecomandari .rec-stars {
-  display: flex;
-  gap: 1px;
-  flex-shrink: 0;
-  font-size: 14px;
-  line-height: 1;
-}
-
-/* Category badge */
-#moduleRecomandari .rec-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-#moduleRecomandari .rec-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 9px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--bg-subtle, #F5F0EB);
-  color: var(--text-secondary);
-}
-
-/* Hero quote block */
-#moduleRecomandari .rec-why {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-primary);
-  font-style: italic;
-  padding: 10px 12px 10px 18px;
-  background: var(--bg-subtle, #F8FAFC);
-  border-radius: 8px;
-  border-left: 3px solid var(--rec-color, var(--accent-primary));
-  margin-bottom: 12px;
-  position: relative;
-  word-break: break-word;
-}
-#moduleRecomandari .rec-why::before {
-  content: '"';
-  font-size: 32px;
-  color: var(--rec-color, var(--accent-primary));
-  opacity: 0.2;
-  position: absolute;
-  top: -4px;
-  left: 6px;
-  font-family: Georgia, serif;
-  line-height: 1;
-  pointer-events: none;
-}
-
-/* Card footer */
-#moduleRecomandari .rec-card-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-#moduleRecomandari .rec-meta {
-  font-size: 11px;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-#moduleRecomandari .rec-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-/* Phone button — full width on mobile */
-#moduleRecomandari .rec-phone-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: var(--accent-primary);
-  color: white;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 150ms ease;
-  min-height: 44px;
-  width: 100%;
-  -webkit-tap-highlight-color: transparent;
-}
-#moduleRecomandari .rec-phone-btn:active {
-  background: #15803D;
-}
-
-#moduleRecomandari .rec-web-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: white;
-  color: var(--text-primary);
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 150ms ease;
-  min-height: 44px;
-  width: 100%;
-  -webkit-tap-highlight-color: transparent;
-}
-#moduleRecomandari .rec-web-btn:active {
-  background: var(--bg-subtle, #F5F0EB);
-}
-
-/* Admin action buttons on cards */
-#moduleRecomandari .rec-admin-actions {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  margin-top: 10px;
-}
-#moduleRecomandari .rec-admin-actions .btn {
-  flex: 1;
-  justify-content: center;
-  min-height: 44px;
-}
-
-/* ── Add recommendation form ── */
-#moduleRecomandari .rec-form-card {
-  background: white;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  padding: 16px;
-  margin-bottom: 20px;
-  width: 100%;
-}
-#moduleRecomandari .rec-form-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Single column on mobile, 2-col on desktop */
-#moduleRecomandari .rec-form-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
   margin-bottom: 14px;
 }
-#moduleRecomandari .rec-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-#moduleRecomandari .rec-form-group label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-#moduleRecomandari .rec-form-group input,
-#moduleRecomandari .rec-form-group select,
-#moduleRecomandari .rec-form-group textarea {
-  width: 100%;
-  font-size: 14px;
-  min-height: 44px;
-  padding: 0 12px;
-  border-radius: 9px;
-  border: 1.5px solid var(--border);
-  color: var(--text-primary);
-  background: white;
-  -webkit-appearance: none;
-}
-#moduleRecomandari .rec-form-group textarea {
-  padding: 10px 12px;
-  min-height: 88px;
-  resize: vertical;
-}
-
-/* Interactive star rating */
-#moduleRecomandari .rec-star-input {
-  display: flex;
-  gap: 6px;
-  padding: 4px 0;
-}
-#moduleRecomandari .rec-star-input span {
-  font-size: 30px;
-  cursor: pointer;
-  opacity: 0.25;
-  transition: opacity 100ms ease, transform 80ms ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  min-width: 44px;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#moduleRecomandari .rec-star-input span.active {
-  opacity: 1;
-}
-
-/* Submit button */
-#moduleRecomandari .rec-submit-btn {
-  width: 100%;
-  min-height: 48px;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 10px;
-  margin-top: 4px;
-}
-
-/* ── Inline edit form on card ── */
-#moduleRecomandari .rec-edit-form {
-  background: var(--bg-subtle, #F8FAFC);
-  border-radius: 10px;
-  padding: 14px;
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-#moduleRecomandari .rec-edit-form input,
-#moduleRecomandari .rec-edit-form select,
-#moduleRecomandari .rec-edit-form textarea {
-  width: 100%;
-  font-size: 14px;
-  min-height: 44px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1.5px solid var(--border);
-  background: white;
-}
-#moduleRecomandari .rec-edit-form textarea {
-  min-height: 88px;
-  resize: vertical;
-}
+#moduleRecomandari .rec-filter-wrap label,
+#moduleRecomandari .rec-form-group label,
+#moduleRecomandari .rec-icon-picker-label,
+#moduleRecomandari .rec-admin-create-title,
 #moduleRecomandari .rec-edit-form label {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 3px;
-  display: block;
-}
-#moduleRecomandari .rec-edit-actions {
-  display: flex;
-  gap: 8px;
-}
-#moduleRecomandari .rec-edit-actions .btn {
-  flex: 1;
-  min-height: 44px;
-  justify-content: center;
 }
 
-/* ── Admin Zone ── */
+#moduleRecomandari .rec-filter-wrap select,
+#moduleRecomandari .rec-form-group input,
+#moduleRecomandari .rec-form-group select,
+#moduleRecomandari .rec-form-group textarea,
+#moduleRecomandari .rec-edit-form input,
+#moduleRecomandari .rec-edit-form select,
+#moduleRecomandari .rec-edit-form textarea,
+#moduleRecomandari .rec-new-cat-form input {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  font-size: 14px;
+  background: white;
+  color: var(--text-primary);
+  padding: 0 12px;
+}
+#moduleRecomandari .rec-form-group textarea,
+#moduleRecomandari .rec-edit-form textarea {
+  min-height: 90px;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
 #moduleRecomandari .rec-admin-zone {
   background: white;
-  border-radius: 14px;
   border: 1.5px solid #FEE2E2;
-  padding: 16px;
-  margin: 12px 0 20px;
-  width: 100%;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
 }
 #moduleRecomandari .rec-admin-zone-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
 }
 #moduleRecomandari .rec-admin-zone-title {
+  flex: 1;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
-  flex: 1;
+}
+#moduleRecomandari .rec-admin-create {
+  border-top: 1px solid var(--border);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+#moduleRecomandari .rec-admin-create-title {
+  margin: 0 0 8px;
 }
 
-/* Category management list */
 #moduleRecomandari .rec-cat-manage-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
-  background: var(--bg-subtle);
-  border-radius: 8px;
-  margin-bottom: 6px;
+  background: var(--bg-subtle, #F8FAFC);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
 }
 #moduleRecomandari .rec-cat-manage-row .cat-label {
   flex: 1;
-  font-size: 14px;
-  font-weight: 500;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 14px;
 }
 #moduleRecomandari .rec-cat-manage-row .btn {
-  flex-shrink: 0;
-  min-height: 44px;
-  min-width: 44px;
-  padding: 0 10px;
-  font-size: 13px;
-}
-
-#moduleRecomandari .rec-cat-manage-edit {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-#moduleRecomandari .rec-cat-manage-edit-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-#moduleRecomandari .rec-cat-manage-edit-row input {
-  min-height: 44px;
-  border-radius: 8px;
-  border: 1.5px solid var(--border);
-  padding: 0 10px;
-  font-size: 14px;
-  background: white;
-}
-#moduleRecomandari .rec-cat-manage-edit-row .rec-cat-edit-icon {
-  width: 58px;
-  text-align: center;
-  font-size: 20px;
-  padding: 0 6px;
-}
-#moduleRecomandari .rec-cat-manage-edit-row .rec-cat-edit-name {
-  flex: 1;
-  min-width: 0;
-}
-#moduleRecomandari .rec-cat-manage-edit-row .btn {
   min-height: 44px;
   min-width: 44px;
   padding: 0 10px;
 }
 
-/* Add category form */
-#moduleRecomandari .rec-new-cat-form {
+#moduleRecomandari .rec-new-cat-form,
+#moduleRecomandari .rec-edit-actions,
+#moduleRecomandari .rec-admin-actions {
   display: flex;
   gap: 8px;
-  margin-top: 10px;
   flex-wrap: wrap;
 }
-#moduleRecomandari .rec-new-cat-form input {
-  min-height: 44px;
-  border-radius: 8px;
-  border: 1.5px solid var(--border);
-  padding: 0 10px;
-  font-size: 14px;
-  background: white;
-}
 #moduleRecomandari .rec-new-cat-icon-input {
-  width: 56px;
+  width: 60px;
   text-align: center;
   font-size: 20px;
-  flex-shrink: 0;
+  padding: 0;
 }
 #moduleRecomandari .rec-new-cat-name-input {
   flex: 1;
-  min-width: 120px;
+  min-width: 140px;
 }
-#moduleRecomandari .rec-new-cat-form .btn {
+#moduleRecomandari .rec-new-cat-form .btn,
+#moduleRecomandari .rec-edit-actions .btn,
+#moduleRecomandari .rec-admin-actions .btn {
   min-height: 44px;
-  flex-shrink: 0;
-  white-space: nowrap;
 }
 
-/* Icon picker */
 #moduleRecomandari .rec-icon-picker {
   display: flex;
   flex-wrap: wrap;
@@ -543,45 +144,217 @@
   justify-content: center;
   font-size: 20px;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 #moduleRecomandari .rec-icon-chip.active {
   border-color: var(--accent-primary);
   box-shadow: inset 0 0 0 1px var(--accent-primary);
 }
-#moduleRecomandari .rec-icon-chip:active {
-  transform: scale(0.96);
-}
-#moduleRecomandari .rec-icon-picker-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin: 8px 0 6px;
+
+#moduleRecomandari .rec-form-card,
+#moduleRecomandari .rec-category-group,
+#moduleRecomandari .rec-card {
+  background: white;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  border-radius: 14px;
 }
 
-/* ── Empty state ── */
+#moduleRecomandari .rec-form-card {
+  padding: 16px;
+  margin-bottom: 16px;
+}
+#moduleRecomandari .rec-form-title {
+  margin: 0 0 14px;
+  font-size: 16px;
+  font-weight: 700;
+}
+#moduleRecomandari .rec-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+#moduleRecomandari .rec-star-input {
+  display: flex;
+  gap: 6px;
+}
+#moduleRecomandari .rec-star-input span {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  opacity: 0.25;
+  cursor: pointer;
+}
+#moduleRecomandari .rec-submit-btn {
+  width: 100%;
+  min-height: 48px;
+}
+
+#moduleRecomandari .rec-category-group {
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+#moduleRecomandari .rec-category-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-subtle, #F8FAFC);
+  box-shadow: inset 4px 0 0 var(--rec-color, var(--accent-primary));
+}
+#moduleRecomandari .rec-category-group-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+#moduleRecomandari .rec-category-group-count {
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: white;
+}
+#moduleRecomandari .rec-category-group-body {
+  padding: 10px;
+}
+
+#moduleRecomandari .rec-card {
+  position: relative;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+#moduleRecomandari .rec-card:last-child {
+  margin-bottom: 0;
+}
+#moduleRecomandari .rec-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--rec-color, var(--accent-primary));
+}
+#moduleRecomandari .rec-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+#moduleRecomandari .rec-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+#moduleRecomandari .rec-area {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+#moduleRecomandari .rec-stars {
+  flex-shrink: 0;
+}
+#moduleRecomandari .rec-badges {
+  margin-bottom: 10px;
+}
+#moduleRecomandari .rec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 3px 9px;
+  background: var(--bg-subtle, #F5F0EB);
+}
+#moduleRecomandari .rec-why {
+  font-size: 14px;
+  line-height: 1.6;
+  font-style: italic;
+  border-left: 3px solid var(--rec-color, var(--accent-primary));
+  background: var(--bg-subtle, #F8FAFC);
+  border-radius: 8px;
+  padding: 10px 12px 10px 16px;
+  margin-bottom: 10px;
+}
+#moduleRecomandari .rec-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#moduleRecomandari .rec-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+#moduleRecomandari .rec-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#moduleRecomandari .rec-phone-btn,
+#moduleRecomandari .rec-web-btn {
+  min-height: 44px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 14px;
+}
+#moduleRecomandari .rec-phone-btn {
+  background: var(--accent-primary);
+  color: white;
+}
+#moduleRecomandari .rec-web-btn {
+  background: white;
+  color: var(--text-primary);
+  border: 1.5px solid var(--border);
+}
+
+#moduleRecomandari .rec-edit-form {
+  background: var(--bg-subtle, #F8FAFC);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 #moduleRecomandari .rec-empty {
   text-align: center;
-  padding: 48px 20px;
+  padding: 44px 16px;
 }
 #moduleRecomandari .rec-empty-icon {
   font-size: 40px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 #moduleRecomandari .rec-empty-title {
   font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 6px;
+  font-weight: 700;
+  margin-bottom: 5px;
 }
 #moduleRecomandari .rec-empty-sub {
   font-size: 13px;
   color: var(--text-muted);
 }
 
-/* ── Desktop overrides (640px+) ── */
 @media (min-width: 640px) {
   #moduleRecomandari .module-content-area {
     padding: 20px;
@@ -594,26 +367,14 @@
   #moduleRecomandari .rec-form-group.full {
     grid-column: 1 / -1;
   }
-  #moduleRecomandari .rec-phone-btn {
-    width: auto;
-    min-width: 160px;
+  #moduleRecomandari .rec-card-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
+  #moduleRecomandari .rec-phone-btn,
   #moduleRecomandari .rec-web-btn {
     width: auto;
     min-width: 140px;
-  }
-  #moduleRecomandari .rec-actions {
-    width: auto;
-  }
-  #moduleRecomandari .rec-card-footer {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-  #moduleRecomandari .rec-admin-actions {
-    width: auto;
-  }
-  #moduleRecomandari .rec-card {
-    padding: 18px 20px;
   }
 }
