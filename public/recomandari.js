@@ -48,12 +48,13 @@ const RecomandariModule = (() => {
   }
 
   function getCurrentUserBuilding() {
-    if (!window.currentUser) return '';
+    if (typeof currentUser === 'undefined' || !currentUser) return '';
     return currentUser.building || currentUser.building_number || '';
   }
 
   function isAdminUser() {
-    return String((window.currentUser && currentUser.role) || '').trim().toLowerCase() === 'admin';
+    if (typeof currentUser === 'undefined' || !currentUser) return false;
+    return String(currentUser.role || '').trim().toLowerCase() === 'admin';
   }
 
   function normalizeWebsite(raw) {
