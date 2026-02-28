@@ -5631,6 +5631,92 @@
           }
         }
       }
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE WOBBLE FIX — do not edit above this line
+   Fixes iOS Safari horizontal scroll / viewport expansion
+   ═══════════════════════════════════════════════════════ */
+
+/* Fix 1: Login page — collapse to single column before minmax(360px) forces overflow */
+@media (max-width: 700px) {
+  .auth-landing {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  .login-hero {
+    display: none !important;
+  }
+  .login-pane {
+    min-height: auto !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* Fix 2: Prevent sidebar padding-left flash on mobile
+   Force padding-left: 0 at all times on mobile regardless of body class */
+@media (max-width: 900px) {
+  body,
+  body.has-sidebar,
+  body.sidebar-collapsed {
+    padding-left: 0 !important;
+  }
+  .side-rail {
+    display: none !important;
+  }
+}
+
+/* Fix 3: Constrain announcement body on mobile */
+@media (max-width: 768px) {
+  .announcement-body,
+  .announcement-body-preview {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-wrap: anywhere !important;
+  }
+}
+
+/* Fix 4: Nav inner padding — fire earlier for mid-range phones */
+@media (max-width: 600px) {
+  .global-nav-inner {
+    padding: 0 10px !important;
+    gap: 6px !important;
+  }
+}
+
+/* Fix 5: Hard overflow clip on iOS Safari
+   @supports targets Safari specifically without affecting Chrome/Firefox */
+@supports (-webkit-touch-callout: none) {
+  html {
+    overflow-x: clip !important;
+    overscroll-behavior-x: none !important;
+  }
+  body {
+    overflow-x: clip !important;
+    overscroll-behavior-x: none !important;
+    position: relative !important;
+    width: 100% !important;
+  }
+}
+
+/* Fix 6: Catch-all — any element wider than viewport gets clipped */
+@media (max-width: 768px) {
+  img, video, iframe, svg:not(.hero-skyline) {
+    max-width: 100% !important;
+  }
+  table {
+    max-width: 100% !important;
+    display: block !important;
+    overflow-x: auto !important;
+  }
+  .bento-grid {
+    overflow: hidden !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   END MOBILE WOBBLE FIX
+   ═══════════════════════════════════════════════════════ */
     </style>
     <link rel="stylesheet" href="contacts.css">
     <link rel="stylesheet" href="recomandari.css?v=20260227d">
