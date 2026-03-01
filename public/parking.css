@@ -1,0 +1,488 @@
+/* parking.css — extracted Parking module styles */
+
+#parkingModule .capacity-grid {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding-bottom: 6px;
+  scroll-snap-type: x proximity;
+}
+
+#parkingModule .capacity-grid::-webkit-scrollbar {
+  height: 7px;
+}
+
+#parkingModule .capacity-grid::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+#parkingModule .capacity-card {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  min-width: 210px;
+  flex: 0 0 210px;
+  scroll-snap-align: start;
+}
+
+#parkingModule .capacity-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+#parkingModule .capacity-card.available {
+  border-color: #93d7b1;
+}
+
+#parkingModule .capacity-card.unavailable {
+  border-color: #d1d5db;
+  background: #f1f5f9;
+}
+
+#parkingModule .capacity-card b {
+  display: block;
+  margin-bottom: 2px;
+}
+
+#parkingModule .capacity-card.is-selected {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35), 0 4px 12px rgba(15, 23, 42, 0.1);
+  background: #ecfdf5;
+}
+
+#parkingModule .capacity-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+#parkingModule .availability {
+  font-size: 0.78rem;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-weight: 700;
+}
+
+#parkingModule .availability.available {
+  background: #e5f8ee;
+  color: #1b7d46;
+  border: 1px solid #b8e4ca;
+}
+
+#parkingModule .availability.unavailable {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+#parkingModule .capacity-help {
+  color: var(--muted);
+  margin-top: 6px;
+  font-size: var(--text-caption);
+}
+
+#parkingModule .capacity-type-line {
+  margin-top: 6px;
+  display: grid;
+  gap: 4px;
+}
+
+#parkingModule .capacity-type {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+#parkingModule .capacity-spot-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+#parkingModule .capacity-spot-indicator::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+#parkingModule .capacity-spot-indicator.available {
+  color: #16a34a;
+}
+
+#parkingModule .capacity-spot-indicator.full {
+  color: #ef4444;
+}
+
+#parkingModule .capacity-legend {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+#parkingModule .preset-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#parkingModule .preset-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+#parkingModule .preset-btn {
+  width: auto;
+  border: 1px solid #94a3b8;
+  color: #334155;
+  background: transparent;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+#parkingModule .preset-btn:hover {
+  background: #e2e8f0;
+  border-color: #64748b;
+}
+
+#parkingModule .preset-btn.active {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #10b981;
+}
+
+#parkingModule .parking-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#parkingModule .parking-kpi-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+  text-align: left;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+#parkingModule .parking-kpi-icon {
+  color: #64748b;
+}
+
+#parkingModule .parking-kpi-value {
+  margin-top: 8px;
+  font-size: 1.55rem;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+#parkingModule .parking-kpi-label {
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+#parkingModule .parking-status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+#parkingModule .parking-status-badge.open,
+#parkingModule .parking-status-badge.free {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+#parkingModule .parking-status-badge.claimed,
+#parkingModule .parking-status-badge.reserved {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+#parkingModule .parking-status-badge.full,
+#parkingModule .parking-status-badge.closed {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+#parkingModule .parking-status-badge.default {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+#parkingModule .parking-status-badge.pending {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+#parkingModule .parking-status-badge.expired {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+#parkingModule .parking-card-list {
+  display: none;
+}
+
+#parkingModule .parking-empty-row td {
+  text-align: center;
+  padding: 14px 8px;
+  color: var(--muted);
+}
+
+#parkingModule .parking-empty-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+#parkingModule .parking-empty-inline .lucide {
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+}
+
+#parkingModule .parking-empty {
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 18px 14px;
+  text-align: center;
+  color: var(--muted);
+  display: grid;
+  gap: 8px;
+  place-items: center;
+}
+
+#parkingModule .parking-empty .lucide {
+  width: 24px;
+  height: 24px;
+  color: #94a3b8;
+}
+
+#parkingModule .parking-spot-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+#parkingModule .parking-spot-card:hover {
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
+}
+
+#parkingModule .parking-spot-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+#parkingModule .spot-number-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  font-weight: 700;
+}
+
+#parkingModule .parking-spot-meta {
+  color: #334155;
+  font-size: 0.82rem;
+  display: grid;
+  gap: 4px;
+}
+
+#parkingModule .parking-card-action {
+  margin-top: 4px;
+}
+
+#parkingModule .parking-spot-card.status-free {
+  border-left: 4px solid #22c55e;
+}
+
+#parkingModule .parking-spot-card.status-claimed {
+  border-left: 4px solid #f59e0b;
+}
+
+#parkingModule .parking-spot-card.status-expired {
+  border-left: 4px solid #ef4444;
+}
+
+#parkingModule .mode-banner {
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 8px 12px;
+  font-weight: 700;
+  position: sticky;
+  top: 62px;
+  z-index: 5;
+}
+
+#parkingModule .mode-banner.sharing {
+  border-color: #86efac;
+  background: #ecfdf5;
+  color: #166534;
+}
+
+#parkingModule .mode-banner.claiming {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+#parkingModule .capacity-skeleton .capacity-skeleton-line {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e2e8f0 20%, #f1f5f9 40%, #e2e8f0 60%);
+  background-size: 200px 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+#parkingModule .admin-mobile-list {
+  display: none;
+}
+
+body[data-theme="dark"] #parkingModule .capacity-card,
+body[data-theme="dark"] #parkingModule .parking-kpi-card,
+body[data-theme="dark"] #parkingModule .parking-spot-card {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+body[data-theme="dark"] #parkingModule .spot-number-badge {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+@media (max-width: 780px) {
+  #parkingModule .parking-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  #parkingModule #adminPanel .table-wrap {
+    display: none;
+  }
+
+  #parkingModule .admin-mobile-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  #parkingModule .tab-panel .table-wrap {
+    display: none;
+  }
+
+  #parkingModule .parking-card-list {
+    display: grid;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 560px) {
+  #parkingModule .capacity-grid {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  #parkingModule .capacity-card {
+    min-width: 210px;
+    flex: 0 0 210px;
+  }
+}
+
+@media (max-width: 768px) {
+  #parkingModule .capacity-grid {
+    display: flex !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x mandatory !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: none;
+  }
+
+  #parkingModule .capacity-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  #parkingModule .capacity-card {
+    scroll-snap-align: start !important;
+    flex-shrink: 0 !important;
+    min-width: 160px !important;
+    max-width: 200px !important;
+  }
+
+  #parkingModule .segmented-control {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  #parkingModule .segmented-control .tab-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 768px) {
+    #parkingModule .segmented-control {
+      overflow: hidden !important;
+    }
+
+    #parkingModule .segmented-control .tab-btn {
+      min-width: 0 !important;
+    }
+  }
+}

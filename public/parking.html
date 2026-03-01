@@ -1,0 +1,272 @@
+        <div id="parkingModule" class="hidden module-panel">
+          <section class="module-header">
+            <div>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Parcare</div>
+              <h1 class="module-title"><i data-lucide="car-front" aria-hidden="true"></i>Parcare</h1>
+            </div>
+            <div class="module-actions module-header-actions">
+              <button id="refreshParkingBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
+            </div>
+          </section>
+          <p id="parkingLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
+
+          <section class="card mt-12">
+            <h2>Capacitate Blocuri</h2>
+            <p class="capacity-legend">UG = Underground, AG = Above-ground. Tap a bloc card to filter claim options.</p>
+            <span class="section-label">Capacitate Blocuri</span>
+            <div id="stats" class="capacity-grid mt-10"></div>
+          </section>
+
+          <section class="card action-shell" id="actionPanel">
+            <h2>Acțiuni Parcare</h2>
+            <p style="margin: 8px 0 0; color: var(--muted)">I want to:</p>
+            <div class="tabs segmented-control mt-8">
+              <button type="button" class="tab-btn active" data-tab-group="action" data-tab-target="actionSharePanel">Ofer locul meu</button>
+              <button type="button" class="tab-btn" data-tab-group="action" data-tab-target="actionClaimPanel">Rezerv un loc</button>
+            </div>
+            <div id="parkingModeBanner" class="mode-banner sharing">
+              <span>Mod: Ofer locul meu</span>
+            </div>
+
+            <section id="actionSharePanel" class="tab-panel" data-tab-group="action">
+              <form id="shareForm" class="stack">
+                <div class="preset-row">
+                  <span class="preset-label">Quick Range:</span>
+                  <button type="button" class="preset-btn" data-target-form="share" data-preset="today">Today</button>
+                  <button type="button" class="preset-btn" data-target-form="share" data-preset="tomorrow">Tomorrow</button>
+                  <button type="button" class="preset-btn" data-target-form="share" data-preset="weekend">This weekend</button>
+                </div>
+                <div>
+                  <label for="spaceNumber">Parking Spot Number</label>
+                  <input id="spaceNumber" placeholder="e.g. UG-12, Spot 7" required />
+                  <span id="spaceNumberError" class="field-error"></span>
+                </div>
+                <div>
+                  <label for="spaceType">Type</label>
+                  <select id="spaceType" required>
+                    <option value="underground">Underground</option>
+                    <option value="above_ground">Above Ground</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="fromAt">Available From</label>
+                  <input id="fromAt" type="datetime-local" required />
+                  <span id="fromAtError" class="field-error"></span>
+                </div>
+                <div>
+                  <label for="untilAt">Available Until</label>
+                  <input id="untilAt" type="datetime-local" required />
+                  <span id="untilAtError" class="field-error"></span>
+                </div>
+                <p class="tz-note">All share times are Bucharest time.</p>
+                <button id="shareBtn" type="submit" data-default-text="Share Spot">Share Spot</button>
+              </form>
+            </section>
+
+            <section id="actionClaimPanel" class="tab-panel hidden" data-tab-group="action">
+              <form id="claimForm" class="stack">
+                <div class="preset-row">
+                  <span class="preset-label">Quick Range:</span>
+                  <button type="button" class="preset-btn" data-target-form="claim" data-preset="today">Today</button>
+                  <button type="button" class="preset-btn" data-target-form="claim" data-preset="tomorrow">Tomorrow</button>
+                  <button type="button" class="preset-btn" data-target-form="claim" data-preset="weekend">This weekend</button>
+                </div>
+                <div>
+                  <label for="claimBuilding">Bloc</label>
+                  <select id="claimBuilding"></select>
+                </div>
+                <div>
+                  <label for="claimType">Type</label>
+                  <select id="claimType">
+                    <option value="">Any</option>
+                    <option value="underground">Underground</option>
+                    <option value="above_ground">Above Ground</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="availableSlot">Available Spot</label>
+                  <select id="availableSlot" required></select>
+                </div>
+                <div>
+                  <label for="claimFrom">Claim From</label>
+                  <input id="claimFrom" type="datetime-local" required />
+                  <span id="claimFromError" class="field-error"></span>
+                </div>
+                <div>
+                  <label for="claimUntil">Claim Until</label>
+                  <input id="claimUntil" type="datetime-local" required />
+                  <span id="claimUntilError" class="field-error"></span>
+                </div>
+                <div>
+                  <label for="claimPhone">Telefon contact (proprietar)</label>
+                  <input id="claimPhone" placeholder="07xx xxx xxx" required />
+                  <span id="claimPhoneError" class="field-error"></span>
+                </div>
+                <p class="tz-note">All claim times are Bucharest time.</p>
+                <button id="claimBtn" class="alt" type="submit" data-default-text="Claim Selected Spot">Claim Selected Spot</button>
+              </form>
+            </section>
+          </section>
+
+          <section class="card activity-shell mt-14">
+            <h2>My Activity</h2>
+            <div class="parking-kpi-grid mt-10">
+              <article class="parking-kpi-card">
+                <div class="parking-kpi-icon"><i data-lucide="car-front" aria-hidden="true"></i></div>
+                <div id="kpiFree" class="parking-kpi-value">0</div>
+                <div class="parking-kpi-label">Free Spots</div>
+              </article>
+              <article class="parking-kpi-card">
+                <div class="parking-kpi-icon"><i data-lucide="share-2" aria-hidden="true"></i></div>
+                <div id="kpiShared" class="parking-kpi-value">0</div>
+                <div class="parking-kpi-label">My Shared</div>
+              </article>
+              <article class="parking-kpi-card">
+                <div class="parking-kpi-icon"><i data-lucide="hand" aria-hidden="true"></i></div>
+                <div id="kpiClaimedByOthers" class="parking-kpi-value">0</div>
+                <div class="parking-kpi-label">Claimed</div>
+              </article>
+              <article class="parking-kpi-card">
+                <div class="parking-kpi-icon"><i data-lucide="badge-check" aria-hidden="true"></i></div>
+                <div id="kpiMyClaims" class="parking-kpi-value">0</div>
+                <div class="parking-kpi-label">My Claims</div>
+              </article>
+            </div>
+            <div class="tabs mt-10">
+              <button type="button" class="tab-btn active" data-tab-group="activity" data-tab-target="activityFreePanel">
+                Free Spots <span class="tab-count" id="countFree">0</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activitySharedPanel">
+                My Shared <span class="tab-count" id="countShared">0</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activityClaimedByOthersPanel">
+                Claimed By Others <span class="tab-count" id="countClaimedByOthers">0</span>
+              </button>
+              <button type="button" class="tab-btn" data-tab-group="activity" data-tab-target="activityMyClaimsPanel">
+                My Claims <span class="tab-count" id="countMyClaims">0</span>
+              </button>
+            </div>
+
+            <section id="activityFreePanel" class="tab-panel" data-tab-group="activity">
+              <span class="section-label">Locuri Disponibile</span>
+              <div id="sharedSpotsTableWrap" class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Status</th>
+                      <th>Bloc</th>
+                      <th>Spot</th>
+                      <th>Type</th>
+                      <th>Owner</th>
+                      <th>Phone</th>
+                      <th>From</th>
+                      <th>Until</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sharedSpots"></tbody>
+                </table>
+              </div>
+              <div id="sharedSpotsEmpty" class="empty-state hidden">🅿️ No spots available right now.</div>
+              <div id="sharedSpotsCards" class="parking-card-list"></div>
+            </section>
+
+            <section id="activitySharedPanel" class="tab-panel hidden" data-tab-group="activity">
+              <span class="section-label">Locurile Mele Partajate</span>
+              <div id="mySharedTableWrap" class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Spot</th><th>Type</th><th>Status</th><th>From</th><th>Until</th></tr>
+                  </thead>
+                  <tbody id="myShared"></tbody>
+                </table>
+              </div>
+              <div id="mySharedEmpty" class="empty-state hidden">📤 You haven't shared any spots yet.</div>
+              <div id="mySharedCards" class="parking-card-list"></div>
+            </section>
+
+            <section id="activityClaimedByOthersPanel" class="tab-panel hidden" data-tab-group="activity">
+              <span class="section-label">Revendicate De Vecini</span>
+              <div id="claimedOnMineTableWrap" class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Spot</th><th>Claimed By</th><th>Phone</th><th>Claim From</th><th>Claim Until</th></tr>
+                  </thead>
+                  <tbody id="claimedOnMine"></tbody>
+                </table>
+              </div>
+              <div id="claimedOnMineEmpty" class="empty-state hidden">📥 None of your spots have been claimed.</div>
+              <div id="claimedOnMineCards" class="parking-card-list"></div>
+            </section>
+
+            <section id="activityMyClaimsPanel" class="tab-panel hidden" data-tab-group="activity">
+              <span class="section-label">Revendicările Mele</span>
+              <div id="myClaimedTableWrap" class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Bloc</th><th>Loc</th><th>Proprietar</th><th>Telefon proprietar</th><th>Telefon folosit</th><th>Rezervare de la</th><th>Rezervare până la</th></tr>
+                  </thead>
+                  <tbody id="myClaimed"></tbody>
+                </table>
+              </div>
+              <div id="myClaimedEmpty" class="empty-state hidden">🔖 You haven't claimed any spots.</div>
+              <div id="myClaimedCards" class="parking-card-list"></div>
+            </section>
+          </section>
+
+          <section id="adminPanel" class="card admin-zone hidden mt-14">
+            <div class="admin-zone-head">
+              <h2><i data-lucide="lock" aria-hidden="true"></i>Admin Zone</h2>
+              <span class="admin-badge"><i data-lucide="shield-check" aria-hidden="true"></i>Admin Only</span>
+            </div>
+            <div class="grid mt-10">
+              <section class="card">
+                <h3>Create User</h3>
+                <form id="createUserForm" class="stack mt-8">
+                  <div><label for="adminNewUsername">Username</label><input id="adminNewUsername" required /></div>
+                  <div><label for="adminNewPassword">Password</label><input id="adminNewPassword" minlength="6" placeholder="10blocuri" required /></div>
+                  <div><label for="adminNewPhone">Phone Number</label><input id="adminNewPhone" placeholder="0712 345 678" /></div>
+                  <div><label for="adminNewRole">Role</label><select id="adminNewRole"><option value="resident">Resident</option><option value="admin">Admin</option></select></div>
+                  <div>
+                    <label for="adminNewAvizierPermission">Avizier Permission</label>
+                    <select id="adminNewAvizierPermission">
+                      <option value="none">None</option>
+                      <option value="reprezentant_bloc">Reprezentant Bloc (building only)</option>
+                      <option value="comitet">Comitet (general + building)</option>
+                    </select>
+                  </div>
+                  <div><label for="adminNewBuilding">Bloc</label><select id="adminNewBuilding"></select></div>
+                  <div><label for="adminNewApartment">Apartment</label><input id="adminNewApartment" type="number" min="1" max="16" value="1" /></div>
+                  <button id="createUserBtn" type="submit" data-default-text="Create User">Create User</button>
+                </form>
+              </section>
+
+              <section class="card">
+                <h3>Admin Create Shared Slot</h3>
+                <form id="adminSlotForm" class="stack mt-8">
+                  <div><label for="adminOwnerUsername">Owner Username</label><input id="adminOwnerUsername" placeholder="bloc2_apt4" required /></div>
+                  <div><label for="adminSpaceNumber">Parking Spot Number</label><input id="adminSpaceNumber" placeholder="Spot-88" required /></div>
+                  <div><label for="adminSpaceType">Type</label><select id="adminSpaceType"><option value="underground">Underground</option><option value="above_ground">Above Ground</option></select></div>
+                  <div><label for="adminFromAt">Available From</label><input id="adminFromAt" type="datetime-local" required /></div>
+                  <div><label for="adminUntilAt">Available Until</label><input id="adminUntilAt" type="datetime-local" required /></div>
+                  <p class="tz-note">All admin slot times are Bucharest time.</p>
+                  <button id="adminShareBtn" type="submit" data-default-text="Create Shared Slot">Create Shared Slot</button>
+                </form>
+              </section>
+
+              <section class="card">
+                <h3>All Users</h3>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr><th>User</th><th>Role</th><th>Avizier</th><th>Bloc</th><th>Apt</th><th>Phone</th></tr>
+                    </thead>
+                    <tbody id="allUsers"></tbody>
+                  </table>
+                </div>
+                <div id="allUsersCards" class="admin-mobile-list"></div>
+              </section>
+            </div>
+          </section>
+        </div>
+
