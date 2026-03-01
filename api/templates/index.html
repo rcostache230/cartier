@@ -3501,6 +3501,21 @@
     <link rel="stylesheet" href="avizier.css">
     <link rel="stylesheet" href="contacts.css">
     <link rel="stylesheet" href="recomandari.css?v=20260227d">
+    <!-- Preload module scripts — browser starts downloading before parsing <body> -->
+    <link rel="preload" href="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" as="script">
+    <link rel="preload" href="parking.js" as="script">
+    <link rel="preload" href="marketplace.js" as="script">
+    <link rel="preload" href="voting.js" as="script">
+    <link rel="preload" href="avizier.js" as="script">
+    <link rel="preload" href="contacts.js" as="script">
+    <link rel="preload" href="recomandari.js?v=20260227d" as="script">
+
+    <!-- Preload module HTML — fetched in parallel with scripts from the very start -->
+    <link rel="preload" href="parking.html" as="fetch" crossorigin>
+    <link rel="preload" href="marketplace.html" as="fetch" crossorigin>
+    <link rel="preload" href="voting.html" as="fetch" crossorigin>
+    <link rel="preload" href="avizier.html" as="fetch" crossorigin>
+    <link rel="preload" href="contacts.html" as="fetch" crossorigin>
   </head>
   <body>
     <aside id="sideRail" class="side-rail hidden" aria-label="Primary navigation">
@@ -3832,7 +3847,6 @@
             .then((r) => r.text())
             .then((html) => {
               document.getElementById("parkingModuleMount").innerHTML = html;
-              if (typeof hydrateLucideIcons === "function") hydrateLucideIcons();
             })
             .catch(() => {});
         </script>
@@ -3851,18 +3865,16 @@
             .then(r => r.text())
             .then(html => {
               document.getElementById('contactsModuleMount').innerHTML = html;
-              if (typeof hydrateLucideIcons === 'function') hydrateLucideIcons();
             });
         </script>
 
         <!-- Recomandări module — recomandari.html injected here -->
         <div id="recomandariMount"></div>
         <script>
-          fetch('recomandari.html?v=20260227d', { cache: 'no-store' })
+          fetch('recomandari.html?v=20260227d')
             .then(r => r.text())
             .then(html => {
               document.getElementById('recomandariMount').innerHTML = html;
-              if (typeof hydrateLucideIcons === 'function') hydrateLucideIcons();
             });
         </script>
 
@@ -3981,19 +3993,18 @@
       <div id="toastContainer" class="toast-wrap"></div>
     </div>
 
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script src="parking.js"></script>
-    <script src="contacts.js"></script>
-    <script src="recomandari.js?v=20260227d"></script>
-    <script src="marketplace.js"></script>
-    <script src="voting.js"></script>
-    <script src="avizier.js"></script>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script defer src="parking.js"></script>
+    <script defer src="contacts.js"></script>
+    <script defer src="recomandari.js?v=20260227d"></script>
+    <script defer src="marketplace.js"></script>
+    <script defer src="voting.js"></script>
+    <script defer src="avizier.js"></script>
     <script>
       window.__marketplaceModuleReady = fetch("marketplace.html")
         .then((r) => r.text())
         .then((html) => {
           document.getElementById("marketplaceModuleMount").innerHTML = html;
-          if (typeof hydrateLucideIcons === "function") hydrateLucideIcons();
           const initWhenReady = () => {
             const marketplaceModuleRef =
               (typeof MarketplaceModule !== "undefined" && MarketplaceModule) ||
@@ -4027,7 +4038,6 @@
         .then((r) => r.text())
         .then((html) => {
           document.getElementById("votingModuleMount").innerHTML = html;
-          if (typeof hydrateLucideIcons === "function") hydrateLucideIcons();
           const initWhenReady = () => {
             const votingModuleRef =
               (typeof VotingModule !== "undefined" && VotingModule) ||
@@ -4051,7 +4061,6 @@
         .then((r) => r.text())
         .then((html) => {
           document.getElementById("avizierModuleMount").innerHTML = html;
-          if (typeof hydrateLucideIcons === "function") hydrateLucideIcons();
           const initWhenReady = () => {
             const avizierModuleRef =
               (typeof AvizierModule !== "undefined" && AvizierModule) ||
@@ -4069,6 +4078,18 @@
           initWhenReady();
         })
         .catch(() => {});
+    </script>
+    <script>
+      // Single icon hydration pass after all module HTML is injected.
+      // Replaces 6 individual hydrateLucideIcons() calls with 1.
+      Promise.allSettled([
+        window.__parkingModuleReady || Promise.resolve(),
+        window.__marketplaceModuleReady || Promise.resolve(),
+        window.__votingModuleReady || Promise.resolve(),
+        window.__avizierModuleReady || Promise.resolve(),
+      ]).then(function() {
+        if (typeof hydrateLucideIcons === "function") hydrateLucideIcons();
+      });
     </script>
     <script>
       const HELP_SEEN_KEY = "10blocuri_help_seen_v1";
