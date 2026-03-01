@@ -1,0 +1,158 @@
+<section id="votingModule" class="card hidden module-panel mt-14">
+          <div class="module-header">
+            <div>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Voting</div>
+              <h1 class="module-title"><i data-lucide="vote" aria-hidden="true"></i>Voting</h1>
+              <p class="poll-note">Participă la sondaje despre decizii comune.</p>
+            </div>
+            <div class="module-actions module-header-actions">
+              <button id="refreshPollsBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
+            </div>
+          </div>
+          <p id="votingLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
+          <section id="createPollCard" class="card hidden mt-12">
+            <h3>Create Poll (Admin Wizard)</h3>
+            <form id="createPollForm" class="stack mt-8">
+              <div class="poll-wizard-header">
+                <div class="wizard-steps">
+                  <div class="step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Basics</div>
+                  </div>
+                  <div class="step-connector"></div>
+                  <div class="step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Scope &amp; Dates</div>
+                  </div>
+                  <div class="step-connector"></div>
+                  <div class="step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Options</div>
+                  </div>
+                  <div class="step-connector"></div>
+                  <div class="step" data-step="4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Review</div>
+                  </div>
+                </div>
+              </div>
+
+              <section id="pollWizardStep1" class="poll-wizard-step">
+                <div>
+                  <label for="pollTitle">Title</label>
+                  <input id="pollTitle" maxlength="200" placeholder="e.g. Upgrade Entrance Lighting" required />
+                  <div class="char-counter" id="pollTitleCounter">0 / 200</div>
+                </div>
+                <div>
+                  <label for="pollDescriptionInput">Description</label>
+                  <textarea id="pollDescriptionInput" placeholder="Optional context for residents"></textarea>
+                </div>
+                <div>
+                  <label for="pollType">Poll Type</label>
+                  <select id="pollType">
+                    <option value="yes_no">Yes/No</option>
+                    <option value="multiple_choice">Multiple Choice</option>
+                    <option value="weighted">Weighted Ranking</option>
+                  </select>
+                </div>
+              </section>
+
+              <section id="pollWizardStep2" class="poll-wizard-step hidden">
+                <div>
+                  <label for="pollScope">Scope</label>
+                  <select id="pollScope">
+                    <option value="neighbourhood">Neighbourhood</option>
+                    <option value="building">Bloc</option>
+                  </select>
+                </div>
+                <div id="pollBuildingRow" class="hidden">
+                  <label for="pollBuilding">Bloc</label>
+                  <select id="pollBuilding"></select>
+                </div>
+                <div class="grid mt-0">
+                  <div>
+                    <label for="pollStart">Start</label>
+                    <input id="pollStart" type="datetime-local" required />
+                  </div>
+                  <div>
+                    <label for="pollEnd">End</label>
+                    <input id="pollEnd" type="datetime-local" required />
+                  </div>
+                </div>
+                <p class="tz-note">Poll start/end uses Bucharest time.</p>
+                <div>
+                  <label for="pollStatus">Initial Status</label>
+                  <select id="pollStatus">
+                    <option value="active">Activ</option>
+                    <option value="draft">Draft</option>
+                  </select>
+                </div>
+              </section>
+
+              <section id="pollWizardStep3" class="poll-wizard-step hidden">
+                <div id="pollOptionsRow" class="hidden">
+                  <label for="pollOptions">Options (one per line)</label>
+                  <textarea id="pollOptions" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+                  <span id="pollOptionsError" class="field-error"></span>
+                </div>
+                <div id="pollAllowMultipleRow" class="hidden">
+                  <label><input id="pollAllowMultiple" type="checkbox" /> Allow multiple selections</label>
+                </div>
+                <div>
+                  <label><input id="pollShowResultsEarly" type="checkbox" /> Afișează rezultatele înainte de închiderea sondajului</label>
+                </div>
+                <div>
+                  <label><input id="pollRequiresQuorum" type="checkbox" /> Requires quorum</label>
+                </div>
+                <div id="pollQuorumRow" class="hidden">
+                  <label for="pollQuorumPercentage">Quorum Percentage</label>
+                  <input id="pollQuorumPercentage" type="number" min="1" max="100" placeholder="e.g. 50" />
+                </div>
+              </section>
+
+              <section id="pollWizardStep4" class="poll-wizard-step hidden">
+                <div>
+                  <label for="pollFiles">Attachments (photos, PDFs, documents)</label>
+                  <input id="pollFiles" type="file" multiple />
+                  <p class="poll-note">Files are uploaded to secure Cloudflare R2 storage before poll creation.</p>
+                  <p id="pollUploadStatus" class="upload-status">No files selected.</p>
+                </div>
+                <div class="poll-review-box" id="pollReviewBox"></div>
+              </section>
+
+              <div class="poll-wizard-nav">
+                <button id="pollWizardPrevBtn" type="button" class="ghost hidden">Back</button>
+                <button id="pollWizardNextBtn" type="button">Next</button>
+                <button id="createPollBtn" class="alt hidden" type="submit" data-default-text="Publish Poll">Publish Poll</button>
+              </div>
+            </form>
+          </section>
+          <div class="grid mt-10">
+            <section class="card">
+              <h3>Sondaje Active <span class="count-pill" id="countActivePolls">0</span></h3>
+              <span class="section-label">Sondaje Active</span>
+              <div id="activePolls" class="poll-card-grid"></div>
+            </section>
+            <section class="card">
+              <h3>Sondaje Închise <span class="count-pill" id="countClosedPolls">0</span></h3>
+              <span class="section-label">Sondaje Închise</span>
+              <div id="closedPollsTableWrap" class="table-wrap mt-8">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Scope</th>
+                      <th>Closed</th>
+                      <th>Status</th>
+                      <th>Winner / Result</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="closedPolls"></tbody>
+                </table>
+              </div>
+              <div id="closedPollsEmpty" class="empty-state hidden">📁 No closed polls yet.</div>
+              <div id="closedPollCards" class="poll-closed-card-list"></div>
+            </section>
+          </div>
+        </section>
