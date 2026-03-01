@@ -1,0 +1,113 @@
+<section id="avizierModule" class="card hidden module-panel mt-14">
+  <div class="module-header">
+    <div>
+      <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Acasă</a> &gt; Avizier</div>
+      <h1 class="module-title"><i data-lucide="newspaper" aria-hidden="true"></i>Avizier</h1>
+      <p class="poll-note">Anunțuri generale și pe bloc pentru toți locatarii.</p>
+    </div>
+    <div class="module-actions module-header-actions">
+      <button id="refreshAvizierBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
+    </div>
+  </div>
+  <p id="avizierLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
+
+  <section class="card mt-12">
+    <h3>Anunțuri <span class="count-pill" id="avizierCount">0</span></h3>
+    <span class="section-label">Anunțuri</span>
+    <div id="avizierScopeFilters" class="tabs market-filter-tabs mt-8">
+      <button type="button" class="tab-btn market-filter-btn active" data-avizier-filter="all">
+        <span class="market-filter-emoji" aria-hidden="true">📋</span>
+        <span>Toate</span>
+      </button>
+      <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="general">
+        <span class="market-filter-emoji" aria-hidden="true">🌐</span>
+        <span>General</span>
+      </button>
+      <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="building">
+        <span class="market-filter-emoji" aria-hidden="true">🏢</span>
+        <span>Pe bloc</span>
+      </button>
+    </div>
+    <div id="avizierList" class="stack mt-8"></div>
+    <div id="avizierLoadMoreWrap" style="display:none; text-align:center; margin-top:12px;">
+      <button
+        type="button"
+        id="avizierLoadMoreBtn"
+        class="home-activity-load-more"
+        style="width:auto; min-height:36px; padding:6px 20px; border-radius:999px; font-size:13px;"
+      >
+        Încarcă mai multe
+      </button>
+    </div>
+  </section>
+
+  <section id="createAvizierCard" class="card hidden mt-12">
+    <div class="avizier-form-head">
+      <h3 id="avizierFormHeading">Creează anunț</h3>
+      <button id="avizierCancelEditBtn" class="ghost hidden" type="button">Anulează editarea</button>
+    </div>
+    <p id="avizierFormModeHint" class="poll-note" style="margin-top:6px">
+      Folosește paragrafe, liste și formatare simplă pentru o lectură mai ușoară.
+    </p>
+    <form id="createAvizierForm" class="stack mt-8">
+      <div>
+        <label for="avizierTitle">Titlu</label>
+        <input id="avizierTitle" maxlength="200" placeholder="ex: Anunț întreținere apă" required />
+        <div class="char-counter" id="avizierTitleCounter">0 / 200</div>
+      </div>
+      <div>
+        <label for="avizierMessage">Mesaj</label>
+        <div id="avizierFormatToolbar" class="avizier-editor-toolbar" role="toolbar" aria-label="Formatare anunț">
+          <button type="button" class="avizier-format-btn" data-avizier-format="bold">Bold</button>
+          <button type="button" class="avizier-format-btn" data-avizier-format="italic">Italic</button>
+          <button type="button" class="avizier-format-btn" data-avizier-format="bullets">Listă</button>
+          <button type="button" class="avizier-format-btn" data-avizier-format="numbers">Listă nr.</button>
+          <button type="button" class="avizier-format-btn" data-avizier-format="link">Link</button>
+          <button type="button" class="avizier-format-btn" data-avizier-format="paragraph">Paragraf</button>
+        </div>
+        <p class="poll-note" style="margin:6px 0 6px">
+          Suportă paragrafe, <code>- liste cu puncte</code>, <code>1. liste numerotate</code>, <code>**bold**</code>, <code>*italic*</code> și linkuri lipite.
+        </p>
+        <textarea id="avizierMessage" maxlength="4000" placeholder="Scrie anunțul complet..." required></textarea>
+        <div class="char-counter" id="avizierMessageCounter">0 / 4000</div>
+        <span id="avizierMessageError" class="field-error"></span>
+      </div>
+      <div>
+        <label for="avizierScope">Vizibilitate</label>
+        <select id="avizierScope">
+          <option value="general">General</option>
+          <option value="building">Pe bloc</option>
+        </select>
+      </div>
+      <div class="grid mt-0">
+        <div>
+          <label for="avizierPriority">Priority</label>
+          <select id="avizierPriority">
+            <option value="normal">Normal</option>
+            <option value="important">Important</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div>
+          <label><input id="avizierPinned" type="checkbox" /> Pin announcement</label>
+        </div>
+      </div>
+      <div id="avizierBuildingRow" class="hidden">
+        <label for="avizierBuilding">Bloc</label>
+        <select id="avizierBuilding"></select>
+      </div>
+      <div>
+        <label for="avizierFiles">Atașamente (JPG/PDF, max 10MB fiecare)</label>
+        <input id="avizierFiles" type="file" multiple accept=".jpg,.jpeg,application/pdf,image/jpeg,image/jpg" />
+        <p id="avizierUploadStatus" class="upload-status">Niciun fișier selectat.</p>
+      </div>
+      <button id="createAvizierBtn" type="submit" data-default-text="Publică anunțul">Publică anunțul</button>
+    </form>
+  </section>
+
+  <section id="avizierLockedCard" class="card hidden mt-12">
+    <div class="locked-notice">
+      🔒 Doar Reprezentanții de Bloc și membrii Comitetului pot posta anunțuri.
+    </div>
+  </section>
+</section>

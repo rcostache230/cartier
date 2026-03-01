@@ -376,43 +376,6 @@
         color: var(--free-text);
       }
 
-      .avizier-form-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .avizier-form-head h3 {
-        margin: 0;
-      }
-
-      .avizier-editor-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 8px;
-      }
-
-      .avizier-format-btn {
-        width: auto;
-        min-height: 32px;
-        padding: 5px 10px;
-        border-radius: 999px;
-        border: 1px solid #cbd5e1;
-        background: #fff;
-        color: #334155;
-        font-size: 0.76rem;
-        font-weight: 700;
-      }
-
-      .avizier-format-btn:hover {
-        background: #eff6ff;
-        border-color: #93c5fd;
-        color: #1d4ed8;
-      }
-
       .tz-note {
         margin-top: 6px;
         font-size: 0.78rem;
@@ -2087,154 +2050,6 @@
         background: var(--module-voting);
       }
 
-      #avizierModule > .card::before {
-        background: var(--module-avizier);
-      }
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      .avizier-card {
-        border-left: 4px solid #0d9488;
-        border-radius: 12px;
-        padding: 20px;
-        transition: box-shadow 150ms ease, transform 150ms ease;
-      }
-
-      .avizier-card:hover {
-        box-shadow: var(--shadow-md);
-      }
-
-      .avizier-card.priority-important {
-        border-left-color: #f59e0b;
-      }
-
-      .avizier-card.priority-urgent {
-        border-left-color: #ef4444;
-      }
-
-      .avizier-card.unread {
-        box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.28), var(--shadow-sm);
-      }
-
-      .avizier-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #ef4444;
-        animation: pulse-dot 1.2s ease infinite;
-      }
-
-      .avizier-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        border-radius: 999px;
-        border: 1px solid #dbe5f2;
-        background: #f8fafc;
-        color: #334155;
-        font-size: 0.72rem;
-        font-weight: 700;
-        padding: 3px 8px;
-      }
-
-      .avizier-chip.scope-general {
-        border-color: #99f6e4;
-        color: #0f766e;
-      }
-
-      .avizier-chip.scope-building {
-        border-color: #bfdbfe;
-        color: #1d4ed8;
-      }
-
-      .avizier-chip.priority-important {
-        border-color: #fcd34d;
-        color: #92400e;
-      }
-
-      .avizier-chip.priority-urgent {
-        border-color: #fecaca;
-        color: #b91c1c;
-      }
-
-      .announcement-head {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px;
-        align-items: start;
-      }
-
-      .announcement-title {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 700;
-        letter-spacing: -0.01em;
-        color: var(--text-primary, #1c1917);
-        line-height: 1.25;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        min-width: 0;
-      }
-
-      .announcement-pin {
-        flex: 0 0 auto;
-      }
-
-      .announcement-time {
-        font-size: 12px;
-        color: var(--text-muted, #78716c);
-        white-space: nowrap;
-        line-height: 1.35;
-        padding-top: 1px;
-      }
-
-      .announcement-meta {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 6px;
-        margin-bottom: 12px;
-        font-size: 12px;
-        color: var(--text-muted, #78716c);
-        flex-wrap: wrap;
-      }
-
-      .announcement-meta-sep {
-        color: var(--text-muted, #78716c);
-      }
-
-      .announcement-body {
-        margin-bottom: 14px;
-        color: var(--text-primary, #1c1917);
-        font-size: 14px;
-        line-height: 1.6;
-        max-width: 680px;
-      }
-
-      .announcement-body-preview {
-        margin: 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .announcement-attachments {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 14px;
-      }
-
       .attachment-chip {
         display: inline-flex;
         align-items: center;
@@ -2255,126 +2070,6 @@
       .attachment-chip:hover {
         background: #ede9e3;
         color: var(--text-primary, #1c1917);
-      }
-
-      .announcement-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 16px;
-        flex-wrap: wrap;
-      }
-
-      .announcement-actions .table-action-btn,
-      .announcement-actions .avizier-read-more {
-        height: 36px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 500;
-      }
-
-      .announcement-actions .avizier-share-btn {
-        background: transparent;
-        color: var(--text-primary, #1c1917);
-        border: 1.5px solid var(--border, #e7e5e4);
-        box-shadow: none;
-      }
-
-      .announcement-actions .avizier-share-btn:hover {
-        background: #fafaf9;
-        color: var(--text-primary, #1c1917);
-        border-color: #d6d3d1;
-      }
-
-      .announcement-actions .avizier-edit-btn {
-        background: transparent;
-        border: 1.5px solid var(--border, #e7e5e4);
-        color: var(--text-primary, #1c1917);
-      }
-
-      .announcement-actions .avizier-edit-btn:hover {
-        background: #fafaf9;
-        border-color: #d6d3d1;
-      }
-
-      .announcement-actions .avizier-read-more {
-        width: auto;
-        min-height: 36px;
-        padding: 0 12px;
-        background: var(--accent-primary);
-        color: #fff;
-        border: none;
-        box-shadow: none;
-      }
-
-      .announcement-actions .avizier-read-more:hover {
-        background: #15803d;
-      }
-
-      .announcement-actions .avizier-delete-btn {
-        width: 36px;
-        min-width: 36px;
-        margin-left: auto;
-        padding: 8px;
-        background: transparent;
-        color: #ef4444;
-        border: none;
-        box-shadow: none;
-      }
-
-      .announcement-actions .avizier-delete-btn:hover {
-        background: #fee2e2;
-        color: #dc2626;
-      }
-
-      .announcement-actions .avizier-delete-btn span {
-        display: none;
-      }
-
-      .avizier-message-rich {
-        color: var(--text-primary, #1c1917);
-        font-size: 14px;
-        line-height: 1.6;
-        overflow-wrap: anywhere;
-      }
-
-      .avizier-message-rich p {
-        margin: 0;
-      }
-
-      .avizier-message-rich p + p,
-      .avizier-message-rich p + ul,
-      .avizier-message-rich p + ol,
-      .avizier-message-rich ul + p,
-      .avizier-message-rich ol + p,
-      .avizier-message-rich ul + ul,
-      .avizier-message-rich ol + ol {
-        margin-top: 8px;
-      }
-
-      .avizier-message-rich ul,
-      .avizier-message-rich ol {
-        margin: 0;
-        padding-left: 18px;
-      }
-
-      .avizier-message-rich li + li {
-        margin-top: 4px;
-      }
-
-      .avizier-message-rich a {
-        color: #2563eb;
-        font-weight: 600;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-      }
-
-      .avizier-message-rich code {
-        border-radius: 6px;
-        border: 1px solid #dbe5f2;
-        background: #f8fafc;
-        padding: 1px 5px;
-        font-size: 0.84em;
       }
 
       .mobile-tabbar {
@@ -2561,27 +2256,6 @@
 
       body[data-theme="dark"] .share-preview {
         background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(20, 184, 166, 0.1) 100%);
-        border-color: #334155;
-      }
-
-      body[data-theme="dark"] .avizier-format-btn {
-        background: #0f172a;
-        border-color: #334155;
-        color: #e2e8f0;
-      }
-
-      body[data-theme="dark"] .avizier-format-btn:hover {
-        background: #1e293b;
-        border-color: #3b82f6;
-        color: #bfdbfe;
-      }
-
-      body[data-theme="dark"] .avizier-message-rich a {
-        color: #93c5fd;
-      }
-
-      body[data-theme="dark"] .avizier-message-rich code {
-        background: #0f172a;
         border-color: #334155;
       }
 
@@ -3083,23 +2757,7 @@
 
       
 
-      .avizier-card {
-        border-radius: 12px;
-        padding: 20px;
-      }
-
-      
-
-      
-
-      
-
-      
-
-      
-
-      .badge-blue,
-      .avizier-chip.scope-building {
+      .badge-blue {
         background: #dbeafe;
         color: #1d4ed8;
         border-color: transparent;
@@ -3111,8 +2769,7 @@
         border-color: transparent;
       }
 
-      .badge-teal,
-      .avizier-chip.scope-general {
+      .badge-teal {
         background: #ccfbf1;
         color: #0f766e;
         border-color: transparent;
@@ -3181,7 +2838,6 @@
       }
 
       .table-action-btn,
-      .avizier-format-btn,
       .btn-sm {
         height: 32px;
         padding: 0 12px;
@@ -3406,9 +3062,7 @@
           min-width: 0;
         }
 
-        .announcement-card,
-        .listing-card,
-        .avizier-card {
+        .listing-card {
           padding: 14px;
           margin: 0;
           border-radius: 10px;
@@ -3434,15 +3088,6 @@
           white-space: nowrap;
         }
 
-        .announcement-meta {
-          flex-wrap: wrap;
-          gap: 6px;
-        }
-
-        .announcement-body {
-          max-width: 100%;
-        }
-
         main#app,
         #app,
         .main-content,
@@ -3461,29 +3106,6 @@
       }
 
       @media (max-width: 480px) {
-        .announcement-actions {
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-
-        .announcement-actions .avizier-edit-btn,
-        .announcement-actions .avizier-share-btn {
-          flex: 1 1 calc(50% - 4px);
-          justify-content: center;
-          min-width: 0;
-        }
-
-        .announcement-actions .avizier-read-more {
-          width: 100%;
-          flex: 1 0 100%;
-          justify-content: center;
-        }
-
-        .announcement-actions .avizier-delete-btn {
-          width: auto;
-          min-width: 36px;
-          flex-shrink: 0;
-        }
       }
       @media (max-width: 768px) {
         .mobile-tabbar {
@@ -3749,17 +3371,6 @@
   }
 }
 
-/* Fix 3: Constrain announcement body on mobile */
-@media (max-width: 768px) {
-  .announcement-body,
-  .announcement-body-preview {
-    max-width: 100% !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    overflow-wrap: anywhere !important;
-  }
-}
-
 /* Fix 4: Nav inner padding — fire earlier for mid-range phones */
 @media (max-width: 600px) {
   .global-nav-inner {
@@ -3887,6 +3498,7 @@
     <link rel="stylesheet" href="parking.css">
     <link rel="stylesheet" href="marketplace.css">
     <link rel="stylesheet" href="voting.css">
+    <link rel="stylesheet" href="avizier.css">
     <link rel="stylesheet" href="contacts.css">
     <link rel="stylesheet" href="recomandari.css?v=20260227d">
   </head>
@@ -4225,119 +3837,8 @@
             .catch(() => {});
         </script>
 
-        <section id="avizierModule" class="card hidden module-panel mt-14">
-          <div class="module-header">
-            <div>
-              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Avizier</div>
-              <h1 class="module-title"><i data-lucide="newspaper" aria-hidden="true"></i>Avizier</h1>
-              <p class="poll-note">General and per-building announcements for all residents.</p>
-            </div>
-            <div class="module-actions module-header-actions">
-              <button id="refreshAvizierBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
-            </div>
-          </div>
-          <p id="avizierLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
-
-          <section class="card mt-12">
-            <h3>Announcements <span class="count-pill" id="avizierCount">0</span></h3>
-            <span class="section-label">Anunțuri</span>
-            <div id="avizierScopeFilters" class="tabs market-filter-tabs mt-8">
-              <button type="button" class="tab-btn market-filter-btn active" data-avizier-filter="all">
-                <span class="market-filter-emoji" aria-hidden="true">📋</span>
-                <span>All</span>
-              </button>
-              <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="general">
-                <span class="market-filter-emoji" aria-hidden="true">🌐</span>
-                <span>General</span>
-              </button>
-              <button type="button" class="tab-btn market-filter-btn" data-avizier-filter="building">
-                <span class="market-filter-emoji" aria-hidden="true">🏢</span>
-                <span>Pe bloc</span>
-              </button>
-            </div>
-            <div id="avizierList" class="stack mt-8"></div>
-            <div id="avizierLoadMoreWrap" style="display:none; text-align:center; margin-top:12px;">
-              <button type="button" id="avizierLoadMoreBtn"
-                      class="home-activity-load-more"
-                      style="width:auto; min-height:36px; padding:6px 20px;
-                             border-radius:999px; font-size:13px;">
-                Încarcă mai multe
-              </button>
-            </div>
-          </section>
-
-          <section id="createAvizierCard" class="card hidden mt-12">
-            <div class="avizier-form-head">
-              <h3 id="avizierFormHeading">Create Announcement</h3>
-              <button id="avizierCancelEditBtn" class="ghost hidden" type="button">Cancel Edit</button>
-            </div>
-            <p id="avizierFormModeHint" class="poll-note" style="margin-top:6px">
-              Use line breaks, lists, and simple formatting for easier reading.
-            </p>
-            <form id="createAvizierForm" class="stack mt-8">
-              <div>
-                <label for="avizierTitle">Title</label>
-                <input id="avizierTitle" maxlength="200" placeholder="e.g. Water maintenance notice" required />
-                <div class="char-counter" id="avizierTitleCounter">0 / 200</div>
-              </div>
-              <div>
-                <label for="avizierMessage">Message</label>
-                <div id="avizierFormatToolbar" class="avizier-editor-toolbar" role="toolbar" aria-label="Announcement formatting">
-                  <button type="button" class="avizier-format-btn" data-avizier-format="bold">Bold</button>
-                  <button type="button" class="avizier-format-btn" data-avizier-format="italic">Italic</button>
-                  <button type="button" class="avizier-format-btn" data-avizier-format="bullets">Bullets</button>
-                  <button type="button" class="avizier-format-btn" data-avizier-format="numbers">Numbers</button>
-                  <button type="button" class="avizier-format-btn" data-avizier-format="link">Link</button>
-                  <button type="button" class="avizier-format-btn" data-avizier-format="paragraph">Paragraph</button>
-                </div>
-                <p class="poll-note" style="margin:6px 0 6px">
-                  Supports paragraphs, <code>- bullet lists</code>, <code>1. numbered lists</code>, <code>**bold**</code>, <code>*italic*</code>, and pasted URLs.
-                </p>
-                <textarea id="avizierMessage" maxlength="4000" placeholder="Write the full announcement..." required></textarea>
-                <div class="char-counter" id="avizierMessageCounter">0 / 4000</div>
-                <span id="avizierMessageError" class="field-error"></span>
-              </div>
-              <div>
-                <label for="avizierScope">Scope</label>
-                <select id="avizierScope">
-                  <option value="general">General</option>
-                  <option value="building">Per building</option>
-                </select>
-              </div>
-              <div class="grid mt-0">
-                <div>
-                  <label for="avizierPriority">Priority</label>
-                  <select id="avizierPriority">
-                    <option value="normal">Normal</option>
-                    <option value="important">Important</option>
-                    <option value="urgent">Urgent</option>
-                  </select>
-                </div>
-                <div>
-                  <label><input id="avizierPinned" type="checkbox" /> Pin announcement</label>
-                </div>
-              </div>
-              <div id="avizierBuildingRow" class="hidden">
-                <label for="avizierBuilding">Bloc</label>
-                <select id="avizierBuilding"></select>
-              </div>
-              <div>
-                <label for="avizierFiles">Attachments (JPG/PDF, max 10MB each)</label>
-                <input id="avizierFiles" type="file" multiple accept=".jpg,.jpeg,application/pdf,image/jpeg,image/jpg" />
-                <p id="avizierUploadStatus" class="upload-status">No files selected.</p>
-              </div>
-              <button id="createAvizierBtn" type="submit" data-default-text="Post Announcement">Post Announcement</button>
-            </form>
-          </section>
-
-          <section id="avizierLockedCard" class="card hidden mt-12">
-            <div class="locked-notice">
-              🔒 Only Reprezentant Bloc and Comitet members can post announcements.
-            </div>
-          </section>
-        </section>
-
-        
+        <!-- Avizier module — avizier.html injected here -->
+        <div id="avizierModuleMount"></div>
 
         <!-- Voting module — voting.html injected here -->
         <div id="votingModuleMount"></div>
@@ -4486,6 +3987,7 @@
     <script src="recomandari.js?v=20260227d"></script>
     <script src="marketplace.js"></script>
     <script src="voting.js"></script>
+    <script src="avizier.js"></script>
     <script>
       window.__marketplaceModuleReady = fetch("marketplace.html")
         .then((r) => r.text())
@@ -4545,10 +4047,33 @@
         .catch(() => {});
     </script>
     <script>
+      window.__avizierModuleReady = fetch("avizier.html")
+        .then((r) => r.text())
+        .then((html) => {
+          document.getElementById("avizierModuleMount").innerHTML = html;
+          if (typeof hydrateLucideIcons === "function") hydrateLucideIcons();
+          const initWhenReady = () => {
+            const avizierModuleRef =
+              (typeof AvizierModule !== "undefined" && AvizierModule) ||
+              (typeof window !== "undefined" && window.AvizierModule) ||
+              null;
+            if (!avizierModuleRef || typeof avizierModuleRef.init !== "function") {
+              setTimeout(initWhenReady, 50);
+              return;
+            }
+            avizierModuleRef.init();
+            if (typeof openModule === "function" && typeof currentModule !== "undefined" && currentModule === "avizierModule") {
+              openModule("avizierModule");
+            }
+          };
+          initWhenReady();
+        })
+        .catch(() => {});
+    </script>
+    <script>
       const HELP_SEEN_KEY = "10blocuri_help_seen_v1";
       const THEME_PREF_KEY = "10blocuri_theme_pref_v1";
       const SIDEBAR_COLLAPSED_KEY = "10blocuri_sidebar_collapsed_v1";
-      const AVIZIER_READ_KEY = "10blocuri_avizier_read_v1";
       const HOME_ACTIVITY_PAGE_SIZE = 10;
       const BUCHAREST_TIMEZONE = "Europe/Bucharest";
       const BUCHAREST_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
@@ -4590,8 +4115,6 @@
         moduleContacts: "Contacte",
         moduleRecomandari: "Recomandări",
       };
-      const AVIZIER_MAX_FILE_BYTES = 10 * 1024 * 1024;
-      const AVIZIER_ALLOWED_FILE_TYPES = new Set(["image/jpeg", "image/jpg", "application/pdf"]);
       const HELP_ITEMS = {
         global: [
           {
@@ -4685,10 +4208,8 @@
         countClosedPolls: document.getElementById("countClosedPolls"),
         refreshParkingBtn: document.getElementById("refreshParkingBtn"),
         refreshPollsBtn: document.getElementById("refreshPollsBtn"),
-        refreshAvizierBtn: document.getElementById("refreshAvizierBtn"),
         parkingLastRefreshed: document.getElementById("parkingLastRefreshed"),
         marketplaceLastRefreshed: document.getElementById("marketplaceLastRefreshed"),
-        avizierLastRefreshed: document.getElementById("avizierLastRefreshed"),
         votingLastRefreshed: document.getElementById("votingLastRefreshed"),
         pollModal: document.getElementById("pollModal"),
         pollModalTitle: document.getElementById("pollModalTitle"),
@@ -4704,29 +4225,8 @@
         pollResultsSection: document.getElementById("pollResultsSection"),
         parkingModule: document.getElementById("parkingModule"),
         parkingModeBanner: document.getElementById("parkingModeBanner"),
-        avizierModule: document.getElementById("avizierModule"),
         votingModule: document.getElementById("votingModule"),
         refreshMarketplaceBtn: document.getElementById("refreshMarketplaceBtn"),
-        createAvizierCard: document.getElementById("createAvizierCard"),
-        avizierLockedCard: document.getElementById("avizierLockedCard"),
-        createAvizierForm: document.getElementById("createAvizierForm"),
-        createAvizierBtn: document.getElementById("createAvizierBtn"),
-        avizierFormHeading: document.getElementById("avizierFormHeading"),
-        avizierFormModeHint: document.getElementById("avizierFormModeHint"),
-        avizierCancelEditBtn: document.getElementById("avizierCancelEditBtn"),
-        avizierFormatToolbar: document.getElementById("avizierFormatToolbar"),
-        avizierTitle: document.getElementById("avizierTitle"),
-        avizierMessage: document.getElementById("avizierMessage"),
-        avizierScope: document.getElementById("avizierScope"),
-        avizierPriority: document.getElementById("avizierPriority"),
-        avizierPinned: document.getElementById("avizierPinned"),
-        avizierBuildingRow: document.getElementById("avizierBuildingRow"),
-        avizierBuilding: document.getElementById("avizierBuilding"),
-        avizierFiles: document.getElementById("avizierFiles"),
-        avizierUploadStatus: document.getElementById("avizierUploadStatus"),
-        avizierScopeFilters: document.getElementById("avizierScopeFilters"),
-        avizierList: document.getElementById("avizierList"),
-        avizierCount: document.getElementById("avizierCount"),
         createPollCard: document.getElementById("createPollCard"),
         createPollForm: document.getElementById("createPollForm"),
         createPollBtn: document.getElementById("createPollBtn"),
@@ -4829,11 +4329,6 @@
       let homeActivityPage = 0;
       let homeActivityItemsCache = [];
       let recommendationsActivityEntries = [];
-      let avizierAnnouncements = [];
-      let avizierEditingAnnouncementId = null;
-      let avizierScopeFilter = "all";
-      let avizierPage = 0;
-      const AVIZIER_PAGE_SIZE = 10;
       let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
       let quickStatsLoading = true;
       let autoRefreshIntervalId = null;
@@ -5135,7 +4630,14 @@
             });
           });
 
-        newestByDate(avizierAnnouncements, (item) => item.created_at)
+        newestByDate((() => {
+          const avizierModuleRef =
+            (typeof AvizierModule !== "undefined" && AvizierModule) ||
+            (typeof window !== "undefined" && window.AvizierModule) ||
+            null;
+          if (!avizierModuleRef) return [];
+          return avizierModuleRef.getAnnouncements();
+        })(), (item) => item.created_at)
           .slice(0, 3)
           .forEach((item) => {
             activity.push({
@@ -5253,39 +4755,6 @@
         if (seconds < 60) return "acum câteva secunde";
         const minutes = Math.round(elapsedMs / 60000);
         return `acum ${minutes} min`;
-      }
-
-      function loadAvizierReadState() {
-        try {
-          return JSON.parse(localStorage.getItem(AVIZIER_READ_KEY) || "{}");
-        } catch {
-          return {};
-        }
-      }
-
-      function storeAvizierReadState(nextState) {
-        try {
-          localStorage.setItem(AVIZIER_READ_KEY, JSON.stringify(nextState || {}));
-        } catch {
-          // ignore local storage errors
-        }
-      }
-
-      function isAvizierRead(announcementId) {
-        if (!currentUser || !announcementId) return false;
-        const state = loadAvizierReadState();
-        const userState = state[currentUser.username] || {};
-        return Boolean(userState[String(announcementId)]);
-      }
-
-      function markAvizierRead(announcementId) {
-        if (!currentUser || !announcementId) return;
-        const state = loadAvizierReadState();
-        const userKey = currentUser.username;
-        const userState = state[userKey] || {};
-        userState[String(announcementId)] = true;
-        state[userKey] = userState;
-        storeAvizierReadState(state);
       }
 
       function setTheme(theme) {
@@ -5409,9 +4878,9 @@
       function updateRefreshMetaLabels() {
         const labels = [
           ["parking", els.parkingLastRefreshed],
-          ["marketplace", document.getElementById("marketplaceLastRefreshed") || els.marketplaceLastRefreshed],
-          ["avizier", els.avizierLastRefreshed],
-          ["voting", document.getElementById("votingLastRefreshed") || els.votingLastRefreshed],
+          ["marketplace", document.getElementById("marketplaceLastRefreshed")],
+          ["avizier", document.getElementById("avizierLastRefreshed")],
+          ["voting", document.getElementById("votingLastRefreshed")],
         ];
         labels.forEach(([key, labelEl]) => {
           if (!labelEl) return;
@@ -5424,9 +4893,9 @@
         lastRefreshAt[key] = new Date();
         const labelMap = {
           parking: els.parkingLastRefreshed,
-          marketplace: document.getElementById("marketplaceLastRefreshed") || els.marketplaceLastRefreshed,
-          avizier: els.avizierLastRefreshed,
-          voting: document.getElementById("votingLastRefreshed") || els.votingLastRefreshed,
+          marketplace: document.getElementById("marketplaceLastRefreshed"),
+          avizier: document.getElementById("avizierLastRefreshed"),
+          voting: document.getElementById("votingLastRefreshed"),
         };
         const labelEl = labelMap[key];
         if (labelEl) {
@@ -5478,6 +4947,26 @@
 
       function openPollModalWhenReady(pollId) {
         return withVotingModuleReady((votingModuleRef) => votingModuleRef.openModal(pollId));
+      }
+
+      function withAvizierModuleReady(run) {
+        const getModule = () =>
+          (typeof AvizierModule !== "undefined" && AvizierModule) ||
+          (typeof window !== "undefined" && window.AvizierModule) ||
+          null;
+        const invoke = () => {
+          const avizierModuleRef = getModule();
+          if (!avizierModuleRef) return Promise.reject(new Error("Avizier module unavailable."));
+          return Promise.resolve(run(avizierModuleRef));
+        };
+        if (window.__avizierModuleReady && typeof window.__avizierModuleReady.then === "function") {
+          return window.__avizierModuleReady.then(() => invoke());
+        }
+        return invoke();
+      }
+
+      function refreshAvizierWhenReady() {
+        return withAvizierModuleReady((avizierModuleRef) => avizierModuleRef.refresh());
       }
 
       // ── Client fetch cache ────────────────────────────────────
@@ -5699,22 +5188,6 @@
         return url.toString();
       }
 
-function buildAnnouncementSharePayload(item) {
-        if (!item) return null;
-        const decoded = decodeAvizierTitle(item.title);
-        const scopeLabel =
-          item.scope === "building" && Number(item.building_id || 0) > 0 ? `Bloc ${item.building_id}` : "General";
-        const authorLabel = String(item.created_by_username || "").trim();
-        return {
-          kind: "announcement",
-          kindLabel: "Avizier announcement",
-          title: String(decoded.cleanTitle || "Announcement").trim(),
-          text: [scopeLabel, authorLabel ? `Posted by ${authorLabel}` : ""].filter(Boolean).join(" · "),
-          preview: shortenText(item.message || "", 180),
-          url: moduleShareUrl("avizier", { announcement: item.id }),
-        };
-      }
-
       function sharePayloadFullText(payload) {
         if (!payload) return "";
         return [payload.title, payload.text, payload.preview, payload.url].filter(Boolean).join("\n");
@@ -5833,11 +5306,6 @@ function buildAnnouncementSharePayload(item) {
         if (buttonEl) buttonEl.blur();
       }
 
-function announcementShareLookup(announcementId) {
-        const allAnnouncements = Array.isArray(avizierAnnouncements) ? avizierAnnouncements : [];
-        return allAnnouncements.find((item) => String(item.id) === String(announcementId)) || null;
-      }
-
       function openShareForEntity(kind, entityId) {
         const normalizedKind = String(kind || "").trim().toLowerCase();
         const normalizedId = String(entityId || "").trim();
@@ -5861,7 +5329,15 @@ function announcementShareLookup(announcementId) {
             payload = votingModuleRef.buildSharePayload(votingModuleRef.shareLookup(normalizedId));
           }
         }
-        if (normalizedKind === "announcement") payload = buildAnnouncementSharePayload(announcementShareLookup(normalizedId));
+        if (normalizedKind === "announcement") {
+          const avizierModuleRef =
+            (typeof AvizierModule !== "undefined" && AvizierModule) ||
+            (typeof window !== "undefined" && window.AvizierModule) ||
+            null;
+          if (avizierModuleRef) {
+            payload = avizierModuleRef.buildSharePayload(avizierModuleRef.shareLookup(normalizedId));
+          }
+        }
         if (!payload) {
           showToast("Unable to prepare share link for this item.", "warning");
           return true;
@@ -5946,6 +5422,7 @@ function announcementShareLookup(announcementId) {
         els.parkingModule = document.getElementById("parkingModule") || els.parkingModule;
         els.marketplaceModule = document.getElementById("marketplaceModule") || els.marketplaceModule;
         els.votingModule = document.getElementById("votingModule") || els.votingModule;
+        const avizierModuleEl = document.getElementById("avizierModule");
         currentModule = null;
         setDocumentTitle(null);
         els.modulesCard.classList.remove("hidden");
@@ -5962,9 +5439,11 @@ function announcementShareLookup(announcementId) {
           els.marketplaceModule.classList.remove("is-visible");
           els.marketplaceModule.classList.remove("module-view");
         }
-        els.avizierModule.classList.add("hidden");
-        els.avizierModule.classList.remove("is-visible");
-        els.avizierModule.classList.remove("module-view");
+        if (avizierModuleEl) {
+          avizierModuleEl.classList.add("hidden");
+          avizierModuleEl.classList.remove("is-visible");
+          avizierModuleEl.classList.remove("module-view");
+        }
         if (els.votingModule) {
           els.votingModule.classList.add("hidden");
           els.votingModule.classList.remove("is-visible");
@@ -6063,6 +5542,7 @@ function announcementShareLookup(announcementId) {
         els.parkingModule = document.getElementById("parkingModule") || els.parkingModule;
         els.marketplaceModule = document.getElementById("marketplaceModule") || els.marketplaceModule;
         els.votingModule = document.getElementById("votingModule") || els.votingModule;
+        const avizierModuleEl = document.getElementById("avizierModule");
         currentModule = moduleId;
         setDocumentTitle(moduleId);
         els.modulesCard.classList.add("hidden");
@@ -6070,7 +5550,7 @@ function announcementShareLookup(announcementId) {
         const modules = [
           els.parkingModule,
           els.marketplaceModule,
-          els.avizierModule,
+          avizierModuleEl,
           els.votingModule,
           document.getElementById("moduleContacts"),
           document.getElementById("moduleRecomandari"),
@@ -6103,7 +5583,7 @@ function announcementShareLookup(announcementId) {
           refreshMarketplaceWhenReady().catch((error) => setStatus(error.message, true));
         }
         if (moduleId === "avizierModule") {
-          refreshAvizier().catch((error) => setStatus(error.message, true));
+          refreshAvizierWhenReady().catch((error) => setStatus(error.message, true));
         }
         if (moduleId === "votingModule") {
           refreshVotingWhenReady().catch((error) => setStatus(error.message, true));
@@ -6424,11 +5904,23 @@ function announcementShareLookup(announcementId) {
 
       async function refreshAdminUsers() {
         if (!currentUser || currentUser.role !== "admin") return;
+        const permissionLabel = (permission) => {
+          const avizierModuleRef =
+            (typeof AvizierModule !== "undefined" && AvizierModule) ||
+            (typeof window !== "undefined" && window.AvizierModule) ||
+            null;
+          if (avizierModuleRef && typeof avizierModuleRef.avizierPermissionLabel === "function") {
+            return avizierModuleRef.avizierPermissionLabel(permission);
+          }
+          if (permission === "comitet") return "Comitet";
+          if (permission === "reprezentant_bloc") return "Reprezentant Bloc";
+          return "Niciuna";
+        };
         const users = await api("/api/users");
         els.allUsers.innerHTML = users
           .map(
             (u) =>
-              `<tr>${td(u.username)}${td(u.role)}${td(avizierPermissionLabel(u.avizier_permission))}${td(u.building_number)}${td(u.apartment_number)}${td(u.phone_number || "-")}</tr>`
+              `<tr>${td(u.username)}${td(u.role)}${td(permissionLabel(u.avizier_permission))}${td(u.building_number)}${td(u.apartment_number)}${td(u.phone_number || "-")}</tr>`
           )
           .join("");
         els.allUsersCards.innerHTML = users.length
@@ -6441,7 +5933,7 @@ function announcementShareLookup(announcementId) {
                       <span class="parking-status-badge default">${u.role}</span>
                     </div>
                     <div class="parking-spot-meta">
-                      <div>Avizier: ${avizierPermissionLabel(u.avizier_permission)}</div>
+                      <div>Avizier: ${permissionLabel(u.avizier_permission)}</div>
                       <div>Bloc: ${u.building_number} | Apt: ${u.apartment_number}</div>
                       <div>Telefon: ${u.phone_number || "-"}</div>
                     </div>
@@ -6453,469 +5945,13 @@ function announcementShareLookup(announcementId) {
         hydrateLucideIcons();
       }
 
-      function avizierPermissionLabel(permission) {
-        if (permission === "comitet") return "Comitet";
-        if (permission === "reprezentant_bloc") return "Reprezentant Bloc";
-        return "None";
-      }
-
-      function canPostAvizier(user, scope, buildingId = null) {
-        if (!user) return false;
-        if (user.role === "admin") return true;
-        if (user.avizier_permission === "comitet") return true;
-        if (user.avizier_permission === "reprezentant_bloc") {
-          return scope === "building" && Number(buildingId || 0) === Number(user.building_number || 0);
-        }
-        return false;
-      }
-
-      function canDeleteAvizierAnnouncement(item, user = currentUser) {
-        if (!user || !item) return false;
-        if (String(item.created_by_username || "") === String(user.username || "")) return true;
-        return canPostAvizier(user, item.scope, item.scope === "building" ? item.building_id : null);
-      }
-
-      function canEditAvizierAnnouncement(item, user = currentUser) {
-        if (!user || !item) return false;
-        if (user.role === "admin") return true;
-        return String(item.created_by_username || "") === String(user.username || "");
-      }
-
-function escapeHtml(value) {
+      function escapeHtml(value) {
         return String(value || "")
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;")
           .replace(/\"/g, "&quot;")
           .replace(/'/g, "&#39;");
-      }
-
-      function formatAvizierInlineRichText(value) {
-        let html = escapeHtml(value);
-        html = html.replace(/(https?:\/\/[^\s<]+)/gi, (match) => {
-          const clean = match.replace(/[),.;!?]+$/g, "");
-          const trailing = match.slice(clean.length);
-          return `<a href="${clean}" target="_blank" rel="noopener noreferrer">${clean}</a>${trailing}`;
-        });
-        html = html.replace(/\*\*([^*\n][\s\S]*?)\*\*/g, "<strong>$1</strong>");
-        html = html.replace(/(^|[^*])\*([^*\n][\s\S]*?)\*/g, "$1<em>$2</em>");
-        html = html.replace(/`([^`\n]+)`/g, "<code>$1</code>");
-        return html;
-      }
-
-      function renderAvizierMessageHtml(message, { truncate = 0 } = {}) {
-        const normalized = String(message || "").replace(/\r\n?/g, "\n").trim();
-        if (!normalized) return `<p class="poll-note">No message.</p>`;
-
-        if (truncate > 0 && normalized.length > truncate) {
-          const short = `${normalized.slice(0, truncate).trim()}...`;
-          return `<p>${formatAvizierInlineRichText(short).replace(/\n/g, "<br>")}</p>`;
-        }
-
-        const blocks = normalized.split(/\n{2,}/).filter(Boolean);
-        return blocks
-          .map((block) => {
-            const lines = block
-              .split("\n")
-              .map((line) => line.trimEnd())
-              .filter((line) => line.length > 0);
-            if (!lines.length) return "";
-            const bulletItems = lines.every((line) => /^[-*]\s+/.test(line));
-            if (bulletItems) {
-              return `<ul>${lines
-                .map((line) => `<li>${formatAvizierInlineRichText(line.replace(/^[-*]\s+/, ""))}</li>`)
-                .join("")}</ul>`;
-            }
-            const numberedItems = lines.every((line) => /^\d+\.\s+/.test(line));
-            if (numberedItems) {
-              return `<ol>${lines
-                .map((line) => `<li>${formatAvizierInlineRichText(line.replace(/^\d+\.\s+/, ""))}</li>`)
-                .join("")}</ol>`;
-            }
-            return `<p>${lines.map((line) => formatAvizierInlineRichText(line)).join("<br>")}</p>`;
-          })
-          .join("");
-      }
-
-      function setAvizierComposerMode() {
-        const editing = Boolean(avizierEditingAnnouncementId);
-        if (els.avizierFormHeading) {
-          els.avizierFormHeading.textContent = editing ? "Edit Announcement" : "Create Announcement";
-        }
-        if (els.avizierFormModeHint) {
-          els.avizierFormModeHint.textContent = editing
-            ? "Editing an existing announcement. Existing attachments stay unless you select new files (replacement)."
-            : "Use line breaks, lists, and simple formatting for easier reading.";
-        }
-        if (els.avizierCancelEditBtn) {
-          els.avizierCancelEditBtn.classList.toggle("hidden", !editing);
-        }
-        if (els.createAvizierBtn) {
-          els.createAvizierBtn.dataset.defaultText = editing ? "Save Changes" : "Post Announcement";
-          setButtonActionIcon(els.createAvizierBtn, "megaphone");
-          hydrateLucideIcons();
-        }
-      }
-
-      function resetAvizierComposer() {
-        avizierEditingAnnouncementId = null;
-        els.createAvizierForm.reset();
-        els.avizierPriority.value = "normal";
-        els.avizierPinned.checked = false;
-        els.avizierFiles.value = "";
-        setAvizierUploadStatus("No files selected.");
-        if (currentUser?.avizier_permission === "reprezentant_bloc" && currentUser?.role !== "admin") {
-          els.avizierScope.value = "building";
-          els.avizierBuilding.value = String(currentUser.building_number || "");
-        }
-        updateAvizierFormVisibility();
-        setAvizierComposerMode();
-      }
-
-      function applyAvizierFormat(formatType) {
-        const textarea = els.avizierMessage;
-        if (!textarea) return;
-        const start = Number(textarea.selectionStart || 0);
-        const end = Number(textarea.selectionEnd || 0);
-        const selected = textarea.value.slice(start, end);
-        const insertWrapped = (prefix, suffix, placeholder) => {
-          const content = selected || placeholder;
-          const next = `${prefix}${content}${suffix}`;
-          textarea.setRangeText(next, start, end, "end");
-          textarea.focus();
-        };
-        if (formatType === "bold") {
-          insertWrapped("**", "**", "text");
-          return;
-        }
-        if (formatType === "italic") {
-          insertWrapped("*", "*", "text");
-          return;
-        }
-        if (formatType === "link") {
-          insertWrapped("", "", "https://example.com");
-          return;
-        }
-        if (formatType === "paragraph") {
-          textarea.setRangeText("\n\n", start, end, "end");
-          textarea.focus();
-          return;
-        }
-        if (formatType === "bullets") {
-          const content = selected || "Item one\nItem two";
-          const lines = content.split(/\r?\n/).map((line) => (line.trim() ? `- ${line.replace(/^[-*]\s+/, "")}` : "- "));
-          textarea.setRangeText(lines.join("\n"), start, end, "end");
-          textarea.focus();
-          return;
-        }
-        if (formatType === "numbers") {
-          const content = selected || "Item one\nItem two";
-          const lines = content.split(/\r?\n/).map((line, idx) => `${idx + 1}. ${line.replace(/^\d+\.\s+/, "").trim() || "Item"}`);
-          textarea.setRangeText(lines.join("\n"), start, end, "end");
-          textarea.focus();
-        }
-      }
-
-      function findAvizierAnnouncementById(announcementId) {
-        return (Array.isArray(avizierAnnouncements) ? avizierAnnouncements : []).find(
-          (item) => String(item.id) === String(announcementId)
-        ) || null;
-      }
-
-      function startAvizierEdit(item) {
-        if (!item) return;
-        const decoded = decodeAvizierTitle(item.title);
-        avizierEditingAnnouncementId = String(item.id);
-        els.avizierTitle.value = decoded.cleanTitle || "";
-        els.avizierMessage.value = String(item.message || "");
-        els.avizierPriority.value = decoded.priority || "normal";
-        els.avizierPinned.checked = Boolean(decoded.pinned);
-        els.avizierScope.value = String(item.scope || "general");
-        if (item.scope === "building" && item.building_id != null) {
-          els.avizierBuilding.value = String(item.building_id);
-        }
-        els.avizierFiles.value = "";
-        setAvizierUploadStatus("No files selected. Existing attachments will be kept unless you choose replacements.");
-        updateAvizierFormVisibility();
-        setAvizierComposerMode();
-        els.createAvizierCard.scrollIntoView({ behavior: "smooth", block: "start" });
-        els.avizierTitle.focus();
-      }
-
-      function normalizeAvizierFileType(fileType, fileName) {
-        const lowered = String(fileType || "").toLowerCase();
-        if (lowered) return lowered;
-        const fileLower = String(fileName || "").toLowerCase();
-        if (fileLower.endsWith(".pdf")) return "application/pdf";
-        if (fileLower.endsWith(".jpg") || fileLower.endsWith(".jpeg")) return "image/jpeg";
-        return "";
-      }
-
-      function setAvizierUploadStatus(message, kind = "") {
-        els.avizierUploadStatus.textContent = message;
-        els.avizierUploadStatus.classList.remove("error", "success");
-        if (kind) {
-          els.avizierUploadStatus.classList.add(kind);
-        }
-      }
-
-      function updateAvizierFormVisibility() {
-        if (!currentUser) {
-          els.createAvizierCard.classList.add("hidden");
-          els.avizierLockedCard.classList.add("hidden");
-          return;
-        }
-        const hasPostAccess =
-          currentUser.role === "admin" ||
-          String(currentUser.avizier_permission || "none") !== "none";
-        els.createAvizierCard.classList.toggle("hidden", !hasPostAccess);
-        els.avizierLockedCard.classList.toggle("hidden", hasPostAccess);
-        if (!hasPostAccess) return;
-
-        if (currentUser.avizier_permission === "reprezentant_bloc" && currentUser.role !== "admin") {
-          els.avizierScope.value = "building";
-          els.avizierScope.disabled = true;
-          els.avizierBuilding.value = String(currentUser.building_number || "");
-          els.avizierBuilding.disabled = true;
-          els.avizierBuildingRow.classList.remove("hidden");
-          return;
-        }
-
-        els.avizierScope.disabled = false;
-        const isBuilding = els.avizierScope.value === "building";
-        els.avizierBuildingRow.classList.toggle("hidden", !isBuilding);
-        els.avizierBuilding.disabled = !isBuilding;
-      }
-
-      function filteredAvizierAnnouncements() {
-        if (avizierScopeFilter === "general") {
-          return avizierAnnouncements.filter((item) => item.scope === "general");
-        }
-        if (avizierScopeFilter === "building") {
-          return avizierAnnouncements.filter((item) => item.scope === "building");
-        }
-        return avizierAnnouncements;
-      }
-
-      function setAvizierScopeFilter(scope) {
-        const nextScope = ["all", "general", "building"].includes(scope) ? scope : "all";
-        avizierPage = 0;
-        avizierScopeFilter = nextScope;
-        els.avizierScopeFilters
-          .querySelectorAll("[data-avizier-filter]")
-          .forEach((button) =>
-            button.classList.toggle("active", button.dataset.avizierFilter === avizierScopeFilter)
-          );
-        renderAvizierAnnouncements();
-      }
-
-      function decodeAvizierTitle(rawTitle) {
-        const source = String(rawTitle || "").trim();
-        let cleanTitle = source;
-        let priority = "normal";
-        let pinned = false;
-        if (/^\[(urgent)\]\s*/i.test(cleanTitle)) {
-          priority = "urgent";
-          cleanTitle = cleanTitle.replace(/^\[(urgent)\]\s*/i, "");
-        } else if (/^\[(important)\]\s*/i.test(cleanTitle)) {
-          priority = "important";
-          cleanTitle = cleanTitle.replace(/^\[(important)\]\s*/i, "");
-        }
-        if (/^\[pin\]\s*/i.test(cleanTitle)) {
-          pinned = true;
-          cleanTitle = cleanTitle.replace(/^\[pin\]\s*/i, "");
-        }
-        return { cleanTitle: cleanTitle || source, priority, pinned };
-      }
-
-      function encodeAvizierTitle(title, priority, pinned) {
-        let encoded = String(title || "").trim();
-        if (priority === "urgent") encoded = `[URGENT] ${encoded}`;
-        if (priority === "important") encoded = `[IMPORTANT] ${encoded}`;
-        if (pinned) encoded = `[PIN] ${encoded}`;
-        return encoded;
-      }
-
-      async function uploadAvizierAttachments(files, onProgress = null) {
-        const uploaded = [];
-        for (let i = 0; i < files.length; i += 1) {
-          const file = files[i];
-          const normalizedType = normalizeAvizierFileType(file.type, file.name);
-          if (!AVIZIER_ALLOWED_FILE_TYPES.has(normalizedType)) {
-            throw new Error(`Unsupported file type for ${file.name}. Allowed: JPG or PDF.`);
-          }
-          if (file.size > AVIZIER_MAX_FILE_BYTES) {
-            throw new Error(`${file.name} exceeds 10MB.`);
-          }
-          if (typeof onProgress === "function") {
-            onProgress({
-              index: i + 1,
-              total: files.length,
-              fileName: file.name,
-              stage: "upload",
-            });
-          }
-
-          const form = new FormData();
-          form.append("file", file);
-          form.append("module_name", "avizier");
-          const uploadRes = await fetch("/api/uploads/direct", { method: "POST", body: form });
-          const uploadData = await uploadRes.json().catch(() => ({}));
-          if (!uploadRes.ok) {
-            throw new Error(uploadData.error || `Upload failed for ${file.name}`);
-          }
-          uploaded.push({
-            file_url: uploadData.file_url,
-            file_name: uploadData.file_name || file.name,
-            file_type: uploadData.file_type || normalizedType,
-            file_size_bytes: Number(uploadData.file_size_bytes || file.size || 0),
-          });
-        }
-        return uploaded;
-      }
-
-      function renderAvizierAnnouncements(items) {
-        if (Array.isArray(items)) {
-          avizierAnnouncements = items;
-          avizierPage = 0;
-        }
-        const visibleAnnouncements = filteredAvizierAnnouncements()
-          .map((item) => {
-            const decoded = decodeAvizierTitle(item.title);
-            return { ...item, ...decoded };
-          })
-          .sort((a, b) => {
-            const pinScoreA = a.pinned ? 1 : 0;
-            const pinScoreB = b.pinned ? 1 : 0;
-            if (pinScoreA !== pinScoreB) return pinScoreB - pinScoreA;
-            const priorityRank = { urgent: 3, important: 2, normal: 1 };
-            const prA = priorityRank[a.priority] || 1;
-            const prB = priorityRank[b.priority] || 1;
-            if (prA !== prB) return prB - prA;
-            return (parseDateSafe(b.created_at)?.getTime() || 0) - (parseDateSafe(a.created_at)?.getTime() || 0);
-          });
-        els.avizierCount.textContent = String(visibleAnnouncements.length);
-        if (!visibleAnnouncements.length) {
-          els.avizierList.innerHTML = `<div class="empty-state">📋 No announcements yet. Check back later.</div>`;
-          const loadMoreWrap = document.getElementById('avizierLoadMoreWrap');
-          if (loadMoreWrap) loadMoreWrap.style.display = 'none';
-          hydrateLucideIcons();
-          return;
-        }
-
-        const startIdx = 0;
-        const endIdx = (avizierPage + 1) * AVIZIER_PAGE_SIZE;
-        const pageItems = visibleAnnouncements.slice(startIdx, endIdx);
-        const hasMore = visibleAnnouncements.length > endIdx;
-
-        els.avizierList.innerHTML = pageItems
-          .map((item) => {
-            const scopeLabel = item.scope === "building" ? "Per bloc" : "General";
-            const attachments = Array.isArray(item.attachments) ? item.attachments : [];
-            const unread = !isAvizierRead(item.id);
-            const longMessage = String(item.message || "").trim();
-            const shouldTruncate = longMessage.length > 220;
-            const collapsedPreviewText = shortenText(longMessage, 240);
-            const canDelete = canDeleteAvizierAnnouncement(item);
-            const canEdit = canEditAvizierAnnouncement(item);
-            const attachmentCountLabel = attachments.length
-              ? `${attachments.length} atașament${attachments.length === 1 ? "" : "e"}`
-              : "";
-            const priorityMetaBadge =
-              item.priority === "important"
-                ? `<span class="avizier-chip priority-important">⚠ Important</span>`
-                : item.priority === "urgent"
-                  ? `<span class="avizier-chip priority-urgent">🔴 Urgent</span>`
-                  : "";
-            return `
-              <article class="poll-card card avizier-card priority-${item.priority} ${unread ? "unread" : ""}" data-avizier-id="${item.id}">
-                <div class="announcement-head">
-                  <h4 class="announcement-title">
-                    ${item.pinned ? `<span class="announcement-pin" aria-hidden="true">📌</span>` : ""}
-                    <span>${escapeHtml(item.cleanTitle)}</span>
-                  </h4>
-                  <span class="announcement-time">${formatRelativeTime(item.created_at)}</span>
-                </div>
-                <div class="announcement-meta">
-                  <span class="avizier-chip scope-${item.scope === "building" ? "building" : "general"}">${iconMarkup(
-                    item.scope === "building" ? "building-2" : "map-pinned"
-                  )}<span>${scopeLabel}</span></span>
-                  ${priorityMetaBadge}
-                  <span class="announcement-meta-sep">·</span>
-                  <span>de ${escapeHtml(item.created_by_username || "-")}</span>
-                  ${
-                    attachmentCountLabel
-                      ? `<span class="announcement-meta-sep">·</span><span>${attachmentCountLabel}</span>`
-                      : ""
-                  }
-                </div>
-                <div class="avizier-message-rich announcement-body" data-avizier-message="${item.id}" data-avizier-full="${encodeURIComponent(
-                  longMessage
-                )}">
-                  ${
-                    shouldTruncate
-                      ? `<p class="announcement-body-preview">${escapeHtml(collapsedPreviewText)}</p>`
-                      : renderAvizierMessageHtml(longMessage)
-                  }
-                </div>
-                ${
-                  attachments.length
-                    ? `<div class="announcement-attachments">
-                  ${attachments
-                    .map((attachment) => {
-                      const fileName = String(attachment.file_name || "Fișier");
-                      return `<a class="attachment-chip" href="${escapeHtml(
-                        attachment.file_url
-                      )}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(fileName)}">📎 Atașament · ${escapeHtml(
-                        shortenText(fileName, 30)
-                      )}</a>`;
-                    })
-                    .join("")}
-                </div>`
-                    : ""
-                }
-                <div class="announcement-actions">
-                  ${
-                    canEdit
-                      ? `<button type="button" class="table-action-btn avizier-edit-btn" data-avizier-edit="${item.id}">Editează</button>`
-                      : ""
-                  }
-                  <button type="button" class="table-action-btn avizier-share-btn share-entity-btn" data-share-kind="announcement" data-share-id="${item.id}">Distribuie</button>
-                  ${
-                    shouldTruncate
-                      ? `<button type="button" class="avizier-read-more" data-avizier-expand="${item.id}">Citește mai mult</button>`
-                      : ""
-                  }
-                  ${
-                    canDelete
-                      ? `<button type="button" class="table-action-btn danger avizier-delete-btn" data-avizier-delete="${item.id}" aria-label="Șterge anunțul" title="Șterge anunțul">Șterge</button>`
-                      : ""
-                  }
-                </div>
-              </article>
-            `;
-          })
-          .join("");
-
-        // Show/hide load more button
-        const loadMoreWrap = document.getElementById('avizierLoadMoreWrap');
-        const loadMoreBtn  = document.getElementById('avizierLoadMoreBtn');
-        if (loadMoreWrap) loadMoreWrap.style.display = hasMore ? 'block' : 'none';
-        if (loadMoreBtn)  loadMoreBtn.textContent =
-          `Încarcă mai multe (${visibleAnnouncements.length - endIdx} rămase)`;
-
-        decorateDynamicActionIcons(els.avizierList);
-        hydrateLucideIcons();
-        refreshHomeActivity();
-      }
-
-      async function refreshAvizier() {
-        if (!currentUser) return;
-        const data = await api("/api/avizier");
-        moduleQuickStats.announcements = Array.isArray(data) ? data.length : 0;
-        renderQuickStats();
-        renderAvizierAnnouncements(data);
-        markModuleRefreshed("avizier");
       }
 
       function stopAutoRefresh() {
@@ -6939,7 +5975,7 @@ function escapeHtml(value) {
             await withRefreshPulse(document.getElementById("refreshMarketplaceBtn"), async () => refreshMarketplaceWhenReady());
           }
           if (!currentModule || currentModule === "avizierModule") {
-            await withRefreshPulse(els.refreshAvizierBtn, async () => refreshAvizier());
+            await withRefreshPulse(document.getElementById("refreshAvizierBtn"), async () => refreshAvizierWhenReady());
           }
           if (!currentModule || currentModule === "votingModule") {
             await withRefreshPulse(document.getElementById("refreshPollsBtn"), async () => refreshVotingWhenReady());
@@ -6997,8 +6033,9 @@ function escapeHtml(value) {
           if (typeof MarketplaceModule !== "undefined") {
             MarketplaceModule.setTypeFilter("all", { rerender: false, scroll: false });
           }
-          avizierAnnouncements = [];
-          avizierEditingAnnouncementId = null;
+          if (typeof AvizierModule !== "undefined") {
+            AvizierModule.clearState();
+          }
           recommendationsActivityEntries = [];
           homeActivityPage = 0;
           homeActivityItemsCache = [];
@@ -7013,9 +6050,10 @@ function escapeHtml(value) {
             MarketplaceModule.clearUploadState();
             MarketplaceModule.setTypeFilter("all", { rerender: false, scroll: false });
           }
-          renderAvizierAnnouncements([]);
-          updateAvizierFormVisibility();
-          setAvizierComposerMode();
+          if (typeof AvizierModule !== "undefined") {
+            AvizierModule.updateFormVisibility();
+            AvizierModule.setComposerMode();
+          }
           return;
         }
 
@@ -7043,8 +6081,9 @@ function escapeHtml(value) {
         if (typeof MarketplaceModule !== "undefined") {
           MarketplaceModule.setTypeFilter("all", { rerender: false, scroll: false });
         }
-        avizierAnnouncements = [];
-        avizierEditingAnnouncementId = null;
+        if (typeof AvizierModule !== "undefined") {
+          AvizierModule.clearState();
+        }
         recommendationsActivityEntries = [];
         homeActivityPage = 0;
         homeActivityItemsCache = [];
@@ -7065,9 +6104,11 @@ function escapeHtml(value) {
           MarketplaceModule.updateFormVisibility();
           MarketplaceModule.setTypeFilter("all", { rerender: false, scroll: false });
         }
-        updateAvizierFormVisibility();
-        setAvizierComposerMode();
-        setAvizierScopeFilter("all");
+        if (typeof AvizierModule !== "undefined") {
+          AvizierModule.updateFormVisibility();
+          AvizierModule.setComposerMode();
+          AvizierModule.setScopeFilter("all");
+        }
 
         if (user.role === "admin") {
           els.adminPanel?.classList.remove("hidden");
@@ -7311,7 +6352,7 @@ function escapeHtml(value) {
               ParkingModule.refreshDashboard(),
               refreshAdminUsers(),
               refreshMarketplaceWhenReady(),
-              refreshAvizier(),
+              refreshAvizierWhenReady(),
               refreshVotingWhenReady(),
               refreshRecommendationsActivity({ refreshFeed: false }),
             ]);
@@ -7373,7 +6414,7 @@ function escapeHtml(value) {
         if (currentModule === "avizierModule") {
           const canPost = currentUser.role === "admin" || String(currentUser.avizier_permission || "none") !== "none";
           if (!canPost) return;
-          els.createAvizierCard.scrollIntoView({ behavior: "smooth", block: "start" });
+          document.getElementById("createAvizierCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
           return;
         }
         openModule("parkingModule");
@@ -7509,196 +6550,6 @@ function escapeHtml(value) {
       }
       bindMarketplaceRefreshButton();
 
-      els.refreshAvizierBtn.addEventListener("click", async () => {
-        try {
-          await withRefreshPulse(els.refreshAvizierBtn, async () => refreshAvizier());
-          showToast("Avizier refreshed.", "info");
-        } catch (error) {
-          setStatus(error.message, true);
-        }
-      });
-      els.avizierScopeFilters.addEventListener("click", (event) => {
-        const filterBtn = event.target.closest("[data-avizier-filter]");
-        if (!filterBtn) return;
-        setAvizierScopeFilter(filterBtn.dataset.avizierFilter);
-      });
-
-      els.avizierScope.addEventListener("change", () => {
-        updateAvizierFormVisibility();
-      });
-
-      els.avizierCancelEditBtn.addEventListener("click", () => {
-        resetAvizierComposer();
-      });
-
-      els.avizierFormatToolbar.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-avizier-format]");
-        if (!button) return;
-        applyAvizierFormat(button.dataset.avizierFormat);
-      });
-
-      els.avizierFiles.addEventListener("change", () => {
-        const files = Array.from(els.avizierFiles.files || []);
-        if (!files.length) {
-          setAvizierUploadStatus(
-            avizierEditingAnnouncementId
-              ? "No files selected. Existing attachments will be kept unless you choose replacements."
-              : "No files selected."
-          );
-          return;
-        }
-        const invalid = files.filter(
-          (file) => !AVIZIER_ALLOWED_FILE_TYPES.has(normalizeAvizierFileType(file.type, file.name))
-        );
-        if (invalid.length) {
-          showToast(
-            `Invalid file type: ${invalid.map((file) => file.name).join(", ")}. Only JPG and PDF allowed.`,
-            "error"
-          );
-          els.avizierFiles.value = "";
-          setAvizierUploadStatus("No files selected.");
-          return;
-        }
-        const oversized = files.filter((file) => Number(file.size || 0) > AVIZIER_MAX_FILE_BYTES);
-        if (oversized.length) {
-          showToast(
-            `File too large: ${oversized.map((file) => file.name).join(", ")}. Max 10MB each.`,
-            "warning"
-          );
-          els.avizierFiles.value = "";
-          setAvizierUploadStatus("No files selected.");
-          return;
-        }
-        setAvizierUploadStatus(`${files.length} file(s) selected.`);
-      });
-
-      els.avizierList.addEventListener("click", (event) => {
-        const shareBtn = event.target.closest('.share-entity-btn[data-share-kind="announcement"]');
-        if (shareBtn) {
-          openShareForEntity("announcement", shareBtn.dataset.shareId);
-          return;
-        }
-        const editBtn = event.target.closest("[data-avizier-edit]");
-        if (editBtn) {
-          const announcementId = String(editBtn.dataset.avizierEdit || "").trim();
-          const item = findAvizierAnnouncementById(announcementId);
-          if (!item) {
-            showToast("Announcement not found. Refresh and try again.", "warning");
-            return;
-          }
-          startAvizierEdit(item);
-          return;
-        }
-        const deleteBtn = event.target.closest("[data-avizier-delete]");
-        if (deleteBtn) {
-          const announcementId = String(deleteBtn.dataset.avizierDelete || "").trim();
-          if (!announcementId) return;
-          requestActionConfirmation("Delete this announcement permanently?").then(async (confirmed) => {
-            if (!confirmed) return;
-            await withButtonProgress(deleteBtn, "Deleting...", async () => {
-              try {
-                await api(`/api/avizier/${announcementId}/delete`, { method: "POST" });
-                showToast("Announcement deleted.");
-                await refreshAvizier();
-              } catch (error) {
-                setStatus(error.message, true);
-              }
-            });
-          });
-          return;
-        }
-        const expandBtn = event.target.closest("[data-avizier-expand]");
-        const card = event.target.closest("[data-avizier-id]");
-        if (card) {
-          const announcementId = String(card.dataset.avizierId || "").trim();
-          if (announcementId) {
-            markAvizierRead(announcementId);
-            card.classList.remove("unread");
-          }
-        }
-        if (!expandBtn) return;
-        const announcementId = String(expandBtn.dataset.avizierExpand || "").trim();
-        const messageEl = els.avizierList.querySelector(`[data-avizier-message="${announcementId}"]`);
-        if (!messageEl) return;
-        const fullText = decodeURIComponent(messageEl.dataset.avizierFull || "");
-        const expanded = expandBtn.dataset.expanded === "1";
-        if (expanded) {
-          messageEl.innerHTML = renderAvizierMessageHtml(fullText, { truncate: 220 });
-          expandBtn.dataset.expanded = "0";
-          expandBtn.textContent = "Read more";
-        } else {
-          messageEl.innerHTML = renderAvizierMessageHtml(fullText);
-          expandBtn.dataset.expanded = "1";
-          expandBtn.textContent = "Show less";
-        }
-        hydrateLucideIcons();
-      });
-
-      els.createAvizierForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const isEditing = Boolean(avizierEditingAnnouncementId);
-        const scope = els.avizierScope.value;
-        const buildingId =
-          scope === "building"
-            ? Number(els.avizierBuilding.value || currentUser?.building_number || 0)
-            : null;
-        if (!canPostAvizier(currentUser, scope, buildingId)) {
-          setStatus("You do not have permission to post this announcement.", true);
-          return;
-        }
-
-        await withButtonProgress(els.createAvizierBtn, isEditing ? "Saving..." : "Posting...", async () => {
-          try {
-            const files = Array.from(els.avizierFiles.files || []);
-            let attachments = [];
-            if (files.length) {
-              setAvizierUploadStatus(`Uploading ${files.length} file(s)...`);
-              attachments = await uploadAvizierAttachments(files, (progress) => {
-                setAvizierUploadStatus(
-                  `Uploading ${progress.index}/${progress.total}: ${progress.fileName}...`
-                );
-              });
-              setAvizierUploadStatus(`Upload complete: ${attachments.length} file(s).`, "success");
-            } else {
-              setAvizierUploadStatus("No files selected.");
-            }
-
-            const payload = {
-              title: encodeAvizierTitle(
-                els.avizierTitle.value.trim(),
-                els.avizierPriority.value,
-                Boolean(els.avizierPinned.checked)
-              ),
-              message: (els.avizierMessage.value || "").trim(),
-              scope,
-              building_id: scope === "building" ? buildingId : null,
-            };
-            if (!isEditing || files.length) {
-              payload.attachments = attachments;
-            }
-            if (isEditing) {
-              await api(`/api/avizier/${avizierEditingAnnouncementId}/update`, {
-                method: "POST",
-                body: JSON.stringify(payload),
-              });
-              showToast("Announcement updated.");
-              flashButtonSuccess(els.createAvizierBtn, "Saved");
-            } else {
-              await api("/api/avizier", {
-                method: "POST",
-                body: JSON.stringify(payload),
-              });
-              showToast("Announcement posted.");
-              flashButtonSuccess(els.createAvizierBtn, "Posted");
-            }
-            resetAvizierComposer();
-            await refreshAvizier();
-          } catch (error) {
-            setStatus(error.message, true);
-            setAvizierUploadStatus(`Upload failed: ${error.message || "unknown error"}`, "error");
-          }
-        });
-      });
       document.getElementById("loginUsername").addEventListener("input", (event) => {
         event.target.value = normalizeUsername(event.target.value);
       });
@@ -7835,8 +6686,6 @@ function escapeHtml(value) {
         update();
       }
 
-      attachCharCounter('avizierMessage', 'avizierMessageCounter', 4000);
-      attachCharCounter('avizierTitle',   'avizierTitleCounter',   200);
       attachCharCounter('marketplaceDescription', 'marketplaceDescCounter', 2500);
       attachCharCounter('marketplaceTitle', 'marketplaceTitleCounter', 160);
 
@@ -7846,12 +6695,6 @@ function escapeHtml(value) {
         attachCharCounter("marketplaceDescription", "marketplaceDescCounter", 2500);
         attachCharCounter("marketplaceTitle", "marketplaceTitleCounter", 160);
       };
-
-      document.getElementById('avizierLoadMoreBtn')?.addEventListener('click', () => {
-        avizierPage += 1;
-        renderAvizierAnnouncements();
-        window.scrollBy({ top: 200, behavior: 'smooth' });
-      });
 
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible' && currentUser) {
@@ -7926,13 +6769,10 @@ function escapeHtml(value) {
         setupParkingBindings();
         fillBuildingSelect("claimBuilding", true);
         fillBuildingSelect("adminNewBuilding");
-        fillBuildingSelect("avizierBuilding");
         setActiveTab("action", "actionSharePanel");
         setActiveTab("activity", "activityFreePanel");
         applyDefaultTimeValues();
-        setAvizierComposerMode();
         applyStaticActionIcons();
-        setAvizierUploadStatus("No files selected.");
         updateRefreshMetaLabels();
         showModuleChooser();
         syncNavigationState();
@@ -7951,7 +6791,7 @@ function escapeHtml(value) {
             ParkingModule.refreshDashboard(),
             refreshAdminUsers(),
             refreshMarketplaceWhenReady(),
-            refreshAvizier(),
+            refreshAvizierWhenReady(),
             refreshVotingWhenReady(),
             refreshRecommendationsActivity({ refreshFeed: false }),
           ]);
