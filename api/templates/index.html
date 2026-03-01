@@ -5706,6 +5706,28 @@
 /* ═══════════════════════════════════════════════════════
    END MOBILE WOBBLE FIX
    ═══════════════════════════════════════════════════════ */
+      .field-error {
+        display: none;
+        font-size: 12px;
+        color: #ef4444;
+        margin-top: 4px;
+        font-weight: 500;
+      }
+      .field-error.visible { display: block; }
+      input.invalid, select.invalid, textarea.invalid {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
+      }
+      input.valid { border-color: #16a34a !important; }
+      .char-counter {
+        font-size: 11px;
+        color: var(--text-muted, #64748b);
+        text-align: right;
+        margin-top: 3px;
+        transition: color 150ms ease;
+      }
+      .char-counter.near-limit { color: #f59e0b; font-weight: 600; }
+      .char-counter.at-limit   { color: #ef4444; font-weight: 700; }
     </style>
     <link rel="stylesheet" href="contacts.css">
     <link rel="stylesheet" href="recomandari.css?v=20260227d">
@@ -6048,6 +6070,7 @@
                 <div>
                   <label for="spaceNumber">Parking Spot Number</label>
                   <input id="spaceNumber" placeholder="e.g. UG-12, Spot 7" required />
+                  <span id="spaceNumberError" class="field-error"></span>
                 </div>
                 <div>
                   <label for="spaceType">Type</label>
@@ -6059,10 +6082,12 @@
                 <div>
                   <label for="fromAt">Available From</label>
                   <input id="fromAt" type="datetime-local" required />
+                  <span id="fromAtError" class="field-error"></span>
                 </div>
                 <div>
                   <label for="untilAt">Available Until</label>
                   <input id="untilAt" type="datetime-local" required />
+                  <span id="untilAtError" class="field-error"></span>
                 </div>
                 <p class="tz-note">All share times are Bucharest time.</p>
                 <button id="shareBtn" type="submit" data-default-text="Share Spot">Share Spot</button>
@@ -6096,14 +6121,17 @@
                 <div>
                   <label for="claimFrom">Claim From</label>
                   <input id="claimFrom" type="datetime-local" required />
+                  <span id="claimFromError" class="field-error"></span>
                 </div>
                 <div>
                   <label for="claimUntil">Claim Until</label>
                   <input id="claimUntil" type="datetime-local" required />
+                  <span id="claimUntilError" class="field-error"></span>
                 </div>
                 <div>
                   <label for="claimPhone">Telefon contact (proprietar)</label>
                   <input id="claimPhone" placeholder="07xx xxx xxx" required />
+                  <span id="claimPhoneError" class="field-error"></span>
                 </div>
                 <p class="tz-note">All claim times are Bucharest time.</p>
                 <button id="claimBtn" class="alt" type="submit" data-default-text="Claim Selected Spot">Claim Selected Spot</button>
@@ -6335,6 +6363,15 @@
               </select>
             </div>
           </div>
+          <div style="margin-bottom: 12px;">
+            <input
+              id="marketplaceSearch"
+              type="search"
+              placeholder="Caută anunțuri..."
+              aria-label="Caută în anunțuri"
+              style="width:100%; box-sizing:border-box;"
+            />
+          </div>
 
           <section class="card mt-12">
             <h3>Anunțuri Active <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
@@ -6415,10 +6452,13 @@
                 <div>
                   <label for="marketplaceTitle">Title</label>
                   <input id="marketplaceTitle" maxlength="160" placeholder="e.g. Dining table - solid wood" required />
+                  <div class="char-counter" id="marketplaceTitleCounter">0 / 160</div>
                 </div>
                 <div>
                   <label for="marketplaceDescription">Description</label>
                   <textarea id="marketplaceDescription" maxlength="2500" placeholder="Condition, dimensions, details"></textarea>
+                  <div class="char-counter" id="marketplaceDescCounter">0 / 2500</div>
+                  <span id="marketplaceDescError" class="field-error"></span>
                 </div>
               </section>
               <section class="market-form-section">
@@ -6427,6 +6467,7 @@
                   <div>
                     <label for="marketplaceContactPhone">Telefon contact</label>
                     <input id="marketplaceContactPhone" maxlength="64" placeholder="07xx xxx xxx" />
+                    <span id="marketContactPhoneError" class="field-error"></span>
                   </div>
                   <div>
                     <label for="marketplacePickupDetails">Pickup Details</label>
@@ -6494,6 +6535,14 @@
               </button>
             </div>
             <div id="avizierList" class="stack" style="margin-top: 8px"></div>
+            <div id="avizierLoadMoreWrap" style="display:none; text-align:center; margin-top:12px;">
+              <button type="button" id="avizierLoadMoreBtn"
+                      class="home-activity-load-more"
+                      style="width:auto; min-height:36px; padding:6px 20px;
+                             border-radius:999px; font-size:13px;">
+                Încarcă mai multe
+              </button>
+            </div>
           </section>
 
           <section id="createAvizierCard" class="card hidden mt-12">
@@ -6508,6 +6557,7 @@
               <div>
                 <label for="avizierTitle">Title</label>
                 <input id="avizierTitle" maxlength="200" placeholder="e.g. Water maintenance notice" required />
+                <div class="char-counter" id="avizierTitleCounter">0 / 200</div>
               </div>
               <div>
                 <label for="avizierMessage">Message</label>
@@ -6523,6 +6573,8 @@
                   Supports paragraphs, <code>- bullet lists</code>, <code>1. numbered lists</code>, <code>**bold**</code>, <code>*italic*</code>, and pasted URLs.
                 </p>
                 <textarea id="avizierMessage" maxlength="4000" placeholder="Write the full announcement..." required></textarea>
+                <div class="char-counter" id="avizierMessageCounter">0 / 4000</div>
+                <span id="avizierMessageError" class="field-error"></span>
               </div>
               <div>
                 <label for="avizierScope">Scope</label>
@@ -6607,6 +6659,7 @@
                 <div>
                   <label for="pollTitle">Title</label>
                   <input id="pollTitle" maxlength="200" placeholder="e.g. Upgrade Entrance Lighting" required />
+                  <div class="char-counter" id="pollTitleCounter">0 / 200</div>
                 </div>
                 <div>
                   <label for="pollDescriptionInput">Description</label>
@@ -6658,6 +6711,7 @@
                 <div id="pollOptionsRow" class="hidden">
                   <label for="pollOptions">Options (one per line)</label>
                   <textarea id="pollOptions" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+                  <span id="pollOptionsError" class="field-error"></span>
                 </div>
                 <div id="pollAllowMultipleRow" class="hidden">
                   <label><input id="pollAllowMultiple" type="checkbox" /> Allow multiple selections</label>
@@ -6806,8 +6860,8 @@
           </div>
           <p id="shareEntitySubtitle" class="poll-note">Share to WhatsApp, social apps, or copy a link.</p>
           <div class="share-preview">
-            <div id="shareEntityKind" class="share-preview-kicker">Item</div>
-            <div id="shareEntityPreviewTitle" class="share-preview-title">-</div>
+            <div id="shareEntityKind" class="share-preview-kicker"></div>
+            <div id="shareEntityPreviewTitle" class="share-preview-title"></div>
             <p id="shareEntityPreviewText" class="share-preview-text"></p>
           </div>
           <div class="share-link-row">
@@ -7227,10 +7281,13 @@
       let marketplaceSelectedType = "all";
       let marketplaceSelectedSort = "newest";
       let marketplaceSelectedBuilding = "all";
+      let marketplaceSearchQuery = '';
       let marketplaceDashboardData = { active_listings: [], my_listings: [] };
       let avizierAnnouncements = [];
       let avizierEditingAnnouncementId = null;
       let avizierScopeFilter = "all";
+      let avizierPage = 0;
+      const AVIZIER_PAGE_SIZE = 10;
       let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
       let quickStatsLoading = true;
       let autoRefreshIntervalId = null;
@@ -7308,7 +7365,7 @@
         if (building > 0) {
           return `Bloc ${building}`;
         }
-        return "Residence n/a";
+        return "";
       }
 
       function userInitials(username) {
@@ -7326,7 +7383,9 @@
           return;
         }
         els.welcomeTitle.textContent = `Hello, ${user.username} 👋`;
-        els.welcomeResidence.textContent = displayResidence(user);
+        const residence = displayResidence(user);
+        els.welcomeResidence.textContent = residence;
+        els.welcomeResidence.style.display = residence ? "" : "none";
       }
 
       function renderQuickStats() {
@@ -8115,7 +8174,7 @@
         closeHelpModal();
         els.shareEntityTitle.textContent = `Share ${payload.kindLabel || "item"}`;
         els.shareEntitySubtitle.textContent = "Share to WhatsApp, social apps, or copy a link.";
-        els.shareEntityKind.textContent = String(payload.kindLabel || "Item").toUpperCase();
+        els.shareEntityKind.textContent = String(payload.kindLabel || "").toUpperCase();
         els.shareEntityPreviewTitle.textContent = payload.title || "Untitled";
         els.shareEntityPreviewText.textContent = [payload.text, payload.preview].filter(Boolean).join(" · ");
         els.shareEntityLink.value = payload.url;
@@ -10029,8 +10088,22 @@
         }
         els.marketplaceBuildingFilter.value = marketplaceSelectedBuilding;
 
+        function marketplaceSearchMatches(post) {
+          if (!marketplaceSearchQuery) return true;
+          const q = marketplaceSearchQuery.toLowerCase();
+          return (
+            String(post.title || '').toLowerCase().includes(q) ||
+            String(post.description || '').toLowerCase().includes(q) ||
+            String(post.owner_username || '').toLowerCase().includes(q)
+          );
+        }
+
         const activeListings = sortMarketplaceListings(
-          activeListingsAll.filter((post) => marketplaceCategoryMatches(post) && marketplaceBuildingMatches(post))
+          activeListingsAll.filter((post) =>
+            marketplaceCategoryMatches(post) &&
+            marketplaceBuildingMatches(post) &&
+            marketplaceSearchMatches(post)
+          )
         );
         const myListings = sortMarketplaceListings(
           myListingsAll.filter((post) => marketplaceCategoryMatches(post) && marketplaceBuildingMatches(post))
@@ -10527,6 +10600,7 @@
 
       function setAvizierScopeFilter(scope) {
         const nextScope = ["all", "general", "building"].includes(scope) ? scope : "all";
+        avizierPage = 0;
         avizierScopeFilter = nextScope;
         els.avizierScopeFilters
           .querySelectorAll("[data-avizier-filter]")
@@ -10604,6 +10678,7 @@
       function renderAvizierAnnouncements(items) {
         if (Array.isArray(items)) {
           avizierAnnouncements = items;
+          avizierPage = 0;
         }
         const visibleAnnouncements = filteredAvizierAnnouncements()
           .map((item) => {
@@ -10623,11 +10698,18 @@
         els.avizierCount.textContent = String(visibleAnnouncements.length);
         if (!visibleAnnouncements.length) {
           els.avizierList.innerHTML = `<div class="empty-state">📋 No announcements yet. Check back later.</div>`;
+          const loadMoreWrap = document.getElementById('avizierLoadMoreWrap');
+          if (loadMoreWrap) loadMoreWrap.style.display = 'none';
           hydrateLucideIcons();
           return;
         }
 
-        els.avizierList.innerHTML = visibleAnnouncements
+        const startIdx = 0;
+        const endIdx = (avizierPage + 1) * AVIZIER_PAGE_SIZE;
+        const pageItems = visibleAnnouncements.slice(startIdx, endIdx);
+        const hasMore = visibleAnnouncements.length > endIdx;
+
+        els.avizierList.innerHTML = pageItems
           .map((item) => {
             const scopeLabel = item.scope === "building" ? "Per bloc" : "General";
             const attachments = Array.isArray(item.attachments) ? item.attachments : [];
@@ -10715,6 +10797,14 @@
             `;
           })
           .join("");
+
+        // Show/hide load more button
+        const loadMoreWrap = document.getElementById('avizierLoadMoreWrap');
+        const loadMoreBtn  = document.getElementById('avizierLoadMoreBtn');
+        if (loadMoreWrap) loadMoreWrap.style.display = hasMore ? 'block' : 'none';
+        if (loadMoreBtn)  loadMoreBtn.textContent =
+          `Încarcă mai multe (${visibleAnnouncements.length - endIdx} rămase)`;
+
         decorateDynamicActionIcons(els.avizierList);
         hydrateLucideIcons();
         refreshHomeActivity();
@@ -10962,10 +11052,14 @@
       function startAutoRefresh() {
         stopAutoRefresh();
         updateRefreshMetaLabels();
+
         refreshTickerIntervalId = setInterval(() => {
           updateRefreshMetaLabels();
         }, 1000);
+
         autoRefreshIntervalId = setInterval(() => {
+          // Skip refresh if tab is hidden
+          if (document.visibilityState === 'hidden') return;
           autoRefreshNow();
         }, 60000);
       }
@@ -11405,9 +11499,10 @@
         els.logoutBtn.classList.remove("hidden");
         els.railUserBadge.classList.remove("hidden");
         els.railLogoutBtn.classList.remove("hidden");
-        els.navUserText.textContent = `${user.username} · ${displayResidence(user)}`;
+        const res = displayResidence(user);
+        els.navUserText.textContent = res ? `${user.username} · ${res}` : user.username;
         els.navUserInitials.textContent = userInitials(user.username);
-        els.railUserText.textContent = `${user.username} · ${displayResidence(user)}`;
+        els.railUserText.textContent = res ? `${user.username} · ${res}` : user.username;
         els.railUserInitials.textContent = userInitials(user.username);
         currentFreeSpots = [];
         currentClaimsOnMine = [];
@@ -11758,6 +11853,11 @@
 
       els.marketplaceBuildingFilter.addEventListener("change", () => {
         setMarketplaceBuildingFilter(els.marketplaceBuildingFilter.value, { rerender: true });
+      });
+
+      document.getElementById('marketplaceSearch')?.addEventListener('input', function() {
+        marketplaceSearchQuery = this.value.trim();
+        renderMarketplace(marketplaceDashboardData);
       });
 
       els.marketplaceDropzone.addEventListener("click", () => {
@@ -12539,6 +12639,123 @@
         }
         if (!els.pollModal.classList.contains("hidden")) {
           closePollModal();
+        }
+      });
+
+      function showFieldError(inputEl, errorEl, message) {
+        if (!inputEl || !errorEl) return;
+        inputEl.classList.add('invalid');
+        inputEl.classList.remove('valid');
+        errorEl.textContent = message;
+        errorEl.classList.add('visible');
+      }
+      function clearFieldError(inputEl, errorEl) {
+        if (!inputEl || !errorEl) return;
+        inputEl.classList.remove('invalid');
+        errorEl.classList.remove('visible');
+        errorEl.textContent = '';
+      }
+      function markFieldValid(inputEl) {
+        if (!inputEl) return;
+        inputEl.classList.remove('invalid');
+        inputEl.classList.add('valid');
+      }
+      function isValidRomanianPhone(value) {
+        const clean = String(value || '').replace(/\s/g, '');
+        return /^(\+40|0)[0-9]{9}$/.test(clean);
+      }
+
+      // Parking date validation
+      document.getElementById('untilAt').addEventListener('change', function() {
+        const from = document.getElementById('fromAt').value;
+        const until = this.value;
+        const errEl = document.getElementById('untilAtError');
+        if (from && until && until <= from) {
+          showFieldError(this, errEl, 'Data de sfârșit trebuie să fie după data de început.');
+        } else if (until && new Date(until) < new Date()) {
+          showFieldError(this, errEl, 'Data nu poate fi în trecut.');
+        } else {
+          clearFieldError(this, errEl);
+          if (until) markFieldValid(this);
+        }
+      });
+
+      document.getElementById('claimUntil').addEventListener('change', function() {
+        const from = document.getElementById('claimFrom').value;
+        const errEl = document.getElementById('claimUntilError');
+        if (from && this.value && this.value <= from) {
+          showFieldError(this, errEl, 'Rezervarea nu poate să se termine înainte să înceapă.');
+        } else {
+          clearFieldError(this, errEl);
+          if (this.value) markFieldValid(this);
+        }
+      });
+
+      document.getElementById('claimPhone').addEventListener('input', function() {
+        const errEl = document.getElementById('claimPhoneError');
+        if (this.value && !isValidRomanianPhone(this.value)) {
+          showFieldError(this, errEl, 'Număr invalid. Exemplu: 0712345678 sau +40712345678');
+        } else {
+          clearFieldError(this, errEl);
+          if (this.value) markFieldValid(this);
+        }
+      });
+
+      document.getElementById('marketplaceContactPhone').addEventListener('input', function() {
+        const errEl = document.getElementById('marketContactPhoneError');
+        if (this.value && !isValidRomanianPhone(this.value)) {
+          showFieldError(this, errEl, 'Număr invalid. Exemplu: 0712345678');
+        } else {
+          clearFieldError(this, errEl);
+        }
+      });
+
+      // Poll options validation
+      document.getElementById('pollOptions').addEventListener('input', function() {
+        const errEl = document.getElementById('pollOptionsError');
+        const type = document.getElementById('pollType').value;
+        const hasOptions = type === 'multiple_choice' || type === 'weighted';
+        if (!hasOptions) return;
+        const lines = this.value.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length < 2) {
+          showFieldError(this, errEl, 'Adaugă cel puțin 2 opțiuni.');
+        } else {
+          clearFieldError(this, errEl);
+          markFieldValid(this);
+        }
+      });
+
+      function attachCharCounter(inputId, counterId, maxLen) {
+        const input = document.getElementById(inputId);
+        const counter = document.getElementById(counterId);
+        if (!input || !counter) return;
+        function update() {
+          const len = input.value.length;
+          const pct = len / maxLen;
+          counter.textContent = `${len} / ${maxLen}`;
+          counter.classList.toggle('near-limit', pct >= 0.85 && pct < 1);
+          counter.classList.toggle('at-limit', pct >= 1);
+        }
+        input.addEventListener('input', update);
+        update();
+      }
+
+      attachCharCounter('avizierMessage', 'avizierMessageCounter', 4000);
+      attachCharCounter('avizierTitle',   'avizierTitleCounter',   200);
+      attachCharCounter('marketplaceDescription', 'marketplaceDescCounter', 2500);
+      attachCharCounter('marketplaceTitle', 'marketplaceTitleCounter', 160);
+      attachCharCounter('pollTitle', 'pollTitleCounter', 200);
+
+      document.getElementById('avizierLoadMoreBtn')?.addEventListener('click', () => {
+        avizierPage += 1;
+        renderAvizierAnnouncements();
+        window.scrollBy({ top: 200, behavior: 'smooth' });
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && currentUser) {
+          // User returned to tab — refresh immediately then let interval take over
+          autoRefreshNow().catch(() => {});
         }
       });
 
