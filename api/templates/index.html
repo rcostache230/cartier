@@ -5728,6 +5728,14 @@
       }
       .char-counter.near-limit { color: #f59e0b; font-weight: 600; }
       .char-counter.at-limit   { color: #ef4444; font-weight: 700; }
+      .mt-0  { margin-top: 0 !important; }
+      .mt-6  { margin-top: 6px !important; }
+      .mt-8  { margin-top: 8px !important; }
+      .mt-10 { margin-top: 10px !important; }
+      .mt-12 { margin-top: 12px !important; }
+      .mt-14 { margin-top: 14px !important; }
+      .mt-16 { margin-top: 16px !important; }
+      .grid-2col { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
     </style>
     <link rel="stylesheet" href="contacts.css">
     <link rel="stylesheet" href="recomandari.css?v=20260227d">
@@ -5948,7 +5956,7 @@
         <section id="loginCard" class="card login-pane">
           <h2 class="heading-title">Resident Login</h2>
           <p class="poll-note">Use your apartment account credentials.</p>
-          <form id="loginForm" class="stack" style="margin-top: 10px">
+          <form id="loginForm" class="stack mt-10">
             <div>
               <label for="loginUsername">Username</label>
               <input id="loginUsername" placeholder="bloc1_apt1" autocomplete="username" autocapitalize="none" spellcheck="false" required />
@@ -6045,13 +6053,13 @@
             <h2>Capacitate Blocuri</h2>
             <p class="capacity-legend">UG = Underground, AG = Above-ground. Tap a bloc card to filter claim options.</p>
             <span class="section-label">Capacitate Blocuri</span>
-            <div id="stats" class="capacity-grid" style="margin-top: 10px"></div>
+            <div id="stats" class="capacity-grid mt-10"></div>
           </section>
 
           <section class="card action-shell" id="actionPanel">
             <h2>Acțiuni Parcare</h2>
             <p style="margin: 8px 0 0; color: var(--muted)">I want to:</p>
-            <div class="tabs segmented-control" style="margin-top: 8px">
+            <div class="tabs segmented-control mt-8">
               <button type="button" class="tab-btn active" data-tab-group="action" data-tab-target="actionSharePanel">Ofer locul meu</button>
               <button type="button" class="tab-btn" data-tab-group="action" data-tab-target="actionClaimPanel">Rezerv un loc</button>
             </div>
@@ -6141,7 +6149,7 @@
 
           <section class="card activity-shell mt-14">
             <h2>My Activity</h2>
-            <div class="parking-kpi-grid" style="margin-top: 10px">
+            <div class="parking-kpi-grid mt-10">
               <article class="parking-kpi-card">
                 <div class="parking-kpi-icon"><i data-lucide="car-front" aria-hidden="true"></i></div>
                 <div id="kpiFree" class="parking-kpi-value">0</div>
@@ -6163,7 +6171,7 @@
                 <div class="parking-kpi-label">My Claims</div>
               </article>
             </div>
-            <div class="tabs" style="margin-top: 10px">
+            <div class="tabs mt-10">
               <button type="button" class="tab-btn active" data-tab-group="activity" data-tab-target="activityFreePanel">
                 Free Spots <span class="tab-count" id="countFree">0</span>
               </button>
@@ -6250,10 +6258,10 @@
               <h2><i data-lucide="lock" aria-hidden="true"></i>Admin Zone</h2>
               <span class="admin-badge"><i data-lucide="shield-check" aria-hidden="true"></i>Admin Only</span>
             </div>
-            <div class="grid" style="margin-top: 10px">
+            <div class="grid mt-10">
               <section class="card">
                 <h3>Create User</h3>
-                <form id="createUserForm" class="stack" style="margin-top: 8px">
+                <form id="createUserForm" class="stack mt-8">
                   <div><label for="adminNewUsername">Username</label><input id="adminNewUsername" required /></div>
                   <div><label for="adminNewPassword">Password</label><input id="adminNewPassword" minlength="6" placeholder="10blocuri" required /></div>
                   <div><label for="adminNewPhone">Phone Number</label><input id="adminNewPhone" placeholder="0712 345 678" /></div>
@@ -6274,7 +6282,7 @@
 
               <section class="card">
                 <h3>Admin Create Shared Slot</h3>
-                <form id="adminSlotForm" class="stack" style="margin-top: 8px">
+                <form id="adminSlotForm" class="stack mt-8">
                   <div><label for="adminOwnerUsername">Owner Username</label><input id="adminOwnerUsername" placeholder="bloc2_apt4" required /></div>
                   <div><label for="adminSpaceNumber">Parking Spot Number</label><input id="adminSpaceNumber" placeholder="Spot-88" required /></div>
                   <div><label for="adminSpaceType">Type</label><select id="adminSpaceType"><option value="underground">Underground</option><option value="above_ground">Above Ground</option></select></div>
@@ -6402,7 +6410,7 @@
                 <div class="market-cards-row" id="cardsLending"></div>
               </div>
             </div>
-            <div class="table-wrap hidden" style="margin-top: 8px">
+            <div class="table-wrap hidden mt-8">
               <table>
                 <tbody id="marketplaceActiveBody"></tbody>
               </table>
@@ -6411,13 +6419,13 @@
 
           <section class="card mt-12">
             <h3>Create Listing</h3>
-            <div class="market-notice-banner" style="margin-top: 8px">
+            <div class="market-notice-banner mt-8">
               💡 All sales are in person only. No online payment.
             </div>
-            <form id="marketplaceCreateForm" class="stack" style="margin-top: 8px">
+            <form id="marketplaceCreateForm" class="stack mt-8">
               <section class="market-form-section">
                 <h4>Type &amp; Category</h4>
-                <div class="grid" style="margin-top: 0">
+                <div class="grid mt-0">
                   <div>
                     <label for="marketplaceListingType">Listing Type</label>
                     <select id="marketplaceListingType">
@@ -6440,7 +6448,7 @@
               </section>
               <section class="market-form-section">
                 <h4>Details</h4>
-                <div id="marketplacePriceRow" style="margin-top: 0">
+                <div id="marketplacePriceRow" class="mt-0">
                   <label for="marketplacePriceText">Price (for sale)</label>
                   <input id="marketplacePriceText" maxlength="120" placeholder="e.g. 150 RON, negotiable" />
                 </div>
@@ -6463,7 +6471,7 @@
               </section>
               <section class="market-form-section">
                 <h4>Contact &amp; Ridicare</h4>
-                <div class="grid" style="margin-top: 0">
+                <div class="grid mt-0">
                   <div>
                     <label for="marketplaceContactPhone">Telefon contact</label>
                     <input id="marketplaceContactPhone" maxlength="64" placeholder="07xx xxx xxx" />
@@ -6520,7 +6528,7 @@
           <section class="card mt-12">
             <h3>Announcements <span class="count-pill" id="avizierCount">0</span></h3>
             <span class="section-label">Anunțuri</span>
-            <div id="avizierScopeFilters" class="tabs market-filter-tabs" style="margin-top: 8px">
+            <div id="avizierScopeFilters" class="tabs market-filter-tabs mt-8">
               <button type="button" class="tab-btn market-filter-btn active" data-avizier-filter="all">
                 <span class="market-filter-emoji" aria-hidden="true">📋</span>
                 <span>All</span>
@@ -6534,7 +6542,7 @@
                 <span>Pe bloc</span>
               </button>
             </div>
-            <div id="avizierList" class="stack" style="margin-top: 8px"></div>
+            <div id="avizierList" class="stack mt-8"></div>
             <div id="avizierLoadMoreWrap" style="display:none; text-align:center; margin-top:12px;">
               <button type="button" id="avizierLoadMoreBtn"
                       class="home-activity-load-more"
@@ -6553,7 +6561,7 @@
             <p id="avizierFormModeHint" class="poll-note" style="margin-top:6px">
               Use line breaks, lists, and simple formatting for easier reading.
             </p>
-            <form id="createAvizierForm" class="stack" style="margin-top: 8px">
+            <form id="createAvizierForm" class="stack mt-8">
               <div>
                 <label for="avizierTitle">Title</label>
                 <input id="avizierTitle" maxlength="200" placeholder="e.g. Water maintenance notice" required />
@@ -6583,7 +6591,7 @@
                   <option value="building">Per building</option>
                 </select>
               </div>
-              <div class="grid" style="margin-top: 0">
+              <div class="grid mt-0">
                 <div>
                   <label for="avizierPriority">Priority</label>
                   <select id="avizierPriority">
@@ -6630,7 +6638,7 @@
           <p id="votingLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
           <section id="createPollCard" class="card hidden mt-12">
             <h3>Create Poll (Admin Wizard)</h3>
-            <form id="createPollForm" class="stack" style="margin-top: 8px">
+            <form id="createPollForm" class="stack mt-8">
               <div class="poll-wizard-header">
                 <div class="wizard-steps">
                   <div class="step active" data-step="1">
@@ -6687,7 +6695,7 @@
                   <label for="pollBuilding">Bloc</label>
                   <select id="pollBuilding"></select>
                 </div>
-                <div class="grid" style="margin-top: 0">
+                <div class="grid mt-0">
                   <div>
                     <label for="pollStart">Start</label>
                     <input id="pollStart" type="datetime-local" required />
@@ -6745,7 +6753,7 @@
               </div>
             </form>
           </section>
-          <div class="grid" style="margin-top: 10px">
+          <div class="grid mt-10">
             <section class="card">
               <h3>Sondaje Active <span class="count-pill" id="countActivePolls">0</span></h3>
               <span class="section-label">Sondaje Active</span>
@@ -6754,7 +6762,7 @@
             <section class="card">
               <h3>Sondaje Închise <span class="count-pill" id="countClosedPolls">0</span></h3>
               <span class="section-label">Sondaje Închise</span>
-              <div id="closedPollsTableWrap" class="table-wrap" style="margin-top: 8px">
+              <div id="closedPollsTableWrap" class="table-wrap mt-8">
                 <table>
                   <thead>
                     <tr>
@@ -6805,12 +6813,12 @@
             <button id="pollCloseBtn" class="ghost" type="button">Close</button>
           </div>
           <div id="pollMeta" class="poll-meta"></div>
-          <p id="pollDescription" style="margin-top: 8px"></p>
-          <div id="pollAttachments" class="stack" style="margin-top: 10px"></div>
-          <section id="pollVoteSection" style="margin-top: 12px">
+          <p id="pollDescription" class="mt-8"></p>
+          <div id="pollAttachments" class="stack mt-10"></div>
+          <section id="pollVoteSection" class="mt-12">
             <h3>Votul tău</h3>
             <p id="pollVoteHint" class="poll-note"></p>
-            <form id="pollVoteForm" class="stack" style="margin-top: 10px">
+            <form id="pollVoteForm" class="stack mt-10">
               <div id="pollVoteOptions" class="poll-options"></div>
               <button id="pollVoteBtn" type="submit" data-default-text="Trimite votul">Trimite votul</button>
             </form>
@@ -9220,7 +9228,7 @@
             () => `
               <article class="capacity-card capacity-skeleton" aria-hidden="true">
                 <div class="capacity-skeleton-line" style="width:44%"></div>
-                <div class="capacity-skeleton-line" style="margin-top:10px"></div>
+                <div class="capacity-skeleton-line mt-10"></div>
                 <div class="capacity-skeleton-line" style="margin-top:8px; width:70%"></div>
               </article>
             `
@@ -12878,7 +12886,7 @@
     </script>
     <div id="moreDrawerOverlay" onclick="closeMoreDrawer()" style="display:none; position:fixed; inset:0 0 calc(84px + env(safe-area-inset-bottom, 0px)) 0; background:rgba(0,0,0,0.4); z-index:1600; opacity:0; transition:opacity 200ms ease;"></div>
 
-    <div id="moreDrawer" style="display:none; position:fixed; bottom:calc(84px + env(safe-area-inset-bottom, 0px)); left:8px; right:8px; background:white; border-radius:20px; padding:0 0 12px 0; max-height:min(62vh, 420px); overflow-y:auto; -webkit-overflow-scrolling:touch; z-index:1601; transform:translateY(100%); transition:transform 250ms cubic-bezier(0.34,1.2,0.64,1); box-shadow: 0 -4px 24px rgba(0,0,0,0.12);">
+    <div id="moreDrawer" style="display:none; position:fixed; bottom:calc(84px + env(safe-area-inset-bottom, 0px)); left:8px; right:8px; background:var(--card); border-radius:20px; padding:0 0 12px 0; max-height:min(62vh, 420px); overflow-y:auto; -webkit-overflow-scrolling:touch; z-index:1601; transform:translateY(100%); transition:transform 250ms cubic-bezier(0.34,1.2,0.64,1); box-shadow: 0 -4px 24px rgba(0,0,0,0.12);">
       <div style="width:36px; height:4px; background:#E2E8F0; border-radius:2px; margin:12px auto 8px; cursor:grab;"></div>
       <p style="text-align:center; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#A8A29E; margin:0 0 8px; padding:0 20px;">
         Module
