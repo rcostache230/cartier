@@ -1,6 +1,45 @@
 /* parking.js — extracted Parking module logic */
 
 const ParkingModule = (() => {
+  function bindParkingElements() {
+    const ids = {
+      parkingModule: "parkingModule",
+      parkingModeBanner: "parkingModeBanner",
+      stats: "stats",
+      sharedSpots: "sharedSpots",
+      sharedSpotsTableWrap: "sharedSpotsTableWrap",
+      sharedSpotsEmpty: "sharedSpotsEmpty",
+      sharedSpotsCards: "sharedSpotsCards",
+      myShared: "myShared",
+      mySharedTableWrap: "mySharedTableWrap",
+      mySharedEmpty: "mySharedEmpty",
+      mySharedCards: "mySharedCards",
+      claimedOnMine: "claimedOnMine",
+      claimedOnMineTableWrap: "claimedOnMineTableWrap",
+      claimedOnMineEmpty: "claimedOnMineEmpty",
+      claimedOnMineCards: "claimedOnMineCards",
+      myClaimed: "myClaimed",
+      myClaimedTableWrap: "myClaimedTableWrap",
+      myClaimedEmpty: "myClaimedEmpty",
+      myClaimedCards: "myClaimedCards",
+      countFree: "countFree",
+      countShared: "countShared",
+      countClaimedByOthers: "countClaimedByOthers",
+      countMyClaims: "countMyClaims",
+      kpiFree: "kpiFree",
+      kpiShared: "kpiShared",
+      kpiClaimedByOthers: "kpiClaimedByOthers",
+      kpiMyClaims: "kpiMyClaims",
+      availableSlot: "availableSlot",
+    };
+    Object.entries(ids).forEach(([key, id]) => {
+      const el = document.getElementById(id);
+      if (el) {
+        els[key] = el;
+      }
+    });
+  }
+
   function parkingTypeShort(type) {
     if (type === "underground") return "UG";
     if (type === "above_ground") return "AG";
@@ -40,6 +79,7 @@ const ParkingModule = (() => {
   }
 
   function updateCapacitySelectionHighlight() {
+    bindParkingElements();
     if (!els.stats) return;
     const selectedBuilding = String(document.getElementById("claimBuilding")?.value || "");
     els.stats.querySelectorAll(".capacity-card").forEach((card) => {
@@ -51,6 +91,7 @@ const ParkingModule = (() => {
   }
 
   function showCapacitySkeleton() {
+    bindParkingElements();
     if (!els.stats) return;
     els.stats.innerHTML = Array.from({ length: 4 })
       .map(
@@ -66,6 +107,7 @@ const ParkingModule = (() => {
   }
 
   function refreshStats(stats) {
+    bindParkingElements();
     currentBuildingStats = Array.isArray(stats) ? stats : [];
     if (!els.stats) return;
     if (!currentBuildingStats.length) {
@@ -133,6 +175,8 @@ const ParkingModule = (() => {
   }
 
   function refreshTables(data) {
+    bindParkingElements();
+    if (!els.sharedSpots || !els.availableSlot) return;
     const freeSpots = data.shared_parking_spots || [];
     const myShared = data.my_shared_parking_spots || [];
     const claimedByOthers = data.my_shared_claimed_by_neighbours || [];
@@ -292,6 +336,8 @@ const ParkingModule = (() => {
   }
 
   function fillAvailableSpotSelect(slots) {
+    bindParkingElements();
+    if (!els.availableSlot) return;
     els.availableSlot.innerHTML = "";
     if (slots.length === 0) {
       els.availableSlot.appendChild(option("", "Nu există locuri libere pentru filtrul selectat"));
@@ -339,6 +385,8 @@ const ParkingModule = (() => {
   }
 
   async function refreshDashboard() {
+    bindParkingElements();
+    if (!els.stats || !els.sharedSpots) return;
     showCapacitySkeleton();
     const data = await api("/api/dashboard");
     refreshTables(data);
@@ -380,6 +428,7 @@ const ParkingModule = (() => {
   }
 
   async function filterClaimsByBuilding(buildingNumber) {
+    bindParkingElements();
     if (!currentUser) return;
     document.getElementById("claimBuilding").value = String(buildingNumber);
     setActiveTab("action", "actionClaimPanel");
@@ -390,6 +439,7 @@ const ParkingModule = (() => {
   }
 
   async function handleQuickClaimButton(button) {
+    bindParkingElements();
     try {
       const slotId = Number(button.dataset.slotId || 0);
       const slot = currentFreeSpots.find((s) => s.id === slotId);
@@ -425,6 +475,14 @@ const ParkingModule = (() => {
   }
 
   async function load() {
+    if (window.__parkingModuleReady && typeof window.__parkingModuleReady.then === "function") {
+      try {
+        await window.__parkingModuleReady;
+      } catch {
+        // ignore fragment load failures; refreshDashboard will no-op safely
+      }
+    }
+    bindParkingElements();
     await refreshDashboard();
   }
 

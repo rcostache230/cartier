@@ -6673,6 +6673,7 @@
       let quickStatsLoading = true;
       let autoRefreshIntervalId = null;
       let refreshTickerIntervalId = null;
+      let parkingBindingsInitialized = false;
       const lastRefreshAt = { parking: null, marketplace: null, avizier: null, voting: null };
       const closedPollSummaryCache = {};
       let actionConfirmResolver = null;
@@ -10578,6 +10579,7 @@
         showModuleChooser();
         renderWelcomeBanner(user);
         updateRefreshMetaLabels();
+        setupParkingBindings();
         const claimBuildingEl = document.getElementById("claimBuilding");
         const claimPhoneEl = document.getElementById("claimPhone");
         if (claimBuildingEl) claimBuildingEl.value = "";
@@ -10602,6 +10604,217 @@
 
         startAutoRefresh();
         updateMobileFab();
+      }
+
+      function setupParkingBindings() {
+        if (parkingBindingsInitialized) return;
+        const parkingRoot = document.getElementById("parkingModule");
+        if (!parkingRoot) return;
+
+        parkingBindingsInitialized = true;
+
+        const parkingRefs = {
+          parkingModule: "parkingModule",
+          parkingModeBanner: "parkingModeBanner",
+          refreshParkingBtn: "refreshParkingBtn",
+          parkingLastRefreshed: "parkingLastRefreshed",
+          stats: "stats",
+          sharedSpots: "sharedSpots",
+          sharedSpotsCards: "sharedSpotsCards",
+          availableSlot: "availableSlot",
+        };
+        Object.entries(parkingRefs).forEach(([key, id]) => {
+          const el = document.getElementById(id);
+          if (el) {
+            els[key] = el;
+          }
+        });
+
+        fillBuildingSelect("claimBuilding", true);
+        fillBuildingSelect("adminNewBuilding");
+        applyDefaultTimeValues();
+
+        if (currentUser) {
+          const claimPhoneEl = document.getElementById("claimPhone");
+          if (claimPhoneEl && !claimPhoneEl.value) {
+            claimPhoneEl.value = currentUser.phone_number || "";
+          }
+        }
+
+        document.querySelectorAll('#parkingModule .tab-btn[data-tab-group][data-tab-target]').forEach((btn) => {
+          btn.addEventListener("click", () => {
+            setActiveTab(btn.dataset.tabGroup, btn.dataset.tabTarget);
+          });
+        });
+
+        document.querySelectorAll('#parkingModule .preset-btn[data-target-form][data-preset]').forEach((btn) => {
+          btn.addEventListener("click", () => {
+            applyPreset(btn.dataset.targetForm, btn.dataset.preset);
+            document
+              .querySelectorAll(`#parkingModule .preset-btn[data-target-form="${btn.dataset.targetForm}"]`)
+              .forEach((chip) => chip.classList.toggle("active", chip === btn));
+          });
+        });
+
+        document.getElementById("refreshParkingBtn")?.addEventListener("click", async () => {
+          try {
+            await withRefreshPulse(els.refreshParkingBtn, async () => ParkingModule.refreshDashboard());
+            showToast("Parking refreshed.", "info");
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+
+        document.getElementById("stats")?.addEventListener("click", async (event) => {
+          const card = event.target.closest(".capacity-card");
+          if (!card) return;
+          await ParkingModule.filterClaimsByBuilding(Number(card.dataset.buildingNumber));
+        });
+
+        document.getElementById("stats")?.addEventListener("keydown", async (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          const card = event.target.closest(".capacity-card");
+          if (!card) return;
+          event.preventDefault();
+          await ParkingModule.filterClaimsByBuilding(Number(card.dataset.buildingNumber));
+        });
+
+        document.getElementById("sharedSpots")?.addEventListener("click", async (event) => {
+          const button = event.target.closest(".quick-claim-btn");
+          if (!button) return;
+          await ParkingModule.handleQuickClaimButton(button);
+        });
+
+        document.getElementById("sharedSpotsCards")?.addEventListener("click", async (event) => {
+          const button = event.target.closest(".quick-claim-btn");
+          if (!button) return;
+          await ParkingModule.handleQuickClaimButton(button);
+        });
+
+        document.getElementById("claimBuilding")?.addEventListener("change", () => {
+          ParkingModule.refreshOpenSpotOptions();
+          ParkingModule.updateCapacitySelectionHighlight();
+        });
+
+        document.getElementById("claimType")?.addEventListener("change", () => {
+          ParkingModule.refreshOpenSpotOptions();
+        });
+
+        document.getElementById("availableSlot")?.addEventListener("change", () => {
+          ParkingModule.syncClaimPeriodToSelection();
+        });
+
+        document.getElementById("adminOwnerUsername")?.addEventListener("input", (event) => {
+          event.target.value = normalizeUsername(event.target.value);
+        });
+
+        document.getElementById("untilAt")?.addEventListener("change", function() {
+          const from = document.getElementById("fromAt")?.value;
+          const until = this.value;
+          const errEl = document.getElementById("untilAtError");
+          if (from && until && until <= from) {
+            showFieldError(this, errEl, "Data de sfârșit trebuie să fie după data de început.");
+          } else if (until && new Date(until) < new Date()) {
+            showFieldError(this, errEl, "Data nu poate fi în trecut.");
+          } else {
+            clearFieldError(this, errEl);
+            if (until) markFieldValid(this);
+          }
+        });
+
+        document.getElementById("claimUntil")?.addEventListener("change", function() {
+          const from = document.getElementById("claimFrom")?.value;
+          const errEl = document.getElementById("claimUntilError");
+          if (from && this.value && this.value <= from) {
+            showFieldError(this, errEl, "Rezervarea nu poate să se termine înainte să înceapă.");
+          } else {
+            clearFieldError(this, errEl);
+            if (this.value) markFieldValid(this);
+          }
+        });
+
+        document.getElementById("claimPhone")?.addEventListener("input", function() {
+          const errEl = document.getElementById("claimPhoneError");
+          if (this.value && !isValidRomanianPhone(this.value)) {
+            showFieldError(this, errEl, "Număr invalid. Exemplu: 0712345678 sau +40712345678");
+          } else {
+            clearFieldError(this, errEl);
+            if (this.value) markFieldValid(this);
+          }
+        });
+
+        document.getElementById("shareForm")?.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const button = document.getElementById("shareBtn");
+          await withButtonProgress(button, "Sharing...", async () => {
+            try {
+              await api("/api/slots", {
+                method: "POST",
+                body: JSON.stringify({
+                  parking_space_number: document.getElementById("spaceNumber").value,
+                  parking_type: document.getElementById("spaceType").value,
+                  available_from: document.getElementById("fromAt").value,
+                  available_until: document.getElementById("untilAt").value,
+                }),
+              });
+              await ParkingModule.refreshDashboard();
+              showToast("Spot shared successfully.");
+              flashButtonSuccess(button, "Shared");
+            } catch (error) {
+              setStatus(error.message, true);
+            }
+          });
+        });
+
+        document.getElementById("claimForm")?.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const button = document.getElementById("claimBtn");
+          try {
+            const slotId = Number(els.availableSlot?.value || 0);
+            if (!slotId) {
+              throw new Error("Select an available spot first.");
+            }
+            const slot = currentOpenSlots.find((s) => s.id === slotId);
+            if (!slot) {
+              throw new Error("Selected spot is no longer available. Please refresh.");
+            }
+            const payload = {
+              slot_id: slotId,
+              requested_from: document.getElementById("claimFrom").value,
+              requested_until: document.getElementById("claimUntil").value,
+              claim_phone_number: String(document.getElementById("claimPhone").value || "").trim(),
+            };
+            await ParkingModule.claimSlotByPayload(payload, slot, button);
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+
+        document.getElementById("adminSlotForm")?.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const button = document.getElementById("adminShareBtn");
+          await withButtonProgress(button, "Creating...", async () => {
+            try {
+              await api("/api/admin/slots", {
+                method: "POST",
+                body: JSON.stringify({
+                  owner_username: normalizeUsername(document.getElementById("adminOwnerUsername").value),
+                  parking_space_number: document.getElementById("adminSpaceNumber").value,
+                  parking_type: document.getElementById("adminSpaceType").value,
+                  available_from: document.getElementById("adminFromAt").value,
+                  available_until: document.getElementById("adminUntilAt").value,
+                }),
+              });
+              await ParkingModule.refreshDashboard();
+              showToast("Admin shared spot created.");
+              flashButtonSuccess(button, "Created");
+            } catch (error) {
+              setStatus(error.message, true);
+            }
+          });
+        });
+
+        applyStaticActionIcons();
       }
 
       document.getElementById("loginForm").addEventListener("submit", async (event) => {
@@ -10688,52 +10901,6 @@
         openModule("parkingModule");
       });
 
-      document.getElementById("shareForm")?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const button = document.getElementById("shareBtn");
-        await withButtonProgress(button, "Sharing...", async () => {
-          try {
-            await api("/api/slots", {
-              method: "POST",
-              body: JSON.stringify({
-                parking_space_number: document.getElementById("spaceNumber").value,
-                parking_type: document.getElementById("spaceType").value,
-                available_from: document.getElementById("fromAt").value,
-                available_until: document.getElementById("untilAt").value,
-              }),
-            });
-            await ParkingModule.refreshDashboard();
-            showToast("Spot shared successfully.");
-            flashButtonSuccess(button, "Shared");
-          } catch (error) {
-            setStatus(error.message, true);
-          }
-        });
-      });
-
-      document.getElementById("claimForm")?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const button = document.getElementById("claimBtn");
-        try {
-          const slotId = Number(els.availableSlot.value || 0);
-          if (!slotId) {
-            throw new Error("Select an available spot first.");
-          }
-          const slot = currentOpenSlots.find((s) => s.id === slotId);
-          if (!slot) {
-            throw new Error("Selected spot is no longer available. Please refresh.");
-          }
-          const payload = {
-            slot_id: slotId,
-            requested_from: document.getElementById("claimFrom").value,
-            requested_until: document.getElementById("claimUntil").value,
-            claim_phone_number: String(document.getElementById("claimPhone").value || "").trim(),
-          };
-          await ParkingModule.claimSlotByPayload(payload, slot, button);
-        } catch (error) {
-          setStatus(error.message, true);
-        }
-      });
 
       document.getElementById("createUserForm")?.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -10761,31 +10928,9 @@
         });
       });
 
-      document.getElementById("adminSlotForm")?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const button = document.getElementById("adminShareBtn");
-        await withButtonProgress(button, "Creating...", async () => {
-          try {
-            await api("/api/admin/slots", {
-              method: "POST",
-              body: JSON.stringify({
-                owner_username: normalizeUsername(document.getElementById("adminOwnerUsername").value),
-                parking_space_number: document.getElementById("adminSpaceNumber").value,
-                parking_type: document.getElementById("adminSpaceType").value,
-                available_from: document.getElementById("adminFromAt").value,
-                available_until: document.getElementById("adminUntilAt").value,
-              }),
-            });
-            await ParkingModule.refreshDashboard();
-            showToast("Admin shared spot created.");
-            flashButtonSuccess(button, "Created");
-          } catch (error) {
-            setStatus(error.message, true);
-          }
-        });
-      });
 
       document.querySelectorAll(".tab-btn[data-tab-group][data-tab-target]").forEach((btn) => {
+        if (btn.closest("#parkingModule")) return;
         btn.addEventListener("click", () => {
           setActiveTab(btn.dataset.tabGroup, btn.dataset.tabTarget);
         });
@@ -10863,21 +11008,13 @@
       });
 
       document.querySelectorAll(".preset-btn[data-target-form][data-preset]").forEach((btn) => {
+        if (btn.closest("#parkingModule")) return;
         btn.addEventListener("click", () => {
           applyPreset(btn.dataset.targetForm, btn.dataset.preset);
           document
             .querySelectorAll(`.preset-btn[data-target-form="${btn.dataset.targetForm}"]`)
             .forEach((chip) => chip.classList.toggle("active", chip === btn));
         });
-      });
-
-      els.refreshParkingBtn?.addEventListener("click", async () => {
-        try {
-          await withRefreshPulse(els.refreshParkingBtn, async () => ParkingModule.refreshDashboard());
-          showToast("Parking refreshed.", "info");
-        } catch (error) {
-          setStatus(error.message, true);
-        }
       });
 
       els.refreshMarketplaceBtn.addEventListener("click", async () => {
@@ -11569,45 +11706,6 @@
         });
       });
 
-      els.stats?.addEventListener("click", async (event) => {
-        const card = event.target.closest(".capacity-card");
-        if (!card) return;
-        await ParkingModule.filterClaimsByBuilding(Number(card.dataset.buildingNumber));
-      });
-
-      els.stats?.addEventListener("keydown", async (event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        const card = event.target.closest(".capacity-card");
-        if (!card) return;
-        event.preventDefault();
-        await ParkingModule.filterClaimsByBuilding(Number(card.dataset.buildingNumber));
-      });
-
-      els.sharedSpots?.addEventListener("click", async (event) => {
-        const button = event.target.closest(".quick-claim-btn");
-        if (!button) return;
-        await ParkingModule.handleQuickClaimButton(button);
-      });
-
-      els.sharedSpotsCards?.addEventListener("click", async (event) => {
-        const button = event.target.closest(".quick-claim-btn");
-        if (!button) return;
-        await ParkingModule.handleQuickClaimButton(button);
-      });
-
-      document.getElementById("claimBuilding")?.addEventListener("change", () => {
-        ParkingModule.refreshOpenSpotOptions();
-        ParkingModule.updateCapacitySelectionHighlight();
-      });
-
-      document.getElementById("claimType")?.addEventListener("change", () => {
-        ParkingModule.refreshOpenSpotOptions();
-      });
-
-      els.availableSlot?.addEventListener("change", () => {
-        ParkingModule.syncClaimPeriodToSelection();
-      });
-
       document.getElementById("loginUsername").addEventListener("input", (event) => {
         event.target.value = normalizeUsername(event.target.value);
       });
@@ -11630,10 +11728,6 @@
         } else {
           permissionSelect.disabled = false;
         }
-      });
-
-      document.getElementById("adminOwnerUsername").addEventListener("input", (event) => {
-        event.target.value = normalizeUsername(event.target.value);
       });
 
       els.helpBtn.addEventListener("click", () => openHelpModal());
@@ -11710,42 +11804,6 @@
         const clean = String(value || '').replace(/\s/g, '');
         return /^(\+40|0)[0-9]{9}$/.test(clean);
       }
-
-      // Parking date validation
-      document.getElementById('untilAt').addEventListener('change', function() {
-        const from = document.getElementById('fromAt').value;
-        const until = this.value;
-        const errEl = document.getElementById('untilAtError');
-        if (from && until && until <= from) {
-          showFieldError(this, errEl, 'Data de sfârșit trebuie să fie după data de început.');
-        } else if (until && new Date(until) < new Date()) {
-          showFieldError(this, errEl, 'Data nu poate fi în trecut.');
-        } else {
-          clearFieldError(this, errEl);
-          if (until) markFieldValid(this);
-        }
-      });
-
-      document.getElementById('claimUntil').addEventListener('change', function() {
-        const from = document.getElementById('claimFrom').value;
-        const errEl = document.getElementById('claimUntilError');
-        if (from && this.value && this.value <= from) {
-          showFieldError(this, errEl, 'Rezervarea nu poate să se termine înainte să înceapă.');
-        } else {
-          clearFieldError(this, errEl);
-          if (this.value) markFieldValid(this);
-        }
-      });
-
-      document.getElementById('claimPhone').addEventListener('input', function() {
-        const errEl = document.getElementById('claimPhoneError');
-        if (this.value && !isValidRomanianPhone(this.value)) {
-          showFieldError(this, errEl, 'Număr invalid. Exemplu: 0712345678 sau +40712345678');
-        } else {
-          clearFieldError(this, errEl);
-          if (this.value) markFieldValid(this);
-        }
-      });
 
       document.getElementById('marketplaceContactPhone').addEventListener('input', function() {
         const errEl = document.getElementById('marketContactPhoneError');
@@ -11851,10 +11909,24 @@
         localStorage.setItem(PWA_INSTALL_KEY, String(s + 1));
       } catch {}
 
+      if (window.__parkingModuleReady && typeof window.__parkingModuleReady.then === "function") {
+        window.__parkingModuleReady
+          .then(() => {
+            setupParkingBindings();
+            if (currentUser) {
+              ParkingModule.refreshDashboard().catch((error) => setStatus(error.message, true));
+            }
+          })
+          .catch(() => {});
+      } else {
+        setupParkingBindings();
+      }
+
       async function boot() {
         initTheme();
         initSidebarPreference();
         setQuickStatsLoading(true);
+        setupParkingBindings();
         fillBuildingSelect("claimBuilding", true);
         fillBuildingSelect("adminNewBuilding");
         fillBuildingSelect("avizierBuilding");
