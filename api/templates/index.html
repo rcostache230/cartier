@@ -214,7 +214,7 @@
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 12px;
-        padding: 22px;
+        padding: 20px 22px 24px;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
@@ -928,6 +928,8 @@
       textarea {
         min-height: 96px;
         resize: vertical;
+        max-height: 480px;   /* prevents infinite resize breaking card layout */
+        overflow-y: auto;
       }
 
       input[type="checkbox"],
@@ -1115,8 +1117,9 @@
         background: #fff;
         padding: 14px;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-        display: grid;
-        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
       }
 
       .market-listing-head {
@@ -1294,12 +1297,13 @@
       }
 
       .market-contact-meta {
-        border: 1px dashed #cbd5e1;
+        border: 1.5px solid #16a34a;
         border-radius: 10px;
-        padding: 8px 10px;
-        background: #f8fafc;
+        padding: 10px 12px;
+        background: #ecfdf5;
+        font-weight: 600;
+        font-size: 15px;
         color: #334155;
-        font-size: 0.8rem;
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -1821,9 +1825,11 @@
       }
 
       .market-listing-body {
-        padding: 12px 14px 14px;
-        display: grid;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         gap: 9px;
+        padding: 12px 14px;
       }
 
       .market-listing-head {
@@ -5272,6 +5278,70 @@
       .mt-14 { margin-top: 14px !important; }
       .mt-16 { margin-top: 16px !important; }
       .grid-2col { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+      /* Consistent card footer — always takes up same space */
+      .market-listing-card .market-card-actions {
+        margin-top: auto;
+        align-items: stretch;
+      }
+      /* Ensure all action buttons are same height */
+      .market-card-actions .table-action-btn,
+      .market-card-actions .table-action-link {
+        min-height: 36px !important;
+        height: auto !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .market-listing-body .market-card-actions {
+        margin-top: auto;
+        padding-top: 10px;
+      }
+      .activity-item[data-activity-module] {
+        cursor: pointer;
+      }
+      .activity-item[data-activity-module]:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 10px rgba(15,23,42,0.07);
+      }
+      .activity-item[data-activity-module]::after {
+        content: "›";
+        font-size: 18px;
+        color: var(--text-muted);
+        margin-left: auto;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      /* Don't show arrow on empty state */
+      .activity-item.activity-empty-state::after { display: none; }
+      input[type="datetime-local"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 44px;
+        padding: 0 12px;
+        border-radius: 9px;
+        border: 1.5px solid var(--border);
+        font-size: 14px;
+        color: var(--text-primary);
+        background: var(--card);
+        width: 100%;
+        box-sizing: border-box;
+        cursor: pointer;
+      }
+      input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        opacity: 0.5;
+        cursor: pointer;
+        padding: 4px;
+      }
+      input[type="datetime-local"]:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+        outline: none;
+      }
+      /* iOS Safari — prevent zoom on focus */
+      @media (max-width: 768px) {
+        input[type="datetime-local"] {
+          font-size: 16px; /* prevents iOS zoom-in on focus */
+        }
+      }
     </style>
     <link rel="stylesheet" href="parking.css">
     <link rel="stylesheet" href="contacts.css">
@@ -5330,7 +5400,13 @@
         <button id="themeToggleBtn" class="rail-link" type="button">
           <i data-lucide="moon-star" aria-hidden="true"></i><span>Dark Mode</span>
         </button>
-        <button type="button" class="rail-link" data-go-profile>
+        <button
+          type="button"
+          class="rail-link"
+          data-go-profile
+          title="Deschide profilul (pagină nouă)"
+          aria-label="Profil - se deschide într-o pagină nouă"
+        >
           <i data-lucide="user-cog" aria-hidden="true"></i><span>Profile</span>
         </button>
         <div id="railUserBadge" class="nav-user-badge hidden">
@@ -5371,6 +5447,26 @@
         </div>
       </div>
     </header>
+    <div id="pwaInstallBanner" role="banner"
+         style="display:none; background:#0f4c75; color:white; padding:10px 16px;
+                display:none; align-items:center; gap:10px; flex-wrap:wrap;
+                font-size:13px; position:sticky; top:calc(56px + env(safe-area-inset-top));
+                z-index:1080;">
+      <span style="flex:1; min-width:200px;">
+        📱 Instalează 10Blocuri pe telefon pentru acces rapid, ca o aplicație nativă.
+      </span>
+      <button id="pwaInstallBtn" type="button"
+              style="background:white; color:#0f4c75; border:none; border-radius:8px;
+                     padding:8px 14px; font-weight:700; font-size:13px; cursor:pointer;
+                     min-height:36px;">
+        Instalează
+      </button>
+      <button id="pwaInstallDismiss" type="button"
+              style="background:transparent; border:none; color:rgba(255,255,255,0.7);
+                     cursor:pointer; padding:4px 8px; font-size:18px; min-height:36px;">
+        ✕
+      </button>
+    </div>
 
     <div class="container">
       <section id="authLanding" class="auth-landing">
@@ -6785,7 +6881,12 @@
         els.homeActivityFeed.innerHTML = visibleItems
           .map(
             (item) => `
-              <article class="activity-item" data-mod="${item.module}" data-activity-module="${item.moduleId}" ${item.pollId ? `data-activity-poll-id="${item.pollId}"` : ""}>
+              <article class="activity-item" data-mod="${item.module}"
+                       data-activity-module="${item.moduleId}"
+                       ${item.pollId ? `data-activity-poll-id="${item.pollId}"` : ""}
+                       role="button"
+                       tabindex="0"
+                       aria-label="Deschide ${item.moduleId === "parkingModule" ? "Parcare" : item.moduleId}">
                 <span class="activity-dot" aria-hidden="true"></span>
                 <div class="activity-text">${item.text}</div>
                 <div class="meta activity-time">${formatRelativeTime(item.createdAt)}</div>
@@ -6972,8 +7073,11 @@
 
       function formatSecondsAgo(dateValue) {
         if (!dateValue) return "-";
-        const elapsedSeconds = Math.max(0, Math.round((Date.now() - dateValue.getTime()) / 1000));
-        return `acum ${elapsedSeconds} sec`;
+        const elapsedMs = Math.max(0, Date.now() - dateValue.getTime());
+        const seconds = Math.round(elapsedMs / 1000);
+        if (seconds < 60) return "acum câteva secunde";
+        const minutes = Math.round(elapsedMs / 60000);
+        return `acum ${minutes} min`;
       }
 
       function loadAvizierReadState() {
@@ -10042,7 +10146,7 @@
 
         refreshTickerIntervalId = setInterval(() => {
           updateRefreshMetaLabels();
-        }, 1000);
+        }, 30000);
 
         autoRefreshIntervalId = setInterval(() => {
           // Skip refresh if tab is hidden
@@ -10718,6 +10822,21 @@
         }
       });
 
+      els.homeActivityFeed.addEventListener("keydown", async (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        const card = event.target.closest("[data-activity-module]");
+        if (!card) return;
+        const moduleId = card.dataset.activityModule;
+        if (moduleId) openModule(moduleId);
+        const pollId = String(card.dataset.activityPollId || "").trim();
+        if (pollId && moduleId === "votingModule") {
+          try {
+            await openPollModal(pollId);
+          } catch {}
+        }
+      });
+
       window.addEventListener("recomandari:changed", () => {
         if (!currentUser) return;
         refreshRecommendationsActivity({ refreshFeed: true }).catch(() => {});
@@ -10731,7 +10850,8 @@
 
       document.querySelectorAll("[data-go-profile]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          window.location.href = "/profile";
+          showToast("Se deschide profilul...", "info");
+          setTimeout(() => { window.location.href = "/profile"; }, 150);
         });
       });
 
@@ -10929,11 +11049,27 @@
         if (contactBtn) {
           const contactId = String(contactBtn.dataset.contactId || "").trim();
           if (!contactId) return;
+
+          // Hide ALL other contact reveals first
+          document.querySelectorAll(".market-contact-meta").forEach((el) => {
+            if (el.id !== contactId) {
+              el.classList.add("hidden");
+            }
+          });
+          // Reset all other contact buttons
+          document.querySelectorAll(".market-contact-btn").forEach((btn) => {
+            if (btn !== contactBtn) {
+              btn.innerHTML = `${iconMarkup("phone")}<span>Contact</span>`;
+              btn.dataset.defaultText = "Contact";
+              hydrateLucideIcons();
+            }
+          });
+
           const detailsEl = document.getElementById(contactId);
           if (!detailsEl) return;
           const isHidden = detailsEl.classList.contains("hidden");
           detailsEl.classList.toggle("hidden", !isHidden);
-          contactBtn.dataset.defaultText = isHidden ? "Ascunde telefon" : "Arată telefon";
+          contactBtn.dataset.defaultText = isHidden ? "Ascunde" : "Contact";
           contactBtn.innerHTML = `${iconMarkup("phone")}<span>${contactBtn.dataset.defaultText}</span>`;
           hydrateLucideIcons();
           return;
@@ -11669,6 +11805,52 @@
         }
       });
 
+      const PWA_INSTALL_KEY = '10blocuri_pwa_sessions_v1';
+      let pwaInstallPrompt = null;
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        pwaInstallPrompt = e;
+        maybeShowPwaBanner();
+      });
+
+      function maybeShowPwaBanner() {
+        if (!pwaInstallPrompt) return;
+        try {
+          const sessions = Number(localStorage.getItem(PWA_INSTALL_KEY) || '0');
+          if (sessions < 3) {
+            localStorage.setItem(PWA_INSTALL_KEY, String(sessions + 1));
+            return; // Don't show yet
+          }
+          const dismissed = localStorage.getItem(PWA_INSTALL_KEY + '_dismissed');
+          if (dismissed) return;
+          const banner = document.getElementById('pwaInstallBanner');
+          if (banner) banner.style.display = 'flex';
+        } catch {}
+      }
+
+      document.getElementById('pwaInstallBtn')?.addEventListener('click', async () => {
+        if (!pwaInstallPrompt) return;
+        const banner = document.getElementById('pwaInstallBanner');
+        pwaInstallPrompt.prompt();
+        const { outcome } = await pwaInstallPrompt.userChoice;
+        pwaInstallPrompt = null;
+        if (banner) banner.style.display = 'none';
+        try { localStorage.setItem(PWA_INSTALL_KEY + '_dismissed', '1'); } catch {}
+      });
+
+      document.getElementById('pwaInstallDismiss')?.addEventListener('click', () => {
+        const banner = document.getElementById('pwaInstallBanner');
+        if (banner) banner.style.display = 'none';
+        try { localStorage.setItem(PWA_INSTALL_KEY + '_dismissed', '1'); } catch {}
+      });
+
+      // Increment session count on load
+      try {
+        const s = Number(localStorage.getItem(PWA_INSTALL_KEY) || '0');
+        localStorage.setItem(PWA_INSTALL_KEY, String(s + 1));
+      } catch {}
+
       async function boot() {
         initTheme();
         initSidebarPreference();
@@ -11807,7 +11989,7 @@
           <span class="more-drawer-icon">👤</span>
           <div class="more-drawer-info">
             <span class="more-drawer-label">Profil</span>
-            <span class="more-drawer-sub">Date personale și activitatea ta</span>
+            <span class="more-drawer-sub">Date personale, parolă și activitate ↗</span>
           </div>
           <span class="more-drawer-chevron">›</span>
         </button>
