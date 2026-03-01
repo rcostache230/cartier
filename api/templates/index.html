@@ -7356,6 +7356,10 @@
         showToast(message, isError ? "error" : "success");
       }
 
+      function isMobile() {
+        return window.innerWidth < 640;
+      }
+
       function displayResidence(user) {
         const building = Number(user?.building_number || 0);
         const apartment = Number(user?.apartment_number || 0);
@@ -10306,8 +10310,13 @@
                 ? "încă."
                 : `în categoria ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
             }</span></div>`;
-        els.myListingsCards.innerHTML = myListingCardsHtml;
-        els.marketplaceMineCards.innerHTML = myListingCardsHtml;
+        if (!isMobile()) {
+          els.myListingsCards.innerHTML = myListingCardsHtml;
+          els.marketplaceMineCards.innerHTML = "";
+        } else {
+          els.marketplaceMineCards.innerHTML = myListingCardsHtml;
+          els.myListingsCards.innerHTML = "";
+        }
 
         els.marketplaceActiveCount.textContent = String(activeListings.length);
         els.marketplaceMineCount.textContent = String(myListings.length);
@@ -10926,46 +10935,20 @@
 
       function renderClosedPollRows(polls) {
         const canDeletePolls = canManagePolls();
-        els.closedPollsTableWrap.classList.toggle("hidden", !polls.length);
-        els.closedPollsEmpty.classList.toggle("hidden", Boolean(polls.length));
-        els.closedPolls.innerHTML = polls.length
-          ? polls
-              .map((poll) => {
-                return `<tr>
-                  ${td(`<div class="poll-title"><strong>${poll.title}</strong><small>${pollTypeLabel(poll.poll_type)}</small></div>`)}
-                  ${td(pollScopeChip(poll))}
-                  ${td(formatPollDate(poll.end_date))}
-                  ${td(pollStatusChip(poll))}
-                  ${td(closedPollSummaryText(poll.id))}
-                  <td>
-                    <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">Vezi</button>
-                    <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Rezultate</button>
-                    <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
-                    ${
-                      canDeletePolls
-                        ? `<button type="button" class="table-action-btn danger poll-delete-btn" data-poll-id="${poll.id}">Delete</button>`
-                        : ""
-                    }
-                  </td>
-                </tr>`;
-              })
-              .join("")
-          : "";
-        els.closedPollCards.innerHTML = polls.length
-          ? polls
-              .map(
-                (poll) => `
-                  <article class="poll-card card">
-                    <div class="poll-card-head">
-                      <h4>${poll.title}</h4>
-                    </div>
-                    <div class="poll-meta">
-                      ${pollScopeChip(poll)}
-                      ${pollStatusChip(poll)}
-                    </div>
-                    <div style="color:var(--muted); font-size:0.82rem">Închis: ${formatPollDate(poll.end_date)}</div>
-                    <div style="color:var(--muted); font-size:0.82rem">Rezultat: ${closedPollSummaryText(poll.id)}</div>
-                    <div class="module-actions">
+        // Table — only populate on desktop
+        if (!isMobile()) {
+          els.closedPollsTableWrap.classList.toggle("hidden", !polls.length);
+          els.closedPollsEmpty.classList.toggle("hidden", Boolean(polls.length));
+          els.closedPolls.innerHTML = polls.length
+            ? polls
+                .map((poll) => {
+                  return `<tr>
+                    ${td(`<div class="poll-title"><strong>${poll.title}</strong><small>${pollTypeLabel(poll.poll_type)}</small></div>`)}
+                    ${td(pollScopeChip(poll))}
+                    ${td(formatPollDate(poll.end_date))}
+                    ${td(pollStatusChip(poll))}
+                    ${td(closedPollSummaryText(poll.id))}
+                    <td>
                       <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">Vezi</button>
                       <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Rezultate</button>
                       <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
@@ -10974,12 +10957,51 @@
                           ? `<button type="button" class="table-action-btn danger poll-delete-btn" data-poll-id="${poll.id}">Delete</button>`
                           : ""
                       }
-                    </div>
-                  </article>
-                `
-              )
-              .join("")
-          : "";
+                    </td>
+                  </tr>`;
+                })
+                .join("")
+            : "";
+        } else {
+          els.closedPollsTableWrap.classList.add("hidden");
+          els.closedPolls.innerHTML = "";
+        }
+
+        // Cards — only populate on mobile
+        if (isMobile()) {
+          els.closedPollCards.innerHTML = polls.length
+            ? polls
+                .map(
+                  (poll) => `
+                    <article class="poll-card card">
+                      <div class="poll-card-head">
+                        <h4>${poll.title}</h4>
+                      </div>
+                      <div class="poll-meta">
+                        ${pollScopeChip(poll)}
+                        ${pollStatusChip(poll)}
+                      </div>
+                      <div style="color:var(--muted); font-size:0.82rem">Închis: ${formatPollDate(poll.end_date)}</div>
+                      <div style="color:var(--muted); font-size:0.82rem">Rezultat: ${closedPollSummaryText(poll.id)}</div>
+                      <div class="module-actions">
+                        <button type="button" class="table-action-btn poll-open-btn" data-poll-id="${poll.id}">Vezi</button>
+                        <button type="button" class="table-action-btn ghost poll-results-btn" data-poll-id="${poll.id}">Rezultate</button>
+                        <button type="button" class="table-action-btn ghost share-entity-btn poll-share-btn" data-share-kind="poll" data-share-id="${poll.id}">Share</button>
+                        ${
+                          canDeletePolls
+                            ? `<button type="button" class="table-action-btn danger poll-delete-btn" data-poll-id="${poll.id}">Delete</button>`
+                            : ""
+                        }
+                      </div>
+                    </article>
+                  `
+                )
+                .join("")
+            : "";
+          els.closedPollsEmpty.classList.toggle("hidden", Boolean(polls.length));
+        } else {
+          els.closedPollCards.innerHTML = "";
+        }
         decorateDynamicActionIcons(els.closedPolls);
         decorateDynamicActionIcons(els.closedPollCards);
       }
