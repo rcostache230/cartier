@@ -1,0 +1,202 @@
+        <section id="marketplaceModule" class="card hidden module-panel mt-14">
+          <div class="module-header">
+            <div>
+              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Marketplace</div>
+              <h1 class="module-title"><i data-lucide="store" aria-hidden="true"></i>Marketplace</h1>
+              <p class="poll-note">
+                Vinde, donează sau oferă la împrumut obiecte vecinilor. Contactul se face direct prin telefon.
+              </p>
+            </div>
+            <div class="module-actions module-header-actions">
+              <button id="refreshMarketplaceBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
+            </div>
+          </div>
+          <p id="marketplaceLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
+
+          <span class="section-label mt-10">Tip anunț</span>
+          <div id="marketplaceTypeTabs" class="type-filter-row" style="margin-top: 6px">
+            <button type="button" class="type-pill active" data-market-type="all">📋 Toate</button>
+            <button type="button" class="type-pill" data-market-type="sale">🏷 Vânzare</button>
+            <button type="button" class="type-pill" data-market-type="donation">🎁 Donații</button>
+            <button type="button" class="type-pill" data-market-type="lending">🤝 Împrumut</button>
+          </div>
+          <span class="section-label">Categorie obiect</span>
+          <div id="marketplaceCategoryTabs" class="tabs market-filter-tabs" style="margin-top: 6px">
+            <button type="button" class="tab-btn market-filter-btn active" data-market-category="all">
+              <span class="market-filter-emoji" aria-hidden="true">📋</span>
+              <span>Toate</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="furniture">
+              <span class="market-filter-emoji" aria-hidden="true">🪑</span>
+              <span>Mobilă</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="toys">
+              <span class="market-filter-emoji" aria-hidden="true">🧸</span>
+              <span>Jucării</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="clothes">
+              <span class="market-filter-emoji" aria-hidden="true">👕</span>
+              <span>Haine</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="brico">
+              <span class="market-filter-emoji" aria-hidden="true">🔧</span>
+              <span>Brico</span>
+            </button>
+            <button type="button" class="tab-btn market-filter-btn" data-market-category="other">
+              <span class="market-filter-emoji" aria-hidden="true">📦</span>
+              <span>Altele</span>
+            </button>
+          </div>
+          <div class="market-filter-row">
+            <div id="marketplaceSortTabs" class="segmented-control market-sort-control">
+              <button type="button" class="tab-btn market-sort-btn active" data-market-sort="newest">Cele mai noi</button>
+              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_asc">Preț ↑</button>
+              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_desc">Preț ↓</button>
+            </div>
+            <div class="market-building-filter">
+              <label for="marketplaceBuildingFilter">Bloc</label>
+              <select id="marketplaceBuildingFilter">
+                <option value="all">All</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <input
+              id="marketplaceSearch"
+              type="search"
+              placeholder="Caută anunțuri..."
+              aria-label="Caută în anunțuri"
+              style="width:100%; box-sizing:border-box;"
+            />
+          </div>
+
+          <section class="card mt-12">
+            <h3>Anunțuri Active <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
+            <span class="section-label">Anunțuri Active</span>
+            <div id="marketplaceActiveCards" class="market-active-grid">
+              <div class="market-section" id="sectionSale">
+                <div class="market-section-header">
+                  <span class="market-section-icon">🏷</span>
+                  <span class="market-section-title">De vânzare</span>
+                  <span class="market-section-count badge" id="countSale">0</span>
+                </div>
+                <div class="market-cards-row" id="cardsSale"></div>
+              </div>
+              <div class="market-section" id="sectionDonation">
+                <div class="market-section-header">
+                  <span class="market-section-icon">🎁</span>
+                  <span class="market-section-title">Donații</span>
+                  <span class="market-section-count badge" id="countDonation">0</span>
+                </div>
+                <div class="market-cards-row" id="cardsDonation"></div>
+              </div>
+              <div class="market-section" id="sectionLending">
+                <div class="market-section-header">
+                  <span class="market-section-icon">🤝</span>
+                  <span class="market-section-title">Sharing is Caring</span>
+                  <span class="market-section-count badge" id="countLending">0</span>
+                </div>
+                <div class="market-cards-row" id="cardsLending"></div>
+              </div>
+            </div>
+            <div class="table-wrap hidden mt-8">
+              <table>
+                <tbody id="marketplaceActiveBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card mt-12">
+            <h3>Create Listing</h3>
+            <div class="market-notice-banner mt-8">
+              💡 All sales are in person only. No online payment.
+            </div>
+            <form id="marketplaceCreateForm" class="stack mt-8">
+              <section class="market-form-section">
+                <h4>Type &amp; Category</h4>
+                <div class="grid mt-0">
+                  <div>
+                    <label for="marketplaceListingType">Listing Type</label>
+                    <select id="marketplaceListingType">
+                      <option value="sale">🏷 De vânzare</option>
+                      <option value="donation">🎁 Donație</option>
+                      <option value="lending">🤝 Împrumut</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="marketplaceCategory">Category</label>
+                    <select id="marketplaceCategory">
+                      <option value="furniture">Furniture</option>
+                      <option value="toys">Toys</option>
+                      <option value="clothes">Clothes</option>
+                      <option value="brico">Brico</option>
+                      <option value="other" selected>Other</option>
+                    </select>
+                  </div>
+                </div>
+              </section>
+              <section class="market-form-section">
+                <h4>Details</h4>
+                <div id="marketplacePriceRow" class="mt-0">
+                  <label for="marketplacePriceText">Price (for sale)</label>
+                  <input id="marketplacePriceText" maxlength="120" placeholder="e.g. 150 RON, negotiable" />
+                </div>
+                <div id="lendingFields" style="display:none">
+                  <label for="maxDays">Durată maximă de împrumut (zile, opțional)</label>
+                  <input type="number" id="maxDays" name="max_days" min="1" max="90" placeholder="ex: 7" />
+                  <p class="field-hint">Lasă gol dacă nu vrei să specifici o durată.</p>
+                </div>
+                <div>
+                  <label for="marketplaceTitle">Title</label>
+                  <input id="marketplaceTitle" maxlength="160" placeholder="e.g. Dining table - solid wood" required />
+                  <div class="char-counter" id="marketplaceTitleCounter">0 / 160</div>
+                </div>
+                <div>
+                  <label for="marketplaceDescription">Description</label>
+                  <textarea id="marketplaceDescription" maxlength="2500" placeholder="Condition, dimensions, details"></textarea>
+                  <div class="char-counter" id="marketplaceDescCounter">0 / 2500</div>
+                  <span id="marketplaceDescError" class="field-error"></span>
+                </div>
+              </section>
+              <section class="market-form-section">
+                <h4>Contact &amp; Ridicare</h4>
+                <div class="grid mt-0">
+                  <div>
+                    <label for="marketplaceContactPhone">Telefon contact</label>
+                    <input id="marketplaceContactPhone" maxlength="64" placeholder="07xx xxx xxx" />
+                    <span id="marketContactPhoneError" class="field-error"></span>
+                  </div>
+                  <div>
+                    <label for="marketplacePickupDetails">Pickup Details</label>
+                    <input id="marketplacePickupDetails" maxlength="600" placeholder="Bloc, floor, pickup interval" />
+                  </div>
+                </div>
+              </section>
+              <section class="market-form-section">
+                <h4>Photos</h4>
+                <div>
+                  <label for="marketplacePhotos">Photos</label>
+                  <input id="marketplacePhotos" class="visually-hidden" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/jpg,image/png,image/webp" multiple />
+                  <div id="marketplaceDropzone" class="market-dropzone" role="button" tabindex="0" aria-label="Add marketplace photos">
+                    <span><b>Drag & drop</b> photos here, or click to browse.</span>
+                  </div>
+                  <div id="marketplaceFileWarning" class="market-upload-warning hidden"></div>
+                  <div id="marketplaceUploadProgress" class="market-upload-progress hidden" aria-live="polite">
+                    <div id="marketplaceUploadProgressFill" class="market-upload-progress-fill" style="width:0%"></div>
+                  </div>
+                  <div id="marketplacePhotoPreviews" class="market-preview-grid"></div>
+                  <p class="poll-note">Uploads use secure storage. Keep photos clear and recent.</p>
+                  <p id="marketplaceUploadStatus" class="upload-status">No photos selected.</p>
+                </div>
+              </section>
+              <button id="marketplaceCreateBtn" type="submit" data-default-text="Create Listing">Create Listing</button>
+            </form>
+          </section>
+
+          <section class="card mt-12">
+            <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
+            <span class="section-label">Anunțurile Mele</span>
+            <div id="myListingsCards" class="market-my-grid"></div>
+            <div id="marketplaceMineCards" class="market-mobile-list hidden"></div>
+          </section>
+        </section>

@@ -73,19 +73,7 @@
         overflow-x: hidden;
       }
 
-      main,
-      #app,
-      .container,
-      .module-panel,
-      .module-header,
-      .module-actions,
-      .stack,
-      .market-section,
-      .market-cards-row,
-      .card {
-        min-width: 0;
-        max-width: 100%;
-      }
+      
 
       .global-nav {
         position: sticky;
@@ -1066,341 +1054,105 @@
         color: #fff;
       }
 
-      .market-filter-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
+      
 
-      .market-filter-btn {
-        width: auto;
-        border-radius: 999px;
-        border: 1px solid #cbd5e1;
-        background: #fff;
-        color: #334155;
-        padding: 7px 12px;
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-size: 0.82rem;
-        font-weight: 700;
-      }
+      
 
-      .market-filter-btn.active {
-        border-color: #10b981;
-        background: #10b981;
-        color: #fff;
-      }
+      
 
-      .market-filter-emoji {
-        line-height: 1;
-        font-size: 0.95rem;
-      }
+      
 
-      .market-active-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 8px;
-      }
+      
 
-      .market-my-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 8px;
-      }
+      
 
-      .market-listing-card {
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: #fff;
-        padding: 14px;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-      }
+      
 
-      .market-listing-head {
-        display: flex;
-        gap: 10px;
-      }
+      
 
-      .market-listing-thumb {
-        width: 64px;
-        height: 64px;
-        border-radius: 10px;
-        border: 1px solid #d8d2c5;
-        background: #f4f1ea;
-        overflow: hidden;
-        flex: 0 0 64px;
-      }
+      
 
-      .market-thumb {
-        width: 56px;
-        height: 56px;
-        flex: 0 0 56px;
-        border-radius: 8px;
-        border: 1px solid #d8d2c5;
-        object-fit: cover;
-        background: #f4f1ea;
-      }
+      
 
-      .market-listing-thumb .market-thumb {
-        width: 100%;
-        height: 100%;
-        border: 0;
-        border-radius: 0;
-      }
+      
 
-      .market-thumb-placeholder {
-        width: 100%;
-        height: 100%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-      }
+      
 
-      .market-item .market-thumb-placeholder {
-        width: 56px;
-        height: 56px;
-        border-radius: 8px;
-        border: 1px solid #d8d2c5;
-        background: #f4f1ea;
-        font-size: 1.2rem;
-      }
+      
 
-      .market-listing-main {
-        min-width: 0;
-        display: grid;
-        gap: 4px;
-      }
+      
 
-      .market-title-line {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 8px;
-      }
+      
 
-      .market-title-line strong {
-        font-size: 0.98rem;
-        line-height: 1.25;
-      }
+      
 
-      .market-owner-line {
-        color: var(--muted);
-        font-size: 0.8rem;
-      }
+      
 
-      .market-card-badges {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-      }
+      
 
-      .market-price-badge,
-      .market-status-badge,
-      .market-category-badge {
-        display: inline-flex;
-        align-items: center;
-        border-radius: 999px;
-        padding: 3px 9px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        border: 1px solid transparent;
-        line-height: 1.2;
-      }
+      
 
-      .market-price-badge.paid {
-        background: #ecfdf5;
-        color: #047857;
-        border-color: #a7f3d0;
-      }
+      
 
-      .market-price-badge.free {
-        background: #eff6ff;
-        color: #1d4ed8;
-        border-color: #bfdbfe;
-      }
+      
 
-      .market-status-badge.available {
-        background: #ecfdf5;
-        color: #047857;
-        border-color: #a7f3d0;
-      }
+      
 
-      .market-status-badge.claimed {
-        background: #fffbeb;
-        color: #b45309;
-        border-color: #fde68a;
-      }
+      
 
-      .market-status-badge.completed {
-        background: #f1f5f9;
-        color: #475569;
-        border-color: #cbd5e1;
-      }
+      
 
-      .market-category-badge {
-        background: #f8fafc;
-        color: #334155;
-        border-color: #cbd5e1;
-      }
+      
 
-      .market-card-actions {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        align-items: start;
-      }
+      
 
-      .market-card-actions .table-action-btn,
-      .market-card-actions .table-action-link {
-        min-height: 38px;
-        padding: 6px 10px;
-        font-size: 0.78rem;
-        line-height: 1.1;
-        border-radius: 10px;
-        justify-content: center;
-      }
+      
 
-      .market-card-actions .table-action-btn .lucide,
-      .market-card-actions .table-action-link .lucide {
-        width: 14px;
-        height: 14px;
-      }
+      
 
-      .market-card-actions .market-claim-btn {
-        grid-column: 1 / -1;
-      }
+      
 
-      .market-card-actions .table-action-link {
-        width: 100%;
-      }
+      
 
-      .market-card-actions .market-contact-btn {
-        background: #10b981;
-        border-color: #10b981;
-      }
+      
 
-      .market-card-actions .market-contact-btn:hover {
-        background: #059669;
-        border-color: #059669;
-      }
+      
 
-      .market-my-meta {
-        color: var(--muted);
-        font-size: 0.81rem;
-      }
+      
 
-      .market-contact-meta {
-        border: 1.5px solid #16a34a;
-        border-radius: 10px;
-        padding: 10px 12px;
-        background: #ecfdf5;
-        font-weight: 600;
-        font-size: 15px;
-        color: #334155;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
+      
 
-      .market-empty-state {
-        border: 1px dashed #cbd5e1;
-        border-radius: 12px;
-        padding: 22px 14px;
-        color: var(--muted);
-        text-align: center;
-        display: grid;
-        place-items: center;
-        gap: 8px;
-      }
+      
 
-      .market-empty-state .lucide {
-        width: 24px;
-        height: 24px;
-        color: #94a3b8;
-      }
+      
 
-      .market-mobile-list {
-        display: none;
-      }
+      
 
-      .market-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
+      
 
-      .market-item-main {
-        min-width: 0;
-      }
+      
 
-      .market-item-main strong {
-        display: block;
-      }
+      
 
-      .market-item-main small {
-        color: var(--muted);
-        font-size: 0.76rem;
-      }
+      
 
-      .market-thumb {
-        width: 56px;
-        height: 56px;
-        flex: 0 0 56px;
-        border-radius: 8px;
-        border: 1px solid #d8d2c5;
-        object-fit: cover;
-        background: #f4f1ea;
-      }
+      
 
-      .market-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
+      
 
-      .market-row-link {
-        cursor: pointer;
-      }
+      
 
-      .market-row-link:hover td {
-        background: #f1f5f9;
-      }
+      
 
-      .market-row-link:focus-within td {
-        background: #e2e8f0;
-      }
+      
 
-      .market-notice-banner {
-        border: 1px solid #fcd34d;
-        background: #fffbeb;
-        color: #92400e;
-        border-radius: 10px;
-        padding: 10px 12px;
-        font-size: 0.85rem;
-        font-weight: 700;
-      }
+      
 
-      .market-form-section {
-        border-top: 1px solid #e2e8f0;
-        padding-top: 12px;
-      }
+      
 
-      .market-form-section:first-of-type {
-        border-top: 0;
-        padding-top: 0;
-      }
+      
 
-      .market-form-section h4 {
-        margin: 0 0 8px;
-        font-size: 0.9rem;
-      }
+      
 
       table {
         width: 100%;
@@ -1797,163 +1549,49 @@
         font-weight: 700;
       }
 
-      .market-filter-row {
-        margin-top: 10px;
-        display: grid;
-        grid-template-columns: 1fr 210px;
-        gap: 10px;
-        align-items: end;
-      }
+      
 
-      .market-sort-control {
-        display: flex;
-        gap: 6px;
-      }
+      
 
-      .market-sort-control .market-sort-btn {
-        width: auto;
-      }
+      
 
-      .market-building-filter {
-        display: grid;
-        gap: 6px;
-      }
+      
 
-      .market-listing-card {
-        padding: 0;
-        overflow: hidden;
-      }
+      
 
-      .market-listing-body {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 9px;
-        padding: 12px 14px;
-      }
+      
 
-      .market-listing-head {
-        display: block;
-      }
+      
 
-      .market-listing-thumb {
-        width: 100%;
-        height: 160px;
-        border: 0;
-        border-bottom: 1px solid var(--line);
-        border-radius: 0;
-        background: #f1f5f9;
-        position: relative;
-      }
+      
 
-      .market-listing-thumb .market-thumb {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+      
 
-      .market-thumb-placeholder {
-        background: #f8fafc;
-        font-size: 2rem;
-      }
+      
 
-      .market-status-corner {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 2;
-      }
+      
 
-      .market-owner-line {
-        color: var(--muted);
-        font-size: 0.81rem;
-      }
+      
 
-      .market-notice-banner {
-        border: 1px solid #bfdbfe;
-        background: #eff6ff;
-        color: #1e40af;
-      }
+      
 
-      .market-dropzone {
-        margin-top: 8px;
-        border: 1px dashed #93c5fd;
-        border-radius: 12px;
-        min-height: 110px;
-        background: #f8fbff;
-        display: grid;
-        place-items: center;
-        text-align: center;
-        color: #1e3a8a;
-        padding: 12px;
-        cursor: pointer;
-      }
+      
 
-      .market-dropzone.dragover {
-        background: #eff6ff;
-        border-color: #10b981;
-      }
+      
 
-      .market-upload-warning {
-        margin-top: 8px;
-        border: 1px solid #fcd34d;
-        border-radius: 8px;
-        background: #fffbeb;
-        color: #92400e;
-        padding: 8px 10px;
-        font-size: 0.82rem;
-      }
+      
 
-      .market-upload-progress {
-        margin-top: 8px;
-        border: 1px solid #dbeafe;
-        border-radius: 999px;
-        height: 10px;
-        background: #eff6ff;
-        overflow: hidden;
-      }
+      
 
-      .market-upload-progress-fill {
-        height: 100%;
-        width: 0;
-        background: linear-gradient(90deg, #10b981, #059669);
-        transition: width 0.2s ease;
-      }
+      
 
-      .market-preview-grid {
-        margin-top: 10px;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
-        gap: 8px;
-      }
+      
 
-      .market-preview-item {
-        position: relative;
-        border: 1px solid #dbe5f2;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #fff;
-        height: 84px;
-      }
+      
 
-      .market-preview-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+      
 
-      .market-preview-remove {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        width: 44px;
-        min-height: 44px;
-        border-radius: 999px;
-        padding: 0;
-        background: rgba(15, 23, 42, 0.85);
-        border-color: rgba(15, 23, 42, 0.85);
-        color: #fff;
-      }
+      
 
       .visually-hidden {
         position: absolute;
@@ -2064,13 +1702,9 @@
           grid-template-columns: 1fr;
         }
 
-        .market-active-grid {
-          grid-template-columns: 1fr;
-        }
+        
 
-        .market-my-grid {
-          grid-template-columns: 1fr;
-        }
+        
 
         .poll-card-grid {
           grid-template-columns: 1fr;
@@ -2078,13 +1712,9 @@
       }
 
       @media (max-width: 640px) {
-        .market-card-actions {
-          grid-template-columns: 1fr;
-        }
+        
 
-        .market-card-actions .market-claim-btn {
-          grid-column: auto;
-        }
+        
 
         .modal {
           align-items: flex-end;
@@ -2153,33 +1783,15 @@
           margin-top: 8px;
         }
 
-        #marketplaceModule .table-wrap {
-          display: none;
-        }
+        
 
-        .market-mobile-list {
-          display: grid;
-          gap: 10px;
-          margin-top: 8px;
-        }
+        
 
-        .market-filter-row {
-          grid-template-columns: 1fr;
-        }
+        
 
-        .tabs.segmented-control,
-        .market-sort-control {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 6px;
-          background: transparent;
-          padding: 0;
-        }
+        
 
-        .tabs.segmented-control .tab-btn,
-        .market-sort-control .tab-btn {
-          width: 100%;
-        }
+        
 
         .toast-wrap {
           left: 12px;
@@ -2249,14 +1861,9 @@
           flex: 0 0 auto;
         }
 
-        .market-filter-tabs {
-          gap: 6px;
-        }
+        
 
-        .market-filter-btn {
-          width: calc(50% - 3px);
-          justify-content: center;
-        }
+        
 
         .segmented-control {
           overflow: visible;
@@ -2825,14 +2432,7 @@
         background: var(--module-profile);
       }
 
-      .card,
-      .module-card,
-      .poll-card,
-      .market-listing-card {
-        position: relative;
-        border-radius: 12px;
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
-      }
+      
 
       .card:hover,
       .module-card:hover,
@@ -2877,12 +2477,7 @@
         }
       }
 
-      #parkingModule > .card,
-      #marketplaceModule > .card,
-      #avizierModule > .card,
-      #votingModule > .card {
-        opacity: 0;
-      }
+      
 
       .card.visible {
         animation: cardIn 280ms ease forwards;
@@ -2973,23 +2568,13 @@
         border-radius: 6px;
       }
 
-      #parkingModule > .card::before,
-      #marketplaceModule > .card::before,
-      #votingModule > .card::before,
-      #avizierModule > .card::before {
-        content: "";
-        position: absolute;
-        inset: 0 0 auto 0;
-        height: 3px;
-      }
+      
 
       #parkingModule > .card::before {
         background: var(--module-parking);
       }
 
-      #marketplaceModule > .card::before {
-        background: var(--module-marketplace);
-      }
+      
 
       #votingModule > .card::before {
         background: var(--module-voting);
@@ -2999,49 +2584,15 @@
         background: var(--module-avizier);
       }
 
-      .market-listing-thumb {
-        height: 180px;
-      }
+      
 
-      .market-free-flag {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 2;
-        padding: 5px 10px;
-        border-radius: 999px;
-        font-weight: 800;
-        font-size: 0.74rem;
-        border: 1px solid #5eead4;
-        background: #0f766e;
-        color: #fff;
-      }
+      
 
-      .market-sold-ribbon {
-        position: absolute;
-        right: -34px;
-        top: 20px;
-        transform: rotate(34deg);
-        min-width: 150px;
-        text-align: center;
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.03em;
-        padding: 5px 0;
-        background: rgba(15, 23, 42, 0.85);
-        color: #fff;
-      }
+      
 
-      .market-price-main {
-        font-size: 1.08rem;
-        font-weight: 800;
-        color: #10b981;
-      }
+      
 
-      .market-age {
-        color: var(--muted);
-        font-size: 0.77rem;
-      }
+      
 
       .poll-urgency {
         display: inline-grid;
@@ -3523,17 +3074,7 @@
         background: #0f172a;
       }
 
-      body[data-theme="dark"] .card,
-      body[data-theme="dark"] .module-card,
-      body[data-theme="dark"] .poll-card,
-      body[data-theme="dark"] .market-listing-card,
-      body[data-theme="dark"] .activity-item,
-      body[data-theme="dark"] .jump-chip,
-      body[data-theme="dark"] .mobile-tabbar {
-        background: #1e293b;
-        border-color: #334155;
-        color: #f8fafc;
-      }
+      
 
       body[data-theme="dark"] input,
       body[data-theme="dark"] select,
@@ -3543,13 +3084,7 @@
         border-color: #334155;
       }
 
-      body[data-theme="dark"] .poll-note,
-      body[data-theme="dark"] .hero-foot,
-      body[data-theme="dark"] .market-age,
-      body[data-theme="dark"] .refresh-meta,
-      body[data-theme="dark"] .market-owner-line {
-        color: #94a3b8;
-      }
+      
 
       body[data-theme="dark"] .home-activity-load-more {
         border-color: #334155;
@@ -4085,79 +3620,24 @@
         margin-top: 14px;
       }
 
-      .card,
-      .market-listing-card,
-      .poll-card,
-      .avizier-card {
-        background: var(--card);
-        border-radius: 16px;
-        padding: 16px 20px;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border);
-        transition: box-shadow 150ms ease, transform 150ms ease;
-      }
+      
 
-      .market-listing-card,
-      .poll-card,
-      .avizier-card {
-        background: var(--card);
-      }
+      
 
       .avizier-card {
         border-radius: 12px;
         padding: 20px;
       }
 
-      .badge,
-      .poll-chip,
-      .avizier-chip,
-      .market-status-badge,
-      .market-category-badge,
-      .availability {
-        display: inline-flex;
-        align-items: center;
-        border-radius: 999px;
-        padding: 3px 10px;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.03em;
-        white-space: nowrap;
-      }
+      
 
-      .badge .lucide,
-      .poll-chip .lucide,
-      .avizier-chip .lucide,
-      .market-status-badge .lucide,
-      .market-category-badge .lucide {
-        width: 14px;
-        height: 14px;
-      }
+      
 
-      .badge-green,
-      .poll-chip.status-active,
-      .poll-chip.status-active-voted,
-      .market-status-badge.available {
-        background: #dcfce7;
-        color: #15803d;
-        border-color: transparent;
-      }
+      
 
-      .badge-amber,
-      .poll-chip.status-draft,
-      .market-status-badge.claimed,
-      .avizier-chip.priority-important {
-        background: #fef3c7;
-        color: #b45309;
-        border-color: transparent;
-      }
+      
 
-      .badge-red,
-      .market-status-badge.completed,
-      .avizier-chip.priority-urgent {
-        background: #fee2e2;
-        color: #b91c1c;
-        border-color: transparent;
-      }
+      
 
       .badge-blue,
       .poll-chip.scope.building,
@@ -4182,25 +3662,11 @@
         border-color: transparent;
       }
 
-      .badge-gray,
-      .poll-chip.status-closed,
-      .poll-chip.status-archived,
-      .poll-chip.time,
-      .market-category-badge {
-        background: #f4f4f5;
-        color: #52525b;
-        border-color: transparent;
-      }
+      
 
-      .market-category-badge.badge-blue {
-        background: #dbeafe;
-        color: #1d4ed8;
-      }
+      
 
-      .market-category-badge.badge-teal {
-        background: #ccfbf1;
-        color: #0f766e;
-      }
+      
 
       .btn,
       button,
@@ -4335,260 +3801,90 @@
         font-size: var(--text-caption);
       }
 
-      #marketplaceActiveCards.market-active-grid {
-        display: block;
-        margin-top: 8px;
-      }
+      
 
-      .market-section {
-        margin-bottom: 32px;
-      }
+      
 
-      .market-section:last-child {
-        margin-bottom: 0;
-      }
+      
 
-      .market-section-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 14px;
-        padding-bottom: 10px;
-        border-bottom: 1.5px solid var(--border);
-      }
+      
 
-      .market-section-title {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-primary);
-        letter-spacing: -0.01em;
-      }
+      
 
-      .market-section-icon {
-        line-height: 1;
-        font-size: 15px;
-      }
+      
 
-      .market-section-count {
-        border-radius: 999px;
-        padding: 2px 9px;
-        font-size: 12px;
-        font-weight: 600;
-      }
+      
 
-      #countSale {
-        background: #fef3c7;
-        color: #b45309;
-        border-color: transparent;
-      }
+      
 
-      #countDonation {
-        background: #dcfce7;
-        color: #15803d;
-        border-color: transparent;
-      }
+      
 
-      #countLending {
-        background: #ccfbf1;
-        color: #0f766e;
-        border-color: transparent;
-      }
+      
 
-      .market-cards-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 14px;
-      }
+      
 
-      .market-cards-row .empty-state {
-        margin: 0;
-        border-radius: 12px;
-        padding: 20px 16px;
-        background: color-mix(in srgb, var(--card) 88%, white);
-        border-color: var(--border);
-      }
+      
 
-      .empty-state-title {
-        margin: 0;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
+      
 
-      .empty-state-body {
-        margin: 6px 0 0;
-        color: var(--text-secondary);
-      }
+      
 
-      .type-filter-row {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 12px;
-      }
+      
 
-      .type-pill {
-        width: auto;
-        min-height: 0;
-        padding: 6px 14px;
-        border-radius: 999px;
-        border: 1.5px solid var(--border);
-        background: var(--card);
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--text-secondary);
-        cursor: pointer;
-        transition: all 120ms ease;
-        height: auto;
-        line-height: 1.15;
-        white-space: nowrap;
-        flex: 0 0 auto;
-      }
+      
 
-      .type-pill.active {
-        background: var(--text-primary);
-        color: #fff;
-        border-color: var(--text-primary);
-      }
+      
 
-      .market-lending-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
+      
 
-      .lending-card {
-        border-left: 3px solid #0d9488;
-      }
+      
 
-      .lending-card .market-listing-thumb {
-        background: linear-gradient(135deg, #ccfbf1, #99f6e4);
-      }
+      
 
       /* Lending section visual differentiation (Sharing is Caring) */
-      #sectionLending .market-listing-card {
-        border-left: 3px solid #0d9488;
-      }
+      
 
-      #sectionLending .market-lending-badges .badge-blue {
-        background: #ccfbf1;
-        color: #0f766e;
-        border-color: transparent;
-      }
+      
 
-      #sectionLending .market-listing-card .table-action-link:not(.ghost) {
-        background: var(--accent-primary, #16a34a);
-        color: #fff;
-        border: none;
-      }
+      
 
-      #sectionLending .market-listing-card .table-action-link:not(.ghost):hover {
-        background: #15803d;
-        color: #fff;
-        border: none;
-      }
+      
 
-      #sectionLending .market-listing-card .market-thumb-placeholder {
-        background: linear-gradient(135deg, #ccfbf1, #99f6e4);
-      }
+      
 
-      .lending-card .market-listing-body {
-        gap: 8px;
-      }
+      
 
-      .market-listing-title {
-        margin: 0;
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text-primary);
-        line-height: 1.3;
-      }
+      
 
-      .market-listing-meta {
-        margin: 0;
-        color: var(--text-secondary);
-      }
+      
 
-      .market-listing-description {
-        margin: 0;
-        color: var(--text-secondary);
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        min-height: 2.9em;
-      }
+      
 
-      .market-lending-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
+      
 
-      .market-lending-actions .btn {
-        width: auto;
-      }
+      
 
-      .market-section.hidden {
-        display: none;
-      }
+      
 
-      .market-cards-row .market-card-actions {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      
 
-      .market-cards-row .market-card-actions .table-action-btn,
-      .market-cards-row .market-card-actions .table-action-link {
-        min-height: 34px;
-        height: auto;
-        padding: 7px 10px;
-        line-height: 1.2;
-      }
+      
 
-      .market-cards-row .market-card-actions .table-action-btn span,
-      .market-cards-row .market-card-actions .table-action-link span {
-        min-width: 0;
-      }
+      
 
-      @media (max-width: 560px) {
-        .market-cards-row .market-card-actions {
-          grid-template-columns: 1fr;
-        }
+      
 
-        .market-cards-row .market-card-actions .market-claim-btn {
-          grid-column: auto;
-        }
-      }
+      
 
-      body[data-theme="dark"] .type-pill:not(.active) {
-        background: #1e293b;
-        color: #cbd5e1;
-      }
+      
 
-      body[data-theme="dark"] .market-section-header {
-        border-bottom-color: #334155;
-      }
+      
 
-      body[data-theme="dark"] .market-cards-row .empty-state {
-        background: #172235;
-        border-color: #334155;
-      }
+      
 
-      body[data-theme="dark"] .empty-state-title {
-        color: #f8fafc;
-      }
+      
 
-      body[data-theme="dark"] .empty-state-body,
-      body[data-theme="dark"] .market-listing-meta,
-      body[data-theme="dark"] .market-listing-description {
-        color: #cbd5e1;
-      }
-
-      body[data-theme="dark"] .badge-gray,
-      body[data-theme="dark"] .market-category-badge,
-      body[data-theme="dark"] .poll-chip.time {
-        background: #334155;
-        color: #e2e8f0;
-      }
+      
       @media (max-width: 640px) {
         html,
         body {
@@ -4596,19 +3892,7 @@
           overflow-x: hidden;
         }
 
-        #app,
-        main,
-        .container,
-        .module-panel,
-        .module-header,
-        .module-actions,
-        .module-header > div,
-        .stack,
-        .market-section,
-        .market-cards-row {
-          min-width: 0;
-          max-width: 100%;
-        }
+        
 
         .module-header-actions,
         .module-header .module-actions {
@@ -4648,81 +3932,23 @@
           overflow-wrap: anywhere;
         }
 
-        .type-filter-row,
-        .category-filter-row,
-        #marketplaceTypeTabs,
-        #marketplaceCategoryTabs,
-        #avizierScopeFilters,
-        .tabs.market-filter-tabs {
-          display: flex;
-          flex-wrap: nowrap !important;
-          gap: 8px;
-          overflow-x: auto !important;
-          overflow-y: hidden;
-          max-width: 100%;
-          min-width: 0;
-          padding-bottom: 4px;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-        }
+        
 
-        .tabs.market-filter-tabs {
-          align-items: flex-start;
-        }
+        
 
-        .type-filter-row::-webkit-scrollbar,
-        .category-filter-row::-webkit-scrollbar,
-        #marketplaceTypeTabs::-webkit-scrollbar,
-        #marketplaceCategoryTabs::-webkit-scrollbar,
-        #avizierScopeFilters::-webkit-scrollbar,
-        .tabs.market-filter-tabs::-webkit-scrollbar {
-          display: none;
-        }
+        
 
-        .type-pill,
-        .market-filter-btn,
-        .tab-btn.market-filter-btn {
-          width: auto !important;
-          flex: 0 0 auto !important;
-          flex-shrink: 0;
-          font-size: 13px;
-          padding: 6px 10px;
-          height: auto;
-          min-height: 34px;
-          white-space: nowrap;
-          justify-content: center;
-          max-width: calc(100vw - 40px);
-          min-width: 0;
-        }
+        
 
-        .market-filter-btn span:last-child {
-          min-width: 0;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
+        
 
-        .market-filter-row {
-          width: 100%;
-          max-width: 100%;
-        }
+        
 
-        .market-sort-control,
-        .market-building-filter {
-          min-width: 0;
-          max-width: 100%;
-        }
+        
 
-        .tabs.segmented-control,
-        .market-sort-control {
-          overflow: hidden;
-        }
+        
 
-        .tabs.segmented-control .tab-btn,
-        .market-sort-control .tab-btn {
-          min-height: 38px;
-          padding: 8px 10px;
-          font-size: 12px;
-        }
+        
 
         .card {
           margin: 0;
@@ -4744,44 +3970,15 @@
           overflow: hidden;
         }
 
-        .market-listing-card {
-          padding: 0;
-          margin: 0;
-          width: 100%;
-          max-width: 100%;
-          min-width: 0;
-          border-radius: 10px;
-          overflow: hidden;
-        }
+        
 
-        .market-listing-body {
-          min-width: 0;
-          max-width: 100%;
-          padding: 12px;
-        }
+        
 
-        .market-title-line,
-        .market-owner-line,
-        .market-age,
-        .market-card-badges,
-        .market-lending-badges,
-        .market-card-actions,
-        .announcement-body,
-        .announcement-meta {
-          min-width: 0;
-          max-width: 100%;
-        }
+        
 
-        .market-title-line {
-          gap: 8px;
-          flex-wrap: wrap;
-        }
+        
 
-        .market-title-line strong,
-        .market-owner-line,
-        .market-listing-description {
-          overflow-wrap: anywhere;
-        }
+        
 
         .attachment-chip {
           max-width: 100%;
@@ -4976,56 +4173,15 @@
           border-radius: 8px !important;
         }
 
-        #marketplaceTypeTabs,
-        #marketplaceCategoryTabs {
-          display: flex !important;
-          flex-wrap: wrap !important;
-          gap: 8px !important;
-          overflow-x: visible !important;
-          width: 100% !important;
-          min-width: 0 !important;
-          padding-bottom: 0 !important;
-        }
+        
 
-        #marketplaceTypeTabs .type-pill,
-        #marketplaceCategoryTabs .market-filter-btn {
-          flex: 0 0 auto !important;
-          white-space: nowrap !important;
-          height: 36px !important;
-          min-height: 36px !important;
-          padding: 0 12px !important;
-          font-size: 13px !important;
-          width: auto !important;
-          min-width: 0 !important;
-          max-width: 100% !important;
-        }
+        
 
-        #marketplaceSortTabs {
-          display: grid !important;
-          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-          gap: 6px !important;
-          width: 100% !important;
-          background: transparent !important;
-          padding: 0 !important;
-        }
+        
 
-        #marketplaceSortTabs .market-sort-btn {
-          width: 100% !important;
-          min-width: 0 !important;
-          height: 34px !important;
-          min-height: 34px !important;
-          font-size: 12px !important;
-          padding: 0 8px !important;
-          white-space: nowrap !important;
-        }
+        
 
-        .market-listing-thumb,
-        .listing-photo,
-        [class*="listing-photo"],
-        [class*="listing-image"] {
-          height: 160px !important;
-          max-height: 160px !important;
-        }
+        
 
         .poll-meta,
         .poll-badges,
@@ -5279,22 +4435,10 @@
       .mt-16 { margin-top: 16px !important; }
       .grid-2col { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
       /* Consistent card footer — always takes up same space */
-      .market-listing-card .market-card-actions {
-        margin-top: auto;
-        align-items: stretch;
-      }
+      
       /* Ensure all action buttons are same height */
-      .market-card-actions .table-action-btn,
-      .market-card-actions .table-action-link {
-        min-height: 36px !important;
-        height: auto !important;
-        align-items: center !important;
-        justify-content: center !important;
-      }
-      .market-listing-body .market-card-actions {
-        margin-top: auto;
-        padding-top: 10px;
-      }
+      
+      
       .activity-item[data-activity-module] {
         cursor: pointer;
       }
@@ -5344,6 +4488,7 @@
       }
     </style>
     <link rel="stylesheet" href="parking.css">
+    <link rel="stylesheet" href="marketplace.css">
     <link rel="stylesheet" href="contacts.css">
     <link rel="stylesheet" href="recomandari.css?v=20260227d">
   </head>
@@ -5681,208 +4826,6 @@
             })
             .catch(() => {});
         </script>
-        <section id="marketplaceModule" class="card hidden module-panel mt-14">
-          <div class="module-header">
-            <div>
-              <div class="module-breadcrumb"><a href="javascript:void(0)" onclick="showModuleSelector()">Home</a> &gt; Marketplace</div>
-              <h1 class="module-title"><i data-lucide="store" aria-hidden="true"></i>Marketplace</h1>
-              <p class="poll-note">
-                Vinde, donează sau oferă la împrumut obiecte vecinilor. Contactul se face direct prin telefon.
-              </p>
-            </div>
-            <div class="module-actions module-header-actions">
-              <button id="refreshMarketplaceBtn" class="ghost refresh-btn btn-refresh" type="button">Actualizează</button>
-            </div>
-          </div>
-          <p id="marketplaceLastRefreshed" class="refresh-meta">Ultima actualizare: -</p>
-
-          <span class="section-label mt-10">Tip anunț</span>
-          <div id="marketplaceTypeTabs" class="type-filter-row" style="margin-top: 6px">
-            <button type="button" class="type-pill active" data-market-type="all">📋 Toate</button>
-            <button type="button" class="type-pill" data-market-type="sale">🏷 Vânzare</button>
-            <button type="button" class="type-pill" data-market-type="donation">🎁 Donații</button>
-            <button type="button" class="type-pill" data-market-type="lending">🤝 Împrumut</button>
-          </div>
-          <span class="section-label">Categorie obiect</span>
-          <div id="marketplaceCategoryTabs" class="tabs market-filter-tabs" style="margin-top: 6px">
-            <button type="button" class="tab-btn market-filter-btn active" data-market-category="all">
-              <span class="market-filter-emoji" aria-hidden="true">📋</span>
-              <span>Toate</span>
-            </button>
-            <button type="button" class="tab-btn market-filter-btn" data-market-category="furniture">
-              <span class="market-filter-emoji" aria-hidden="true">🪑</span>
-              <span>Mobilă</span>
-            </button>
-            <button type="button" class="tab-btn market-filter-btn" data-market-category="toys">
-              <span class="market-filter-emoji" aria-hidden="true">🧸</span>
-              <span>Jucării</span>
-            </button>
-            <button type="button" class="tab-btn market-filter-btn" data-market-category="clothes">
-              <span class="market-filter-emoji" aria-hidden="true">👕</span>
-              <span>Haine</span>
-            </button>
-            <button type="button" class="tab-btn market-filter-btn" data-market-category="brico">
-              <span class="market-filter-emoji" aria-hidden="true">🔧</span>
-              <span>Brico</span>
-            </button>
-            <button type="button" class="tab-btn market-filter-btn" data-market-category="other">
-              <span class="market-filter-emoji" aria-hidden="true">📦</span>
-              <span>Altele</span>
-            </button>
-          </div>
-          <div class="market-filter-row">
-            <div id="marketplaceSortTabs" class="segmented-control market-sort-control">
-              <button type="button" class="tab-btn market-sort-btn active" data-market-sort="newest">Cele mai noi</button>
-              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_asc">Preț ↑</button>
-              <button type="button" class="tab-btn market-sort-btn" data-market-sort="price_desc">Preț ↓</button>
-            </div>
-            <div class="market-building-filter">
-              <label for="marketplaceBuildingFilter">Bloc</label>
-              <select id="marketplaceBuildingFilter">
-                <option value="all">All</option>
-              </select>
-            </div>
-          </div>
-          <div style="margin-bottom: 12px;">
-            <input
-              id="marketplaceSearch"
-              type="search"
-              placeholder="Caută anunțuri..."
-              aria-label="Caută în anunțuri"
-              style="width:100%; box-sizing:border-box;"
-            />
-          </div>
-
-          <section class="card mt-12">
-            <h3>Anunțuri Active <span class="count-pill" id="marketplaceActiveCount">0</span></h3>
-            <span class="section-label">Anunțuri Active</span>
-            <div id="marketplaceActiveCards" class="market-active-grid">
-              <div class="market-section" id="sectionSale">
-                <div class="market-section-header">
-                  <span class="market-section-icon">🏷</span>
-                  <span class="market-section-title">De vânzare</span>
-                  <span class="market-section-count badge" id="countSale">0</span>
-                </div>
-                <div class="market-cards-row" id="cardsSale"></div>
-              </div>
-              <div class="market-section" id="sectionDonation">
-                <div class="market-section-header">
-                  <span class="market-section-icon">🎁</span>
-                  <span class="market-section-title">Donații</span>
-                  <span class="market-section-count badge" id="countDonation">0</span>
-                </div>
-                <div class="market-cards-row" id="cardsDonation"></div>
-              </div>
-              <div class="market-section" id="sectionLending">
-                <div class="market-section-header">
-                  <span class="market-section-icon">🤝</span>
-                  <span class="market-section-title">Sharing is Caring</span>
-                  <span class="market-section-count badge" id="countLending">0</span>
-                </div>
-                <div class="market-cards-row" id="cardsLending"></div>
-              </div>
-            </div>
-            <div class="table-wrap hidden mt-8">
-              <table>
-                <tbody id="marketplaceActiveBody"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="card mt-12">
-            <h3>Create Listing</h3>
-            <div class="market-notice-banner mt-8">
-              💡 All sales are in person only. No online payment.
-            </div>
-            <form id="marketplaceCreateForm" class="stack mt-8">
-              <section class="market-form-section">
-                <h4>Type &amp; Category</h4>
-                <div class="grid mt-0">
-                  <div>
-                    <label for="marketplaceListingType">Listing Type</label>
-                    <select id="marketplaceListingType">
-                      <option value="sale">🏷 De vânzare</option>
-                      <option value="donation">🎁 Donație</option>
-                      <option value="lending">🤝 Împrumut</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label for="marketplaceCategory">Category</label>
-                    <select id="marketplaceCategory">
-                      <option value="furniture">Furniture</option>
-                      <option value="toys">Toys</option>
-                      <option value="clothes">Clothes</option>
-                      <option value="brico">Brico</option>
-                      <option value="other" selected>Other</option>
-                    </select>
-                  </div>
-                </div>
-              </section>
-              <section class="market-form-section">
-                <h4>Details</h4>
-                <div id="marketplacePriceRow" class="mt-0">
-                  <label for="marketplacePriceText">Price (for sale)</label>
-                  <input id="marketplacePriceText" maxlength="120" placeholder="e.g. 150 RON, negotiable" />
-                </div>
-                <div id="lendingFields" style="display:none">
-                  <label for="maxDays">Durată maximă de împrumut (zile, opțional)</label>
-                  <input type="number" id="maxDays" name="max_days" min="1" max="90" placeholder="ex: 7" />
-                  <p class="field-hint">Lasă gol dacă nu vrei să specifici o durată.</p>
-                </div>
-                <div>
-                  <label for="marketplaceTitle">Title</label>
-                  <input id="marketplaceTitle" maxlength="160" placeholder="e.g. Dining table - solid wood" required />
-                  <div class="char-counter" id="marketplaceTitleCounter">0 / 160</div>
-                </div>
-                <div>
-                  <label for="marketplaceDescription">Description</label>
-                  <textarea id="marketplaceDescription" maxlength="2500" placeholder="Condition, dimensions, details"></textarea>
-                  <div class="char-counter" id="marketplaceDescCounter">0 / 2500</div>
-                  <span id="marketplaceDescError" class="field-error"></span>
-                </div>
-              </section>
-              <section class="market-form-section">
-                <h4>Contact &amp; Ridicare</h4>
-                <div class="grid mt-0">
-                  <div>
-                    <label for="marketplaceContactPhone">Telefon contact</label>
-                    <input id="marketplaceContactPhone" maxlength="64" placeholder="07xx xxx xxx" />
-                    <span id="marketContactPhoneError" class="field-error"></span>
-                  </div>
-                  <div>
-                    <label for="marketplacePickupDetails">Pickup Details</label>
-                    <input id="marketplacePickupDetails" maxlength="600" placeholder="Bloc, floor, pickup interval" />
-                  </div>
-                </div>
-              </section>
-              <section class="market-form-section">
-                <h4>Photos</h4>
-                <div>
-                  <label for="marketplacePhotos">Photos</label>
-                  <input id="marketplacePhotos" class="visually-hidden" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/jpg,image/png,image/webp" multiple />
-                  <div id="marketplaceDropzone" class="market-dropzone" role="button" tabindex="0" aria-label="Add marketplace photos">
-                    <span><b>Drag & drop</b> photos here, or click to browse.</span>
-                  </div>
-                  <div id="marketplaceFileWarning" class="market-upload-warning hidden"></div>
-                  <div id="marketplaceUploadProgress" class="market-upload-progress hidden" aria-live="polite">
-                    <div id="marketplaceUploadProgressFill" class="market-upload-progress-fill" style="width:0%"></div>
-                  </div>
-                  <div id="marketplacePhotoPreviews" class="market-preview-grid"></div>
-                  <p class="poll-note">Uploads use secure storage. Keep photos clear and recent.</p>
-                  <p id="marketplaceUploadStatus" class="upload-status">No photos selected.</p>
-                </div>
-              </section>
-              <button id="marketplaceCreateBtn" type="submit" data-default-text="Create Listing">Create Listing</button>
-            </form>
-          </section>
-
-          <section class="card mt-12">
-            <h3>My Listings <span class="count-pill" id="marketplaceMineCount">0</span></h3>
-            <span class="section-label">Anunțurile Mele</span>
-            <div id="myListingsCards" class="market-my-grid"></div>
-            <div id="marketplaceMineCards" class="market-mobile-list hidden"></div>
-          </section>
-        </section>
 
         <section id="avizierModule" class="card hidden module-panel mt-14">
           <div class="module-header">
@@ -6176,6 +5119,9 @@
               if (typeof hydrateLucideIcons === 'function') hydrateLucideIcons();
             });
         </script>
+
+        <!-- Marketplace module — marketplace.html injected here -->
+        <div id="marketplaceModuleMount"></div>
       </main>
 
       <div id="pollModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pollModalTitle">
@@ -6293,6 +5239,41 @@
     <script src="parking.js"></script>
     <script src="contacts.js"></script>
     <script src="recomandari.js?v=20260227d"></script>
+    <script src="marketplace.js"></script>
+    <script>
+      window.__marketplaceModuleReady = fetch("marketplace.html")
+        .then((r) => r.text())
+        .then((html) => {
+          document.getElementById("marketplaceModuleMount").innerHTML = html;
+          if (typeof hydrateLucideIcons === "function") hydrateLucideIcons();
+          const initWhenReady = () => {
+            const marketplaceModuleRef =
+              (typeof MarketplaceModule !== "undefined" && MarketplaceModule) ||
+              (typeof window !== "undefined" && window.MarketplaceModule) ||
+              null;
+            if (
+              !marketplaceModuleRef ||
+              typeof marketplaceModuleRef.init !== "function" ||
+              typeof iconMarkup !== "function" ||
+              typeof decorateDynamicActionIcons !== "function"
+            ) {
+              setTimeout(initWhenReady, 50);
+              return;
+            }
+            marketplaceModuleRef.init();
+            const runPostMountBindings = () => {
+              if (typeof window.initMarketplacePostMount === "function") {
+                window.initMarketplacePostMount();
+                return;
+              }
+              setTimeout(runPostMountBindings, 50);
+            };
+            runPostMountBindings();
+          };
+          initWhenReady();
+        })
+        .catch(() => {});
+    </script>
     <script>
       const HELP_SEEN_KEY = "10blocuri_help_seen_v1";
       const THEME_PREF_KEY = "10blocuri_theme_pref_v1";
@@ -6321,28 +5302,6 @@
         hour12: false,
       });
       const WEEKDAY_INDEX = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-      const MARKETPLACE_PLACEHOLDER_THUMB =
-        "data:image/svg+xml;utf8," +
-        encodeURIComponent(
-          '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><rect width="240" height="240" fill="#f3efe7"/><rect x="38" y="46" width="164" height="148" rx="14" fill="#ffffff" stroke="#d7d2c8" stroke-width="6"/><circle cx="92" cy="98" r="16" fill="#d8d2c8"/><path d="M58 174l44-46 28 28 24-23 28 41H58z" fill="#c6d9d4"/><text x="120" y="220" text-anchor="middle" font-size="18" fill="#8a8f95" font-family="Arial, sans-serif">No Photo</text></svg>'
-        );
-      const MARKETPLACE_CATEGORY_ORDER = ["furniture", "toys", "clothes", "brico", "other"];
-      const MARKETPLACE_CATEGORY_LABELS = {
-        all: "Toate",
-        furniture: "Mobilă",
-        toys: "Jucării",
-        clothes: "Haine",
-        brico: "Brico",
-        other: "Altele",
-      };
-      const MARKETPLACE_CATEGORY_ICONS = {
-        all: "📋",
-        furniture: "🪑",
-        toys: "🧸",
-        clothes: "👕",
-        brico: "🔧",
-        other: "📦",
-      };
       const MODULE_QUERY_TO_ID = {
         parking: "parkingModule",
         marketplace: "marketplaceModule",
@@ -6361,13 +5320,6 @@
         moduleContacts: "Contacte",
         moduleRecomandari: "Recomandări",
       };
-      const MARKETPLACE_MAX_FILE_BYTES = 5 * 1024 * 1024;
-      const MARKETPLACE_ALLOWED_FILE_TYPES = new Set([
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/webp",
-      ]);
       const AVIZIER_MAX_FILE_BYTES = 10 * 1024 * 1024;
       const AVIZIER_ALLOWED_FILE_TYPES = new Set(["image/jpeg", "image/jpg", "application/pdf"]);
       const HELP_ITEMS = {
@@ -6482,48 +5434,9 @@
         pollResultsSection: document.getElementById("pollResultsSection"),
         parkingModule: document.getElementById("parkingModule"),
         parkingModeBanner: document.getElementById("parkingModeBanner"),
-        marketplaceModule: document.getElementById("marketplaceModule"),
         avizierModule: document.getElementById("avizierModule"),
         votingModule: document.getElementById("votingModule"),
         refreshMarketplaceBtn: document.getElementById("refreshMarketplaceBtn"),
-        marketplaceTypeTabs: document.getElementById("marketplaceTypeTabs"),
-        marketplaceCategoryTabs: document.getElementById("marketplaceCategoryTabs"),
-        marketplaceSortTabs: document.getElementById("marketplaceSortTabs"),
-        marketplaceBuildingFilter: document.getElementById("marketplaceBuildingFilter"),
-        marketplaceCreateForm: document.getElementById("marketplaceCreateForm"),
-        marketplaceCreateBtn: document.getElementById("marketplaceCreateBtn"),
-        marketplaceListingType: document.getElementById("marketplaceListingType"),
-        marketplaceCategory: document.getElementById("marketplaceCategory"),
-        marketplaceTitle: document.getElementById("marketplaceTitle"),
-        marketplaceDescription: document.getElementById("marketplaceDescription"),
-        marketplacePriceRow: document.getElementById("marketplacePriceRow"),
-        marketplacePriceText: document.getElementById("marketplacePriceText"),
-        lendingFields: document.getElementById("lendingFields"),
-        maxDays: document.getElementById("maxDays"),
-        marketplaceContactPhone: document.getElementById("marketplaceContactPhone"),
-        marketplacePickupDetails: document.getElementById("marketplacePickupDetails"),
-        marketplacePhotos: document.getElementById("marketplacePhotos"),
-        marketplaceDropzone: document.getElementById("marketplaceDropzone"),
-        marketplaceFileWarning: document.getElementById("marketplaceFileWarning"),
-        marketplaceUploadProgress: document.getElementById("marketplaceUploadProgress"),
-        marketplaceUploadProgressFill: document.getElementById("marketplaceUploadProgressFill"),
-        marketplacePhotoPreviews: document.getElementById("marketplacePhotoPreviews"),
-        marketplaceUploadStatus: document.getElementById("marketplaceUploadStatus"),
-        marketplaceActiveCards: document.getElementById("marketplaceActiveCards"),
-        marketplaceActiveBody: document.getElementById("marketplaceActiveBody"),
-        myListingsCards: document.getElementById("myListingsCards"),
-        marketplaceMineCards: document.getElementById("marketplaceMineCards"),
-        marketplaceActiveCount: document.getElementById("marketplaceActiveCount"),
-        marketplaceMineCount: document.getElementById("marketplaceMineCount"),
-        countSale: document.getElementById("countSale"),
-        countDonation: document.getElementById("countDonation"),
-        countLending: document.getElementById("countLending"),
-        cardsSale: document.getElementById("cardsSale"),
-        cardsDonation: document.getElementById("cardsDonation"),
-        cardsLending: document.getElementById("cardsLending"),
-        sectionSale: document.getElementById("sectionSale"),
-        sectionDonation: document.getElementById("sectionDonation"),
-        sectionLending: document.getElementById("sectionLending"),
         createAvizierCard: document.getElementById("createAvizierCard"),
         avizierLockedCard: document.getElementById("avizierLockedCard"),
         createAvizierForm: document.getElementById("createAvizierForm"),
@@ -6653,17 +5566,6 @@
       let pollUploadedAttachments = [];
       let pollUploadPromise = null;
       let pollUploadToken = 0;
-      let marketplaceUploadedPhotos = [];
-      let marketplaceUploadPromise = null;
-      let marketplaceUploadToken = 0;
-      let marketplaceSelectedFiles = [];
-      let marketplacePreviewUrls = [];
-      let marketplaceSelectedCategory = "all";
-      let marketplaceSelectedType = "all";
-      let marketplaceSelectedSort = "newest";
-      let marketplaceSelectedBuilding = "all";
-      let marketplaceSearchQuery = '';
-      let marketplaceDashboardData = { active_listings: [], my_listings: [] };
       let avizierAnnouncements = [];
       let avizierEditingAnnouncementId = null;
       let avizierScopeFilter = "all";
@@ -6937,15 +5839,18 @@
             });
           });
 
-        newestByDate(marketplaceDashboardData.active_listings || [], (listing) => listing.created_at || listing.updated_at)
+        newestByDate(((typeof MarketplaceModule !== "undefined" && MarketplaceModule) ? MarketplaceModule.getDashboardData().active_listings : []) || [], (listing) => listing.created_at || listing.updated_at)
           .slice(0, 3)
           .forEach((listing) => {
             const prefix = listing.listing_type === "donation" ? "Donație nouă" : "Anunț nou";
+            const categoryLabel = (typeof MarketplaceModule !== "undefined" && MarketplaceModule)
+              ? MarketplaceModule.categoryLabel(listing.category)
+              : String(listing.category || "");
             activity.push({
               module: "marketplace",
               moduleId: "marketplaceModule",
               createdAt: listing.created_at || listing.updated_at,
-              text: `${prefix}: ${listing.title} (${marketplaceCategoryLabel(listing.category)}).`,
+              text: `${prefix}: ${listing.title} (${categoryLabel}).`,
             });
           });
 
@@ -7235,7 +6140,7 @@
       function updateRefreshMetaLabels() {
         const labels = [
           ["parking", els.parkingLastRefreshed],
-          ["marketplace", els.marketplaceLastRefreshed],
+          ["marketplace", document.getElementById("marketplaceLastRefreshed") || els.marketplaceLastRefreshed],
           ["avizier", els.avizierLastRefreshed],
           ["voting", els.votingLastRefreshed],
         ];
@@ -7250,7 +6155,7 @@
         lastRefreshAt[key] = new Date();
         const labelMap = {
           parking: els.parkingLastRefreshed,
-          marketplace: els.marketplaceLastRefreshed,
+          marketplace: document.getElementById("marketplaceLastRefreshed") || els.marketplaceLastRefreshed,
           avizier: els.avizierLastRefreshed,
           voting: els.votingLastRefreshed,
         };
@@ -7273,6 +6178,13 @@
         } finally {
           button.classList.remove("refreshing");
         }
+      }
+
+      function refreshMarketplaceWhenReady() {
+        if (window.__marketplaceModuleReady && typeof window.__marketplaceModuleReady.then === "function") {
+          return window.__marketplaceModuleReady.then(() => MarketplaceModule.refresh());
+        }
+        return MarketplaceModule.refresh();
       }
 
       // ── Client fetch cache ────────────────────────────────────
@@ -7494,22 +6406,6 @@
         return url.toString();
       }
 
-      function buildListingSharePayload(post) {
-        if (!post) return null;
-        const isDonation = String(post.listing_type || "") === "donation";
-        const priceLabel = isDonation ? "FREE" : String(post.price_text || "Price on request");
-        const categoryLabel = marketplaceCategoryLabel(post.category);
-        const ownerLabel = String(post.owner_username || "").trim();
-        return {
-          kind: "listing",
-          kindLabel: "Marketplace listing",
-          title: String(post.title || "Marketplace listing").trim(),
-          text: [priceLabel, categoryLabel, ownerLabel ? `Posted by ${ownerLabel}` : ""].filter(Boolean).join(" · "),
-          preview: shortenText(post.description || "", 180),
-          url: absoluteUrl(marketplaceListingUrl(post.id)),
-        };
-      }
-
       function buildPollSharePayload(poll) {
         if (!poll) return null;
         const scopeLabel =
@@ -7662,14 +6558,6 @@
         if (buttonEl) buttonEl.blur();
       }
 
-      function marketplaceShareLookup(postId) {
-        const allListings = [
-          ...(Array.isArray(marketplaceDashboardData.active_listings) ? marketplaceDashboardData.active_listings : []),
-          ...(Array.isArray(marketplaceDashboardData.my_listings) ? marketplaceDashboardData.my_listings : []),
-        ];
-        return allListings.find((post) => String(post.id) === String(postId)) || null;
-      }
-
       function pollShareLookup(pollId) {
         const allPolls = [
           ...(Array.isArray(latestActivePolls) ? latestActivePolls : []),
@@ -7688,7 +6576,15 @@
         const normalizedId = String(entityId || "").trim();
         if (!normalizedKind || !normalizedId) return false;
         let payload = null;
-        if (normalizedKind === "listing") payload = buildListingSharePayload(marketplaceShareLookup(normalizedId));
+        if (normalizedKind === "listing") {
+          const marketplaceModuleRef =
+            (typeof MarketplaceModule !== "undefined" && MarketplaceModule) ||
+            (typeof window !== "undefined" && window.MarketplaceModule) ||
+            null;
+          if (marketplaceModuleRef) {
+            payload = marketplaceModuleRef.buildSharePayload(marketplaceModuleRef.shareLookup(normalizedId));
+          }
+        }
         if (normalizedKind === "poll") payload = buildPollSharePayload(pollShareLookup(normalizedId));
         if (normalizedKind === "announcement") payload = buildAnnouncementSharePayload(announcementShareLookup(normalizedId));
         if (!payload) {
@@ -7870,6 +6766,7 @@
       function showModuleChooser() {
         closeMoreDrawer();
         els.parkingModule = document.getElementById("parkingModule") || els.parkingModule;
+        els.marketplaceModule = document.getElementById("marketplaceModule") || els.marketplaceModule;
         currentModule = null;
         setDocumentTitle(null);
         els.modulesCard.classList.remove("hidden");
@@ -7881,9 +6778,11 @@
           els.parkingModule.classList.remove("is-visible");
           els.parkingModule.classList.remove("module-view");
         }
-        els.marketplaceModule.classList.add("hidden");
-        els.marketplaceModule.classList.remove("is-visible");
-        els.marketplaceModule.classList.remove("module-view");
+        if (els.marketplaceModule) {
+          els.marketplaceModule.classList.add("hidden");
+          els.marketplaceModule.classList.remove("is-visible");
+          els.marketplaceModule.classList.remove("module-view");
+        }
         els.avizierModule.classList.add("hidden");
         els.avizierModule.classList.remove("is-visible");
         els.avizierModule.classList.remove("module-view");
@@ -7981,6 +6880,7 @@
       function openModule(moduleId) {
         closeMoreDrawer();
         els.parkingModule = document.getElementById("parkingModule") || els.parkingModule;
+        els.marketplaceModule = document.getElementById("marketplaceModule") || els.marketplaceModule;
         currentModule = moduleId;
         setDocumentTitle(moduleId);
         els.modulesCard.classList.add("hidden");
@@ -8018,7 +6918,7 @@
           }
         }
         if (moduleId === "marketplaceModule") {
-          refreshMarketplace().catch((error) => setStatus(error.message, true));
+          refreshMarketplaceWhenReady().catch((error) => setStatus(error.message, true));
         }
         if (moduleId === "avizierModule") {
           refreshAvizier().catch((error) => setStatus(error.message, true));
@@ -8623,809 +7523,6 @@
               .join("")
           : `<div class="parking-empty">${iconMarkup("users")}<span>No users found.</span></div>`;
         hydrateLucideIcons();
-      }
-
-      function marketplaceTypeLabel(type) {
-        if (type === "donation") return "Donație";
-        if (type === "lending") return "Împrumut";
-        return "Vânzare";
-      }
-
-      function normalizeMarketplaceCategory(category) {
-        const normalized = String(category || "other")
-          .trim()
-          .toLowerCase();
-        if (normalized === "all") return "all";
-        return MARKETPLACE_CATEGORY_ORDER.includes(normalized) ? normalized : "other";
-      }
-
-      function marketplaceCategoryLabel(category) {
-        const normalized = normalizeMarketplaceCategory(category);
-        return MARKETPLACE_CATEGORY_LABELS[normalized] || "Altele";
-      }
-
-      function marketplaceCategoryIcon(category) {
-        const normalized = normalizeMarketplaceCategory(category);
-        return MARKETPLACE_CATEGORY_ICONS[normalized] || "📦";
-      }
-
-      function marketplaceOwnerBuilding(post) {
-        const fromPayload = Number(post?.building_number || 0);
-        if (fromPayload > 0) return fromPayload;
-        return inferBuildingFromUsername(post?.owner_username) || 0;
-      }
-
-      function marketplaceBuildingMatches(post) {
-        if (marketplaceSelectedBuilding === "all") return true;
-        return String(marketplaceOwnerBuilding(post)) === marketplaceSelectedBuilding;
-      }
-
-      function parseMarketplacePriceValue(post) {
-        if (!post || post.listing_type === "donation" || post.listing_type === "lending") return 0;
-        const raw = String(post.price_text || "").replace(",", ".").match(/(\d+(\.\d+)?)/);
-        if (!raw) return Number.POSITIVE_INFINITY;
-        return Number(raw[1] || Number.POSITIVE_INFINITY);
-      }
-
-      function sortMarketplaceListings(listings) {
-        const sorted = listings.slice();
-        sorted.sort((a, b) => {
-          if (marketplaceSelectedSort === "price_asc") {
-            return parseMarketplacePriceValue(a) - parseMarketplacePriceValue(b);
-          }
-          if (marketplaceSelectedSort === "price_desc") {
-            return parseMarketplacePriceValue(b) - parseMarketplacePriceValue(a);
-          }
-          const da = new Date(String(a.updated_at || a.created_at || 0)).getTime() || 0;
-          const db = new Date(String(b.updated_at || b.created_at || 0)).getTime() || 0;
-          return db - da;
-        });
-        return sorted;
-      }
-
-      function marketplaceCategoryMatches(post) {
-        if (marketplaceSelectedCategory === "all") return true;
-        return normalizeMarketplaceCategory(post?.category) === marketplaceSelectedCategory;
-      }
-
-      function marketplaceTypeMatches(post) {
-        if (marketplaceSelectedType === "all") return true;
-        return String(post?.listing_type || "").toLowerCase() === marketplaceSelectedType;
-      }
-
-      function syncMarketplaceTypeSectionVisibility() {
-        const sectionMap = {
-          sale: els.sectionSale,
-          donation: els.sectionDonation,
-          lending: els.sectionLending,
-        };
-        Object.entries(sectionMap).forEach(([type, sectionEl]) => {
-          if (!sectionEl) return;
-          sectionEl.classList.toggle("hidden", marketplaceSelectedType !== "all" && marketplaceSelectedType !== type);
-        });
-      }
-
-      function setMarketplaceTypeFilter(type, { rerender = true, scroll = true } = {}) {
-        const normalized = ["sale", "donation", "lending"].includes(String(type || "").toLowerCase())
-          ? String(type).toLowerCase()
-          : "all";
-        marketplaceSelectedType = normalized;
-        if (els.marketplaceTypeTabs) {
-          els.marketplaceTypeTabs.querySelectorAll("[data-market-type]").forEach((btn) => {
-            btn.classList.toggle("active", btn.dataset.marketType === normalized);
-          });
-        }
-        if (rerender) {
-          renderMarketplace(marketplaceDashboardData);
-        } else {
-          syncMarketplaceTypeSectionVisibility();
-        }
-        if (scroll && normalized === "lending" && els.sectionLending) {
-          els.sectionLending.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }
-
-      function setMarketplaceCategory(category, { syncForm = true, rerender = true } = {}) {
-        const nextCategory = normalizeMarketplaceCategory(category);
-        marketplaceSelectedCategory = nextCategory;
-        if (els.marketplaceCategoryTabs) {
-          els.marketplaceCategoryTabs.querySelectorAll("[data-market-category]").forEach((btn) => {
-            btn.classList.toggle("active", btn.dataset.marketCategory === nextCategory);
-          });
-        }
-        if (syncForm && els.marketplaceCategory && nextCategory !== "all") {
-          els.marketplaceCategory.value = nextCategory;
-        }
-        if (rerender) {
-          renderMarketplace(marketplaceDashboardData);
-        }
-      }
-
-      function setMarketplaceSort(sortKey, { rerender = true } = {}) {
-        const normalized =
-          sortKey === "price_asc" || sortKey === "price_desc" ? sortKey : "newest";
-        marketplaceSelectedSort = normalized;
-        els.marketplaceSortTabs.querySelectorAll("[data-market-sort]").forEach((btn) => {
-          btn.classList.toggle("active", btn.dataset.marketSort === normalized);
-        });
-        if (rerender) renderMarketplace(marketplaceDashboardData);
-      }
-
-      function setMarketplaceBuildingFilter(buildingValue, { rerender = true } = {}) {
-        marketplaceSelectedBuilding = buildingValue || "all";
-        els.marketplaceBuildingFilter.value = marketplaceSelectedBuilding;
-        if (rerender) renderMarketplace(marketplaceDashboardData);
-      }
-
-      function marketplaceStatusLabel(status) {
-        if (status === "sold") return "Vândut";
-        if (status === "donated") return "Donat";
-        return "Activ";
-      }
-
-      function marketplaceStatusTag(post) {
-        const status = String(post?.status || "active")
-          .trim()
-          .toLowerCase();
-        if (post?.listing_type === "lending") {
-          if (status !== "active") {
-            return { label: "Închis", className: "completed" };
-          }
-          return post?.is_available === false
-            ? { label: "Împrumutat momentan", className: "claimed" }
-            : { label: "Disponibil", className: "available" };
-        }
-        if (status === "active") {
-          if (post?.listing_type === "donation" && post?.claimed_by_username) {
-            return { label: "Rezervat", className: "claimed" };
-          }
-          return { label: "Disponibil", className: "available" };
-        }
-        return { label: "Finalizat", className: "completed" };
-      }
-
-      function marketplacePrimaryPhotoUrl(post) {
-        const photos = Array.isArray(post?.photos) ? post.photos : [];
-        if (!photos.length) return "";
-        const first = photos[0];
-        return first && first.file_url ? first.file_url : "";
-      }
-
-      function marketplaceThumbHtml(post, title = "Listing photo") {
-        const thumbUrl = marketplacePrimaryPhotoUrl(post);
-        if (thumbUrl) {
-          return `<img class="market-thumb" src="${thumbUrl}" alt="${title}" loading="lazy" />`;
-        }
-        return `<div class="market-thumb-placeholder" aria-hidden="true">${marketplaceCategoryIcon(post?.category)}</div>`;
-      }
-
-      function marketplacePriceBadge(post) {
-        if (post.listing_type === "donation") {
-          return `<span class="market-price-badge free">Gratuit</span>`;
-        }
-        if (post.listing_type === "lending") {
-          return `<span class="market-price-badge free">Împrumut</span>`;
-        }
-        const priceLabel = post.price_text ? post.price_text : "Preț";
-        return `<span class="market-price-badge paid">${priceLabel}</span>`;
-      }
-
-      function marketplaceContactLabel(post) {
-        return post.contact_phone || post.owner_phone_number || "Telefon indisponibil";
-      }
-
-      function marketplaceTypeBadgeClass(type) {
-        if (type === "donation") return "badge-teal";
-        if (type === "lending") return "badge-blue";
-        return "badge-amber";
-      }
-
-      function sanitizePhoneHref(phoneValue) {
-        return String(phoneValue || "").replace(/[^\d+]/g, "");
-      }
-
-      function marketplaceSectionEmptyStateHtml(type) {
-        if (type === "sale") {
-          return `
-            <div class="empty-state">
-              <p class="empty-state-title">Niciun obiect de vânzare momentan.</p>
-              <p class="empty-state-body">Fii primul care listează ceva!</p>
-            </div>
-          `;
-        }
-        if (type === "donation") {
-          return `
-            <div class="empty-state">
-              <p class="empty-state-title">Nicio donație disponibilă momentan.</p>
-              <p class="empty-state-body">Ai ceva de dăruit unui vecin?</p>
-            </div>
-          `;
-        }
-        return `
-          <div class="empty-state">
-            <p class="empty-state-title">Nimeni nu a pus ceva la împrumut încă.</p>
-            <p class="empty-state-body">Ai o bormaşină, o scară sau un cort? Oferă-le vecinilor!</p>
-          </div>
-        `;
-      }
-
-      function normalizeMarketplaceFileType(fileType, fileName) {
-        const lowered = String(fileType || "").toLowerCase();
-        if (lowered) return lowered;
-        const fileLower = String(fileName || "").toLowerCase();
-        if (fileLower.endsWith(".jpg") || fileLower.endsWith(".jpeg")) return "image/jpeg";
-        if (fileLower.endsWith(".png")) return "image/png";
-        if (fileLower.endsWith(".webp")) return "image/webp";
-        return "";
-      }
-
-      function setMarketplaceUploadStatus(message, kind = "") {
-        els.marketplaceUploadStatus.textContent = message;
-        els.marketplaceUploadStatus.classList.remove("error", "success");
-        if (kind) {
-          els.marketplaceUploadStatus.classList.add(kind);
-        }
-      }
-
-      function clearMarketplaceUploadState() {
-        marketplaceUploadedPhotos = [];
-        marketplaceUploadPromise = null;
-        marketplaceUploadToken += 1;
-        marketplaceSelectedFiles = [];
-        marketplacePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
-        marketplacePreviewUrls = [];
-        els.marketplacePhotoPreviews.innerHTML = "";
-        els.marketplacePhotos.value = "";
-        els.marketplaceFileWarning.classList.add("hidden");
-        els.marketplaceFileWarning.textContent = "";
-        els.marketplaceUploadProgress.classList.add("hidden");
-        els.marketplaceUploadProgressFill.style.width = "0%";
-        setMarketplaceUploadStatus("No photos selected.");
-      }
-
-      function renderMarketplacePhotoPreviews() {
-        marketplacePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
-        marketplacePreviewUrls = [];
-        els.marketplacePhotoPreviews.innerHTML = marketplaceSelectedFiles
-          .map((file, index) => {
-            const url = URL.createObjectURL(file);
-            marketplacePreviewUrls.push(url);
-            return `
-              <div class="market-preview-item">
-                <img src="${url}" alt="Selected photo ${index + 1}" />
-                <button type="button" class="market-preview-remove" data-remove-market-file="${index}" aria-label="Remove photo">
-                  ×
-                </button>
-              </div>
-            `;
-          })
-          .join("");
-        els.marketplaceFileWarning.classList.add("hidden");
-        els.marketplaceFileWarning.textContent = "";
-        hydrateLucideIcons();
-      }
-
-      function setMarketplaceSelectedFiles(fileList, { append = false } = {}) {
-        const incoming = Array.from(fileList || []).filter(Boolean);
-        const invalid = incoming.filter(
-          (file) => !MARKETPLACE_ALLOWED_FILE_TYPES.has(normalizeMarketplaceFileType(file.type, file.name))
-        );
-        if (invalid.length) {
-          showToast(
-            `Invalid file type: ${invalid.map((file) => file.name).join(", ")}. Only JPG, PNG and WEBP allowed.`,
-            "error"
-          );
-          if (!append) {
-            marketplaceUploadToken += 1;
-            marketplaceUploadPromise = null;
-            marketplaceUploadedPhotos = [];
-            marketplaceSelectedFiles = [];
-            els.marketplacePhotos.value = "";
-            setMarketplaceUploadStatus("No photos selected.");
-            renderMarketplacePhotoPreviews();
-          }
-          return;
-        }
-
-        const oversized = incoming.filter((file) => Number(file.size || 0) > MARKETPLACE_MAX_FILE_BYTES);
-        if (oversized.length) {
-          showToast(
-            `File too large: ${oversized.map((file) => file.name).join(", ")}. Max 5MB each.`,
-            "warning"
-          );
-          if (!append) {
-            marketplaceUploadToken += 1;
-            marketplaceUploadPromise = null;
-            marketplaceUploadedPhotos = [];
-            marketplaceSelectedFiles = [];
-            els.marketplacePhotos.value = "";
-            setMarketplaceUploadStatus("No photos selected.");
-            renderMarketplacePhotoPreviews();
-          }
-          return;
-        }
-
-        marketplaceUploadToken += 1;
-        marketplaceUploadPromise = null;
-        marketplaceSelectedFiles = append ? [...marketplaceSelectedFiles, ...incoming] : incoming;
-        marketplaceUploadedPhotos = [];
-        els.marketplaceUploadProgress.classList.add("hidden");
-        els.marketplaceUploadProgressFill.style.width = "0%";
-        setMarketplaceUploadStatus(
-          marketplaceSelectedFiles.length ? `${marketplaceSelectedFiles.length} photo(s) selected.` : "No photos selected."
-        );
-        renderMarketplacePhotoPreviews();
-      }
-
-      function updateMarketplaceFormVisibility() {
-        const listingType = String(els.marketplaceListingType.value || "sale");
-        const showPrice = listingType === "sale";
-        const showLending = listingType === "lending";
-        if (els.marketplacePriceRow) {
-          els.marketplacePriceRow.style.display = showPrice ? "" : "none";
-        }
-        els.marketplacePriceText.disabled = !showPrice;
-        if (!showPrice) {
-          els.marketplacePriceText.value = "";
-          els.marketplacePriceText.placeholder = "Nu se folosește pentru donații / împrumut";
-        } else {
-          els.marketplacePriceText.placeholder = "e.g. 150 RON, negotiable";
-        }
-        if (els.lendingFields) {
-          els.lendingFields.style.display = showLending ? "" : "none";
-        }
-        if (!showLending && els.maxDays) {
-          els.maxDays.value = "";
-        }
-      }
-
-      async function uploadMarketplacePhotos(files, onProgress = null) {
-        const uploaded = [];
-        for (let i = 0; i < files.length; i += 1) {
-          const file = files[i];
-          if (typeof onProgress === "function") {
-            onProgress({
-              index: i,
-              total: files.length,
-              fileName: file.name,
-              stage: "upload",
-            });
-          }
-          const form = new FormData();
-          form.append("file", file);
-          form.append("module_name", "marketplace");
-
-          const uploadRes = await fetch("/api/uploads/direct", {
-            method: "POST",
-            body: form,
-          });
-          const uploadData = await uploadRes.json().catch(() => ({}));
-          if (!uploadRes.ok) {
-            throw new Error(uploadData.error || `Upload failed for ${file.name}.`);
-          }
-
-          uploaded.push({
-            file_url: uploadData.file_url,
-            file_name: uploadData.file_name || file.name,
-            file_type: uploadData.file_type || file.type || "application/octet-stream",
-          });
-
-          if (typeof onProgress === "function") {
-            onProgress({
-              index: i + 1,
-              total: files.length,
-              fileName: file.name,
-              stage: "done",
-            });
-          }
-        }
-        return uploaded;
-      }
-
-      async function startMarketplacePhotoUpload() {
-        const files = marketplaceSelectedFiles.slice();
-        const token = ++marketplaceUploadToken;
-
-        if (!files.length) {
-          marketplaceUploadedPhotos = [];
-          els.marketplaceUploadProgress.classList.add("hidden");
-          els.marketplaceUploadProgressFill.style.width = "0%";
-          setMarketplaceUploadStatus("No photos selected.");
-          return;
-        }
-
-        els.marketplaceUploadProgress.classList.remove("hidden");
-        els.marketplaceUploadProgressFill.style.width = "0%";
-        setMarketplaceUploadStatus(`Uploading ${files.length} photo(s)...`);
-
-        marketplaceUploadPromise = uploadMarketplacePhotos(files, (progress) => {
-          if (token !== marketplaceUploadToken) {
-            throw new Error("__upload_cancelled__");
-          }
-          if (progress.stage === "upload") {
-            const percent = Math.min(99, Math.round((progress.index / progress.total) * 100));
-            els.marketplaceUploadProgressFill.style.width = `${percent}%`;
-            setMarketplaceUploadStatus(
-              `Uploading ${progress.index + 1}/${progress.total}: ${progress.fileName}...`
-            );
-            return;
-          }
-          if (progress.stage === "done") {
-            const percent = Math.min(100, Math.round((progress.index / progress.total) * 100));
-            els.marketplaceUploadProgressFill.style.width = `${percent}%`;
-            setMarketplaceUploadStatus(`Uploaded ${progress.index}/${progress.total} photo(s)...`);
-          }
-        })
-          .then((photos) => {
-            if (token !== marketplaceUploadToken) return;
-            marketplaceUploadedPhotos = photos;
-            els.marketplaceUploadProgressFill.style.width = "100%";
-            setMarketplaceUploadStatus(
-              `Upload complete: ${photos.length} photo(s) ready.`,
-              "success"
-            );
-          })
-          .catch((error) => {
-            if (token !== marketplaceUploadToken || error.message === "__upload_cancelled__") {
-              return;
-            }
-            marketplaceUploadedPhotos = [];
-            els.marketplaceUploadProgress.classList.add("hidden");
-            els.marketplaceUploadProgressFill.style.width = "0%";
-            setMarketplaceUploadStatus(
-              `Upload failed: ${error.message || "unknown error"}`,
-              "error"
-            );
-            throw error;
-          })
-          .finally(() => {
-            if (token === marketplaceUploadToken) {
-              marketplaceUploadPromise = null;
-            }
-          });
-
-        return marketplaceUploadPromise;
-      }
-
-      function marketplacePhotoLinks(post) {
-        const photos = Array.isArray(post.photos) ? post.photos : [];
-        if (!photos.length) return "-";
-        return photos
-          .map((photo, idx) => `<a href="${photo.file_url}" target="_blank" rel="noopener noreferrer">Photo ${idx + 1}</a>`)
-          .join(" | ");
-      }
-
-      function marketplaceListingUrl(postId) {
-        return `/marketplace/listings/${postId}`;
-      }
-
-      function shouldSkipMarketplaceRowNavigation(target) {
-        return Boolean(target.closest("button, a, input, select, textarea, label"));
-      }
-
-      function maybeNavigateMarketplaceRow(event) {
-        const row = event.target.closest("tr[data-listing-url]");
-        if (!row) return false;
-        if (shouldSkipMarketplaceRowNavigation(event.target)) return false;
-        const url = String(row.dataset.listingUrl || "").trim();
-        if (!url) return false;
-        window.location.href = url;
-        return true;
-      }
-
-      function maybeNavigateMarketplaceRowFromKeyboard(event) {
-        if (event.key !== "Enter" && event.key !== " ") return false;
-        const row = event.target.closest("tr[data-listing-url]");
-        if (!row) return false;
-        if (shouldSkipMarketplaceRowNavigation(event.target)) return false;
-        event.preventDefault();
-        const url = String(row.dataset.listingUrl || "").trim();
-        if (!url) return false;
-        window.location.href = url;
-        return true;
-      }
-
-      function clearMarketplaceTables() {
-        if (els.cardsSale) els.cardsSale.innerHTML = marketplaceSectionEmptyStateHtml("sale");
-        if (els.cardsDonation) els.cardsDonation.innerHTML = marketplaceSectionEmptyStateHtml("donation");
-        if (els.cardsLending) els.cardsLending.innerHTML = marketplaceSectionEmptyStateHtml("lending");
-        els.marketplaceActiveBody.innerHTML = "";
-        if (els.marketplaceMineBody) els.marketplaceMineBody.innerHTML = "";
-        const mineEmptyHtml = `<div class="market-empty-state">${iconMarkup("package-search")}<span>Nu ai creat anunțuri încă.</span></div>`;
-        els.myListingsCards.innerHTML = mineEmptyHtml;
-        els.marketplaceMineCards.innerHTML = mineEmptyHtml;
-        els.marketplaceActiveCount.textContent = "0";
-        els.marketplaceMineCount.textContent = "0";
-        if (els.countSale) els.countSale.textContent = "0";
-        if (els.countDonation) els.countDonation.textContent = "0";
-        if (els.countLending) els.countLending.textContent = "0";
-        marketplaceDashboardData = { active_listings: [], my_listings: [] };
-        syncMarketplaceTypeSectionVisibility();
-        refreshHomeActivity();
-        hydrateLucideIcons();
-      }
-
-      function renderMarketplace(data) {
-        const activeListingsAll = Array.isArray(data.active_listings) ? data.active_listings : [];
-        const myListingsAll = Array.isArray(data.my_listings) ? data.my_listings : [];
-        marketplaceDashboardData = {
-          active_listings: activeListingsAll,
-          my_listings: myListingsAll,
-        };
-
-        const buildingOptions = ["<option value=\"all\">Toate</option>"]
-          .concat(Array.from({ length: 10 }, (_, idx) => idx + 1).map((building) => `<option value="${building}">Bloc ${building}</option>`))
-          .join("");
-        els.marketplaceBuildingFilter.innerHTML = buildingOptions;
-        if (!Array.from(els.marketplaceBuildingFilter.options).some((opt) => opt.value === marketplaceSelectedBuilding)) {
-          marketplaceSelectedBuilding = "all";
-        }
-        els.marketplaceBuildingFilter.value = marketplaceSelectedBuilding;
-
-        function marketplaceSearchMatches(post) {
-          if (!marketplaceSearchQuery) return true;
-          const q = marketplaceSearchQuery.toLowerCase();
-          return (
-            String(post.title || '').toLowerCase().includes(q) ||
-            String(post.description || '').toLowerCase().includes(q) ||
-            String(post.owner_username || '').toLowerCase().includes(q)
-          );
-        }
-
-        const activeListings = sortMarketplaceListings(
-          activeListingsAll.filter((post) =>
-            marketplaceCategoryMatches(post) &&
-            marketplaceBuildingMatches(post) &&
-            marketplaceSearchMatches(post)
-          )
-        );
-        const myListings = sortMarketplaceListings(
-          myListingsAll.filter((post) => marketplaceCategoryMatches(post) && marketplaceBuildingMatches(post))
-        );
-
-        const activeByType = {
-          sale: activeListings.filter((post) => post.listing_type === "sale"),
-          donation: activeListings.filter((post) => post.listing_type === "donation"),
-          lending: activeListings.filter((post) => post.listing_type === "lending"),
-        };
-
-        function renderActiveStandardCard(post) {
-          const isOwner = currentUser && post.owner_username === currentUser.username;
-          const statusTag = marketplaceStatusTag(post);
-          const openLink = `<a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Detalii</a>`;
-          const canClaim =
-            post.status === "active" &&
-            post.listing_type === "donation" &&
-            !post.claimed_by_username &&
-            !isOwner;
-          const contactId = `market-contact-${post.id}`;
-          const ownerBuilding = marketplaceOwnerBuilding(post);
-          const isDonation = post.listing_type === "donation";
-          return `
-            <article class="market-listing-card card">
-              <div class="market-listing-head">
-                <div class="market-listing-thumb">
-                  ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
-                  <div class="market-status-corner">
-                    <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
-                  </div>
-                  ${marketplaceThumbHtml(post, post.title || "Imagine anunț")}
-                </div>
-                <div class="market-listing-body">
-                  <div class="market-title-line">
-                    <strong>${escapeHtml(post.title)}</strong>
-                    <span class="market-price-main">${isDonation ? "Gratuit" : escapeHtml(post.price_text || "-")}</span>
-                  </div>
-                  <div class="market-owner-line">${escapeHtml(post.owner_username)} ${
-                    ownerBuilding ? `· Bloc ${ownerBuilding}` : ""
-                  }</div>
-                  <div class="market-age">Publicat ${formatRelativeTime(post.created_at)}</div>
-                  <div class="market-card-badges">
-                    <span class="market-category-badge ${marketplaceTypeBadgeClass(post.listing_type)}">${marketplaceTypeLabel(post.listing_type)}</span>
-                    <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="market-card-actions">
-                <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contact</button>
-                <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
-                ${canClaim ? `<button type="button" class="table-action-btn alt market-claim-btn" data-post-id="${post.id}">Revendică donația</button>` : ""}
-                ${openLink}
-              </div>
-              <div id="${contactId}" class="market-contact-meta hidden">${iconMarkup("phone")}<span>${escapeHtml(marketplaceContactLabel(post))}</span></div>
-            </article>
-          `;
-        }
-
-        function renderLendingCard(post) {
-          const isOwner = currentUser && post.owner_username === currentUser.username;
-          const ownerBuilding = marketplaceOwnerBuilding(post);
-          const statusBadge = marketplaceStatusTag(post);
-          const contactId = `market-contact-${post.id}`;
-          const maxDaysBadge =
-            Number(post.max_days || 0) > 0
-              ? `<span class="badge badge-gray">⏱ Max ${Number(post.max_days)} zile</span>`
-              : "";
-          const toggleLabel = post.is_available === false ? "Marchează ca disponibil" : "Marchează ca împrumutat";
-          return `
-            <article class="market-listing-card card lending-card">
-              <div class="market-listing-head">
-                <div class="market-listing-thumb">
-                  ${marketplaceThumbHtml(post, post.title || "Imagine anunț împrumut")}
-                </div>
-                <div class="market-listing-body">
-                  <div class="market-card-badges market-lending-badges">
-                    <span class="badge badge-blue">🤝 Împrumut</span>
-                    <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
-                    ${maxDaysBadge}
-                    <span class="badge ${statusBadge.className === "available" ? "badge-green" : "badge-amber"}">${statusBadge.label}</span>
-                  </div>
-                  <div class="market-title-line">
-                    <strong>${escapeHtml(post.title)}</strong>
-                    <span class="market-price-main">Împrumut</span>
-                  </div>
-                  <div class="market-owner-line">${escapeHtml(post.owner_username)}${
-                    ownerBuilding ? ` · Bloc ${ownerBuilding}` : ""
-                  }</div>
-                  <div class="market-age">Publicat ${formatRelativeTime(post.created_at)}</div>
-                  ${
-                    post.description
-                      ? `<p class="market-listing-description">${escapeHtml(post.description)}</p>`
-                      : ""
-                  }
-                  <div class="market-card-actions">
-                    <button type="button" class="table-action-btn market-contact-btn" data-contact-id="${contactId}">Contact</button>
-                    <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
-                    ${
-                      isOwner
-                        ? `<button type="button" class="table-action-btn alt market-lending-toggle-btn" data-lending-toggle-id="${post.id}">${toggleLabel}</button>`
-                        : ""
-                    }
-                    <a class="table-action-link ghost" href="${marketplaceListingUrl(post.id)}">Detalii</a>
-                  </div>
-                  <div id="${contactId}" class="market-contact-meta hidden">${iconMarkup("phone")}<span>${escapeHtml(
-                    marketplaceContactLabel(post)
-                  )}</span></div>
-                </div>
-              </div>
-            </article>
-          `;
-        }
-
-        function renderTypeSection(containerEl, posts, type) {
-          if (!containerEl) return;
-          if (!posts.length) {
-            containerEl.innerHTML = marketplaceSectionEmptyStateHtml(type);
-            return;
-          }
-          containerEl.innerHTML = posts
-            .map((post) => (type === "lending" ? renderLendingCard(post) : renderActiveStandardCard(post)))
-            .join("");
-        }
-
-        renderTypeSection(els.cardsSale, activeByType.sale, "sale");
-        renderTypeSection(els.cardsDonation, activeByType.donation, "donation");
-        renderTypeSection(els.cardsLending, activeByType.lending, "lending");
-        els.marketplaceActiveBody.innerHTML = "";
-
-        if (els.marketplaceMineBody) els.marketplaceMineBody.innerHTML = "";
-
-        const myListingCardsHtml = myListings.length
-          ? myListings
-              .map((post) => {
-                const isActive = post.status === "active";
-                const statusTag = marketplaceStatusTag(post);
-                const isDonation = post.listing_type === "donation";
-                const isLending = post.listing_type === "lending";
-                const priceLabel =
-                  post.listing_type === "sale" ? post.price_text || "-" : post.listing_type === "donation" ? "Gratuit" : "Împrumut";
-                const listingUrl = marketplaceListingUrl(post.id);
-                const lendingToggleLabel =
-                  post.is_available === false ? "Disponibil ✓" : "Împrumutat ✗";
-                return `
-                  <article class="market-listing-card card">
-                    <div class="market-listing-head">
-                      <div class="market-listing-thumb">
-                        ${isDonation ? `<span class="market-free-flag">FREE</span>` : ""}
-                        <div class="market-status-corner">
-                          <span class="market-status-badge ${statusTag.className}">${statusTag.label}</span>
-                        </div>
-                        ${marketplaceThumbHtml(post, post.title || "Imagine anunț")}
-                      </div>
-                      <div class="market-listing-body">
-                        <div class="market-title-line">
-                          <strong>${escapeHtml(post.title)}</strong>
-                          <span class="market-price-main">${escapeHtml(priceLabel)}</span>
-                        </div>
-                        <div class="market-card-badges">
-                          <span class="market-category-badge listing-type ${marketplaceTypeBadgeClass(post.listing_type)}">${marketplaceTypeLabel(post.listing_type)}</span>
-                          <span class="market-category-badge">${marketplaceCategoryIcon(post.category)} ${marketplaceCategoryLabel(post.category)}</span>
-                          ${
-                            isLending
-                              ? `<span class="badge ${post.is_available === false ? "badge-amber" : "badge-green"}">${post.is_available === false ? "Împrumutat momentan" : "Disponibil"}</span>`
-                              : ""
-                          }
-                          ${isLending && Number(post.max_days || 0) > 0 ? `<span class="badge badge-gray">⏱ Max ${Number(post.max_days)} zile</span>` : ""}
-                        </div>
-                        ${
-                          post.claimed_by_username
-                            ? `<div class="market-my-meta">Revendicat de: ${escapeHtml(post.claimed_by_username)}</div>`
-                            : ""
-                        }
-                        <div class="market-my-meta">Actualizat ${formatRelativeTime(post.updated_at || post.created_at)}</div>
-                        <div class="market-age">Publicat ${formatRelativeTime(post.created_at)}</div>
-                      </div>
-                    </div>
-                    <div class="market-card-actions">
-                      <button type="button" class="table-action-btn ghost share-entity-btn" data-share-kind="listing" data-share-id="${post.id}">Distribuie</button>
-                      <button type="button" class="table-action-btn market-edit-btn" data-listing-url="${listingUrl}">Editează</button>
-                      <button type="button" class="table-action-btn market-delete-btn" data-post-id="${post.id}">Șterge</button>
-                      ${
-                        isLending && isActive
-                          ? `<button type="button" class="table-action-btn ghost market-lending-toggle-btn" data-lending-toggle-id="${post.id}">${lendingToggleLabel}</button>`
-                          : ""
-                      }
-                      ${
-                        isActive && !isLending
-                          ? `<button type="button" class="table-action-btn alt market-complete-btn" data-post-id="${post.id}">Marchează finalizat</button>`
-                          : ""
-                      }
-                    </div>
-                  </article>
-                `;
-              })
-              .join("")
-          : `<div class="market-empty-state">${iconMarkup("package-search")}<span>Nu ai creat anunțuri ${
-              marketplaceSelectedCategory === "all"
-                ? "încă."
-                : `în categoria ${marketplaceCategoryLabel(marketplaceSelectedCategory)}.`
-            }</span></div>`;
-        if (!isMobile()) {
-          els.myListingsCards.innerHTML = myListingCardsHtml;
-          els.marketplaceMineCards.innerHTML = "";
-        } else {
-          els.marketplaceMineCards.innerHTML = myListingCardsHtml;
-          els.myListingsCards.innerHTML = "";
-        }
-
-        els.marketplaceActiveCount.textContent = String(activeListings.length);
-        els.marketplaceMineCount.textContent = String(myListings.length);
-        if (els.countSale) els.countSale.textContent = String(activeByType.sale.length);
-        if (els.countDonation) els.countDonation.textContent = String(activeByType.donation.length);
-        if (els.countLending) els.countLending.textContent = String(activeByType.lending.length);
-        syncMarketplaceTypeSectionVisibility();
-        refreshHomeActivity();
-        decorateDynamicActionIcons(els.marketplaceActiveCards);
-        decorateDynamicActionIcons(els.myListingsCards);
-        decorateDynamicActionIcons(els.marketplaceMineCards);
-      }
-
-      async function refreshMarketplace() {
-        if (!currentUser) return;
-        const data = await api("/api/marketplace/dashboard");
-        moduleQuickStats.activeListings = Array.isArray(data.active_listings) ? data.active_listings.length : 0;
-        renderQuickStats();
-        renderMarketplace(data);
-        markModuleRefreshed("marketplace");
-      }
-
-      async function toggleLendingAvailability(postId, button, { source = "mine" } = {}) {
-        if (!postId) return;
-        await withButtonProgress(button, "Se actualizează...", async () => {
-          try {
-            const updated = await api(`/api/marketplace/posts/${postId}/complete`, { method: "POST" });
-            const isAvailable = updated && updated.is_available !== false;
-            showToast(
-              isAvailable ? "Anunțul este marcat ca disponibil." : "Anunțul este marcat ca împrumutat momentan."
-            );
-            if (source === "active") {
-              flashButtonSuccess(button, isAvailable ? "Disponibil" : "Împrumutat");
-            }
-            await refreshMarketplace();
-          } catch (error) {
-            setStatus(error.message, true);
-          }
-        });
       }
 
       function avizierPermissionLabel(permission) {
@@ -10127,7 +8224,7 @@
             await withRefreshPulse(els.refreshParkingBtn, async () => ParkingModule.refreshDashboard());
           }
           if (!currentModule || currentModule === "marketplaceModule") {
-            await withRefreshPulse(els.refreshMarketplaceBtn, async () => refreshMarketplace());
+            await withRefreshPulse(document.getElementById("refreshMarketplaceBtn"), async () => refreshMarketplaceWhenReady());
           }
           if (!currentModule || currentModule === "avizierModule") {
             await withRefreshPulse(els.refreshAvizierBtn, async () => refreshAvizier());
@@ -10524,8 +8621,9 @@
           currentMyClaims = [];
           currentBuildingStats = [];
           latestActivePolls = [];
-          marketplaceSelectedType = "all";
-          marketplaceDashboardData = { active_listings: [], my_listings: [] };
+          if (typeof MarketplaceModule !== "undefined") {
+            MarketplaceModule.setTypeFilter("all", { rerender: false, scroll: false });
+          }
           avizierAnnouncements = [];
           avizierEditingAnnouncementId = null;
           recommendationsActivityEntries = [];
@@ -10537,9 +8635,11 @@
           updateRefreshMetaLabels();
           showModuleChooser();
           clearPollLists();
-          clearMarketplaceTables();
-          clearMarketplaceUploadState();
-          setMarketplaceTypeFilter("all", { rerender: false, scroll: false });
+          if (typeof MarketplaceModule !== "undefined") {
+            MarketplaceModule.clearTables();
+            MarketplaceModule.clearUploadState();
+            MarketplaceModule.setTypeFilter("all", { rerender: false, scroll: false });
+          }
           renderAvizierAnnouncements([]);
           updateAvizierFormVisibility();
           setAvizierComposerMode();
@@ -10567,8 +8667,9 @@
         currentMyClaims = [];
         currentBuildingStats = [];
         latestActivePolls = [];
-        marketplaceSelectedType = "all";
-        marketplaceDashboardData = { active_listings: [], my_listings: [] };
+        if (typeof MarketplaceModule !== "undefined") {
+          MarketplaceModule.setTypeFilter("all", { rerender: false, scroll: false });
+        }
         avizierAnnouncements = [];
         avizierEditingAnnouncementId = null;
         recommendationsActivityEntries = [];
@@ -10584,12 +8685,15 @@
         const claimPhoneEl = document.getElementById("claimPhone");
         if (claimBuildingEl) claimBuildingEl.value = "";
         if (claimPhoneEl) claimPhoneEl.value = user.phone_number || "";
-        els.marketplaceContactPhone.value = user.phone_number || "";
+        const marketplaceContactPhoneEl = document.getElementById("marketplaceContactPhone");
+        if (marketplaceContactPhoneEl) marketplaceContactPhoneEl.value = user.phone_number || "";
         applyDefaultTimeValues();
         setPollFormDefaults();
         setPollWizardStep(1);
-        updateMarketplaceFormVisibility();
-        setMarketplaceTypeFilter("all", { rerender: false, scroll: false });
+        if (typeof MarketplaceModule !== "undefined") {
+          MarketplaceModule.updateFormVisibility();
+          MarketplaceModule.setTypeFilter("all", { rerender: false, scroll: false });
+        }
         updateAvizierFormVisibility();
         setAvizierComposerMode();
         setAvizierScopeFilter("all");
@@ -10835,7 +8939,7 @@
             await Promise.allSettled([
               ParkingModule.refreshDashboard(),
               refreshAdminUsers(),
-              refreshMarketplace(),
+              refreshMarketplaceWhenReady(),
               refreshAvizier(),
               refreshVoting(),
               refreshRecommendationsActivity({ refreshFeed: false }),
@@ -10884,7 +8988,10 @@
           return;
         }
         if (currentModule === "marketplaceModule") {
-          els.marketplaceCreateForm.scrollIntoView({ behavior: "smooth", block: "start" });
+          const marketplaceCreateForm = document.getElementById("marketplaceCreateForm");
+          if (marketplaceCreateForm) {
+            marketplaceCreateForm.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
           return;
         }
         if (currentModule === "votingModule") {
@@ -11016,15 +9123,20 @@
             .forEach((chip) => chip.classList.toggle("active", chip === btn));
         });
       });
-
-      els.refreshMarketplaceBtn.addEventListener("click", async () => {
-        try {
-          await withRefreshPulse(els.refreshMarketplaceBtn, async () => refreshMarketplace());
-          showToast("Marketplace refreshed.", "info");
-        } catch (error) {
-          setStatus(error.message, true);
-        }
-      });
+      function bindMarketplaceRefreshButton() {
+        const refreshMarketplaceBtn = document.getElementById("refreshMarketplaceBtn");
+        if (!refreshMarketplaceBtn || refreshMarketplaceBtn.dataset.marketRefreshBound === "1") return;
+        refreshMarketplaceBtn.dataset.marketRefreshBound = "1";
+        refreshMarketplaceBtn.addEventListener("click", async () => {
+          try {
+            await withRefreshPulse(refreshMarketplaceBtn, async () => refreshMarketplaceWhenReady());
+            showToast("Marketplace refreshed.", "info");
+          } catch (error) {
+            setStatus(error.message, true);
+          }
+        });
+      }
+      bindMarketplaceRefreshButton();
 
       els.refreshAvizierBtn.addEventListener("click", async () => {
         try {
@@ -11034,280 +9146,6 @@
           setStatus(error.message, true);
         }
       });
-
-      els.marketplaceListingType.addEventListener("change", () => {
-        updateMarketplaceFormVisibility();
-      });
-
-      if (els.marketplaceTypeTabs) {
-        els.marketplaceTypeTabs.addEventListener("click", (event) => {
-          const typeBtn = event.target.closest("[data-market-type]");
-          if (!typeBtn) return;
-          setMarketplaceTypeFilter(typeBtn.dataset.marketType, { rerender: false, scroll: true });
-        });
-      }
-
-      els.marketplaceCategoryTabs.addEventListener("click", (event) => {
-        const tabButton = event.target.closest("[data-market-category]");
-        if (!tabButton) return;
-        setMarketplaceCategory(tabButton.dataset.marketCategory, { syncForm: true, rerender: true });
-      });
-
-      els.marketplaceCategory.addEventListener("change", () => {
-        setMarketplaceCategory(els.marketplaceCategory.value, { syncForm: false, rerender: true });
-      });
-
-      els.marketplaceSortTabs.addEventListener("click", (event) => {
-        const sortBtn = event.target.closest("[data-market-sort]");
-        if (!sortBtn) return;
-        setMarketplaceSort(sortBtn.dataset.marketSort, { rerender: true });
-      });
-
-      els.marketplaceBuildingFilter.addEventListener("change", () => {
-        setMarketplaceBuildingFilter(els.marketplaceBuildingFilter.value, { rerender: true });
-      });
-
-      document.getElementById('marketplaceSearch')?.addEventListener('input', function() {
-        marketplaceSearchQuery = this.value.trim();
-        renderMarketplace(marketplaceDashboardData);
-      });
-
-      els.marketplaceDropzone.addEventListener("click", () => {
-        els.marketplacePhotos.click();
-      });
-
-      els.marketplaceDropzone.addEventListener("keydown", (event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-        els.marketplacePhotos.click();
-      });
-
-      els.marketplaceDropzone.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        els.marketplaceDropzone.classList.add("dragover");
-      });
-
-      els.marketplaceDropzone.addEventListener("dragleave", () => {
-        els.marketplaceDropzone.classList.remove("dragover");
-      });
-
-      els.marketplaceDropzone.addEventListener("drop", (event) => {
-        event.preventDefault();
-        els.marketplaceDropzone.classList.remove("dragover");
-        setMarketplaceSelectedFiles(event.dataTransfer?.files || [], { append: true });
-      });
-
-      els.marketplacePhotos.addEventListener("change", () => {
-        setMarketplaceSelectedFiles(els.marketplacePhotos.files || [], { append: false });
-      });
-
-      els.marketplacePhotoPreviews.addEventListener("click", (event) => {
-        const removeBtn = event.target.closest("[data-remove-market-file]");
-        if (!removeBtn) return;
-        const removeIndex = Number(removeBtn.dataset.removeMarketFile || -1);
-        if (removeIndex < 0) return;
-        marketplaceSelectedFiles = marketplaceSelectedFiles.filter((_, idx) => idx !== removeIndex);
-        marketplaceUploadedPhotos = [];
-        renderMarketplacePhotoPreviews();
-        setMarketplaceUploadStatus(
-          marketplaceSelectedFiles.length ? `${marketplaceSelectedFiles.length} photo(s) selected.` : "No photos selected."
-        );
-      });
-
-      els.marketplaceCreateForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        if (!currentUser || currentUser.role !== "resident") {
-          setStatus("Only residents can create marketplace listings.", true);
-          return;
-        }
-        await withButtonProgress(els.marketplaceCreateBtn, "Creating...", async () => {
-          try {
-            const payload = {
-              listing_type: els.marketplaceListingType.value,
-              category: normalizeMarketplaceCategory(els.marketplaceCategory.value),
-              title: els.marketplaceTitle.value.trim(),
-              description: (els.marketplaceDescription.value || "").trim(),
-              price_text:
-                els.marketplaceListingType.value === "sale" ? (els.marketplacePriceText.value || "").trim() : null,
-              max_days:
-                els.marketplaceListingType.value === "lending"
-                  ? (els.maxDays && els.maxDays.value ? Number(els.maxDays.value) : null)
-                  : null,
-              is_available: els.marketplaceListingType.value === "lending" ? true : null,
-              contact_phone: (els.marketplaceContactPhone.value || "").trim(),
-              pickup_details: (els.marketplacePickupDetails.value || "").trim(),
-            };
-
-            const files = marketplaceSelectedFiles.slice();
-            if (files.length) {
-              if (marketplaceUploadPromise) {
-                await marketplaceUploadPromise;
-              } else if (!marketplaceUploadedPhotos.length) {
-                await startMarketplacePhotoUpload();
-              }
-              if (!marketplaceUploadedPhotos.length) {
-                throw new Error("Photos failed to upload. Please reselect files.");
-              }
-              payload.photos = [...marketplaceUploadedPhotos];
-            }
-
-            await api("/api/marketplace/posts", {
-              method: "POST",
-              body: JSON.stringify(payload),
-            });
-            showToast("Marketplace listing created.");
-            flashButtonSuccess(els.marketplaceCreateBtn, "Created");
-            els.marketplaceCreateForm.reset();
-            els.marketplaceContactPhone.value = currentUser.phone_number || "";
-            setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: true, rerender: false });
-            clearMarketplaceUploadState();
-            updateMarketplaceFormVisibility();
-            await refreshMarketplace();
-          } catch (error) {
-            setStatus(error.message, true);
-          }
-        });
-      });
-
-      els.marketplaceActiveCards.addEventListener("click", async (event) => {
-        const lendingToggleBtn = event.target.closest(".market-lending-toggle-btn");
-        if (lendingToggleBtn) {
-          const postId = Number(lendingToggleBtn.dataset.lendingToggleId || 0);
-          if (!postId) return;
-          await toggleLendingAvailability(postId, lendingToggleBtn, { source: "active" });
-          return;
-        }
-        const shareBtn = event.target.closest('.share-entity-btn[data-share-kind="listing"]');
-        if (shareBtn) {
-          openShareForEntity("listing", shareBtn.dataset.shareId);
-          return;
-        }
-        const contactBtn = event.target.closest(".market-contact-btn");
-        if (contactBtn) {
-          const contactId = String(contactBtn.dataset.contactId || "").trim();
-          if (!contactId) return;
-
-          // Hide ALL other contact reveals first
-          document.querySelectorAll(".market-contact-meta").forEach((el) => {
-            if (el.id !== contactId) {
-              el.classList.add("hidden");
-            }
-          });
-          // Reset all other contact buttons
-          document.querySelectorAll(".market-contact-btn").forEach((btn) => {
-            if (btn !== contactBtn) {
-              btn.innerHTML = `${iconMarkup("phone")}<span>Contact</span>`;
-              btn.dataset.defaultText = "Contact";
-              hydrateLucideIcons();
-            }
-          });
-
-          const detailsEl = document.getElementById(contactId);
-          if (!detailsEl) return;
-          const isHidden = detailsEl.classList.contains("hidden");
-          detailsEl.classList.toggle("hidden", !isHidden);
-          contactBtn.dataset.defaultText = isHidden ? "Ascunde" : "Contact";
-          contactBtn.innerHTML = `${iconMarkup("phone")}<span>${contactBtn.dataset.defaultText}</span>`;
-          hydrateLucideIcons();
-          return;
-        }
-
-        const button = event.target.closest(".market-claim-btn");
-        if (button) {
-          const postId = Number(button.dataset.postId || 0);
-          if (!postId) return;
-
-          await withButtonProgress(button, "Claiming...", async () => {
-            try {
-              await api(`/api/marketplace/posts/${postId}/claim`, { method: "POST" });
-              await refreshMarketplace();
-              showToast("Donation claimed.");
-              flashButtonSuccess(button, "Claimed");
-            } catch (error) {
-              setStatus(error.message, true);
-            }
-          });
-          return;
-        }
-      });
-
-      async function handleMarketplaceMineActions(event, { allowRowNav = false } = {}) {
-        const shareBtn = event.target.closest('.share-entity-btn[data-share-kind="listing"]');
-        const editBtn = event.target.closest(".market-edit-btn");
-        const completeBtn = event.target.closest(".market-complete-btn");
-        const deleteBtn = event.target.closest(".market-delete-btn");
-        const lendingToggleBtn = event.target.closest(".market-lending-toggle-btn");
-        if (shareBtn) {
-          openShareForEntity("listing", shareBtn.dataset.shareId);
-          return;
-        }
-        if (editBtn) {
-          const url = String(editBtn.dataset.listingUrl || "").trim();
-          if (url) {
-            window.location.href = url;
-          }
-          return;
-        }
-        if (completeBtn) {
-          const postId = Number(completeBtn.dataset.postId || 0);
-          if (!postId) return;
-          await withButtonProgress(completeBtn, "Updating...", async () => {
-            try {
-              await api(`/api/marketplace/posts/${postId}/complete`, { method: "POST" });
-              await refreshMarketplace();
-              showToast("Listing marked as completed.");
-            } catch (error) {
-              setStatus(error.message, true);
-            }
-          });
-          return;
-        }
-        if (lendingToggleBtn) {
-          const postId = Number(lendingToggleBtn.dataset.lendingToggleId || 0);
-          if (!postId) return;
-          await toggleLendingAvailability(postId, lendingToggleBtn, { source: "mine" });
-          return;
-        }
-        if (deleteBtn) {
-          const postId = Number(deleteBtn.dataset.postId || 0);
-          if (!postId) return;
-          const confirmed = await requestActionConfirmation("Delete this listing permanently?");
-          if (!confirmed) return;
-          await withButtonProgress(deleteBtn, "Deleting...", async () => {
-            try {
-              await api(`/api/marketplace/posts/${postId}/delete`, { method: "POST" });
-              await refreshMarketplace();
-              showToast("Listing deleted.");
-            } catch (error) {
-              setStatus(error.message, true);
-            }
-          });
-          return;
-        }
-        if (allowRowNav) {
-          maybeNavigateMarketplaceRow(event);
-        }
-      }
-
-      if (els.marketplaceMineBody) {
-        els.marketplaceMineBody.addEventListener("click", async (event) => {
-          await handleMarketplaceMineActions(event, { allowRowNav: true });
-        });
-      }
-
-      els.myListingsCards.addEventListener("click", async (event) => {
-        await handleMarketplaceMineActions(event, { allowRowNav: false });
-      });
-
-      els.marketplaceMineCards.addEventListener("click", async (event) => {
-        await handleMarketplaceMineActions(event, { allowRowNav: false });
-      });
-
-      if (els.marketplaceMineBody) {
-        els.marketplaceMineBody.addEventListener("keydown", (event) => {
-          maybeNavigateMarketplaceRowFromKeyboard(event);
-        });
-      }
 
       els.refreshPollsBtn.addEventListener("click", async () => {
         try {
@@ -11805,14 +9643,20 @@
         return /^(\+40|0)[0-9]{9}$/.test(clean);
       }
 
-      document.getElementById('marketplaceContactPhone').addEventListener('input', function() {
-        const errEl = document.getElementById('marketContactPhoneError');
-        if (this.value && !isValidRomanianPhone(this.value)) {
-          showFieldError(this, errEl, 'Număr invalid. Exemplu: 0712345678');
-        } else {
-          clearFieldError(this, errEl);
-        }
-      });
+      function bindMarketplacePhoneValidation() {
+        const input = document.getElementById("marketplaceContactPhone");
+        if (!input || input.dataset.marketPhoneValidateBound === "1") return;
+        input.dataset.marketPhoneValidateBound = "1";
+        input.addEventListener("input", function onMarketplacePhoneInput() {
+          const errEl = document.getElementById("marketContactPhoneError");
+          if (this.value && !isValidRomanianPhone(this.value)) {
+            showFieldError(this, errEl, "Număr invalid. Exemplu: 0712345678");
+          } else {
+            clearFieldError(this, errEl);
+          }
+        });
+      }
+      bindMarketplacePhoneValidation();
 
       // Poll options validation
       document.getElementById('pollOptions').addEventListener('input', function() {
@@ -11833,6 +9677,9 @@
         const input = document.getElementById(inputId);
         const counter = document.getElementById(counterId);
         if (!input || !counter) return;
+        const boundAttr = `data-counter-bound-${counterId}`;
+        if (input.getAttribute(boundAttr) === "1") return;
+        input.setAttribute(boundAttr, "1");
         function update() {
           const len = input.value.length;
           const pct = len / maxLen;
@@ -11849,6 +9696,13 @@
       attachCharCounter('marketplaceDescription', 'marketplaceDescCounter', 2500);
       attachCharCounter('marketplaceTitle', 'marketplaceTitleCounter', 160);
       attachCharCounter('pollTitle', 'pollTitleCounter', 200);
+
+      window.initMarketplacePostMount = function initMarketplacePostMount() {
+        bindMarketplaceRefreshButton();
+        bindMarketplacePhoneValidation();
+        attachCharCounter("marketplaceDescription", "marketplaceDescCounter", 2500);
+        attachCharCounter("marketplaceTitle", "marketplaceTitleCounter", 160);
+      };
 
       document.getElementById('avizierLoadMoreBtn')?.addEventListener('click', () => {
         avizierPage += 1;
@@ -11937,14 +9791,8 @@
         setPollFormDefaults();
         setPollWizardStep(1);
         updatePollFormVisibility();
-        updateMarketplaceFormVisibility();
         setAvizierComposerMode();
-        setMarketplaceCategory(marketplaceSelectedCategory, { syncForm: false, rerender: false });
-        setMarketplaceSort(marketplaceSelectedSort, { rerender: false });
-        setMarketplaceBuildingFilter("all", { rerender: false });
         applyStaticActionIcons();
-        clearMarketplaceTables();
-        clearMarketplaceUploadState();
         setAvizierUploadStatus("No files selected.");
         updateRefreshMetaLabels();
         showModuleChooser();
@@ -11963,7 +9811,7 @@
           await Promise.allSettled([
             ParkingModule.refreshDashboard(),
             refreshAdminUsers(),
-            refreshMarketplace(),
+            refreshMarketplaceWhenReady(),
             refreshAvizier(),
             refreshVoting(),
             refreshRecommendationsActivity({ refreshFeed: false }),
