@@ -6,9 +6,9 @@ This project now runs on **Next.js (Node runtime)** with PostgreSQL (Neon on Ver
 
 - 10 buildings (`bloc1` .. `bloc10`)
 - 16 apartment users per building (`bloc1_apt1` .. `bloc10_apt16`)
-- Default resident password: `10blocuri`
+- Default resident password: ``
 - Admin user: `admin`
-- Admin password: `adex123#`
+- Admin password: ``
 - Usernames are normalized to lowercase automatically.
 - Avizier permission classes: `none`, `reprezentant_bloc`, `comitet` (admin is always super user)
 
