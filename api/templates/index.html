@@ -1347,6 +1347,7 @@
         --module-marketplace: #f59e0b;
         --module-voting: #8b5cf6;
         --module-avizier: #14b8a6;
+        --module-contacts: #0ea5e9;
         --module-recomandari: #f97316;
         --module-profile: #64748b;
         --font-body: "Inter", system-ui, -apple-system, sans-serif;
@@ -2583,6 +2584,16 @@
         grid-row: 3 / 4;
       }
 
+      .bento-contacts {
+        grid-column: 1 / 3;
+        grid-row: 4 / 5;
+      }
+
+      .bento-recomandari {
+        grid-column: 3 / 5;
+        grid-row: 4 / 5;
+      }
+
       .bento-parking::before {
         background: var(--module-parking);
       }
@@ -2597,6 +2608,14 @@
 
       .bento-avizier::before {
         background: var(--module-avizier);
+      }
+
+      .bento-contacts::before {
+        background: var(--module-contacts);
+      }
+
+      .bento-recomandari::before {
+        background: var(--module-recomandari);
       }
 
       .bento-kpi-head {
@@ -2699,7 +2718,9 @@
         .bento-parking,
         .bento-voting,
         .bento-market,
-        .bento-avizier {
+        .bento-avizier,
+        .bento-contacts,
+        .bento-recomandari {
           grid-column: span 1;
           grid-row: auto;
         }
@@ -2719,7 +2740,9 @@
         .bento-parking,
         .bento-voting,
         .bento-market,
-        .bento-avizier {
+        .bento-avizier,
+        .bento-contacts,
+        .bento-recomandari {
           grid-column: 1;
           grid-row: auto;
         }
@@ -3837,6 +3860,24 @@
               <div id="quickStatAvizier" class="bento-kpi-stat"><span class="stat-loading"></span></div>
               <button type="button" class="bento-open-link" data-module-target="avizierModule" data-icon-locked="1">Deschide →</button>
             </article>
+
+            <article class="card bento-card bento-kpi-card bento-contacts">
+              <div class="bento-kpi-head">
+                <div class="bento-kpi-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></div>
+                <div class="bento-kpi-name">Contacte</div>
+              </div>
+              <div class="bento-kpi-stat">Numere utile</div>
+              <button type="button" class="bento-open-link" data-module-target="moduleContacts" data-icon-locked="1">Deschide →</button>
+            </article>
+
+            <article class="card bento-card bento-kpi-card bento-recomandari">
+              <div class="bento-kpi-head">
+                <div class="bento-kpi-icon"><i data-lucide="lightbulb" aria-hidden="true"></i></div>
+                <div class="bento-kpi-name">Recomandări</div>
+              </div>
+              <div class="bento-kpi-stat">Servicii locale</div>
+              <button type="button" class="bento-open-link" data-module-target="moduleRecomandari" data-icon-locked="1">Deschide →</button>
+            </article>
           </div>
         </section>
 
@@ -4368,6 +4409,8 @@
         ['button[data-module-target="marketplaceModule"]', "store"],
         ['button[data-module-target="avizierModule"]', "newspaper"],
         ['button[data-module-target="votingModule"]', "vote"],
+        ['button[data-module-target="moduleContacts"]', "clipboard-list"],
+        ['button[data-module-target="moduleRecomandari"]', "lightbulb"],
         ['button[data-go-profile]', "user-cog"],
         ["#refreshParkingBtn", "refresh-cw"],
         ["#refreshMarketplaceBtn", "refresh-cw"],
@@ -6478,7 +6521,16 @@
 
       document.querySelectorAll("[data-module-target]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          openModule(btn.dataset.moduleTarget);
+          const target = String(btn.dataset.moduleTarget || "").trim();
+          if (target === "moduleContacts") {
+            showContacts();
+            return;
+          }
+          if (target === "moduleRecomandari") {
+            showRecomandari();
+            return;
+          }
+          openModule(target);
         });
       });
 
