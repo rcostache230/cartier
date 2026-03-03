@@ -21,7 +21,13 @@ function injectVercelAnalytics(html) {
 
 export async function GET() {
   const htmlPath = path.join(process.cwd(), "api", "templates", "index.html");
-  const html = await readFile(htmlPath, "utf8");
+  let html = await readFile(htmlPath, "utf8");
+  html = html.replace(
+    "</head>",
+    `<script>window.__VAPID_PUBLIC_KEY__=${JSON.stringify(
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ""
+    )};</script>\n</head>`
+  );
   return new Response(injectVercelAnalytics(html), {
     status: 200,
     headers: {

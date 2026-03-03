@@ -6183,6 +6183,8 @@
         }
 
         startAutoRefresh();
+        // Prompt for push after login — delayed so dashboard appears first
+        setTimeout(() => maybePromptForPush(), 3000);
         updateMobileFab();
       }
 
@@ -6433,6 +6435,7 @@
 
       async function handleLogout() {
         try {
+          unsubscribeFromPush().catch(() => {});
           await api("/api/auth/logout", { method: "POST" });
           applyAuthState(null);
           showToast("Logged out.");
@@ -6775,6 +6778,155 @@
           autoRefreshNow().catch(() => {});
         }
       });
+
+      // ─── Service Worker + Push Notifications ────────────────────────────────
+
+      // Register service worker
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then(() => {})
+          .catch((err) => console.warn("SW registration failed:", err));
+
+        // Handle navigation message from notification click
+        navigator.serviceWorker.addEventListener("message", (event) => {
+          if (event.data?.type === "NAVIGATE_MODULE" && event.data.module) {
+            if (typeof openModule === "function") openModule(event.data.module);
+          }
+        });
+      }
+
+      // VAPID public key converter (required by pushManager.subscribe)
+      function urlBase64ToUint8Array(base64String) {
+        const source = String(base64String || "").trim();
+        if (!source) return null;
+        const padding = "=".repeat((4 - (source.length % 4)) % 4);
+        const base64 = (source + padding).replace(/-/g, "+").replace(/_/g, "/");
+        const raw = atob(base64);
+        return new Uint8Array([...raw].map((c) => c.charCodeAt(0)));
+      }
+
+      async function getPushSubscription() {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) return null;
+        const reg = await navigator.serviceWorker.ready;
+        return reg.pushManager.getSubscription();
+      }
+
+      async function subscribeToPush() {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) return null;
+
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") return null;
+
+        const reg = await navigator.serviceWorker.ready;
+        const vapidKey = urlBase64ToUint8Array(window.__VAPID_PUBLIC_KEY__ || "");
+        if (!vapidKey) return null;
+
+        const subscription = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: vapidKey,
+        });
+
+        await fetch("/api/push/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(subscription.toJSON()),
+        });
+
+        return subscription;
+      }
+
+      async function unsubscribeFromPush() {
+        const sub = await getPushSubscription();
+        if (!sub) return;
+        await fetch("/api/push/subscribe", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ endpoint: sub.endpoint }),
+        }).catch(() => {});
+        await sub.unsubscribe().catch(() => {});
+      }
+
+      const PUSH_ASKED_KEY = "10b_push_asked";
+
+      async function maybePromptForPush() {
+        if (!currentUser) return;
+        if (!("Notification" in window) || !("PushManager" in window)) return;
+        if (Notification.permission === "denied") return;
+        if (!(window.__VAPID_PUBLIC_KEY__ || "")) return;
+
+        if (Notification.permission === "granted") {
+          // Already granted — ensure subscription is saved server-side
+          const existing = await getPushSubscription();
+          if (!existing) await subscribeToPush();
+          return;
+        }
+
+        // Soft-prompt only after user has seen the app at least once
+        try {
+          const count = Number(localStorage.getItem(PUSH_ASKED_KEY) || "0");
+          if (count < 1) {
+            localStorage.setItem(PUSH_ASKED_KEY, String(count + 1));
+            return;
+          }
+        } catch {}
+
+        showPushBanner();
+      }
+
+      function showPushBanner() {
+        if (document.getElementById("pushBanner")) return;
+
+        const banner = document.createElement("div");
+        banner.id = "pushBanner";
+        Object.assign(banner.style, {
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "10px",
+          background: "#0f4c75",
+          color: "white",
+          padding: "10px 16px",
+          fontSize: "13px",
+          position: "sticky",
+          top: "calc(56px + env(safe-area-inset-top, 0px))",
+          zIndex: "1079",
+        });
+        banner.setAttribute("role", "banner");
+        banner.innerHTML = `
+          <span style="flex:1;min-width:200px;">
+            🔔 Activează notificările pentru locuri de parcare, anunțuri noi și sondaje.
+          </span>
+          <button id="pushAllowBtn" type="button"
+            style="background:white;color:#0f4c75;border:none;border-radius:8px;
+                  padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;min-height:36px;">
+            Activează
+          </button>
+          <button id="pushDismissBtn" type="button"
+            style="background:transparent;border:none;color:rgba(255,255,255,0.7);
+                  cursor:pointer;padding:4px 8px;font-size:18px;min-height:36px;">✕</button>
+        `;
+
+        const header = document.querySelector("header.global-nav");
+        if (header && typeof header.insertAdjacentElement === "function") {
+          header.insertAdjacentElement("afterend", banner);
+        } else {
+          document.body.prepend(banner);
+        }
+
+        document.getElementById("pushAllowBtn")?.addEventListener("click", async () => {
+          banner.remove();
+          const sub = await subscribeToPush();
+          if (sub) showToast("Notificări activate ✓", "success");
+        });
+
+        document.getElementById("pushDismissBtn")?.addEventListener("click", () => {
+          banner.remove();
+          try {
+            localStorage.setItem(PUSH_ASKED_KEY, "99");
+          } catch {}
+        });
+      }
 
       const PWA_INSTALL_KEY = '10blocuri_pwa_sessions_v1';
       let pwaInstallPrompt = null;

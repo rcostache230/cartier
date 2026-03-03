@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import { DateTime } from "luxon";
 import { NextResponse } from "next/server";
 import { ensureInitialized, query, withTransaction } from "../../../lib/db.js";
+import { sendPushNotification } from "../../../lib/sendPushNotification.js";
 import {
   createUploadTarget,
   createViewUrl,
@@ -3886,6 +3887,16 @@ async function handleRequest(request, slug) {
       availableFrom: String(payload.available_from || ""),
       availableUntil: String(payload.available_until || ""),
     });
+    sendPushNotification(
+      { type: "building", building: slot.building_number },
+      {
+        title: "🅿️ Loc de parcare liber",
+        body: `Loc ${slot.parking_space_number} disponibil în Bloc ${slot.building_number}`,
+        url: "/?module=parkingModule",
+        module: "parkingModule",
+        tag: `parking-${slot.building_number}`,
+      }
+    ).catch(() => {});
     return json(slot, 201);
   }
 
@@ -3901,6 +3912,16 @@ async function handleRequest(request, slug) {
       availableFrom: String(payload.available_from || ""),
       availableUntil: String(payload.available_until || ""),
     });
+    sendPushNotification(
+      { type: "building", building: slot.building_number },
+      {
+        title: "🅿️ Loc de parcare liber",
+        body: `Loc ${slot.parking_space_number} disponibil în Bloc ${slot.building_number}`,
+        url: "/?module=parkingModule",
+        module: "parkingModule",
+        tag: `parking-${slot.building_number}`,
+      }
+    ).catch(() => {});
     return json(slot, 201);
   }
 
@@ -4104,7 +4125,22 @@ async function handleRequest(request, slug) {
   if (path[0] === "avizier" && method === "POST" && path.length === 1) {
     const user = await requireUser(request);
     const payload = await parseJsonBody(request);
-    return json(await createAvizierAnnouncement({ user, payload }), 201);
+    const newPost = await createAvizierAnnouncement({ user, payload });
+    const isBuilding = newPost.scope === "building";
+    const isUrgent = /^\[urgent\]/i.test(String(newPost.title || ""));
+    sendPushNotification(
+      isBuilding
+        ? { type: "building", building: Number(newPost.building_id || 0) }
+        : { type: "all" },
+      {
+        title: isUrgent ? "🚨 Anunț urgent" : "📋 Anunț nou",
+        body: String(newPost.title || "").slice(0, 80),
+        url: "/?module=avizierModule",
+        module: "avizierModule",
+        tag: "avizier-new",
+      }
+    ).catch(() => {});
+    return json(newPost, 201);
   }
 
   if (path[0] === "avizier" && method === "GET" && path.length === 2) {
@@ -4174,10 +4210,22 @@ async function handleRequest(request, slug) {
       return jsonError("invalid poll payload", 400, errors);
     }
 
-    const poll = await createPoll(cleaned, user);
-    const options = await getPollOptions(poll.id);
-    const attachments = await getPollAttachments(poll.id);
-    return json({ poll, options, attachments }, 201);
+    const newPoll = await createPoll(cleaned, user);
+    sendPushNotification(
+      newPoll.scope === "building"
+        ? { type: "building", building: Number(newPoll.building_id || 0) }
+        : { type: "all" },
+      {
+        title: "🗳️ Sondaj nou",
+        body: String(newPoll.title || "").slice(0, 80),
+        url: "/?module=votingModule",
+        module: "votingModule",
+        tag: "poll-new",
+      }
+    ).catch(() => {});
+    const options = await getPollOptions(newPoll.id);
+    const attachments = await getPollAttachments(newPoll.id);
+    return json({ poll: newPoll, options, attachments }, 201);
   }
 
   if (path[0] === "polls" && method === "GET" && path.length === 2) {
