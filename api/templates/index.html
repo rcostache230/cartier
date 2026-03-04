@@ -1347,6 +1347,7 @@
         --module-marketplace: #f59e0b;
         --module-voting: #8b5cf6;
         --module-avizier: #14b8a6;
+        --module-messaging: #e8883c;
         --module-contacts: #0ea5e9;
         --module-recomandari: #f97316;
         --module-profile: #64748b;
@@ -1607,17 +1608,39 @@
         min-height: 46px;
         padding: 10px 12px;
         border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
         justify-content: flex-start;
         background: transparent;
         color: #dbeafe;
         border: 1px solid transparent;
         font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
       }
 
       .rail-link.active {
         background: rgba(255, 255, 255, 0.14);
         border-color: rgba(255, 255, 255, 0.2);
         color: #fff;
+      }
+
+      .nav-badge {
+        margin-left: auto;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: #ef4444;
+        color: #fff;
+        font-size: 10px;
+        line-height: 18px;
+        text-align: center;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .rail-foot {
@@ -1643,6 +1666,10 @@
       body.sidebar-collapsed #railUserText,
       body.sidebar-collapsed .rail-foot .nav-logout span {
         display: none;
+      }
+
+      body.sidebar-collapsed .rail-link .nav-badge {
+        display: none !important;
       }
 
       body.sidebar-collapsed .rail-link,
@@ -2109,6 +2136,17 @@
         color: #1d4ed8;
       }
 
+      .mobile-tab {
+        position: relative;
+      }
+
+      .mobile-tab .nav-badge {
+        position: absolute;
+        right: calc(50% - 20px);
+        top: 4px;
+        margin-left: 0;
+      }
+
       .more-drawer-item {
         display: flex;
         align-items: center;
@@ -2529,6 +2567,11 @@
         box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
       }
 
+      .activity-item[data-mod="messaging"] .activity-dot {
+        background: var(--module-messaging);
+        box-shadow: 0 0 0 4px rgba(232, 136, 60, 0.18);
+      }
+
       .activity-item.activity-empty-state {
         min-height: 160px;
         display: grid;
@@ -2594,6 +2637,11 @@
         grid-row: 4 / 5;
       }
 
+      .bento-messages {
+        grid-column: 1 / 5;
+        grid-row: 5 / 6;
+      }
+
       .bento-parking::before {
         background: var(--module-parking);
       }
@@ -2616,6 +2664,10 @@
 
       .bento-recomandari::before {
         background: var(--module-recomandari);
+      }
+
+      .bento-messages::before {
+        background: var(--module-messaging);
       }
 
       .bento-kpi-head {
@@ -2719,6 +2771,7 @@
         .bento-voting,
         .bento-market,
         .bento-avizier,
+        .bento-messages,
         .bento-contacts,
         .bento-recomandari {
           grid-column: span 1;
@@ -2741,6 +2794,7 @@
         .bento-voting,
         .bento-market,
         .bento-avizier,
+        .bento-messages,
         .bento-contacts,
         .bento-recomandari {
           grid-column: 1;
@@ -3582,6 +3636,10 @@
         <button type="button" class="rail-link" data-nav-module="avizierModule" data-module-target="avizierModule">
           <i data-lucide="newspaper" aria-hidden="true"></i><span>Avizier</span>
         </button>
+        <a href="/messaging" class="rail-link" data-nav-messaging>
+          <i data-lucide="messages-square" aria-hidden="true"></i><span>Mesaje</span>
+          <span id="msg-unread-badge" class="nav-badge" style="display:none">0</span>
+        </a>
         <button type="button" class="rail-link" data-nav-module="moduleContacts" onclick="showContacts()">
           <i data-lucide="clipboard-list" aria-hidden="true"></i><span>Contacte</span>
         </button>
@@ -3861,6 +3919,15 @@
               <button type="button" class="bento-open-link" data-module-target="avizierModule" data-icon-locked="1">Deschide →</button>
             </article>
 
+            <article class="card bento-card bento-kpi-card bento-messages">
+              <div class="bento-kpi-head">
+                <div class="bento-kpi-icon"><i data-lucide="messages-square" aria-hidden="true"></i></div>
+                <div class="bento-kpi-name">Mesaje</div>
+              </div>
+              <div id="quickStatMessages" class="bento-kpi-stat"><span class="stat-loading"></span></div>
+              <a class="bento-open-link" href="/messaging">Deschide →</a>
+            </article>
+
             <article class="card bento-card bento-kpi-card bento-contacts">
               <div class="bento-kpi-head">
                 <div class="bento-kpi-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></div>
@@ -4009,13 +4076,14 @@
           <i data-lucide="car-front" aria-hidden="true"></i>
           <span>Parking</span>
         </button>
+        <button type="button" class="mobile-tab" id="tabMessages" onclick="window.location.href='/messaging'">
+          <i data-lucide="messages-square" aria-hidden="true"></i>
+          <span>Mesaje</span>
+          <span id="msg-unread-badge-mobile" class="nav-badge" style="display:none">0</span>
+        </button>
         <button type="button" class="mobile-tab" id="tabMarket" data-nav-module="marketplaceModule" data-module-target="marketplaceModule">
           <i data-lucide="store" aria-hidden="true"></i>
           <span>Market</span>
-        </button>
-        <button type="button" class="mobile-tab" id="tabAvizier" data-nav-module="avizierModule" data-module-target="avizierModule">
-          <i data-lucide="newspaper" aria-hidden="true"></i>
-          <span>Avizier</span>
         </button>
         <button type="button" class="mobile-tab bottom-nav-item" id="tabMore" onclick="toggleMoreDrawer()">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -4041,6 +4109,9 @@
     <script defer src="marketplace.js"></script>
     <script defer src="voting.js"></script>
     <script defer src="avizier.js"></script>
+    <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+    <script>const PUSHER_KEY='{{PUSHER_KEY}}';const USERNAME='{{username}}';</script>
+    <script defer src="/js/messaging-badge.js"></script>
     <script>
       window.__marketplaceModuleReady = fetch("marketplace.html")
         .then((r) => r.text())
@@ -4261,6 +4332,7 @@
         quickStatListings: document.getElementById("quickStatListings"),
         quickStatPolls: document.getElementById("quickStatPolls"),
         quickStatAvizier: document.getElementById("quickStatAvizier"),
+        quickStatMessages: document.getElementById("quickStatMessages"),
         adminPanel: document.getElementById("adminPanel"),
         modulesCard: document.getElementById("modulesCard"),
         activePolls: document.getElementById("activePolls"),
@@ -4391,7 +4463,8 @@
       let homeActivityPage = 0;
       let homeActivityItemsCache = [];
       let recommendationsActivityEntries = [];
-      let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
+      let messagingRecentEntries = [];
+      let moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0, messagesUnread: 0 };
       let quickStatsLoading = true;
       let autoRefreshIntervalId = null;
       let refreshTickerIntervalId = null;
@@ -4504,6 +4577,7 @@
           els.quickStatListings.innerHTML = loadingHtml;
           els.quickStatPolls.innerHTML = loadingHtml;
           if (els.quickStatAvizier) els.quickStatAvizier.innerHTML = loadingHtml;
+          if (els.quickStatMessages) els.quickStatMessages.innerHTML = loadingHtml;
           return;
         }
         els.quickStatFree.textContent = `${moduleQuickStats.freeSpots} locuri libere`;
@@ -4511,6 +4585,9 @@
         els.quickStatPolls.textContent = `${moduleQuickStats.openPolls} sondaje active`;
         if (els.quickStatAvizier) {
           els.quickStatAvizier.textContent = `${moduleQuickStats.announcements} anunțuri`;
+        }
+        if (els.quickStatMessages) {
+          els.quickStatMessages.textContent = `${moduleQuickStats.messagesUnread} necitite`;
         }
       }
 
@@ -4610,7 +4687,13 @@
                        ${item.pollId ? `data-activity-poll-id="${item.pollId}"` : ""}
                        role="button"
                        tabindex="0"
-                       aria-label="Deschide ${item.moduleId === "parkingModule" ? "Parcare" : item.moduleId}">
+                       aria-label="Deschide ${
+                         item.moduleId === "parkingModule"
+                           ? "Parcare"
+                           : item.moduleId === "messagingPage"
+                             ? "Mesaje"
+                             : item.moduleId
+                       }">
                 <span class="activity-dot" aria-hidden="true"></span>
                 <div class="activity-text">${item.text}</div>
                 <div class="meta activity-time">${formatRelativeTime(item.createdAt)}</div>
@@ -4720,6 +4803,18 @@
               moduleId: "moduleRecomandari",
               createdAt: item.created_at || item.updated_at,
               text: `Recomandare nouă: ${item.name}${item.added_by ? ` (de ${item.added_by})` : ""}.`,
+            });
+          });
+
+        newestByDate(messagingRecentEntries, (item) => item.time || item.created_at)
+          .slice(0, 3)
+          .forEach((item) => {
+            const preview = String(item.preview || "").trim();
+            activity.push({
+              module: "messaging",
+              moduleId: "messagingPage",
+              createdAt: item.time || item.created_at,
+              text: `Mesaje · ${item.name || "Conversație"}${preview ? `: ${shortenText(preview, 72)}` : ""}`,
             });
           });
 
@@ -4895,7 +4990,7 @@
         if (!moduleId) mobileTabId = "tabHome";
         if (moduleId === "parkingModule") mobileTabId = "tabParking";
         if (moduleId === "marketplaceModule") mobileTabId = "tabMarket";
-        if (moduleId === "avizierModule") mobileTabId = "tabAvizier";
+        if (moduleId === "avizierModule") mobileTabId = "tabMore";
         if (moduleId === "votingModule" || moduleId === "moduleContacts" || moduleId === "moduleRecomandari") mobileTabId = "tabMore";
         if (mobileTabId) {
           setActiveBottomTab(mobileTabId);
@@ -5561,7 +5656,7 @@
 
       function showAvizier() {
         closeMoreDrawer();
-        setActiveBottomTab("tabAvizier");
+        setActiveBottomTab("tabMore");
         openModule("avizierModule");
       }
 
@@ -6101,9 +6196,10 @@
             AvizierModule.clearState();
           }
           recommendationsActivityEntries = [];
+          messagingRecentEntries = [];
           homeActivityPage = 0;
           homeActivityItemsCache = [];
-          moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
+          moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0, messagesUnread: 0 };
           setQuickStatsLoading(false);
           renderWelcomeBanner(null);
           updateRefreshMetaLabels();
@@ -6149,9 +6245,10 @@
           AvizierModule.clearState();
         }
         recommendationsActivityEntries = [];
+        messagingRecentEntries = [];
         homeActivityPage = 0;
         homeActivityItemsCache = [];
-        moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0 };
+        moduleQuickStats = { freeSpots: 0, activeListings: 0, openPolls: 0, announcements: 0, messagesUnread: 0 };
         setQuickStatsLoading(true);
         showModuleChooser();
         renderWelcomeBanner(user);
@@ -6551,6 +6648,10 @@
         const card = event.target.closest("[data-activity-module]");
         if (!card) return;
         const moduleId = card.dataset.activityModule;
+        if (moduleId === "messagingPage") {
+          window.location.href = "/messaging";
+          return;
+        }
         if (moduleId) openModule(moduleId);
         const pollId = String(card.dataset.activityPollId || "").trim();
         if (pollId && moduleId === "votingModule") {
@@ -6568,6 +6669,10 @@
         const card = event.target.closest("[data-activity-module]");
         if (!card) return;
         const moduleId = card.dataset.activityModule;
+        if (moduleId === "messagingPage") {
+          window.location.href = "/messaging";
+          return;
+        }
         if (moduleId) openModule(moduleId);
         const pollId = String(card.dataset.activityPollId || "").trim();
         if (pollId && moduleId === "votingModule") {

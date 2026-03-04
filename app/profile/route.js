@@ -968,6 +968,7 @@ function profileHtml() {
       };
 
       let currentUser = null;
+      let viewedProfileUsername = "";
       let overviewData = { marketplace_listings: [], shared_parking_spots: [], active_interest_polls: [] };
       let adminUsers = [];
       let adminSortKey = "username";
@@ -1237,6 +1238,18 @@ function profileHtml() {
         const listings = Array.isArray(overviewData.marketplace_listings) ? overviewData.marketplace_listings : [];
         const slots = Array.isArray(overviewData.shared_parking_spots) ? overviewData.shared_parking_spots : [];
         const rows = [];
+        try {
+          const ownUsername = normalizeUsername(currentUser && currentUser.username);
+          const targetUsername = normalizeUsername(viewedProfileUsername);
+          if (targetUsername && ownUsername && targetUsername !== ownUsername) {
+            rows.push(
+              '<div class="danger-item">' +
+                '<span>Mesagerie directă cu <b>' + targetUsername + "</b></span>" +
+                '<a class="back-link" href="/messaging?dm=' + encodeURIComponent(targetUsername) + '">💬 Trimite mesaj</a>' +
+              "</div>"
+            );
+          }
+        } catch {}
 
         listings.slice(0, 5).forEach(function (listing) {
           rows.push(
@@ -1407,6 +1420,12 @@ function profileHtml() {
         clearError();
         const data = await api("/api/profile/overview");
         currentUser = data.current_user;
+        try {
+          const requestedUsername = normalizeUsername(new URLSearchParams(window.location.search).get("username"));
+          viewedProfileUsername = requestedUsername || normalizeUsername(currentUser && currentUser.username);
+        } catch {
+          viewedProfileUsername = normalizeUsername(currentUser && currentUser.username);
+        }
         overviewData = {
           marketplace_listings: Array.isArray(data.marketplace_listings) ? data.marketplace_listings : [],
           shared_parking_spots: Array.isArray(data.shared_parking_spots) ? data.shared_parking_spots : [],

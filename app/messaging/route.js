@@ -20,19 +20,19 @@ function injectVercelAnalytics(html) {
 }
 
 export async function GET() {
-  const htmlPath = path.join(process.cwd(), "api", "templates", "index.html");
+  const htmlPath = path.join(process.cwd(), "api", "templates", "messaging.html");
   let html = await readFile(htmlPath, "utf8");
   const safePusherKey = String(process.env.PUSHER_KEY || "")
     .replace(/\\/g, "\\\\")
     .replace(/'/g, "\\'");
   html = html.replaceAll("{{PUSHER_KEY}}", safePusherKey);
   html = html.replaceAll("{{username}}", "");
+
   html = html.replace(
     "</head>",
-    `<script>window.__VAPID_PUBLIC_KEY__=${JSON.stringify(
-      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ""
-    )};</script>\n</head>`
+    `<script>window.__PUSHER_KEY__=${JSON.stringify(process.env.PUSHER_KEY || "")};window.__PUSHER_CLUSTER__=${JSON.stringify(process.env.PUSHER_CLUSTER || "eu")};</script>\n</head>`
   );
+
   return new Response(injectVercelAnalytics(html), {
     status: 200,
     headers: {

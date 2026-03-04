@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Messaging dashboard screenshot reference">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f4f1ec"/>
+      <stop offset="100%" stop-color="#f0ede7"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect x="0" y="0" width="236" height="900" fill="#ffffff" stroke="#e8e4dd"/>
+  <rect x="236" y="0" width="1364" height="64" fill="#ffffff" stroke="#e8e4dd"/>
+  <text x="28" y="38" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="800" fill="#1f1d19">10Blocuri</text>
+  <text x="274" y="39" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="800" fill="#1f1d19">Mesaje</text>
+
+  <g font-family="Inter,Arial,sans-serif" font-size="14" fill="#5f5a53" font-weight="600">
+    <text x="28" y="100">Acasă</text>
+    <text x="28" y="136">Parcare</text>
+    <text x="28" y="172">Marketplace</text>
+    <text x="28" y="208">Vot</text>
+    <text x="28" y="244">Avizier</text>
+    <rect x="16" y="262" width="204" height="34" rx="10" fill="#fff3e8" stroke="#f3d1b4"/>
+    <text x="28" y="284" fill="#e8883c">Mesaje</text>
+    <text x="28" y="320">Contacte</text>
+    <text x="28" y="356">Recomandări</text>
+  </g>
+
+  <rect x="256" y="82" width="1320" height="792" rx="14" fill="#ffffff" stroke="#e8e4dd"/>
+  <rect x="256" y="82" width="320" height="792" rx="14" fill="#ffffff" stroke="#e8e4dd"/>
+  <rect x="256" y="82" width="320" height="66" rx="14" fill="#ffffff"/>
+  <text x="278" y="122" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="800" fill="#1f1d19">Mesaje</text>
+  <circle cx="544" cy="114" r="18" fill="#e8883c"/>
+  <path d="M544 106v16M536 114h16" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+
+  <rect x="272" y="156" width="288" height="40" rx="10" fill="#f5f2ed" stroke="#e8e4dd"/>
+  <text x="286" y="181" font-family="Inter,Arial,sans-serif" font-size="13" fill="#7a7269">Caută conversații...</text>
+
+  <rect x="272" y="208" width="58" height="32" rx="16" fill="#fff3e8" stroke="#f3d1b4"/>
+  <rect x="338" y="208" width="48" height="32" rx="16" fill="#fff" stroke="#e8e4dd"/>
+  <rect x="394" y="208" width="64" height="32" rx="16" fill="#fff" stroke="#e8e4dd"/>
+  <rect x="466" y="208" width="92" height="32" rx="16" fill="#fff" stroke="#e8e4dd"/>
+  <g font-family="Inter,Arial,sans-serif" font-size="12" font-weight="700">
+    <text x="289" y="228" fill="#e8883c">Toate</text>
+    <text x="353" y="228" fill="#6e675f">DM</text>
+    <text x="413" y="228" fill="#6e675f">Board</text>
+    <text x="483" y="228" fill="#6e675f">Anunțuri</text>
+  </g>
+
+  <text x="276" y="268" font-family="Inter,Arial,sans-serif" font-size="11" letter-spacing="1.4" fill="#8c847a" font-weight="800">BLOCUL MEU</text>
+
+  <g>
+    <rect x="270" y="280" width="292" height="84" rx="12" fill="#fff3e8" stroke="#f3d1b4"/>
+    <rect x="282" y="292" width="40" height="40" rx="11" fill="url(#accent)"/>
+    <rect x="332" y="296" width="126" height="10" rx="5" fill="#b9aea1"/>
+    <rect x="332" y="312" width="170" height="8" rx="4" fill="#e8883c" opacity="0.85"/>
+    <rect x="332" y="326" width="188" height="8" rx="4" fill="#cec5ba"/>
+    <rect x="526" y="294" width="20" height="20" rx="10" fill="#e8883c"/>
+  </g>
+
+  <g>
+    <rect x="270" y="372" width="292" height="84" rx="12" fill="#fff" stroke="#e8e4dd"/>
+    <circle cx="302" cy="404" r="20" fill="url(#accent)"/>
+    <rect x="332" y="388" width="120" height="10" rx="5" fill="#b9aea1"/>
+    <rect x="332" y="404" width="178" height="8" rx="4" fill="#cec5ba"/>
+    <rect x="332" y="418" width="192" height="8" rx="4" fill="#d7cfc5"/>
+  </g>
+
+  <rect x="576" y="82" width="1000" height="792" rx="14" fill="#ffffff"/>
+  <rect x="576" y="82" width="1000" height="66" fill="#ffffff" stroke="#e8e4dd"/>
+  <rect x="594" y="95" width="38" height="38" rx="11" fill="url(#accent)"/>
+  <text x="646" y="114" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="800" fill="#1f1d19">Bloc 3 — General</text>
+  <text x="646" y="132" font-family="Inter,Arial,sans-serif" font-size="12" fill="#e8883c">Discuții despre citirea repartitoarelor</text>
+
+  <g fill="#fff" stroke="#e8e4dd">
+    <rect x="1438" y="95" width="34" height="34" rx="10"/>
+    <rect x="1478" y="95" width="34" height="34" rx="10"/>
+    <rect x="1518" y="95" width="34" height="34" rx="10"/>
+  </g>
+
+  <rect x="594" y="158" width="964" height="40" rx="10" fill="#fff7cc" stroke="#f9d94a"/>
+  <text x="608" y="183" font-family="Inter,Arial,sans-serif" font-size="13" fill="#8a5a00">📌 Ședința de bloc începe vineri la 18:30.</text>
+
+  <g>
+    <rect x="606" y="232" width="404" height="72" rx="12" fill="#ffffff" stroke="#e8e4dd"/>
+    <text x="620" y="254" font-family="Inter,Arial,sans-serif" font-size="11" fill="#7a7269" font-weight="700">bloc3_apt7</text>
+    <text x="620" y="276" font-family="Inter,Arial,sans-serif" font-size="14" fill="#1f1d19">A confirmat cine vine la întâlnire?</text>
+    <text x="620" y="294" font-family="Inter,Arial,sans-serif" font-size="10" fill="#8c847a">12:16</text>
+
+    <rect x="1176" y="318" width="350" height="62" rx="12" fill="#e8883c"/>
+    <text x="1192" y="344" font-family="Inter,Arial,sans-serif" font-size="14" fill="#ffffff">Da, majoritatea sunt confirmați.</text>
+    <text x="1490" y="366" font-family="Inter,Arial,sans-serif" font-size="10" fill="#fde8d7" text-anchor="end">12:18</text>
+
+    <rect x="606" y="396" width="360" height="58" rx="12" fill="#ffffff" stroke="#e8e4dd"/>
+    <text x="620" y="430" font-family="Inter,Arial,sans-serif" font-size="14" fill="#6e675f" font-style="italic">Mesaj șters</text>
+
+    <rect x="606" y="472" width="206" height="40" rx="12" fill="#fff" stroke="#e8e4dd"/>
+    <circle cx="622" cy="492" r="3" fill="#9e968d"/>
+    <circle cx="632" cy="492" r="3" fill="#9e968d"/>
+    <circle cx="642" cy="492" r="3" fill="#9e968d"/>
+    <text x="656" y="496" font-family="Inter,Arial,sans-serif" font-size="12" fill="#7a7269">bloc3_apt4 scrie...</text>
+  </g>
+
+  <rect x="592" y="802" width="968" height="58" rx="12" fill="#ffffff" stroke="#e8e4dd"/>
+  <rect x="606" y="814" width="36" height="36" rx="10" fill="#ffffff" stroke="#e8e4dd"/>
+  <rect x="654" y="814" width="840" height="36" rx="10" fill="#faf8f4" stroke="#e8e4dd"/>
+  <rect x="1504" y="814" width="36" height="36" rx="10" fill="#e8883c"/>
+
+  <text x="654" y="876" font-family="Inter,Arial,sans-serif" font-size="12" fill="#8c847a">Messaging dashboard reference screenshot (generated)</text>
+</svg>

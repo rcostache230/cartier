@@ -389,6 +389,11 @@ const ParkingModule = (() => {
     if (!els.stats || !els.sharedSpots) return;
     showCapacitySkeleton();
     const data = await api("/api/dashboard");
+    if (data && typeof data === "object") {
+      moduleQuickStats.messagesUnread = Math.max(0, Number(data.messaging?.total_unread || 0));
+      messagingRecentEntries = Array.isArray(data.messaging?.recent) ? data.messaging.recent : [];
+      renderQuickStats();
+    }
     refreshTables(data);
     refreshOpenSpotOptions();
     markModuleRefreshed("parking");

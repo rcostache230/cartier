@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Messaging Mobile Blueprint</title>
+    <style>
+      :root {
+        --bg: #f0ede7;
+        --card: #ffffff;
+        --line: #e8e4dd;
+        --ink: #1f1d19;
+        --muted: #6e675f;
+        --accent: #e8883c;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        padding: 24px;
+      }
+      h1 {
+        margin: 0 0 16px;
+        font-size: 22px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 18px;
+      }
+      .phone {
+        background: #141414;
+        border-radius: 30px;
+        padding: 10px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      }
+      .screen {
+        background: var(--bg);
+        border-radius: 22px;
+        min-height: 640px;
+        overflow: hidden;
+        border: 1px solid #0000001f;
+        display: flex;
+        flex-direction: column;
+      }
+      .topbar {
+        height: 58px;
+        border-bottom: 1px solid var(--line);
+        background: var(--card);
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        gap: 10px;
+        font-weight: 700;
+      }
+      .icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        font-size: 14px;
+        background: #fff;
+      }
+      .title {
+        margin-right: auto;
+      }
+      .list {
+        flex: 1;
+        padding: 10px;
+        overflow: hidden;
+      }
+      .group {
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        margin: 8px 4px;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+      .row {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: 38px 1fr auto;
+        gap: 10px;
+        align-items: start;
+        margin-bottom: 8px;
+      }
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: linear-gradient(135deg, #f59e0b, #ea580c);
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .line {
+        height: 9px;
+        border-radius: 999px;
+        background: #d8d2c9;
+        margin: 4px 0;
+      }
+      .line.short { width: 58%; }
+      .line.mid { width: 72%; }
+      .line.tiny { width: 34%; }
+      .tabbar {
+        height: 70px;
+        border-top: 1px solid var(--line);
+        background: #fff;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+        padding: 8px;
+      }
+      .tab {
+        border-radius: 10px;
+        border: 1px solid transparent;
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .tab.active {
+        background: #fff3e8;
+        color: var(--accent);
+        border-color: #f3d1b4;
+      }
+      .bubble {
+        max-width: 78%;
+        border-radius: 12px;
+        padding: 10px;
+        font-size: 13px;
+        margin: 6px 0;
+      }
+      .bubble.in {
+        background: #fff;
+        border: 1px solid var(--line);
+      }
+      .bubble.out {
+        background: var(--accent);
+        color: #fff;
+        margin-left: auto;
+      }
+      .composer {
+        border-top: 1px solid var(--line);
+        background: #fff;
+        padding: 8px;
+        display: grid;
+        grid-template-columns: 40px 1fr 40px;
+        gap: 8px;
+      }
+      .composer .field {
+        height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #faf8f4;
+      }
+      .note {
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mesaje · Blueprint Mobile</h1>
+    <div class="grid">
+      <section>
+        <div class="phone">
+          <div class="screen">
+            <div class="topbar">
+              <div class="icon">☰</div>
+              <div class="title">Mesaje</div>
+              <div class="icon">⌕</div>
+              <div class="icon" style="background:#e8883c;color:#fff;border-color:#e8883c;">＋</div>
+            </div>
+            <div class="list">
+              <div class="group">Blocul meu</div>
+              <div class="row">
+                <div class="avatar"></div>
+                <div>
+                  <div class="line mid"></div>
+                  <div class="line short"></div>
+                  <div class="line tiny"></div>
+                </div>
+                <div class="dot"></div>
+              </div>
+              <div class="row">
+                <div class="avatar" style="border-radius:50%;"></div>
+                <div>
+                  <div class="line mid"></div>
+                  <div class="line short"></div>
+                  <div class="line tiny"></div>
+                </div>
+                <div class="dot"></div>
+              </div>
+              <div class="group">Cartier</div>
+              <div class="row">
+                <div class="avatar"></div>
+                <div>
+                  <div class="line mid"></div>
+                  <div class="line short"></div>
+                  <div class="line tiny"></div>
+                </div>
+                <div class="dot"></div>
+              </div>
+            </div>
+            <div class="tabbar">
+              <div class="tab">Acasă</div>
+              <div class="tab">Parcare</div>
+              <div class="tab active">Mesaje</div>
+              <div class="tab">Market</div>
+              <div class="tab">Mai mult</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="phone">
+          <div class="screen">
+            <div class="topbar">
+              <div class="icon">←</div>
+              <div class="avatar" style="width:30px;height:30px;border-radius:10px;"></div>
+              <div class="title">Bloc 3 — General</div>
+              <div class="icon">⋮</div>
+            </div>
+            <div class="list" style="padding-bottom:0;">
+              <div class="line tiny" style="margin:0 auto 10px;"></div>
+              <div class="bubble in">Salut! Confirmăm întâlnirea de vineri.</div>
+              <div class="bubble out">Da, la 18:30 în fața scării.</div>
+              <div class="bubble in">Perfect, mulțumesc.</div>
+            </div>
+            <div class="composer">
+              <div class="icon">📎</div>
+              <div class="field"></div>
+              <div class="icon" style="background:#e8883c;color:#fff;border-color:#e8883c;">➤</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <p class="note">Blueprint-only reference for mobile layout behavior (list view + chat view).</p>
+  </body>
+</html>

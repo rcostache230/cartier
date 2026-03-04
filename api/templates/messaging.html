@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mesaje · 10Blocuri</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/messaging.css" />
+    <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+    <script>
+      const PUSHER_KEY='{{PUSHER_KEY}}';const USERNAME='{{username}}';
+      window.__PUSHER_KEY__ = PUSHER_KEY || "";
+      window.__PUSHER_CLUSTER__ = "eu";
+    </script>
+    <script defer src="/js/messaging-badge.js"></script>
+    <script>
+      (function loadLucide() {
+        var s = document.createElement("script");
+        s.src = "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js";
+        s.defer = true;
+        s.onerror = function () {
+          var s2 = document.createElement("script");
+          s2.src = "https://cdnjs.cloudflare.com/ajax/libs/lucide/0.468.0/umd/lucide.min.js";
+          s2.defer = true;
+          s2.onerror = function () {
+            window.lucide = { createIcons: function () {} };
+            console.warn("10Blocuri: Lucide unavailable for messaging.");
+          };
+          document.head.appendChild(s2);
+        };
+        document.head.appendChild(s);
+      })();
+    </script>
+    <script defer src="/js/messaging.js"></script>
+  </head>
+  <body>
+    <aside id="sideRail" class="side-rail" aria-label="Primary navigation">
+      <div class="rail-head">
+        <button id="sidebarToggleBtn" class="rail-toggle" type="button" aria-label="Restrânge meniul" title="Restrânge meniul">
+          <svg class="rail-toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div class="brand brand-rail">
+          <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+            <defs>
+              <linearGradient id="markGradientMessaging" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3B82F6" />
+                <stop offset="100%" stop-color="#14B8A6" />
+              </linearGradient>
+            </defs>
+            <rect x="6" y="6" width="36" height="36" rx="12" fill="url(#markGradientMessaging)" />
+            <path d="M14 29V20L24 14L34 20V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <path d="M20 29V24H28V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+          <div class="brand-copy">
+            <div class="brand-title">10Blocuri</div>
+            <div class="brand-subtitle">Resident Portal</div>
+          </div>
+        </div>
+      </div>
+      <nav class="rail-nav">
+        <button type="button" class="rail-link" data-nav-home>
+          <i data-lucide="house" aria-hidden="true"></i><span>Acasă</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="parkingModule" data-module-target="parkingModule">
+          <i data-lucide="car-front" aria-hidden="true"></i><span>Parcare</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="marketplaceModule" data-module-target="marketplaceModule">
+          <i data-lucide="store" aria-hidden="true"></i><span>Marketplace</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="votingModule" data-module-target="votingModule">
+          <i data-lucide="vote" aria-hidden="true"></i><span>Vot</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="avizierModule" data-module-target="avizierModule">
+          <i data-lucide="newspaper" aria-hidden="true"></i><span>Avizier</span>
+        </button>
+        <a href="/messaging" class="rail-link active" data-nav-messaging>
+          <i data-lucide="messages-square" aria-hidden="true"></i><span>Mesaje</span>
+          <span id="msg-unread-badge" class="nav-badge" style="display:none">0</span>
+        </a>
+        <button type="button" class="rail-link" data-nav-module="moduleContacts" onclick="showContacts()">
+          <i data-lucide="clipboard-list" aria-hidden="true"></i><span>Contacte</span>
+        </button>
+        <button type="button" class="rail-link" data-nav-module="moduleRecomandari" onclick="showRecomandari()">
+          <i data-lucide="lightbulb" aria-hidden="true"></i><span>Recomandări</span>
+        </button>
+      </nav>
+      <div class="rail-foot">
+        <button id="themeToggleBtn" class="rail-link" type="button">
+          <i data-lucide="moon-star" aria-hidden="true"></i><span>Temă</span>
+        </button>
+        <button
+          type="button"
+          class="rail-link"
+          data-go-profile
+          title="Deschide profilul (pagină nouă)"
+          aria-label="Profil - se deschide într-o pagină nouă"
+        >
+          <i data-lucide="user-cog" aria-hidden="true"></i><span>Profil</span>
+        </button>
+        <div id="railUserBadge" class="nav-user-badge hidden">
+          <span id="railUserInitials" class="nav-user-initials">--</span>
+          <span id="railUserText" class="nav-user-text"></span>
+        </div>
+        <button id="railLogoutBtn" class="nav-logout hidden" type="button">Deconectare</button>
+      </div>
+    </aside>
+
+    <header class="global-nav">
+      <div class="global-nav-inner">
+        <div class="brand">
+          <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+            <defs>
+              <linearGradient id="topMarkGradientMessaging" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3B82F6" />
+                <stop offset="100%" stop-color="#14B8A6" />
+              </linearGradient>
+            </defs>
+            <rect x="6" y="6" width="36" height="36" rx="12" fill="url(#topMarkGradientMessaging)" />
+            <path d="M14 29V20L24 14L34 20V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <path d="M20 29V24H28V29" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+          <div class="brand-copy">
+            <div class="brand-title">10Blocuri</div>
+            <div class="brand-subtitle">Resident Dashboard</div>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <button id="topThemeToggleBtn" class="help-btn" type="button" aria-label="Toggle theme">Temă</button>
+          <button id="helpBtn" class="help-btn" type="button" aria-label="Open help">Ajutor</button>
+          <div id="navUserBadge" class="nav-user-badge hidden">
+            <span id="navUserInitials" class="nav-user-initials">--</span>
+            <span id="navUserText" class="nav-user-text"></span>
+          </div>
+          <button id="logoutBtn" class="nav-logout hidden" type="button">Deconectare</button>
+        </div>
+      </div>
+    </header>
+
+    <header class="mobile-topbar">
+      <button type="button" class="topbar-menu" data-nav-home aria-label="Meniu">
+        <i data-lucide="menu" aria-hidden="true"></i>
+      </button>
+      <div class="mobile-topbar-title">Mesaje</div>
+      <button id="mobileSearchBtn" type="button" class="topbar-menu" aria-label="Caută conversații">
+        <i data-lucide="search" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <main class="page-wrap" id="app">
+      <section class="messaging-shell" aria-label="Mesaje">
+        <aside class="conversation-pane" aria-label="Conversații">
+          <div class="pane-head">
+            <div class="pane-head-title">Mesaje</div>
+            <div class="pane-head-actions">
+              <button id="createConversationBtn" class="plus-btn" type="button" aria-label="Conversație nouă">
+                <i data-lucide="plus" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="search-wrap">
+            <label class="hidden" for="conversationSearch">Caută conversații</label>
+            <input id="conversationSearch" class="search-input" type="search" placeholder="Caută conversații..." autocomplete="off" />
+          </div>
+
+          <div id="conversationFilterRow" class="filter-row" role="tablist" aria-label="Filtre conversații">
+            <button type="button" class="filter-chip active" data-filter="all">Toate</button>
+            <button type="button" class="filter-chip" data-filter="dm">DM</button>
+            <button type="button" class="filter-chip" data-filter="board">Board</button>
+            <button type="button" class="filter-chip" data-filter="announcement">Anunțuri</button>
+          </div>
+
+          <div id="pullRefreshIndicator" class="pull-refresh-indicator">
+            <i data-lucide="refresh-cw" aria-hidden="true"></i>
+            <span>Trage pentru actualizare</span>
+          </div>
+
+          <div id="conversationList" class="conversation-list" aria-live="polite"></div>
+        </aside>
+
+        <section class="chat-pane" aria-label="Conversație activă">
+          <div class="chat-topbar">
+            <button id="chatBackBtn" type="button" class="topbar-back" aria-label="Înapoi">
+              <i data-lucide="arrow-left" aria-hidden="true"></i>
+            </button>
+            <span id="chatAvatar" class="conv-avatar square">#</span>
+            <div class="chat-topbar-main">
+              <div id="chatTitle" class="chat-title">Selectează o conversație</div>
+              <div id="chatTopic" class="chat-topic"></div>
+            </div>
+            <div class="chat-actions">
+              <button id="btnEditTopic" type="button" class="icon-btn desktop-admin-only" aria-label="Editează topic" title="Editează topic">
+                <i data-lucide="pencil" aria-hidden="true"></i>
+              </button>
+              <button id="btnToggleLock" type="button" class="icon-btn desktop-admin-only" aria-label="Blochează conversația" title="Blochează conversația">
+                <i data-lucide="lock" aria-hidden="true"></i>
+              </button>
+              <button id="btnDeleteConversation" type="button" class="icon-btn desktop-admin-only" aria-label="Șterge conversația" title="Șterge conversația">
+                <i data-lucide="trash-2" aria-hidden="true"></i>
+              </button>
+              <button id="btnSearchMessages" type="button" class="icon-btn" aria-label="Caută în mesaje" title="Caută">
+                <i data-lucide="search" aria-hidden="true"></i>
+              </button>
+              <button id="btnInfoConversation" type="button" class="icon-btn" aria-label="Detalii conversație" title="Detalii">
+                <i data-lucide="info" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="pinnedBar" class="chat-banner hidden" role="status" aria-live="polite">
+            <i data-lucide="pin" aria-hidden="true"></i>
+            <span id="pinnedText"></span>
+          </div>
+
+          <div id="lockedBar" class="locked-banner hidden" role="alert">
+            <i data-lucide="lock" aria-hidden="true"></i>
+            <span>Board blocat de admin — doar vizualizare</span>
+          </div>
+
+          <div id="messagesScroll" class="messages-scroll" aria-live="polite"></div>
+
+          <div id="emptyChat" class="empty-chat">
+            <div class="empty-chat-icon"><i data-lucide="message-square" aria-hidden="true"></i></div>
+            <div>Selectează o conversație</div>
+          </div>
+
+          <div id="chatComposerDock" class="chat-composer-dock">
+            <div id="replyChip" class="reply-chip">
+              <span id="replyLabel"></span>
+              <button id="cancelReplyBtn" type="button" class="icon-btn" aria-label="Anulează răspuns">
+                <i data-lucide="x" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div id="attachmentChip" class="attachment-chip">
+              <span id="attachmentLabel"></span>
+              <button id="removeAttachmentBtn" type="button" class="icon-btn" aria-label="Elimină atașamentul">
+                <i data-lucide="x" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div id="composerRow" class="composer-row">
+              <button id="attachBtn" type="button" class="attach-btn" aria-label="Atașează fișier">
+                <i data-lucide="paperclip" aria-hidden="true"></i>
+              </button>
+              <label class="hidden" for="composerInput">Mesaj</label>
+              <textarea id="composerInput" class="composer-input" placeholder="Scrie un mesaj..." rows="1"></textarea>
+              <button id="sendBtn" type="button" class="send-btn" aria-label="Trimite mesajul">
+                <i data-lucide="send" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <input
+              id="attachmentInput"
+              type="file"
+              class="hidden"
+              accept="image/jpeg,image/png,image/webp,application/pdf"
+            />
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <button id="mobileCreateBtn" class="fab" type="button" aria-label="Conversație nouă">
+      <i data-lucide="plus" aria-hidden="true"></i>
+    </button>
+
+    <nav id="mobileTabBar" class="mobile-tabbar" aria-label="Mobile navigation">
+      <button type="button" class="mobile-tab" id="tabHome" data-mobile-home>
+        <i data-lucide="house" aria-hidden="true"></i>
+        <span>Acasă</span>
+      </button>
+      <button type="button" class="mobile-tab" id="tabParking" data-nav-module="parkingModule" data-module-target="parkingModule">
+        <i data-lucide="car-front" aria-hidden="true"></i>
+        <span>Parcare</span>
+      </button>
+      <button type="button" class="mobile-tab active" id="tabMessages" aria-current="page">
+        <i data-lucide="messages-square" aria-hidden="true"></i>
+        <span>Mesaje</span>
+        <span id="mobileMessagesBadge" class="mobile-tab-badge">0</span>
+      </button>
+      <button type="button" class="mobile-tab" id="tabMarket" data-nav-module="marketplaceModule" data-module-target="marketplaceModule">
+        <i data-lucide="store" aria-hidden="true"></i>
+        <span>Market</span>
+      </button>
+      <button type="button" class="mobile-tab" id="tabMore" onclick="toggleMoreDrawer()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="5" cy="12" r="1.5"></circle>
+          <circle cx="12" cy="12" r="1.5"></circle>
+          <circle cx="19" cy="12" r="1.5"></circle>
+        </svg>
+        <span>Mai mult</span>
+      </button>
+    </nav>
+
+    <div id="newConversationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="newConversationModalTitle">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h2 id="newConversationModalTitle">Conversație nouă</h2>
+          <button id="newConversationClose" type="button" class="icon-btn" aria-label="Închide">
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <form id="newConversationForm" class="form-grid">
+          <div>
+            <label for="convTypeSelect">Tip conversație</label>
+            <select id="convTypeSelect" required>
+              <option value="dm">DM</option>
+              <option value="board">Board</option>
+              <option value="announcement">Announcement</option>
+            </select>
+          </div>
+
+          <section id="formDmFields" class="form-grid">
+            <div>
+              <label for="dmRecipient">Destinatar</label>
+              <input id="dmRecipient" type="text" list="dmRecipientList" placeholder="bloc3_apt7" autocomplete="off" />
+              <datalist id="dmRecipientList"></datalist>
+            </div>
+          </section>
+
+          <section id="formBoardFields" class="form-grid hidden">
+            <div>
+              <label for="boardTitle">Titlu board</label>
+              <input id="boardTitle" type="text" maxlength="120" placeholder="Bloc 3 — Repartitoare" />
+            </div>
+            <div>
+              <label for="boardTopic">Topic</label>
+              <textarea id="boardTopic" maxlength="500" placeholder="Discuții despre citirea repartitoarelor"></textarea>
+            </div>
+            <div>
+              <label for="boardScope">Scop</label>
+              <select id="boardScope">
+                <option value="building">Blocul meu</option>
+                <option value="neighborhood">Tot cartierul</option>
+              </select>
+            </div>
+            <div>
+              <label for="boardBuilding">Bloc</label>
+              <select id="boardBuilding">
+                <option value="bloc1">Bloc 1</option>
+                <option value="bloc2">Bloc 2</option>
+                <option value="bloc3">Bloc 3</option>
+                <option value="bloc4">Bloc 4</option>
+                <option value="bloc5">Bloc 5</option>
+                <option value="bloc6">Bloc 6</option>
+                <option value="bloc7">Bloc 7</option>
+                <option value="bloc8">Bloc 8</option>
+                <option value="bloc9">Bloc 9</option>
+                <option value="bloc10">Bloc 10</option>
+              </select>
+            </div>
+            <div>
+              <label for="boardInitialMessage">Primul mesaj (opțional)</label>
+              <textarea id="boardInitialMessage" maxlength="1000" placeholder="Salut! Deschid acest board pentru..."></textarea>
+            </div>
+          </section>
+
+          <section id="formAnnouncementFields" class="form-grid hidden">
+            <div>
+              <label for="announcementTitle">Titlu canal anunțuri</label>
+              <input id="announcementTitle" type="text" maxlength="120" placeholder="Anunțuri Bloc 3" />
+            </div>
+            <div>
+              <label for="announcementBuilding">Bloc</label>
+              <select id="announcementBuilding">
+                <option value="bloc1">Bloc 1</option>
+                <option value="bloc2">Bloc 2</option>
+                <option value="bloc3">Bloc 3</option>
+                <option value="bloc4">Bloc 4</option>
+                <option value="bloc5">Bloc 5</option>
+                <option value="bloc6">Bloc 6</option>
+                <option value="bloc7">Bloc 7</option>
+                <option value="bloc8">Bloc 8</option>
+                <option value="bloc9">Bloc 9</option>
+                <option value="bloc10">Bloc 10</option>
+              </select>
+            </div>
+            <div>
+              <label for="announcementMessage">Mesaj inițial</label>
+              <textarea id="announcementMessage" maxlength="2000" placeholder="Textul anunțului..."></textarea>
+            </div>
+          </section>
+
+          <div class="modal-actions">
+            <button id="conversationCreateSubmit" class="action-btn primary" type="submit">Creează conversația</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="messageActionSheet" class="message-sheet" role="dialog" aria-modal="true" aria-label="Acțiuni mesaj">
+      <button id="actionReply" type="button">Răspunde</button>
+      <button id="actionCopy" type="button">Copiază</button>
+      <button id="actionPin" type="button">Fixează mesajul</button>
+      <button id="actionDelete" class="danger" type="button">Șterge mesajul</button>
+      <button id="actionCancel" type="button">Anulează</button>
+    </div>
+
+    <div id="status" aria-live="polite"></div>
+    <div id="toastContainer" class="toast-wrap" aria-live="polite"></div>
+  </body>
+</html>

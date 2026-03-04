@@ -3,6 +3,7 @@ import { DateTime } from "luxon";
 import { NextResponse } from "next/server";
 import { ensureInitialized, query, withTransaction } from "../../../lib/db.js";
 import { sendPushNotification } from "../../../lib/sendPushNotification.js";
+import { getConversationsForUser, getUnreadCounts } from "../../../messaging_module/lib/messaging-queries.js";
 import {
   createUploadTarget,
   createViewUrl,
@@ -4001,6 +4002,33 @@ async function handleRequest(request, slug) {
     const myClaimed = await listSlots("ps.reserved_by_user_id = $1 AND ps.status = 'RESERVED'", [user.id]);
     const claimedOnMy = await listSlots("ps.owner_user_id = $1 AND ps.status = 'RESERVED'", [user.id]);
 
+    let messaging = { total_unread: 0, recent: [] };
+    try {
+      const unread = await getUnreadCounts(user.username);
+      const conversations = await getConversationsForUser(
+        user.username,
+        `bloc${Number(user.building_number || 0)}`,
+        null,
+        null,
+        24
+      );
+      const recent = (Array.isArray(conversations) ? conversations : [])
+        .filter((conversation) => conversation?.last_message?.created_at)
+        .slice(0, 8)
+        .map((conversation) => ({
+          name: String(conversation.title || "Conversație"),
+          preview: String(conversation.last_message?.content || "").slice(0, 180),
+          time: conversation.last_message?.created_at || conversation.updated_at,
+          conv_id: Number(conversation.id),
+        }));
+      messaging = {
+        total_unread: Number(unread?.total || 0),
+        recent,
+      };
+    } catch {
+      messaging = { total_unread: 0, recent: [] };
+    }
+
     return json(
       {
         current_user: user,
@@ -4009,6 +4037,7 @@ async function handleRequest(request, slug) {
         my_shared_parking_spots: myShared,
         my_shared_claimed_by_neighbours: claimedOnMy,
         my_claimed_parking_spots: myClaimed,
+        messaging,
       },
       200
     );
@@ -4140,6 +4169,49 @@ async function handleRequest(request, slug) {
         tag: "avizier-new",
       }
     ).catch(() => {});
+    try {
+      const buildingNumber = Number(newPost.building_id || 0);
+      if (Number.isInteger(buildingNumber) && buildingNumber >= 1 && buildingNumber <= TOTAL_BUILDINGS) {
+        const announcementChannel = await query(
+          `
+            SELECT id
+            FROM msg_conversations
+            WHERE type = 'announcement'
+              AND building_id = $1
+            LIMIT 1
+          `,
+          [`bloc${buildingNumber}`]
+        );
+        if (announcementChannel.rowCount > 0) {
+          const conversationId = Number(announcementChannel.rows[0].id);
+          const rawMessage = String(newPost.message || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+          const preview = rawMessage.slice(0, 200);
+          const summary = `📋 Anunț nou: ${String(newPost.title || "Fără titlu").trim()}\n\n${preview}${rawMessage.length > 200 ? "..." : ""}`;
+          const insertedMessage = await query(
+            `
+              INSERT INTO msg_messages (conversation_id, sender, content)
+              VALUES ($1, $2, $3)
+              RETURNING id, sender, content, created_at, reply_to_id, attachment_key, attachment_name
+            `,
+            [conversationId, String(user.username || "admin"), summary]
+          );
+          await query("UPDATE msg_conversations SET updated_at = NOW() WHERE id = $1", [conversationId]);
+          try {
+            const { triggerConversation } = await import("../../../messaging_module/lib/pusher-server.js");
+            const messageRow = insertedMessage.rows[0] || {};
+            void triggerConversation(conversationId, "message:new", {
+              id: messageRow.id,
+              sender: messageRow.sender,
+              content: messageRow.content,
+              created_at: messageRow.created_at,
+              reply_to_id: messageRow.reply_to_id || null,
+              attachment_key: messageRow.attachment_key || null,
+              attachment_name: messageRow.attachment_name || null,
+            });
+          } catch {}
+        }
+      }
+    } catch {}
     return json(newPost, 201);
   }
 

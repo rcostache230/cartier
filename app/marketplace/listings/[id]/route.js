@@ -670,6 +670,7 @@ function buildListingHtml(listingId, meta = {}) {
           <div class="actions">
             <button id="contactBtn" class="action-contact" type="button">Contact owner</button>
             <button id="claimBtn" class="action-claim" type="button">Claim donation</button>
+            <button id="messageSellerBtn" class="action-contact hidden" type="button">💬 Contactează vânzătorul</button>
           </div>
 
           <div id="editToolbar" class="edit-toolbar hidden">
@@ -804,6 +805,7 @@ function buildListingHtml(listingId, meta = {}) {
         priceCurrency: document.getElementById("priceCurrency"),
         contactBtn: document.getElementById("contactBtn"),
         claimBtn: document.getElementById("claimBtn"),
+        messageSellerBtn: document.getElementById("messageSellerBtn"),
         openMainPhotoLink: document.getElementById("openMainPhotoLink"),
         soldNote: document.getElementById("soldNote"),
         metaSku: document.getElementById("metaSku"),
@@ -1133,6 +1135,19 @@ function buildListingHtml(listingId, meta = {}) {
           if (!contactPhone) return;
           window.location.href = "tel:" + contactPhone.replace(/\\s+/g, "");
         };
+        try {
+          const sellerUsername = String(post.owner_username || "").trim();
+          const isOwner = !!currentUser && String(currentUser.username || "").trim().toLowerCase() === sellerUsername.toLowerCase();
+          const canMessageSeller = !!sellerUsername && !isOwner;
+          els.messageSellerBtn.classList.toggle("hidden", !canMessageSeller);
+          if (canMessageSeller) {
+            els.messageSellerBtn.onclick = () => {
+              window.location.href = "/messaging?dm=" + encodeURIComponent(sellerUsername);
+            };
+          } else {
+            els.messageSellerBtn.onclick = null;
+          }
+        } catch {}
 
         setClaimButton(post);
         els.claimBtn.onclick = async () => {
