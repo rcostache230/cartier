@@ -22,6 +22,7 @@ import {
 import {
   ApiError,
   handleRouteError,
+  isMessagingSchemaMissingError,
   json,
   parseBuildingId,
   parseConversationType,
@@ -77,6 +78,9 @@ export async function GET(request) {
 
     return json({ ok: true, conversations: visibleConversations, next_cursor: nextCursor });
   } catch (error) {
+    if (isMessagingSchemaMissingError(error)) {
+      return json({ ok: true, conversations: [], next_cursor: null, unavailable: true });
+    }
     return handleRouteError(error);
   }
 }

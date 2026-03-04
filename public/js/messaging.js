@@ -35,6 +35,7 @@
     pullStartY: 0,
     pullDeltaY: 0,
     pullActive: false,
+    messagingUnavailable: false,
   };
 
   const els = {
@@ -706,6 +707,7 @@
     if (state.filter !== "all") params.set("type", state.filter);
 
     const data = await api(`/api/messaging/conversations?${params.toString()}`);
+    state.messagingUnavailable = Boolean(data?.unavailable);
     state.conversations = Array.isArray(data.conversations) ? data.conversations : [];
 
     if (state.activeConversationId) {
@@ -1894,6 +1896,9 @@
       updateConversationTypeFields();
 
       await refreshConversations();
+      if (state.messagingUnavailable) {
+        showStatus("Mesageria nu este inițializată încă. Rulează migrarea pentru tabelul msg_*.", true);
+      }
       await handleDeepLinks();
       await initRealtime();
 
@@ -1907,7 +1912,9 @@
 
       renderUnreadBadge();
       hydrateIcons();
-      showStatus("");
+      if (!state.messagingUnavailable) {
+        showStatus("");
+      }
     } catch (error) {
       const message = error?.status === 401
         ? "Sesiunea a expirat. Te redirecționăm spre autentificare..."

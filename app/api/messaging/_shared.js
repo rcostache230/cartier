@@ -12,6 +12,18 @@ export class ApiError extends Error {
   }
 }
 
+export function isMessagingSchemaMissingError(error) {
+  const code = String(error?.code || "").trim();
+  if (code === "42P01" || code === "42703") return true;
+  const message = String(error?.message || "").toLowerCase();
+  return (
+    message.includes('relation "msg_') ||
+    message.includes("msg_conversations") ||
+    message.includes("msg_messages") ||
+    message.includes("msg_participants")
+  );
+}
+
 export function json(data, status = 200) {
   return NextResponse.json(data, {
     status,
@@ -20,6 +32,9 @@ export function json(data, status = 200) {
 }
 
 export function handleRouteError(error) {
+  if (isMessagingSchemaMissingError(error)) {
+    return json({ ok: false, error: "Modulul Mesaje nu este inițializat încă." }, 503);
+  }
   if (error instanceof ApiError) {
     const payload = { ok: false, error: error.message };
     if (error.details) payload.details = error.details;

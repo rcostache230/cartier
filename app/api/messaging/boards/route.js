@@ -3,6 +3,7 @@ import { canViewConversation } from "../../../../messaging_module/lib/messaging-
 import {
   ApiError,
   handleRouteError,
+  isMessagingSchemaMissingError,
   json,
   requireSessionUser,
 } from "../_shared.js";
@@ -37,6 +38,9 @@ export async function GET(request) {
 
     return json({ ok: true, ...grouped });
   } catch (error) {
+    if (isMessagingSchemaMissingError(error)) {
+      return json({ ok: true, building: [], neighborhood: [], unavailable: true });
+    }
     return handleRouteError(error);
   }
 }
