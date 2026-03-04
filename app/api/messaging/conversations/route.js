@@ -56,13 +56,16 @@ export async function GET(request) {
     const user = await requireSessionUser(request);
 
     const searchParams = request.nextUrl.searchParams;
-    const type = searchParams.get("type") ? parseConversationType(searchParams.get("type")) : null;
-    const cursor = parseCursor(searchParams.get("cursor"));
+    const rawType = searchParams.get("type");
+    const type = rawType ? parseConversationType(rawType) : null;
+    const rawCursor = searchParams.get("cursor");
+    const cursor = rawCursor ? parseCursor(rawCursor) : null;
     const limit = parseLimit(searchParams.get("limit"), 20, 50);
+    const buildingId = user?.building_id ?? null;
 
     const conversations = await getConversationsForUser(
       user.username,
-      user.building_id,
+      buildingId,
       type,
       cursor,
       limit

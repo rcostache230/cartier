@@ -144,15 +144,15 @@ export async function getConversationsForUser(username, building_id, type_filter
         SELECT c.*
         FROM msg_conversations c
         WHERE
-          ($1 = 'admin')
+          ($1::text = 'admin')
           OR EXISTS (
             SELECT 1
             FROM msg_participants p
             WHERE p.conversation_id = c.id
-              AND p.username = $1
+              AND p.username = $1::text
           )
           OR c.scope = 'neighborhood'
-          OR ($2 IS NOT NULL AND c.scope = 'building' AND c.building_id = $2)
+          OR ($2::text IS NOT NULL AND c.scope = 'building' AND c.building_id = $2::text)
       )
       SELECT
         c.*,
@@ -187,16 +187,16 @@ export async function getConversationsForUser(username, building_id, type_filter
         FROM msg_messages m
         LEFT JOIN msg_participants p
           ON p.conversation_id = c.id
-         AND p.username = $1
+         AND p.username = $1::text
         WHERE m.conversation_id = c.id
           AND m.deleted_at IS NULL
-          AND m.sender <> $1
+          AND m.sender <> $1::text
           AND m.created_at::timestamptz > COALESCE(p.last_read_at, to_timestamp(0))
       ) uc ON TRUE
-      WHERE ($3::text IS NULL OR c.type = $3)
+      WHERE ($3::text IS NULL OR c.type = $3::text)
         AND ($4::timestamptz IS NULL OR c.updated_at::timestamptz < $4::timestamptz)
       ORDER BY c.updated_at::timestamptz DESC, c.id DESC
-      LIMIT $5
+      LIMIT $5::int
     `,
     [safeUsername, safeBuildingId, safeType, safeCursor, safeLimit]
   );
@@ -222,7 +222,7 @@ export async function getConversationById(id) {
       FROM msg_conversations c
       LEFT JOIN msg_messages pm
         ON pm.id = c.pinned_msg_id
-      WHERE c.id = $1
+      WHERE c.id = $1::bigint
       LIMIT 1
     `,
     [conversationId]
@@ -234,7 +234,7 @@ export async function getConversationById(id) {
     `
       SELECT conversation_id, username, role, last_read_at, muted_until, joined_at
       FROM msg_participants
-      WHERE conversation_id = $1
+      WHERE conversation_id = $1::bigint
       ORDER BY
         CASE role
           WHEN 'admin' THEN 0
@@ -280,7 +280,7 @@ export async function createConversation(type, title, topic, scope, building_id,
         created_at,
         updated_at
       )
-      VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+      VALUES ($1::text, $2::text, $3::text, $4::text, $5::text, $6::text, NOW(), NOW())
       RETURNING *
     `,
     [safeType, title == null ? null : String(title), topic == null ? null : String(topic), safeScope, safeBuildingId, safeCreator]
@@ -302,7 +302,7 @@ export async function addParticipants(conversation_id, usernames, role = "member
   const result = await query(
     `
       INSERT INTO msg_participants (conversation_id, username, role)
-      SELECT $1, username, $3
+      SELECT $1::bigint, username, $3::text
       FROM UNNEST($2::text[]) AS t(username)
       ON CONFLICT (conversation_id, username)
       DO UPDATE SET role = EXCLUDED.role
@@ -324,7 +324,7 @@ export async function removeParticipants(conversation_id, usernames) {
   const result = await query(
     `
       DELETE FROM msg_participants
-      WHERE conversation_id = $1
+      WHERE conversation_id = $1::bigint
         AND username = ANY($2::text[])
       RETURNING username
     `,
@@ -348,19 +348,19 @@ export async function findExistingDM(username1, username2) {
           SELECT 1
           FROM msg_participants p
           WHERE p.conversation_id = c.id
-            AND p.username = $1
+            AND p.username = $1::text
         )
         AND EXISTS (
           SELECT 1
           FROM msg_participants p
           WHERE p.conversation_id = c.id
-            AND p.username = $2
+            AND p.username = $2::text
         )
         AND NOT EXISTS (
           SELECT 1
           FROM msg_participants p
           WHERE p.conversation_id = c.id
-            AND p.username NOT IN ($1, $2, 'admin')
+            AND p.username NOT IN ($1::text, $2::text, 'admin')
       )
       ORDER BY c.updated_at::timestamptz DESC, c.id DESC
       LIMIT 1
@@ -404,10 +404,10 @@ export async function getMessages(conversation_id, before_cursor, limit) {
       FROM msg_messages m
       LEFT JOIN msg_messages r
         ON r.id = m.reply_to_id
-      WHERE m.conversation_id = $1
+      WHERE m.conversation_id = $1::bigint
         AND ($2::timestamptz IS NULL OR m.created_at::timestamptz < $2::timestamptz)
       ORDER BY m.created_at::timestamptz DESC, m.id DESC
-      LIMIT $3
+      LIMIT $3::int
     `,
     [conversationId, safeCursor, safeLimit]
   );
@@ -441,7 +441,7 @@ export async function createMessage(
           attachment_type,
           created_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+        VALUES ($1::bigint, $2::text, $3::text, $4::bigint, $5::text, $6::text, $7::text, NOW())
         RETURNING *
       `,
       [
@@ -459,7 +459,7 @@ export async function createMessage(
       `
         UPDATE msg_conversations
         SET updated_at = NOW()
-        WHERE id = $1
+        WHERE id = $1::bigint
       `,
       [conversationId]
     );
@@ -477,7 +477,7 @@ export async function markAsRead(conversation_id, username) {
   await query(
     `
       INSERT INTO msg_participants (conversation_id, username, role, last_read_at)
-      VALUES ($1, $2, CASE WHEN $2 = 'admin' THEN 'admin' ELSE 'member' END, NOW())
+      VALUES ($1::bigint, $2::text, CASE WHEN $2::text = 'admin' THEN 'admin' ELSE 'member' END, NOW())
       ON CONFLICT (conversation_id, username)
       DO UPDATE SET last_read_at = NOW()
     `,
@@ -500,7 +500,7 @@ export async function getUnreadCounts(username) {
             ELSE NULL
           END AS building_id
         FROM users u
-        WHERE u.username = $1
+        WHERE u.username = $1::text
         LIMIT 1
       ),
       visible AS (
@@ -513,7 +513,7 @@ export async function getUnreadCounts(username) {
             SELECT 1
             FROM msg_participants p
             WHERE p.conversation_id = c.id
-              AND p.username = $1
+              AND p.username = $1::text
           )
           OR c.scope = 'neighborhood'
           OR (me.building_id IS NOT NULL AND c.scope = 'building' AND c.building_id = me.building_id)
@@ -527,10 +527,10 @@ export async function getUnreadCounts(username) {
               FROM msg_messages m
               LEFT JOIN msg_participants p
                 ON p.conversation_id = v.id
-               AND p.username = $1
+               AND p.username = $1::text
               WHERE m.conversation_id = v.id
                 AND m.deleted_at IS NULL
-                AND m.sender <> $1
+                AND m.sender <> $1::text
                 AND m.created_at::timestamptz > COALESCE(p.last_read_at, to_timestamp(0))
             ),
             0
@@ -565,8 +565,8 @@ export async function softDeleteMessage(message_id, deleted_by) {
       UPDATE msg_messages
       SET
         deleted_at = COALESCE(deleted_at, NOW()),
-        deleted_by = COALESCE(deleted_by, $2)
-      WHERE id = $1
+        deleted_by = COALESCE(deleted_by, $2::text)
+      WHERE id = $1::bigint
       RETURNING *
     `,
     [messageId, actor]
@@ -585,8 +585,8 @@ export async function pinMessage(conversation_id, message_id) {
       `
         SELECT id
         FROM msg_messages
-        WHERE id = $1
-          AND conversation_id = $2
+        WHERE id = $1::bigint
+          AND conversation_id = $2::bigint
           AND deleted_at IS NULL
         LIMIT 1
       `,
@@ -601,7 +601,7 @@ export async function pinMessage(conversation_id, message_id) {
       `
         UPDATE msg_messages
         SET is_pinned = FALSE
-        WHERE conversation_id = $1
+        WHERE conversation_id = $1::bigint
           AND is_pinned = TRUE
       `,
       [conversationId]
@@ -611,7 +611,7 @@ export async function pinMessage(conversation_id, message_id) {
       `
         UPDATE msg_messages
         SET is_pinned = TRUE
-        WHERE id = $1
+        WHERE id = $1::bigint
       `,
       [messageId]
     );
@@ -619,9 +619,9 @@ export async function pinMessage(conversation_id, message_id) {
     const conversationResult = await client.query(
       `
         UPDATE msg_conversations
-        SET pinned_msg_id = $1,
+        SET pinned_msg_id = $1::bigint,
             updated_at = NOW()
-        WHERE id = $2
+        WHERE id = $2::bigint
         RETURNING *
       `,
       [messageId, conversationId]
@@ -639,7 +639,7 @@ export async function unpinMessage(conversation_id) {
       `
         UPDATE msg_messages
         SET is_pinned = FALSE
-        WHERE conversation_id = $1
+        WHERE conversation_id = $1::bigint
           AND is_pinned = TRUE
       `,
       [conversationId]
@@ -650,7 +650,7 @@ export async function unpinMessage(conversation_id) {
         UPDATE msg_conversations
         SET pinned_msg_id = NULL,
             updated_at = NOW()
-        WHERE id = $1
+        WHERE id = $1::bigint
         RETURNING *
       `,
       [conversationId]
@@ -668,7 +668,7 @@ export async function lockConversation(id) {
       UPDATE msg_conversations
       SET is_locked = TRUE,
           updated_at = NOW()
-      WHERE id = $1
+      WHERE id = $1::bigint
       RETURNING *
     `,
     [conversationId]
@@ -684,7 +684,7 @@ export async function unlockConversation(id) {
       UPDATE msg_conversations
       SET is_locked = FALSE,
           updated_at = NOW()
-      WHERE id = $1
+      WHERE id = $1::bigint
       RETURNING *
     `,
     [conversationId]
@@ -698,7 +698,7 @@ export async function deleteConversation(id) {
   const result = await query(
     `
       DELETE FROM msg_conversations
-      WHERE id = $1
+      WHERE id = $1::bigint
       RETURNING id
     `,
     [conversationId]
@@ -711,10 +711,10 @@ export async function updateConversationTopic(id, title, topic) {
   const result = await query(
     `
       UPDATE msg_conversations
-      SET title = $2,
-          topic = $3,
+      SET title = $2::text,
+          topic = $3::text,
           updated_at = NOW()
-      WHERE id = $1
+      WHERE id = $1::bigint
       RETURNING *
     `,
     [conversationId, title == null ? null : String(title), topic == null ? null : String(topic)]
@@ -732,7 +732,7 @@ export async function getMessageById(message_id) {
     `
       SELECT *
       FROM msg_messages
-      WHERE id = $1
+      WHERE id = $1::bigint
       LIMIT 1
     `,
     [messageId]
@@ -750,7 +750,7 @@ export async function getUserByUsername(username) {
     `
       SELECT id, username, role, building_number, apartment_number, avizier_permission
       FROM users
-      WHERE username = $1
+      WHERE username = $1::text
       LIMIT 1
     `,
     [safeUsername]
@@ -778,7 +778,7 @@ export async function listResidentUsernamesByBuilding(building_id) {
       SELECT username
       FROM users
       WHERE role = 'resident'
-        AND ('bloc' || building_number::text) = $1
+        AND ('bloc' || building_number::text) = $1::text
       ORDER BY apartment_number ASC, username ASC
     `,
     [safeBuildingId]

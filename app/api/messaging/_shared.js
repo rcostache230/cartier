@@ -147,7 +147,7 @@ export async function getSessionUser(request) {
     `
       SELECT id, username, role, avizier_permission, building_number, apartment_number, phone_number
       FROM users
-      WHERE id = $1
+      WHERE id = $1::bigint
       LIMIT 1
     `,
     [token.userId]
