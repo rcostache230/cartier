@@ -4109,7 +4109,7 @@
     <script defer src="marketplace.js"></script>
     <script defer src="voting.js"></script>
     <script defer src="avizier.js"></script>
-    <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+    <script defer src="https://js.pusher.com/8.0/pusher.min.js"></script>
     <script>const PUSHER_KEY='{{PUSHER_KEY}}';const USERNAME='{{username}}';</script>
     <script defer src="/js/messaging-badge.js"></script>
     <script>
@@ -6511,16 +6511,14 @@
             });
             applyAuthState(response.user);
             applyRequestedModuleFromQuery();
-            await Promise.allSettled([
+            setQuickStatsLoading(false);
+            Promise.allSettled([
               ParkingModule.refreshDashboard(),
               refreshAdminUsers(),
-              refreshMarketplaceWhenReady(),
-              refreshAvizierWhenReady(),
-              refreshVotingWhenReady(),
               refreshRecommendationsActivity({ refreshFeed: false }),
-            ]);
-            refreshHomeActivity({ resetPage: true });
-            setQuickStatsLoading(false);
+            ]).then(() => {
+              refreshHomeActivity({ resetPage: true });
+            });
             showToast("Login successful.");
             flashButtonSuccess(button, "Welcome");
           } catch (error) {
@@ -7117,16 +7115,14 @@
           }
           applyAuthState(me.user);
           applyRequestedModuleFromQuery();
-          await Promise.allSettled([
+          setQuickStatsLoading(false);
+          Promise.allSettled([
             ParkingModule.refreshDashboard(),
             refreshAdminUsers(),
-            refreshMarketplaceWhenReady(),
-            refreshAvizierWhenReady(),
-            refreshVotingWhenReady(),
             refreshRecommendationsActivity({ refreshFeed: false }),
-          ]);
-          refreshHomeActivity({ resetPage: true });
-          setQuickStatsLoading(false);
+          ]).then(() => {
+            refreshHomeActivity({ resetPage: true });
+          });
         } catch (error) {
           setQuickStatsLoading(false);
           setStatus(error.message, true);
