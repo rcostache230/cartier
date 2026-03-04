@@ -263,6 +263,21 @@
     return `${words[0][0] || ""}${words[1][0] || ""}`.toUpperCase();
   }
 
+  function conversationPreview(conversation) {
+    const lastMessage = String(conversation?.last_message?.content || "").trim();
+    if (lastMessage) return { text: lastMessage, empty: false };
+    return { text: "Nicio activitate încă", empty: true };
+  }
+
+  function conversationAvatarHtml(conversation) {
+    const type = normalizeConversationType(conversation?.type);
+    if (type === "dm") {
+      return `<span class="conv-avatar circle dm">${escapeHtml(avatarInitials(conversation))}</span>`;
+    }
+    const icon = type === "announcement" ? "megaphone" : "messages-square";
+    return `<span class="conv-avatar square board"><i data-lucide="${icon}" aria-hidden="true"></i></span>`;
+  }
+
   function relativeTime(iso) {
     if (!iso) return "";
     const date = new Date(iso);
@@ -383,28 +398,27 @@
         const active = Number(state.activeConversationId) === Number(conversation.id);
         const unread = Number(conversation.unread_count || 0);
         const isDm = normalizeConversationType(conversation.type) === "dm";
-        const preview =
-          conversation.last_message?.content ||
-          (conversation.topic ? conversation.topic : "Nicio activitate încă");
+        const preview = conversationPreview(conversation);
+        const type = normalizeConversationType(conversation.type);
 
         const unreadMarkup = unread > 0
           ? `<span class="unread-badge">${unread > 99 ? "99+" : unread}</span>`
-          : `<span class="unread-dot" style="opacity:0;"></span>`;
+          : "";
 
         return `
           <button class="conversation-item ${active ? "active" : ""}" data-conversation-id="${conversation.id}" type="button" aria-label="Deschide ${escapeHtml(conversation.title || "Conversație")}">
-            <span class="conv-avatar ${isDm ? "circle" : "square"}">${escapeHtml(avatarInitials(conversation))}</span>
+            ${conversationAvatarHtml(conversation)}
             <span class="conv-body">
-              <span class="conv-title-row">
-                <span class="conv-title">${escapeHtml(conversation.title || (isDm ? "Mesaj direct" : "Conversație"))}</span>
-                <span class="conv-type-chip">${escapeHtml(typeLabel(normalizeConversationType(conversation.type)))}</span>
+              <span class="conv-title">${escapeHtml(conversation.title || (isDm ? "Mesaj direct" : "Conversație"))}</span>
+              <span class="conv-topic-row">
+                ${!isDm && conversation.topic ? `<span class="conv-topic">${escapeHtml(conversation.topic)}</span>` : "<span></span>"}
+                <span class="conv-type-chip">${escapeHtml(typeLabel(type))}</span>
               </span>
-              ${!isDm && conversation.topic ? `<span class="conv-topic">${escapeHtml(conversation.topic)}</span>` : ""}
-              <span class="conv-preview">${escapeHtml(preview)}</span>
+              <span class="conv-preview ${preview.empty ? "is-empty" : ""}">${escapeHtml(preview.text)}</span>
             </span>
             <span class="conv-meta">
               <span class="conv-time">${escapeHtml(relativeTime(conversation.updated_at))}</span>
-              ${unread > 0 ? unreadMarkup : ""}
+              ${unreadMarkup}
             </span>
           </button>
         `;
@@ -432,7 +446,8 @@
       els.conversationList.innerHTML = `
         <div class="empty-chat" style="margin:18px 0;">
           <div class="empty-chat-icon"><i data-lucide="message-square"></i></div>
-          <div>Nu există conversații pentru filtrul ales.</div>
+          <div class="empty-chat-title">Nu există conversații pentru filtrul ales.</div>
+          <div class="empty-chat-subtitle">Nicio activitate recentă. Fii primul care postează!</div>
         </div>
       `;
       hydrateIcons();
@@ -455,16 +470,23 @@
       if (els.chatTitle) els.chatTitle.textContent = "Selectează o conversație";
       if (els.chatTopic) els.chatTopic.textContent = "";
       if (els.chatAvatar) {
-        els.chatAvatar.textContent = "#";
-        els.chatAvatar.className = "conv-avatar square";
+        els.chatAvatar.innerHTML = `<i data-lucide="message-square" aria-hidden="true"></i>`;
+        els.chatAvatar.className = "conv-avatar square board";
       }
+      hydrateIcons();
       return;
     }
 
     const isDm = normalizeConversationType(conversation.type) === "dm";
     if (els.chatAvatar) {
-      els.chatAvatar.textContent = avatarInitials(conversation);
-      els.chatAvatar.className = `conv-avatar ${isDm ? "circle" : "square"}`;
+      if (isDm) {
+        els.chatAvatar.textContent = avatarInitials(conversation);
+        els.chatAvatar.className = "conv-avatar circle dm";
+      } else {
+        const icon = normalizeConversationType(conversation.type) === "announcement" ? "megaphone" : "messages-square";
+        els.chatAvatar.innerHTML = `<i data-lucide="${icon}" aria-hidden="true"></i>`;
+        els.chatAvatar.className = "conv-avatar square board";
+      }
     }
     if (els.chatTitle) {
       els.chatTitle.textContent = conversation.title || (isDm ? "Mesaj direct" : "Conversație");
@@ -482,6 +504,7 @@
       els.btnToggleLock.title = conversation.is_locked ? "Deblochează" : "Blochează";
       els.btnToggleLock.setAttribute("aria-label", conversation.is_locked ? "Deblochează board" : "Blochează board");
     }
+    hydrateIcons();
   }
 
   function renderPinnedBar(conversation) {
@@ -596,7 +619,7 @@
       const bubbleText = escapeHtml(message.content || "");
       const attachmentUrl = messageAttachmentUrl(message);
       const attachment = attachmentUrl
-        ? `<a class="message-attachment" target="_blank" rel="noopener noreferrer" href="${escapeHtml(attachmentUrl)}">📎 ${escapeHtml(message.attachment_name || "Fișier")}</a>`
+        ? `<a class="message-attachment" target="_blank" rel="noopener noreferrer" href="${escapeHtml(attachmentUrl)}">${escapeHtml(message.attachment_name || "Fișier")}</a>`
         : "";
 
       rows.push(`
