@@ -171,10 +171,10 @@ export async function getConversationsForUser(username, building_id, type_filter
             WHEN m.deleted_at IS NOT NULL THEN 'Mesaj șters'
             ELSE LEFT(COALESCE(m.content, ''), 220)
           END AS preview,
-          m.created_at
+          m.created_at::timestamptz AS created_at
         FROM msg_messages m
         WHERE m.conversation_id = c.id
-        ORDER BY m.created_at DESC, m.id DESC
+        ORDER BY m.created_at::timestamptz DESC, m.id DESC
         LIMIT 1
       ) lm ON TRUE
       LEFT JOIN LATERAL (
@@ -191,11 +191,11 @@ export async function getConversationsForUser(username, building_id, type_filter
         WHERE m.conversation_id = c.id
           AND m.deleted_at IS NULL
           AND m.sender <> $1
-          AND m.created_at > COALESCE(p.last_read_at, to_timestamp(0))
+          AND m.created_at::timestamptz > COALESCE(p.last_read_at, to_timestamp(0))
       ) uc ON TRUE
       WHERE ($3::text IS NULL OR c.type = $3)
-        AND ($4::timestamptz IS NULL OR c.updated_at < $4::timestamptz)
-      ORDER BY c.updated_at DESC, c.id DESC
+        AND ($4::timestamptz IS NULL OR c.updated_at::timestamptz < $4::timestamptz)
+      ORDER BY c.updated_at::timestamptz DESC, c.id DESC
       LIMIT $5
     `,
     [safeUsername, safeBuildingId, safeType, safeCursor, safeLimit]
@@ -361,8 +361,8 @@ export async function findExistingDM(username1, username2) {
           FROM msg_participants p
           WHERE p.conversation_id = c.id
             AND p.username NOT IN ($1, $2, 'admin')
-        )
-      ORDER BY c.updated_at DESC, c.id DESC
+      )
+      ORDER BY c.updated_at::timestamptz DESC, c.id DESC
       LIMIT 1
     `,
     [u1, u2]
@@ -405,8 +405,8 @@ export async function getMessages(conversation_id, before_cursor, limit) {
       LEFT JOIN msg_messages r
         ON r.id = m.reply_to_id
       WHERE m.conversation_id = $1
-        AND ($2::timestamptz IS NULL OR m.created_at < $2::timestamptz)
-      ORDER BY m.created_at DESC, m.id DESC
+        AND ($2::timestamptz IS NULL OR m.created_at::timestamptz < $2::timestamptz)
+      ORDER BY m.created_at::timestamptz DESC, m.id DESC
       LIMIT $3
     `,
     [conversationId, safeCursor, safeLimit]
@@ -531,7 +531,7 @@ export async function getUnreadCounts(username) {
               WHERE m.conversation_id = v.id
                 AND m.deleted_at IS NULL
                 AND m.sender <> $1
-                AND m.created_at > COALESCE(p.last_read_at, to_timestamp(0))
+                AND m.created_at::timestamptz > COALESCE(p.last_read_at, to_timestamp(0))
             ),
             0
           )::int AS unread_count

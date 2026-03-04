@@ -14,13 +14,15 @@ export class ApiError extends Error {
 
 export function isMessagingSchemaMissingError(error) {
   const code = String(error?.code || "").trim();
-  if (code === "42P01" || code === "42703") return true;
+  if (["42P01", "42703", "42883", "42804", "22P02"].includes(code)) return true;
   const message = String(error?.message || "").toLowerCase();
   return (
     message.includes('relation "msg_') ||
     message.includes("msg_conversations") ||
     message.includes("msg_messages") ||
-    message.includes("msg_participants")
+    message.includes("msg_participants") ||
+    (message.includes("created_at") && message.includes("timestamp")) ||
+    (message.includes("updated_at") && message.includes("timestamp"))
   );
 }
 
