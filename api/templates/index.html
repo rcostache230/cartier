@@ -6214,6 +6214,7 @@
             AvizierModule.updateFormVisibility();
             AvizierModule.setComposerMode();
           }
+          document.documentElement.classList.remove("session-hint");
           return;
         }
 
@@ -6283,6 +6284,7 @@
         // Prompt for push after login — delayed so dashboard appears first
         setTimeout(() => maybePromptForPush(), 3000);
         updateMobileFab();
+        document.documentElement.classList.remove("session-hint");
       }
 
       function setupParkingBindings() {
