@@ -70,7 +70,9 @@
     sendBtn: document.getElementById("sendBtn"),
     attachmentInput: document.getElementById("attachmentInput"),
     attachmentChip: document.getElementById("attachmentChip"),
+    attachmentPreviewImage: document.getElementById("attachmentPreviewImage"),
     attachmentLabel: document.getElementById("attachmentLabel"),
+    attachmentSize: document.getElementById("attachmentSize"),
     removeAttachmentBtn: document.getElementById("removeAttachmentBtn"),
     replyChip: document.getElementById("replyChip"),
     replyLabel: document.getElementById("replyLabel"),
@@ -112,6 +114,9 @@
     actionPin: document.getElementById("actionPin"),
     actionDelete: document.getElementById("actionDelete"),
     actionCancel: document.getElementById("actionCancel"),
+    imageLightbox: document.getElementById("imageLightbox"),
+    imageLightboxClose: document.getElementById("imageLightboxClose"),
+    imageLightboxImg: document.getElementById("imageLightboxImg"),
   };
 
   function showStatus(message, isError = false) {
@@ -316,6 +321,30 @@
   function messageAttachmentUrl(message) {
     if (!message?.attachment_key) return null;
     return `/api/uploads/view?key=${encodeURIComponent(message.attachment_key)}`;
+  }
+
+  function isImageAttachmentType(typeValue) {
+    return String(typeValue || "").toLowerCase().startsWith("image/");
+  }
+
+  function attachmentFileSizeBytes(message) {
+    if (!message) return null;
+    const raw = message.attachment_size_bytes ?? message.attachment_size ?? null;
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed) || parsed <= 0) return null;
+    return parsed;
+  }
+
+  function formatFileSize(bytesValue) {
+    const bytes = Number(bytesValue || 0);
+    if (!Number.isFinite(bytes) || bytes <= 0) return "";
+    if (bytes < 1024) return `${bytes} B`;
+    const kb = bytes / 1024;
+    if (kb < 1024) return `${Math.round(kb)} KB`;
+    const mb = kb / 1024;
+    if (mb < 1024) return `${mb.toFixed(mb >= 10 ? 0 : 1)} MB`;
+    const gb = mb / 1024;
+    return `${gb.toFixed(gb >= 10 ? 0 : 1)} GB`;
   }
 
   function normalizeConversationType(type) {
@@ -564,12 +593,91 @@
     if (!state.attachment) {
       els.attachmentChip.classList.remove("show");
       els.attachmentLabel.textContent = "";
+      if (els.attachmentSize) {
+        els.attachmentSize.textContent = "";
+        els.attachmentSize.style.display = "none";
+      }
+      if (els.attachmentPreviewImage) {
+        els.attachmentPreviewImage.src = "";
+        els.attachmentPreviewImage.classList.add("hidden");
+      }
       return;
     }
 
     const label = state.attachmentUploading ? `Se încarcă: ${state.attachment.attachment_name}` : state.attachment.attachment_name;
     els.attachmentChip.classList.add("show");
     els.attachmentLabel.textContent = label;
+    const sizeLabel = formatFileSize(attachmentFileSizeBytes(state.attachment));
+    if (els.attachmentSize) {
+      els.attachmentSize.textContent = sizeLabel;
+      els.attachmentSize.style.display = sizeLabel ? "inline-flex" : "none";
+    }
+
+    const showImage = isImageAttachmentType(state.attachment.attachment_type) && state.attachment.local_preview_url;
+    if (els.attachmentPreviewImage) {
+      if (showImage) {
+        els.attachmentPreviewImage.src = state.attachment.local_preview_url;
+        els.attachmentPreviewImage.classList.remove("hidden");
+      } else {
+        els.attachmentPreviewImage.src = "";
+        els.attachmentPreviewImage.classList.add("hidden");
+      }
+    }
+  }
+
+  function revokeAttachmentPreview(attachment) {
+    const previewUrl = String(attachment?.local_preview_url || "");
+    if (!previewUrl || !previewUrl.startsWith("blob:")) return;
+    try {
+      URL.revokeObjectURL(previewUrl);
+    } catch {
+      // ignore revoke failures
+    }
+  }
+
+  function closeImageLightbox() {
+    if (!els.imageLightbox) return;
+    els.imageLightbox.classList.remove("show");
+    if (els.imageLightboxImg) {
+      els.imageLightboxImg.src = "";
+      els.imageLightboxImg.alt = "Imagine atașată";
+    }
+  }
+
+  function openImageLightbox(src, label = "") {
+    if (!els.imageLightbox || !els.imageLightboxImg || !src) return;
+    els.imageLightboxImg.src = src;
+    els.imageLightboxImg.alt = label || "Imagine atașată";
+    els.imageLightbox.classList.add("show");
+    hydrateIcons();
+  }
+
+  function bindMessageImageLoadStates() {
+    if (!els.messagesScroll) return;
+    els.messagesScroll.querySelectorAll(".message-image-wrap.loading .message-image").forEach((img) => {
+      const wrap = img.closest(".message-image-wrap");
+      if (!wrap) return;
+
+      const onLoad = () => {
+        wrap.classList.remove("loading", "is-error");
+      };
+      const onError = () => {
+        wrap.classList.remove("loading");
+        wrap.classList.add("is-error");
+      };
+
+      if (img.complete && img.naturalWidth > 0) {
+        onLoad();
+        return;
+      }
+      if (img.complete && img.naturalWidth === 0) {
+        onError();
+        return;
+      }
+
+      img.addEventListener("load", onLoad, { once: true });
+      img.addEventListener("error", onError, { once: true });
+    });
   }
 
   function messageIdKey(message) {
@@ -616,18 +724,67 @@
       const failed = Boolean(message.__failed);
 
       const senderLine = !sent && !isDm ? `<div class="message-sender">${escapeHtml(message.sender || "")}</div>` : "";
-      const bubbleText = escapeHtml(message.content || "");
-      const attachmentUrl = messageAttachmentUrl(message);
-      const attachment = attachmentUrl
-        ? `<a class="message-attachment" target="_blank" rel="noopener noreferrer" href="${escapeHtml(attachmentUrl)}">${escapeHtml(message.attachment_name || "Fișier")}</a>`
-        : "";
+      const bubbleTextRaw = String(message.content || "");
+      const bubbleText = escapeHtml(bubbleTextRaw);
+      const hasText = bubbleTextRaw.trim().length > 0;
+      const attachmentUrl = deleted ? null : messageAttachmentUrl(message);
+      const isImageAttachment = attachmentUrl && isImageAttachmentType(message.attachment_type);
+      const attachmentName = String(message.attachment_name || "Fișier");
+      const fileSizeLabel = formatFileSize(attachmentFileSizeBytes(message));
+      const fileSizeMarkup = fileSizeLabel ? `<span class="message-file-size">${escapeHtml(fileSizeLabel)}</span>` : "";
+
+      let bubbleClassName = "message-bubble";
+      let attachmentMarkup = "";
+      if (isImageAttachment) {
+        bubbleClassName += hasText ? " has-image-with-text" : " has-image-only";
+        attachmentMarkup = `
+          <button type="button"
+                  class="message-image-trigger"
+                  data-open-image="${escapeHtml(attachmentUrl)}"
+                  data-image-name="${escapeHtml(attachmentName)}"
+                  aria-label="Deschide imaginea ${escapeHtml(attachmentName)}">
+            <span class="message-image-wrap loading ${sent ? "sent" : "received"}">
+              <img class="message-image"
+                   src="${escapeHtml(attachmentUrl)}"
+                   alt="${escapeHtml(attachmentName)}"
+                   loading="lazy" />
+              <span class="message-image-loading" aria-hidden="true">
+                <span class="message-image-spinner"></span>
+              </span>
+              <span class="message-image-error" aria-hidden="true">
+                <i data-lucide="image-off" aria-hidden="true"></i>
+                <span>Imaginea nu poate fi încărcată</span>
+              </span>
+            </span>
+          </button>
+        `;
+      } else if (attachmentUrl) {
+        attachmentMarkup = `
+          <div class="message-file-card">
+            <div class="message-file-icon"><i data-lucide="file-text" aria-hidden="true"></i></div>
+            <div class="message-file-meta">
+              <div class="message-file-name">${escapeHtml(attachmentName)}</div>
+              ${fileSizeMarkup}
+            </div>
+            <a class="message-file-download"
+               target="_blank"
+               rel="noopener noreferrer"
+               href="${escapeHtml(attachmentUrl)}">Descarcă</a>
+          </div>
+        `;
+      }
+
+      let bubbleInner = hasText ? `<div class="message-text">${bubbleText}</div>` : "";
+      bubbleInner += attachmentMarkup;
+      if (!bubbleInner) {
+        bubbleInner = "<div class=\"message-text\"></div>";
+      }
 
       rows.push(`
         <article id="msg-${escapeHtml(messageIdKey(message))}" class="message-row ${sent ? "sent" : "received"} ${deleted ? "deleted" : ""} ${failed ? "failed" : ""}" data-msg-id="${escapeHtml(messageIdKey(message))}" data-msg-sender="${escapeHtml(message.sender || "")}">
           ${senderLine}
-          <div class="message-bubble">
-            ${bubbleText}
-            ${attachment}
+          <div class="${bubbleClassName}">
+            ${bubbleInner}
           </div>
           <div class="message-meta">${escapeHtml(formatClock(createdAt))}${failed ? " · Eșuat" : ""}</div>
         </article>
@@ -645,6 +802,8 @@
     }
 
     els.messagesScroll.innerHTML = rows.join("");
+    bindMessageImageLoadStates();
+    hydrateIcons();
 
     if (scrollToBottom) {
       requestAnimationFrame(() => {
@@ -974,10 +1133,16 @@
   }
 
   async function uploadAttachment(file) {
+    if (state.attachment) {
+      revokeAttachmentPreview(state.attachment);
+    }
+    const localPreviewUrl = isImageAttachmentType(file.type) ? URL.createObjectURL(file) : "";
     state.attachmentUploading = true;
     state.attachment = {
       attachment_name: file.name,
       attachment_type: file.type || "application/octet-stream",
+      attachment_size_bytes: Number(file.size || 0) || null,
+      local_preview_url: localPreviewUrl || null,
     };
     renderAttachmentChip();
 
@@ -1000,7 +1165,14 @@
       attachment_key: data.key,
       attachment_name: data.file_name || file.name,
       attachment_type: data.file_type || file.type || "application/octet-stream",
+      attachment_size_bytes: Number(file.size || 0) || null,
+      local_preview_url: localPreviewUrl || null,
     };
+
+    if (!isImageAttachmentType(state.attachment.attachment_type) && localPreviewUrl) {
+      revokeAttachmentPreview({ local_preview_url: localPreviewUrl });
+      state.attachment.local_preview_url = null;
+    }
   }
 
   async function handleAttachmentSelection(event) {
@@ -1011,6 +1183,7 @@
       await uploadAttachment(file);
       toast("Atașament încărcat.", "success");
     } catch (error) {
+      if (state.attachment) revokeAttachmentPreview(state.attachment);
       state.attachment = null;
       toast(error.message || "Atașamentul nu a putut fi încărcat.", "error");
     } finally {
@@ -1021,9 +1194,13 @@
   }
 
   function clearAttachment() {
+    if (state.attachment) {
+      revokeAttachmentPreview(state.attachment);
+    }
     state.attachment = null;
     state.attachmentUploading = false;
     renderAttachmentChip();
+    if (els.attachmentInput) els.attachmentInput.value = "";
   }
 
   function clearReply() {
@@ -1042,6 +1219,7 @@
       attachment_key: payload.attachment_key || null,
       attachment_name: payload.attachment_name || null,
       attachment_type: payload.attachment_type || null,
+      attachment_size_bytes: payload.attachment_size_bytes || null,
       created_at: new Date().toISOString(),
       __optimistic: true,
       __failed: false,
@@ -1115,6 +1293,7 @@
       attachment_key: state.attachment?.attachment_key,
       attachment_name: state.attachment?.attachment_name,
       attachment_type: state.attachment?.attachment_type,
+      attachment_size_bytes: state.attachment?.attachment_size_bytes,
     };
 
     const tempId = addOptimisticMessage(payload);
@@ -1162,6 +1341,7 @@
       attachment_key: data.attachment_key || null,
       attachment_name: data.attachment_name || null,
       attachment_type: data.attachment_type || null,
+      attachment_size_bytes: data.attachment_size_bytes || data.attachment_size || null,
       created_at: data.created_at || new Date().toISOString(),
     };
 
@@ -1791,6 +1971,21 @@
       }
     });
 
+    els.messagesScroll?.addEventListener("click", (event) => {
+      const trigger = event.target.closest("[data-open-image]");
+      if (!trigger) return;
+      const src = String(trigger.dataset.openImage || "").trim();
+      if (!src) return;
+      openImageLightbox(src, String(trigger.dataset.imageName || "").trim());
+    });
+
+    els.imageLightboxClose?.addEventListener("click", closeImageLightbox);
+    els.imageLightbox?.addEventListener("click", (event) => {
+      if (event.target === els.imageLightbox) {
+        closeImageLightbox();
+      }
+    });
+
     bindLongPressHandlers();
     bindPullToRefresh();
 
@@ -1859,6 +2054,12 @@
         const isInsideSheet = event.target.closest("#messageActionSheet");
         const isMessageRow = event.target.closest("[data-msg-id]");
         if (!isInsideSheet && !isMessageRow) closeActionSheet();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && els.imageLightbox?.classList.contains("show")) {
+        closeImageLightbox();
       }
     });
 

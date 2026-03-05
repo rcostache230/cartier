@@ -239,7 +239,9 @@
             </div>
 
             <div id="attachmentChip" class="attachment-chip">
+              <img id="attachmentPreviewImage" class="attachment-chip-thumb hidden" alt="Previzualizare atașament" />
               <span id="attachmentLabel"></span>
+              <span id="attachmentSize" class="attachment-size"></span>
               <button id="removeAttachmentBtn" type="button" class="icon-btn" aria-label="Elimină atașamentul">
                 <i data-lucide="x" aria-hidden="true"></i>
               </button>
@@ -402,6 +404,13 @@
       <button id="actionPin" type="button">Fixează mesajul</button>
       <button id="actionDelete" class="danger" type="button">Șterge mesajul</button>
       <button id="actionCancel" type="button">Anulează</button>
+    </div>
+
+    <div id="imageLightbox" class="image-lightbox" role="dialog" aria-modal="true" aria-label="Previzualizare imagine">
+      <button id="imageLightboxClose" type="button" class="image-lightbox-close" aria-label="Închide previzualizarea">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+      <img id="imageLightboxImg" class="image-lightbox-img" alt="Imagine atașată" />
     </div>
 
     <div id="status" aria-live="polite"></div>
