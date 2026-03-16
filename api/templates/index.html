@@ -4607,6 +4607,24 @@
         }
       }
 
+      function startAncillaryHomeRefresh() {
+        return Promise.allSettled([
+          refreshAdminUsers(),
+          refreshRecommendationsActivity({ refreshFeed: false }),
+        ]).then(() => {
+          refreshHomeActivity({ resetPage: true });
+        });
+      }
+
+      async function loadInitialHomeState() {
+        startAncillaryHomeRefresh();
+        try {
+          await ParkingModule.refreshDashboard();
+        } finally {
+          setQuickStatsLoading(false);
+        }
+      }
+
       function animateCounter(el, target, duration = 700) {
         if (!el || isNaN(target)) return;
         const numericTarget = Math.max(0, Number(target || 0));
@@ -6542,14 +6560,7 @@
             });
             applyAuthState(response.user);
             applyRequestedModuleFromQuery();
-            setQuickStatsLoading(false);
-            Promise.allSettled([
-              ParkingModule.refreshDashboard(),
-              refreshAdminUsers(),
-              refreshRecommendationsActivity({ refreshFeed: false }),
-            ]).then(() => {
-              refreshHomeActivity({ resetPage: true });
-            });
+            await loadInitialHomeState();
             showToast("Login successful.");
             flashButtonSuccess(button, "Welcome");
           } catch (error) {
@@ -7147,14 +7158,7 @@
           }
           applyAuthState(me.user);
           applyRequestedModuleFromQuery();
-          setQuickStatsLoading(false);
-          Promise.allSettled([
-            ParkingModule.refreshDashboard(),
-            refreshAdminUsers(),
-            refreshRecommendationsActivity({ refreshFeed: false }),
-          ]).then(() => {
-            refreshHomeActivity({ resetPage: true });
-          });
+          await loadInitialHomeState();
         } catch (error) {
           setQuickStatsLoading(false);
           setStatus(error.message, true);

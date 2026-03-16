@@ -1076,6 +1076,90 @@ async function listBuildingStats() {
   return stats;
 }
 
+async function countMarketplaceActiveListings() {
+  const result = await query(
+    `
+      SELECT COUNT(*)::int AS total
+      FROM marketplace_posts
+      WHERE status = 'active'
+    `
+  );
+  return Number(result.rows[0]?.total || 0);
+}
+
+async function countOpenPollsForViewer(viewer) {
+  const params = [];
+  const where = ["p.status = 'active'"];
+
+  if (viewer.role !== "admin") {
+    params.push(Number(viewer.building_number || 0));
+    where.push(`(p.scope = 'neighbourhood' OR (p.scope = 'building' AND p.building_id = $${params.length}))`);
+  }
+
+  const result = await query(
+    `
+      SELECT COUNT(*)::int AS total
+      FROM polls p
+      WHERE ${where.join(" AND ")}
+    `,
+    params
+  );
+  return Number(result.rows[0]?.total || 0);
+}
+
+async function countAvizierAnnouncementsForViewer(viewer) {
+  const params = [];
+  const where = [];
+
+  if (!canManageAllAvizier(viewer)) {
+    params.push(Number(viewer.building_number || 0));
+    where.push(`(a.scope = 'general' OR (a.scope = 'building' AND a.building_id = $${params.length}))`);
+  }
+
+  const whereClause = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const result = await query(
+    `
+      SELECT COUNT(*)::int AS total
+      FROM avizier_announcements a
+      ${whereClause}
+    `,
+    params
+  );
+  return Number(result.rows[0]?.total || 0);
+}
+
+async function getDashboardMessaging(user) {
+  try {
+    const [unread, conversations] = await Promise.all([
+      getUnreadCounts(user.username),
+      getConversationsForUser(
+        user.username,
+        `bloc${Number(user.building_number || 0)}`,
+        null,
+        null,
+        24
+      ),
+    ]);
+
+    const recent = (Array.isArray(conversations) ? conversations : [])
+      .filter((conversation) => conversation?.last_message?.created_at)
+      .slice(0, 8)
+      .map((conversation) => ({
+        name: String(conversation.title || "Conversație"),
+        preview: String(conversation.last_message?.content || "").slice(0, 180),
+        time: conversation.last_message?.created_at || conversation.updated_at,
+        conv_id: Number(conversation.id),
+      }));
+
+    return {
+      total_unread: Number(unread?.total || 0),
+      recent,
+    };
+  } catch {
+    return { total_unread: 0, recent: [] };
+  }
+}
+
 async function expirePastParkingSlots() {
   const result = await query(
     `
@@ -3994,49 +4078,44 @@ async function handleRequest(request, slug) {
     const buildingNumber = parseOptionalInt(request.nextUrl.searchParams.get("building_number"), "building_number");
     if (buildingNumber != null) validateBuildingNumber(buildingNumber);
 
-    const sharedSpots = await listOpenSlots({
-      buildingNumber,
-      excludeOwnerUserId: null,
-    });
-    const myShared = await listSlots("ps.owner_user_id = $1 AND ps.status IN ('OPEN', 'RESERVED')", [user.id]);
-    const myClaimed = await listSlots("ps.reserved_by_user_id = $1 AND ps.status = 'RESERVED'", [user.id]);
-    const claimedOnMy = await listSlots("ps.owner_user_id = $1 AND ps.status = 'RESERVED'", [user.id]);
-
-    let messaging = { total_unread: 0, recent: [] };
-    try {
-      const unread = await getUnreadCounts(user.username);
-      const conversations = await getConversationsForUser(
-        user.username,
-        `bloc${Number(user.building_number || 0)}`,
-        null,
-        null,
-        24
-      );
-      const recent = (Array.isArray(conversations) ? conversations : [])
-        .filter((conversation) => conversation?.last_message?.created_at)
-        .slice(0, 8)
-        .map((conversation) => ({
-          name: String(conversation.title || "Conversație"),
-          preview: String(conversation.last_message?.content || "").slice(0, 180),
-          time: conversation.last_message?.created_at || conversation.updated_at,
-          conv_id: Number(conversation.id),
-        }));
-      messaging = {
-        total_unread: Number(unread?.total || 0),
-        recent,
-      };
-    } catch {
-      messaging = { total_unread: 0, recent: [] };
-    }
+    const [
+      sharedSpots,
+      myShared,
+      myClaimed,
+      claimedOnMy,
+      buildingStats,
+      marketplaceActiveListings,
+      openPolls,
+      avizierAnnouncements,
+      messaging,
+    ] = await Promise.all([
+      listOpenSlots({
+        buildingNumber,
+        excludeOwnerUserId: null,
+      }),
+      listSlots("ps.owner_user_id = $1 AND ps.status IN ('OPEN', 'RESERVED')", [user.id]),
+      listSlots("ps.reserved_by_user_id = $1 AND ps.status = 'RESERVED'", [user.id]),
+      listSlots("ps.owner_user_id = $1 AND ps.status = 'RESERVED'", [user.id]),
+      listBuildingStats(),
+      countMarketplaceActiveListings(),
+      countOpenPollsForViewer(user),
+      countAvizierAnnouncementsForViewer(user),
+      getDashboardMessaging(user),
+    ]);
 
     return json(
       {
         current_user: user,
-        building_stats: await listBuildingStats(),
+        building_stats: buildingStats,
         shared_parking_spots: sharedSpots,
         my_shared_parking_spots: myShared,
         my_shared_claimed_by_neighbours: claimedOnMy,
         my_claimed_parking_spots: myClaimed,
+        summary: {
+          active_marketplace_listings: marketplaceActiveListings,
+          open_polls: openPolls,
+          avizier_announcements: avizierAnnouncements,
+        },
         messaging,
       },
       200

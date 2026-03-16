@@ -1,6 +1,8 @@
 /* parking.js — extracted Parking module logic */
 
 const ParkingModule = (() => {
+  let refreshDashboardPromise = null;
+
   function bindParkingElements() {
     const ids = {
       parkingModule: "parkingModule",
@@ -387,16 +389,34 @@ const ParkingModule = (() => {
   async function refreshDashboard() {
     bindParkingElements();
     if (!els.stats || !els.sharedSpots) return;
+    if (refreshDashboardPromise) return refreshDashboardPromise;
+
     showCapacitySkeleton();
-    const data = await api("/api/dashboard");
-    if (data && typeof data === "object") {
-      moduleQuickStats.messagesUnread = Math.max(0, Number(data.messaging?.total_unread || 0));
-      messagingRecentEntries = Array.isArray(data.messaging?.recent) ? data.messaging.recent : [];
-      renderQuickStats();
-    }
-    refreshTables(data);
-    refreshOpenSpotOptions();
-    markModuleRefreshed("parking");
+    refreshDashboardPromise = (async () => {
+      const data = await api("/api/dashboard");
+      if (data && typeof data === "object") {
+        moduleQuickStats.messagesUnread = Math.max(0, Number(data.messaging?.total_unread || 0));
+        moduleQuickStats.activeListings = Math.max(
+          0,
+          Number(data.summary?.active_marketplace_listings || moduleQuickStats.activeListings || 0)
+        );
+        moduleQuickStats.openPolls = Math.max(0, Number(data.summary?.open_polls || moduleQuickStats.openPolls || 0));
+        moduleQuickStats.announcements = Math.max(
+          0,
+          Number(data.summary?.avizier_announcements || moduleQuickStats.announcements || 0)
+        );
+        messagingRecentEntries = Array.isArray(data.messaging?.recent) ? data.messaging.recent : [];
+        renderQuickStats();
+      }
+      refreshTables(data);
+      refreshOpenSpotOptions();
+      markModuleRefreshed("parking");
+      return data;
+    })().finally(() => {
+      refreshDashboardPromise = null;
+    });
+
+    return refreshDashboardPromise;
   }
 
   async function claimSlotByPayload(payload, slotForDisplay, buttonEl) {
